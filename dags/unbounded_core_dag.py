@@ -2,8 +2,8 @@ import json
 
 from datetime import timedelta
 from subprocess import Popen
-from stellaretl_airflow.build_export_task import build_export_task
-from stellaretl_airflow.build_date_task import build_date_task
+from stellar_etl_airflow.build_export_task import build_export_task
+from stellar_etl_airflow.build_date_task import build_date_task
 
 from airflow import DAG, AirflowException
 from airflow.operators.bash_operator import BashOperator
