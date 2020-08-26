@@ -1,5 +1,3 @@
-import json
-
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_date_task import build_date_task
 from stellar_etl_airflow.default import get_default_dag_args

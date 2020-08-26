@@ -1,13 +1,4 @@
-import json
-
-from datetime import timedelta
-from subprocess import Popen
-
-from airflow import DAG, AirflowException
 from airflow.operators.bash_operator import BashOperator
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago
-from airflow.models import Variable
 
 
 def build_date_task(dag):
