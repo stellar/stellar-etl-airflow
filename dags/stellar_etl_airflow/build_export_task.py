@@ -20,17 +20,17 @@ def execute_cmd(args):
     process = Popen(args)#, stdout=PIPE, stderr=PIPE)
     if process.returncode:
         raise AirflowException("Bash command failed")
-   # stdout, stderr = process.communicate()
-    #return stdout, stderr
-    #return 0
+    stdout, stderr = process.communicate()
+    return stdout, stderr
 
-def get_variables():
+def get_path_variables():
     return Variable.get('output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
 
 def run_etl_cmd(command, filename, cmd_type, **kwargs):
     start_ledger, end_ledger = parse_ledger_range(kwargs)
-    output_path, core_exec, core_cfg = get_variables()
+    output_path, core_exec, core_cfg = get_path_variables()
     cmd_args = ['stellar-etl', command, '-o', output_path + filename]
+
     if cmd_type == 'archive':
         cmd_args.extend(['-s', start_ledger, '-e', end_ledger])
     elif cmd_type == 'bucket':
@@ -41,9 +41,8 @@ def run_etl_cmd(command, filename, cmd_type, **kwargs):
         cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg, ])
     else:
         raise AirflowException("Command type is not supported: ", cmd_type)
-    print(cmd_args)
-    execute_cmd(cmd_args)
-    #return execute_cmd(cmd_args)
+
+    return execute_cmd(cmd_args)
 
 def build_export_task(dag, cmd_type, command, filename):
     return PythonOperator(
