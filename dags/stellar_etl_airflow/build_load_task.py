@@ -74,6 +74,7 @@ def upload_to_gcs(filename, data_type, **kwargs):
     success = attempt_upload(local_filepath, gcs_filepath, bucket_name)
     if success:
         os.remove(local_filepath)
+    return gcs_filepath
 
 def build_load_task(dag, data_type, exported_filename):
     return PythonOperator(
