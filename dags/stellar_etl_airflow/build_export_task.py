@@ -1,12 +1,9 @@
 import json
 
-from datetime import timedelta
 from subprocess import Popen, PIPE
 
-from airflow import DAG, AirflowException
-from airflow.operators.bash_operator import BashOperator
+from airflow import AirflowException
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago
 from airflow.models import Variable
 
 def parse_ledger_range(context):
@@ -17,7 +14,7 @@ def parse_ledger_range(context):
     return str(start), str(end)
 
 def execute_cmd(args):
-    process = Popen(args)#, stdout=PIPE, stderr=PIPE)
+    process = Popen(args, stdout=PIPE, stderr=PIPE)
     if process.returncode:
         raise AirflowException("Bash command failed")
     stdout, stderr = process.communicate()

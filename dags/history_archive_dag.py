@@ -1,10 +1,10 @@
-import json
-
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_date_task import build_date_task
 from stellar_etl_airflow.default import get_default_dag_args
+from stellar_etl_airflow.build_load_task import build_load_task
 
 from airflow import DAG
+from airflow.models import Variable
 
 dag = DAG(
     'history_archive_export',
@@ -13,14 +13,26 @@ dag = DAG(
     schedule_interval="*/5 * * * *",
 )
 
+file_names = Variable.get('output_file_names', deserialize_json=True)
+table_ids = Variable.get('table_ids', deserialize_json=True)
+
 date_task = build_date_task(dag)
 
-ledger_task = build_export_task(dag, 'archive', 'export_ledgers', 'ledgers.txt')
+ledger_export_task = build_export_task(dag, 'archive', 'export_ledgers', file_names['ledgers'])
 
-tx_task = build_export_task(dag, 'archive', 'export_transactions', 'transactions.txt')
+tx_export_task = build_export_task(dag, 'archive', 'export_transactions', file_names['transactions'])
 
-op_task = build_export_task(dag, 'archive', 'export_operations', 'operations.txt')
+op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'])
 
-date_task >> ledger_task
-date_task >> tx_task
-date_task >> op_task
+date_task >> ledger_export_task
+date_task >> tx_export_task
+date_task >> op_export_task
+
+load_ledger_task = build_load_task(dag, 'ledgers', file_names['ledgers'])
+ledger_export_task >> load_ledger_task
+
+load_tx_task = build_load_task(dag, 'transactions', file_names['transactions'])
+tx_export_task >> load_tx_task
+
+load_op_task = build_load_task(dag, 'operations', file_names['operations'])
+op_export_task >> load_op_task
