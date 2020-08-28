@@ -1,3 +1,7 @@
+'''
+This file contains function to build Airflow tasks that load local files into Google Cloud Storage. 
+These load tasks become part of larger DAGs in the overall ETL process.
+'''
 import os
 import logging
 from google.oauth2 import service_account
@@ -10,8 +14,6 @@ from apiclient.http import MediaFileUpload
 from googleapiclient import errors
 from googleapiclient.discovery import build
 from stellar_etl_airflow.build_export_task import parse_ledger_range
-
-MEGABYTE = 1024 * 1024
 
 def build_storage_credentials():
     key_path = Variable.get('api_key_path')
@@ -28,12 +30,12 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
         local_filepath - path to the local file to be uploaded 
         gcs_filepath - path for the file in gcs
         bucket_name - name of the bucket to upload to
-        mime_type - type of media to upload
+        mime_type - type of media to upload; other values are defined https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
     Returns:
         True if the upload is successful. Raises an Airflow error otherwise
     '''
     storage_service = build_storage_credentials()
-    if os.path.getsize(local_filepath) > 10 * MEGABYTE:
+    if os.path.getsize(local_filepath) > 10 * 2 ** 20:
         media = MediaFileUpload(local_filepath, mime_type, resumable=True)
 
         try:
@@ -64,7 +66,7 @@ def upload_to_gcs(filename, data_type, **kwargs):
         filename - name of the file to be uploaded 
         data_type - type of the data being uploaded (transaction, ledger, etc)
     Returns:
-        N/A
+        the full filepath in Google Cloud Storage of the uploaded file
     '''
     start_ledger, end_ledger = parse_ledger_range(kwargs)
     gcs_filepath = 'exported/' + data_type + '/' + '-'.join([start_ledger, end_ledger, filename])
