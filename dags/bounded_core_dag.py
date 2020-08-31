@@ -1,3 +1,8 @@
+'''
+The bounded_core_export DAG exports ledger entry changes (accounts, offers, and trustlines) within a bounded range using stellar-core. 
+The range is based on the times the DAG receives as it runs.
+'''
+
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_date_task import build_date_task
 from stellar_etl_airflow.default import get_default_dag_args
