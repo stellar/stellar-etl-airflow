@@ -1,3 +1,8 @@
+'''
+The history_archive_export DAG exports ledgers, transactions, operations, and trades from the history archives. 
+It is scheduled to export information to BigQuery every 5 minutes. 
+'''
+
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_date_task import build_date_task
 from stellar_etl_airflow.default import get_default_dag_args
@@ -9,7 +14,7 @@ from airflow.models import Variable
 dag = DAG(
     'history_archive_export',
     default_args=get_default_dag_args(),
-    description='This DAG exports ledgers, transactions, and operations from the history archive to BigQuery.',
+    description='This DAG exports ledgers, transactions, operations, and trades from the history archive to BigQuery.',
     schedule_interval="*/5 * * * *",
 )
 
