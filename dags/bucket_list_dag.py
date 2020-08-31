@@ -1,8 +1,8 @@
 '''
-The bucket_list_export DAG exports ledger entry changes (accounts, offers, and trustlines) using the bucket list. 
-As a result, it is faster than stellar-core. Since the bucket list is used, the DAG exports every change up to 
-the end time determined by when the Airflow DAG is run. This DAG should be triggered manually in order to catch up
-to the current state in the network, but should not be scheduled to run constantly.
+The bucket_list_export DAG exports ledger entry changes (accounts, offers, and trustlines) using the history archives' 
+bucket list. As a result, it is faster than stellar-core. Bucket list commands require an end ledger that determines when 
+to stop exporting. This end ledger  is determined by when the Airflow DAG is run. This DAG should be triggered manually 
+when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 '''
 
 from stellar_etl_airflow.build_export_task import build_export_task
