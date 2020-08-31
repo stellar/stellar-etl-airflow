@@ -19,7 +19,7 @@ from build_export_task import parse_ledger_range
 def build_storage_service():
     '''
     Creates a storage service object that uses the credentials specified by the Airflow api_key_path variable.
-    This v1 storage object is described here: http://googleapis.github.io/google-api-python-client/docs/dyn/storage_v1.html.
+    This v1 storage object is described here: http://googleapis.github.io/google-api-python-client/docs/dyn/storage_v1.html
     Parameters:
         N/A
     Returns:
@@ -94,6 +94,7 @@ def upload_to_gcs(filename, data_type, **kwargs):
 def build_load_task(dag, data_type, filename):
     '''
     Creates a task that loads a local file into Google Cloud Storage.
+    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
     
     Parameters:
         dag - the parent dag

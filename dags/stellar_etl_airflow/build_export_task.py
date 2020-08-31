@@ -1,6 +1,6 @@
 '''
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
-In order for these tasks to work, the stellar-etl must be installed, and the Go bin needs
+In order for these tasks to work, the stellar-etl must be installed, and the GOBIN needs
 to be added to the PATH env variable.
 '''
 
@@ -52,7 +52,14 @@ def get_path_variables():
 def run_etl_cmd(command, filename, cmd_type, **kwargs):
     '''
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
-    The supported command types are: 'archive', 'bucket', 'bounded-core', and 'unbounded-core'.
+    The supported command types are: 
+        'archive' - indicates that information is being read within a bounded range from the history archives
+        'bucket' - indicates that information is being read up to an end time from the history archives' bucket list.
+        'bounded-core' - indicates that information is being read within a bounded range from stellar-core
+        'unbounded-core' - indicates that information is being read from the start time onwards from stellar-core
+
+    The supported commands are export_accounts, export_ledgers, export_offers, export_operations, export_trades, export_transactions, and export_trustlines.  
+    
     Parameters:
         command - stellar-etl command (ex. export_ledgers, export_accounts)
         filename - filename for the output file or folder
