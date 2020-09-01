@@ -33,7 +33,7 @@ def build_storage_service():
 def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/plain'):
     '''
     Tries to upload the file into Google Cloud Storage. Files above 10 megabytes are uploaded incrementally
-    as described here: https://github.com/googleapis/google-api-python-client/blob/master/docs/media.md#resumable-media-chunked-upload.
+    as described here: https://github.com/googleapis/google-api-python-client/blob/master/docs/media.md#resumable-media-chunked-upload
 
     
     Parameters:
@@ -68,7 +68,7 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
         except errors.HttpError as e:
             raise AirflowException("Unable to upload file to gcs", e)
 
-def upload_to_gcs(filename, data_type, **kwargs):
+def upload_to_gcs(data_type, **kwargs):
     '''
     Uploads a local file to Google Cloud Storage and deletes the local file if the upload is successful.
 
@@ -80,8 +80,9 @@ def upload_to_gcs(filename, data_type, **kwargs):
         the full filepath in Google Cloud Storage of the uploaded file
     '''
 
-    start_ledger, end_ledger = parse_ledger_range(kwargs)
-    gcs_filepath = 'exported/' + data_type + '/' + '-'.join([start_ledger, end_ledger, filename])
+    filename = kwargs['task_instance'].xcom_pull(task_ids='export_' + data_type + '_task')
+    gcs_filepath = 'exported/' + data_type + '/' + filename
+
     local_filepath = Variable.get('output_path') + filename
     bucket_name = Variable.get('gcs_bucket_name')
 
@@ -89,9 +90,10 @@ def upload_to_gcs(filename, data_type, **kwargs):
     if success:
         #TODO: consider adding backups or integrity checking before uploading/deleting
         os.remove(local_filepath)
+
     return gcs_filepath
 
-def build_load_task(dag, data_type, filename):
+def build_load_task(dag, data_type):
     '''
     Creates a task that loads a local file into Google Cloud Storage.
     Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
@@ -107,7 +109,7 @@ def build_load_task(dag, data_type, filename):
     return PythonOperator(
             task_id='load_' + data_type + '_to_gcs',
             python_callable=upload_to_gcs,
-            op_kwargs={'filename': filename, 'data_type': data_type},
+            op_kwargs={'data_type': data_type},
             dag=dag,
             provide_context=True,
         )

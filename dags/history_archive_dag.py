@@ -33,11 +33,11 @@ date_task >> ledger_export_task
 date_task >> tx_export_task
 date_task >> op_export_task
 
-load_ledger_task = build_load_task(dag, 'ledgers', file_names['ledgers'])
+load_ledger_task = build_load_task(dag, 'ledgers')
 ledger_export_task >> load_ledger_task
 
-load_tx_task = build_load_task(dag, 'transactions', file_names['transactions'])
+load_tx_task = build_load_task(dag, 'transactions')
 tx_export_task >> load_tx_task
 
-load_op_task = build_load_task(dag, 'operations', file_names['operations'])
+load_op_task = build_load_task(dag, 'operations')
 op_export_task >> load_op_task
