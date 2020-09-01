@@ -5,6 +5,7 @@ to be added to the PATH env variable.
 '''
 
 import json
+import logging
 
 from subprocess import Popen, PIPE
 
@@ -44,12 +45,12 @@ def execute_cmd(args):
     stdout, stderr = process.communicate()
     if process.returncode:
         raise AirflowException("Bash command failed", process.returncode, stderr)
-    return stdout, stderr
+    #return stdout, stderr
 
 def get_path_variables():
     return Variable.get('output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
 
-def run_etl_cmd(command, filename, cmd_type, **kwargs):
+def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
     '''
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
     The supported command types are: 
@@ -62,28 +63,32 @@ def run_etl_cmd(command, filename, cmd_type, **kwargs):
     
     Parameters:
         command - stellar-etl command (ex. export_ledgers, export_accounts)
-        filename - filename for the output file or folder
+        base_filename - base filename for the output file or folder; the ledger range is appended to this filename
         cmd_type - the type of the command, which is determined by the information source
     Returns:
-        output of the command, error
+        name of the file that contains the exported data
     '''
 
     start_ledger, end_ledger = parse_ledger_range(kwargs)
     output_path, core_exec, core_cfg = get_path_variables()
-    cmd_args = ['stellar-etl', command, '-o', output_path + filename]
+
+    batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
+    cmd_args = ['stellar-etl', command, '-o', output_path + batch_filename]
 
     if cmd_type == 'archive':
         cmd_args.extend(['-s', start_ledger, '-e', end_ledger])
     elif cmd_type == 'bucket':
         cmd_args.extend(['-e', end_ledger])
     elif cmd_type == 'bounded-core':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-x', core_exec, '-c', core_cfg,])
+        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-x', core_exec, '-c', core_cfg])
     elif cmd_type == 'unbounded-core':
-        cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg, ])
+        cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg])
     else:
         raise AirflowException("Command type is not supported: ", cmd_type)
-
-    return execute_cmd(cmd_args)
+    execute_cmd(cmd_args)
+    #output, _ = execute_cmd(cmd_args)
+    #logging.info('Comand output: ' + str(output))
+    return batch_filename
 
 def build_export_task(dag, cmd_type, command, filename):
     '''
@@ -101,7 +106,7 @@ def build_export_task(dag, cmd_type, command, filename):
     return PythonOperator(
             task_id=command + '_task',
             python_callable=run_etl_cmd,
-            op_kwargs={'command': command, 'filename': filename, 'cmd_type': cmd_type},
+            op_kwargs={'command': command, 'base_filename': filename, 'cmd_type': cmd_type},
             provide_context=True,
             dag=dag,
         )
