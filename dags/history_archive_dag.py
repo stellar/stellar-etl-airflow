@@ -4,7 +4,7 @@ It is scheduled to export information to BigQuery every 5 minutes.
 '''
 
 from stellar_etl_airflow.build_export_task import build_export_task
-from stellar_etl_airflow.build_date_task import build_date_task
+from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_load_task import build_load_task
 
@@ -21,7 +21,7 @@ dag = DAG(
 file_names = Variable.get('output_file_names', deserialize_json=True)
 table_ids = Variable.get('table_ids', deserialize_json=True)
 
-date_task = build_date_task(dag)
+date_task = build_time_task(dag)
 
 ledger_export_task = build_export_task(dag, 'archive', 'export_ledgers', file_names['ledgers'])
 

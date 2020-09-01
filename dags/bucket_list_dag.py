@@ -6,7 +6,7 @@ when initializing the tables in order to catch up to the current state in the ne
 '''
 
 from stellar_etl_airflow.build_export_task import build_export_task
-from stellar_etl_airflow.build_date_task import build_date_task
+from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 
 from airflow import DAG
@@ -21,7 +21,7 @@ dag = DAG(
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 
-date_task = build_date_task(dag)
+date_task = build_time_task(dag, use_next_exec_time=False)
 
 acc_task = build_export_task(dag, 'bucket', 'export_accounts', file_names['accounts'])
 

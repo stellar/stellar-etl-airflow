@@ -6,7 +6,7 @@ background task, it should be triggered once manually.
 '''
 
 from stellar_etl_airflow.build_export_task import build_export_task
-from stellar_etl_airflow.build_date_task import build_date_task
+from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 
 from airflow import DAG
@@ -19,7 +19,7 @@ dag = DAG(
     schedule_interval=None,
 )
 
-date_task = build_date_task(dag)
+date_task = build_time_task(dag, use_next_exec_time=False)
 
 changes_task = build_export_task(dag, 'unbounded-core', 'export_ledger_entry_changes', 'changes.txt')
 
