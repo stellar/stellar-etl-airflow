@@ -17,8 +17,8 @@ def build_time_task(dag, use_next_exec_time=True):
     Returns:
         the newly created task
     '''
-    end_time = '{{ next_execution_date.isoformat() }}' if use_next_exec_time else '{{ ts }}'
 
+    end_time = '{{ next_execution_date.isoformat() }}' if use_next_exec_time else '{{ ts }}'
     return BashOperator(
         task_id='get_ledger_range_from_times',
         bash_command='stellar-etl get_ledger_range_from_times -s {{ ts }} --stdout -e ' + end_time,

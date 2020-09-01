@@ -14,7 +14,7 @@ from airflow.operators.python_operator import PythonOperator
 from googleapiclient.http import MediaFileUpload
 from googleapiclient import errors
 from googleapiclient.discovery import build
-from build_export_task import parse_ledger_range
+from stellar_etl_airflow.build_export_task import parse_ledger_range
 
 def build_storage_service():
     '''
