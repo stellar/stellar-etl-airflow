@@ -45,7 +45,6 @@ def execute_cmd(args):
     stdout, stderr = process.communicate()
     if process.returncode:
         raise AirflowException("Bash command failed", process.returncode, stderr)
-    #return stdout, stderr
 
 def get_path_variables():
     return Variable.get('output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
@@ -86,8 +85,6 @@ def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
     else:
         raise AirflowException("Command type is not supported: ", cmd_type)
     execute_cmd(cmd_args)
-    #output, _ = execute_cmd(cmd_args)
-    #logging.info('Comand output: ' + str(output))
     return batch_filename
 
 def build_export_task(dag, cmd_type, command, filename):
