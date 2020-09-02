@@ -62,7 +62,7 @@ def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
     
     Parameters:
         command - stellar-etl command (ex. export_ledgers, export_accounts)
-        base_filename - base filename for the output file or folder; the ledger range is appended to this filename
+        base_filename - base filename for the output file or folder; the ledger range is pre-pended to this filename
         cmd_type - the type of the command, which is determined by the information source
     Returns:
         name of the file that contains the exported data

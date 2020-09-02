@@ -81,7 +81,7 @@ def upload_to_gcs(data_type, **kwargs):
     '''
 
     filename = kwargs['task_instance'].xcom_pull(task_ids='export_' + data_type + '_task')
-    gcs_filepath = 'exported/' + data_type + '/' + filename
+    gcs_filepath = f'exported/{data_type}/{filename}'
 
     local_filepath = Variable.get('output_path') + filename
     bucket_name = Variable.get('gcs_bucket_name')

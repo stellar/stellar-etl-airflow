@@ -8,5 +8,5 @@ def get_default_dag_args():
     'depends_on_past': False,
     'start_date': "2015-09-30T16:41:54+00:00",
     'retries': 5,
-    'retry_delay': timedelta(seconds=30),
+    'retry_delay': timedelta(minutes=5),
 }
