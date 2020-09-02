@@ -27,7 +27,7 @@ def parse_ledger_range(context):
     range_string = context['task_instance'].xcom_pull(task_ids='get_ledger_range_from_times')
     range_parsed = json.loads(range_string)
     start = range_parsed['start']
-    end = range_parsed['end']
+    end = max(range_parsed['end'] - 1, start)
     return str(start), str(end)
 
 def execute_cmd(args):    
