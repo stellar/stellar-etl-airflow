@@ -7,15 +7,16 @@ from airflow.models import Variable
 
 def build_gcs_to_bq_task(dag, data_type):
     '''
-    Creates a task to load a file from Google Cloud Storage into BigQuery. The name of the file being loaded is retrieved through Airflow's
-    Xcom.
-    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
+    Creates a task to load a file from Google Cloud Storage into BigQuery. 
+    The name of the file being loaded is retrieved through Airflow's Xcom.
+    Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', or 'trustlines'.
     Parameters:
         dag - parent dag that the task will be attached to 
-        data_type - type of the data being uploaded (transaction, ledger, etc)
+        data_type - type of the data being uploaded; should be string
     Returns:
         the newly created task
     '''
+    
     bucket_name = Variable.get('gcs_bucket_name')
     project_name = Variable.get('bq_project')
     dataset_name = Variable.get('bq_dataset')
