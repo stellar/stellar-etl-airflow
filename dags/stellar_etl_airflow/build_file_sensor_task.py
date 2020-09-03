@@ -10,6 +10,5 @@ def build_file_sensor_task(dag, data_type):
         task_id=f'{data_type}_file_sensor',
         filepath=os.path.join(Variable.get('output_path'), folder_name, filename),
         poke_interval=60,
-        #mode="reschedule",
         dag=dag
     )
