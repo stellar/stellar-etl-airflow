@@ -68,14 +68,14 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
         except errors.HttpError as e:
             raise AirflowException("Unable to upload file to gcs", e)
 
-def upload_to_gcs(data_type, **kwargs):
+def upload_to_gcs(data_type, prev_task_id, **kwargs):
     '''
     Uploads a local file to Google Cloud Storage and deletes the local file if the upload is successful.
 
     
     Parameters:
-        filename - name of the file to be uploaded 
         data_type - type of the data being uploaded (transaction, ledger, etc)
+        prev_task_id - the task id to get the filename from
     Returns:
         the full filepath in Google Cloud Storage of the uploaded file
     '''
@@ -93,7 +93,7 @@ def upload_to_gcs(data_type, **kwargs):
 
     return gcs_filepath
 
-def build_load_task(dag, data_type):
+def build_load_task(dag, data_type, prev_task_id):
     '''
     Creates a task that loads a local file into Google Cloud Storage.
     Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
@@ -101,7 +101,7 @@ def build_load_task(dag, data_type):
     Parameters:
         dag - the parent dag
         data_type - type of the data being uploaded (transaction, ledger, etc)
-        filename - name of the file to be uploaded 
+        prev_task_id - the task id to get the filename from 
     Returns:
         the newly created task
     '''
@@ -109,7 +109,7 @@ def build_load_task(dag, data_type):
     return PythonOperator(
             task_id='load_' + data_type + '_to_gcs',
             python_callable=upload_to_gcs,
-            op_kwargs={'data_type': data_type},
+            op_kwargs={'data_type': data_type, 'prev_task_id': prev_task_id},
             dag=dag,
             provide_context=True,
         )
