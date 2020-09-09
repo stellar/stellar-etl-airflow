@@ -9,6 +9,7 @@ def build_file_sensor_task(dag, data_type):
     return GlobFileSensor(
         task_id=f'{data_type}_file_sensor',
         filepath=os.path.join(Variable.get('output_path'), folder_name, filename),
+        base_path=Variable.get('output_path'),
         poke_interval=60,
         dag=dag
     )

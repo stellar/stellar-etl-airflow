@@ -80,8 +80,8 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
         the full filepath in Google Cloud Storage of the uploaded file
     '''
 
-    filename = kwargs['task_instance'].xcom_pull(task_ids='export_' + data_type + '_task')
-    gcs_filepath = f'exported/{data_type}/{filename}'
+    filename = kwargs['task_instance'].xcom_pull(task_ids=prev_task_id)
+    gcs_filepath = f'exported/{data_type}/{os.path.basename(filename)}'
 
     local_filepath = Variable.get('output_path') + filename
     bucket_name = Variable.get('gcs_bucket_name')
