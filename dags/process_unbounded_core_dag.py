@@ -35,7 +35,8 @@ load_trustlines_task = build_load_task(dag, 'trustlines', 'trustlines_file_senso
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task appends the entries in the file to the corresponding table in BigQuery. 
+Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
+Entries are updated, deleted, or inserted as needed.
 '''
 apply_account_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'accounts')
 apply_offer_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'offers')
