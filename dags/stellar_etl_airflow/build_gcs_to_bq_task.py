@@ -36,5 +36,4 @@ def build_gcs_to_bq_task(dag, data_type):
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
         dag=dag,
-
     )
