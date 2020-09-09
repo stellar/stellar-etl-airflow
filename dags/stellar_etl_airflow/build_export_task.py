@@ -72,16 +72,16 @@ def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
     output_path, core_exec, core_cfg = get_path_variables()
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
-    cmd_args = ['stellar-etl', command, '-o', output_path + batch_filename]
+    cmd_args = ['stellar-etl', command]
 
     if cmd_type == 'archive':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger])
+        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-o', output_path + batch_filename])
     elif cmd_type == 'bucket':
-        cmd_args.extend(['-e', end_ledger])
+        cmd_args.extend(['-e', end_ledger, '-o', output_path + batch_filename])
     elif cmd_type == 'bounded-core':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-x', core_exec, '-c', core_cfg])
+        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-x', core_exec, '-c', core_cfg, '-o', output_path + base_filename])
     elif cmd_type == 'unbounded-core':
-        cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg])
+        cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg, '-o', output_path + base_filename])
     else:
         raise AirflowException("Command type is not supported: ", cmd_type)
     execute_cmd(cmd_args)
