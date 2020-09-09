@@ -16,7 +16,7 @@ from google.oauth2 import service_account
 
 def read_gcs_schema(data_type):
     '''
-    Reads a the schema file corresponding to data_type from Google Cloud Storage and parses it.
+    Reads the schema file corresponding to data_type from Google Cloud Storage and parses it.
     Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', or 'trustlines'.
 
     Parameters:
@@ -31,26 +31,58 @@ def read_gcs_schema(data_type):
         f'schemas/{data_type}_schema.json').decode("utf-8"))
     return schema_fields
 
-def generate_queries_from_schema(schema, source_table_alias):
+def generate_insert_query(schema, source_table_alias):
     '''
-    Generates the SQL queries that will insert or update a row in a table based on the provided schema.
+    Generates the SQL insert query that will insert a row in a table based on the provided schema.
     
     Parameters:
         schema - an array of dictionaries, each containing the name, type, and description of a schema field 
         source_table_alias - the name of the table being used as a data source
     Returns:
-        the insert query and update query
+        the insert query
     '''
 
-    insert = []
-    update = []
-    for field in schema:
-        name = field['name']
-        insert.append(name)
-        update.append(f'{name} = {source_table_alias}.{name}')
-    insert_list = ', '.join(insert)
-    updated_list = ', '.join(update)
-    return f'INSERT ({insert_list}) VALUES ({insert_list})', f'UPDATE SET {updated_list}'
+    insert_list = ', '.join([f'{field["name"]} = {source_table_alias}.{field["name"]}' for field in schema])
+    return f'INSERT ({insert_list}) VALUES ({insert_list})'
+
+def generate_update_query(schema, source_table_alias):
+    '''
+    Generates the SQL update query that will update a row in a table based on the provided schema.
+    
+    Parameters:
+        schema - an array of dictionaries, each containing the name, type, and description of a schema field 
+        source_table_alias - the name of the table being used as a data source
+    Returns:
+        the update query
+    '''
+
+    updated_list = ', '.join([field['name'] for field in schema])
+    return f'UPDATE SET {updated_list}'
+
+def generate_equality_comparison(data_type, source_table_alias, dest_table_alias):
+    '''
+    Generates the equality comparison used to determine if two rows are the same.
+    Data types should be: 'accounts', 'offers', or 'trustlines'. 
+    Parameters:
+        data_type - type of the data being uploaded; should be string
+        source_table_alias - the name of the table being used as a data source
+        dest_table_alias - the name of the table being used as a destination
+    Returns:
+        the update query
+    '''
+
+    equality_comparison = ''
+    switch = {
+        'accounts': f'{dest_table_alias}.account_id = {source_table_alias}.account_id',
+        'offers': f'{dest_table_alias}.offer_id = {source_table_alias}.offer_id',
+        'trustlines': f'{dest_table_alias}.account_id = {source_table_alias}.account_id AND {dest_table_alias}.asset_type = {source_table_alias}.asset_type \
+        AND {dest_table_alias}.asset_issuer = {source_table_alias}.asset_issuer AND {dest_table_alias}.asset_code = {source_table_alias}.asset_code',
+    }
+
+    equality_comparison = switch.get(data_type, 'No comparison')
+    if equality_comparison == 'No comparison':
+        raise AirflowException("Unable to write query: unknown data type for merges ", data_type)
+    return equality_comparison
 
 def create_merge_query(temp_table_id, data_type, schema_fields):
     '''
@@ -67,19 +99,11 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
     dataset_name = Variable.get('bq_dataset')
     true_table_id = Variable.get('table_ids')[data_type]
     dest_alias = 'T'
-    source_alias = 'S'
-    
-    equality_comparison = ''
-    if data_type == 'accounts':
-        equality_comparison = f'{dest_alias}.account_id = {source_alias}.account_id'
-    elif data_type == 'offers':
-        equality_comparison = f'{dest_alias}.offer_id = {source_alias}.offer_id'
-    elif data_type == 'trustlines':
-        equality_comparison = f'{dest_alias}.account_id = {source_alias}.account_id AND {dest_alias}.asset_type = {source_alias}.asset_type AND {dest_alias}.asset_issuer = {source_alias}.asset_issuer AND {dest_alias}.asset_code = {source_alias}.asset_code'
-    else:
-        raise AirflowException("Unable to write query: unknown data type for merges ", data_type)
+    source_alias = 'S'   
 
-    insert_query, update_query = generate_queries_from_schema(schema_fields, source_alias)
+    insert_query = generate_insert_query(schema_fields, source_alias)
+    update_query = generate_update_query(schema_fields, source_alias)
+    equality_comparison = generate_equality_comparison(data_type, source_alias, dest_alias)
 
     query = f'''MERGE {dataset_name}.{true_table_id} {dest_alias}
                 USING {dataset_name}.{temp_table_id} {source_alias}
