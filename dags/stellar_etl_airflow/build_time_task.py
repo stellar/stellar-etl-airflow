@@ -2,7 +2,8 @@
 This file contains functions for creating Airflow tasks to convert from a time range to a ledger range.
 '''
 
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.docker_operator import DockerOperator
+from airflow.models import Variable
 
 def build_time_task(dag, use_next_exec_time=True):
     '''
@@ -19,9 +20,11 @@ def build_time_task(dag, use_next_exec_time=True):
     '''
 
     end_time = '{{ next_execution_date.isoformat() }}' if use_next_exec_time else '{{ ts }}'
-    return BashOperator(
+    return DockerOperator(
         task_id='get_ledger_range_from_times',
-        bash_command='stellar-etl get_ledger_range_from_times -s {{ ts }} --stdout -e ' + end_time,
+        image=Variable.get('image_name'),
+        command='stellar-etl get_ledger_range_from_times -s {{ ts }} --stdout -e ' + end_time,
         dag=dag,
         xcom_push=True,
+        auto_remove=True,
     )
