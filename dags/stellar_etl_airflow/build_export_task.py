@@ -10,7 +10,7 @@ import logging
 from subprocess import Popen, PIPE
 
 from airflow import AirflowException
-from airflow.operators.python_operator import PythonOperator
+from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.models import Variable
 
 def parse_ledger_range(context):
@@ -47,9 +47,9 @@ def execute_cmd(args):
         raise AirflowException("Bash command failed", process.returncode, stderr)
 
 def get_path_variables():
-    return Variable.get('output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
+    return Variable.get('image_output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
 
-def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
+def generate_etl_cmd(command, base_filename, cmd_type):
     '''
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
     The supported command types are: 
@@ -68,30 +68,33 @@ def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
         name of the file that contains the exported data
     '''
 
-    start_ledger, end_ledger = parse_ledger_range(kwargs)
-    output_path, core_exec, core_cfg = get_path_variables()
+    start_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"]}}'
+    end_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["end"]}}'
+    image_output_path, core_exec, core_cfg = get_path_variables()
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
-    batched_path = output_path + batch_filename
-    base_path = output_path + base_filename
-    cmd_args = ['stellar-etl', command]
+    batched_path = image_output_path + batch_filename
+    base_path = image_output_path + base_filename
+    full_cmd = f'stellar-etl {command} '
 
     if cmd_type == 'archive':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-o', batched_path])
+        full_cmd += f'-s {start_ledger} -e {end_ledger} -o {batched_path}'
+        return full_cmd, batch_filename
     elif cmd_type == 'bucket':
-        cmd_args.extend(['-e', end_ledger, '-o', batched_path])
+        full_cmd += f'-e {end_ledger} -o {batched_path}'
+        return full_cmd, batch_filename
     elif cmd_type == 'bounded-core':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-x', core_exec, '-c', core_cfg, '-o', base_path])
+        full_cmd += f'-s {start_ledger} -e {end_ledger} -x {core_exec} -c {core_cfg} -o {base_path}'
+        return full_cmd, base_filename
     elif cmd_type == 'unbounded-core':
-        cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg, '-o', base_path])
+        full_cmd += f'-s {start_ledger} -x {core_exec} -c {core_cfg} -o {base_path}'
+        return full_cmd, base_filename
     else:
         raise AirflowException("Command type is not supported: ", cmd_type)
-    execute_cmd(cmd_args)
-    return batch_filename
 
 def build_export_task(dag, cmd_type, command, filename):
     '''
-    Creates a task that calls the provided stellar-etl export function with the correct arguments.
+    Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
     
     Parameters:
         dag - the parent dag
@@ -101,11 +104,13 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
-
-    return PythonOperator(
+    etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
+    return DockerOperator(
             task_id=command + '_task',
-            python_callable=run_etl_cmd,
-            op_kwargs={'command': command, 'base_filename': filename, 'cmd_type': cmd_type},
-            provide_context=True,
+            image=Variable.get('image_name'),
+            command=f'bash -c "{etl_cmd} && echo {output_file}"', # echo the output file so it can be captured by xcom; have to run bash to combine commands
+            volumes=[f'{Variable.get("output_path")}:{Variable.get("image_output_path")}'],
             dag=dag,
+            do_xcom_push=True,
+            auto_remove=True,
         )
