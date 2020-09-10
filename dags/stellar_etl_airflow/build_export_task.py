@@ -31,7 +31,7 @@ def generate_etl_cmd(command, base_filename, cmd_type):
         base_filename - base filename for the output file or folder; the ledger range is pre-pended to this filename
         cmd_type - the type of the command, which is determined by the information source
     Returns:
-        name of the file that contains the exported data
+        the generated etl command; name of the file that contains the exported data
     '''
 
     start_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"]}}'
@@ -70,6 +70,7 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
+    
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
     return DockerOperator(
             task_id=command + '_task',
