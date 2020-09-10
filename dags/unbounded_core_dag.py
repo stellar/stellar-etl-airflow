@@ -4,6 +4,7 @@ exports accounts, offers, and trustlines to a local folder. For each batch of 64
 network, 3 files are created in the folder. There is one folder for each data type. Since this is a long-running 
 background task, it should be triggered once manually.
 '''
+import json
 
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
@@ -18,6 +19,7 @@ dag = DAG(
     description='This DAG runs an unbounded stellar-core instance, which allows it to export accounts, offers, and trustlines to BigQuery. The core instance will \
         continue running and exporting in the background.',
     schedule_interval=None,
+    user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
 date_task = build_time_task(dag, use_next_exec_time=False)
