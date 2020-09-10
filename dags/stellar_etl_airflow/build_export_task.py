@@ -7,44 +7,10 @@ to be added to the PATH env variable.
 import json
 import logging
 
-from subprocess import Popen, PIPE
-
 from airflow import AirflowException
-from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.models import Variable
+from airflow.providers.docker.operators.docker import DockerOperator
 
-def parse_ledger_range(context):
-    '''
-    Reads in the output of the get_ledger_range_from_times task, which is a JSON object 
-    containing a start and end field. Converts the fields to strings and returns them.
-    
-    Parameters:
-        context - the context object passed by Airflow (requires provide_context=True when creating the operator)
-    Returns:
-        start and end ledger sequence numbers
-    '''
-
-    range_string = context['task_instance'].xcom_pull(task_ids='get_ledger_range_from_times')
-    range_parsed = json.loads(range_string)
-    start = range_parsed['start']
-    end = max(range_parsed['end'] - 1, start)
-    return str(start), str(end)
-
-def execute_cmd(args):    
-    '''
-    Executes the provided arguments on the command line. Raises an AirflowException if the return code is non-zero, 
-    which indicates a failure.
-    
-    Parameters:
-        context - the context object passed by Airflow (requires provide_context=True when creating the operator)
-    Returns:
-        output of the command, error
-    '''
-    
-    process = Popen(args, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
-    if process.returncode:
-        raise AirflowException("Bash command failed", process.returncode, stderr)
 
 def get_path_variables():
     return Variable.get('image_output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
