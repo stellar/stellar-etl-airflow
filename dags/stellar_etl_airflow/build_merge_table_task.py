@@ -97,7 +97,7 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
     '''
 
     dataset_name = Variable.get('bq_dataset')
-    true_table_id = Variable.get('table_ids')[data_type]
+    true_table_id = Variable.get('table_ids', deserialize_json=True)[data_type]
     dest_alias = 'T'
     source_alias = 'S'   
 
@@ -137,7 +137,7 @@ def apply_gcs_changes(data_type, **kwargs):
     schema = read_gcs_schema(data_type)
     external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
     external_config.source_uris = [f'gs://{gcs_filename}']
-    external_config.schema = schema
+    external_config.schema = [bigquery.SchemaField(field['name'], field['type'], mode=field['mode']) for field in schema]
     table_id = f'{data_type}_temp_table'
     job_config = bigquery.QueryJobConfig(table_definitions={table_id: external_config})
 

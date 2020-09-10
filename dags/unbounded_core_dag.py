@@ -10,6 +10,7 @@ from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 
 from airflow import DAG
+from airflow.models import Variable
 
 dag = DAG(
     'unbounded_core_export',
@@ -21,6 +22,7 @@ dag = DAG(
 
 date_task = build_time_task(dag, use_next_exec_time=False)
 
-changes_task = build_export_task(dag, 'unbounded-core', 'export_ledger_entry_changes', 'changes.txt')
+file_names = Variable.get('output_file_names', deserialize_json=True)
+changes_task = build_export_task(dag, 'unbounded-core', 'export_ledger_entry_changes', file_names['changes'])
 
 date_task >> changes_task
