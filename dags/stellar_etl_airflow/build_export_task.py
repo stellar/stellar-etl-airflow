@@ -34,8 +34,11 @@ def generate_etl_cmd(command, base_filename, cmd_type):
         the generated etl command; name of the file that contains the exported data
     '''
 
+    # These are JIJNA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
+    # Then, it is turned into a JSON object with fromjson, and then the start or end field is accessed.
     start_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"]}}'
     end_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["end"]}}'
+
     image_output_path, core_exec, core_cfg = get_path_variables()
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
@@ -43,20 +46,17 @@ def generate_etl_cmd(command, base_filename, cmd_type):
     base_path = image_output_path + base_filename
     full_cmd = f'stellar-etl {command} '
 
-    if cmd_type == 'archive':
-        full_cmd += f'-s {start_ledger} -e {end_ledger} -o {batched_path}'
-        return full_cmd, batch_filename
-    elif cmd_type == 'bucket':
-        full_cmd += f'-e {end_ledger} -o {batched_path}'
-        return full_cmd, batch_filename
-    elif cmd_type == 'bounded-core':
-        full_cmd += f'-s {start_ledger} -e {end_ledger} -x {core_exec} -c {core_cfg} -o {base_path}'
-        return full_cmd, base_filename
-    elif cmd_type == 'unbounded-core':
-        full_cmd += f'-s {start_ledger} -x {core_exec} -c {core_cfg} -o {base_path}'
-        return full_cmd, base_filename
-    else:
+    switch = {
+        'archive': (f'stellar-etl {command} -s {start_ledger} -e {end_ledger} -o {batched_path}', batch_filename),
+        'bucket': (f'stellar-etl {command} -e {end_ledger} -o {batched_path}', batch_filename),
+        'bounded-core': (f'stellar-etl {command} -s {start_ledger} -e {end_ledger} -x {core_exec} -c {core_cfg} -o {base_path}', base_filename),
+        'unbounded-core': (f'stellar-etl {command} -s {start_ledger} -x {core_exec} -c {core_cfg} -o {base_path}', base_filename),
+    }
+
+    cmd, filename = switch.get(cmd_type, ('No command', 'No file'))
+    if cmd == 'No command':
         raise AirflowException("Command type is not supported: ", cmd_type)
+    return cmd, filename
 
 def build_export_task(dag, cmd_type, command, filename):
     '''
@@ -70,12 +70,16 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
-    
+
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
+
+    # echo the output file so it can be captured by xcom; have to run bash to combine commands
+    full_cmd = f'bash -c "{etl_cmd} && echo {output_file}"'
+
     return DockerOperator(
             task_id=command + '_task',
             image=Variable.get('image_name'),
-            command=f'bash -c "{etl_cmd} && echo {output_file}"', # echo the output file so it can be captured by xcom; have to run bash to combine commands
+            command=full_cmd, 
             volumes=[f'{Variable.get("output_path")}:{Variable.get("image_output_path")}'],
             dag=dag,
             do_xcom_push=True,
