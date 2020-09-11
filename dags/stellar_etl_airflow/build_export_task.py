@@ -7,49 +7,15 @@ to be added to the PATH env variable.
 import json
 import logging
 
-from subprocess import Popen, PIPE
-
 from airflow import AirflowException
-from airflow.operators.python_operator import PythonOperator
 from airflow.models import Variable
+from airflow.providers.docker.operators.docker import DockerOperator
 
-def parse_ledger_range(context):
-    '''
-    Reads in the output of the get_ledger_range_from_times task, which is a JSON object 
-    containing a start and end field. Converts the fields to strings and returns them.
-    
-    Parameters:
-        context - the context object passed by Airflow (requires provide_context=True when creating the operator)
-    Returns:
-        start and end ledger sequence numbers
-    '''
-
-    range_string = context['task_instance'].xcom_pull(task_ids='get_ledger_range_from_times')
-    range_parsed = json.loads(range_string)
-    start = range_parsed['start']
-    end = max(range_parsed['end'] - 1, start)
-    return str(start), str(end)
-
-def execute_cmd(args):    
-    '''
-    Executes the provided arguments on the command line. Raises an AirflowException if the return code is non-zero, 
-    which indicates a failure.
-    
-    Parameters:
-        context - the context object passed by Airflow (requires provide_context=True when creating the operator)
-    Returns:
-        output of the command, error
-    '''
-    
-    process = Popen(args, stdout=PIPE, stderr=PIPE)
-    stdout, stderr = process.communicate()
-    if process.returncode:
-        raise AirflowException("Bash command failed", process.returncode, stderr)
 
 def get_path_variables():
-    return Variable.get('output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
+    return Variable.get('image_output_path'), Variable.get('core_exec_path'), Variable.get('core_cfg_path')
 
-def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
+def generate_etl_cmd(command, base_filename, cmd_type):
     '''
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
     The supported command types are: 
@@ -65,33 +31,36 @@ def run_etl_cmd(command, base_filename, cmd_type, **kwargs):
         base_filename - base filename for the output file or folder; the ledger range is pre-pended to this filename
         cmd_type - the type of the command, which is determined by the information source
     Returns:
-        name of the file that contains the exported data
+        the generated etl command; name of the file that contains the exported data
     '''
 
-    start_ledger, end_ledger = parse_ledger_range(kwargs)
-    output_path, core_exec, core_cfg = get_path_variables()
+    # These are JIJNA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
+    # Then, it is turned into a JSON object with fromjson, and then the start or end field is accessed.
+    start_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"]}}'
+    end_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["end"]}}'
+
+    image_output_path, core_exec, core_cfg = get_path_variables()
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
-    batched_path = output_path + batch_filename
-    base_path = output_path + base_filename
-    cmd_args = ['stellar-etl', command]
+    batched_path = image_output_path + batch_filename
+    base_path = image_output_path + base_filename
+    full_cmd = f'stellar-etl {command} '
 
-    if cmd_type == 'archive':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-o', batched_path])
-    elif cmd_type == 'bucket':
-        cmd_args.extend(['-e', end_ledger, '-o', batched_path])
-    elif cmd_type == 'bounded-core':
-        cmd_args.extend(['-s', start_ledger, '-e', end_ledger, '-x', core_exec, '-c', core_cfg, '-o', base_path])
-    elif cmd_type == 'unbounded-core':
-        cmd_args.extend(['-s', start_ledger, '-x', core_exec, '-c', core_cfg, '-o', base_path])
-    else:
+    switch = {
+        'archive': (f'stellar-etl {command} -s {start_ledger} -e {end_ledger} -o {batched_path}', batch_filename),
+        'bucket': (f'stellar-etl {command} -e {end_ledger} -o {batched_path}', batch_filename),
+        'bounded-core': (f'stellar-etl {command} -s {start_ledger} -e {end_ledger} -x {core_exec} -c {core_cfg} -o {base_path}', base_filename),
+        'unbounded-core': (f'stellar-etl {command} -s {start_ledger} -x {core_exec} -c {core_cfg} -o {base_path}', base_filename),
+    }
+
+    cmd, filename = switch.get(cmd_type, ('No command', 'No file'))
+    if cmd == 'No command':
         raise AirflowException("Command type is not supported: ", cmd_type)
-    execute_cmd(cmd_args)
-    return batch_filename
+    return cmd, filename
 
 def build_export_task(dag, cmd_type, command, filename):
     '''
-    Creates a task that calls the provided stellar-etl export function with the correct arguments.
+    Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
     
     Parameters:
         dag - the parent dag
@@ -102,10 +71,17 @@ def build_export_task(dag, cmd_type, command, filename):
         the newly created task
     '''
 
-    return PythonOperator(
+    etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
+
+    # echo the output file so it can be captured by xcom; have to run bash to combine commands
+    full_cmd = f'bash -c "{etl_cmd} && echo {output_file}"'
+
+    return DockerOperator(
             task_id=command + '_task',
-            python_callable=run_etl_cmd,
-            op_kwargs={'command': command, 'base_filename': filename, 'cmd_type': cmd_type},
-            provide_context=True,
+            image=Variable.get('image_name'),
+            command=full_cmd, 
+            volumes=[f'{Variable.get("output_path")}:{Variable.get("image_output_path")}'],
             dag=dag,
+            do_xcom_push=True,
+            auto_remove=True,
         )

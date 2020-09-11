@@ -14,7 +14,6 @@ from airflow.operators.python_operator import PythonOperator
 from googleapiclient.http import MediaFileUpload
 from googleapiclient import errors
 from googleapiclient.discovery import build
-from stellar_etl_airflow.build_export_task import parse_ledger_range
 
 def build_storage_service():
     '''
@@ -80,7 +79,11 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
         the full filepath in Google Cloud Storage of the uploaded file
     '''
 
+    # DockerOperators send UTF-8 bytes through XCOM, while GlobFileOperators send strings
     filename = kwargs['task_instance'].xcom_pull(task_ids=prev_task_id)
+    if isinstance(filename, bytes):
+        filename = filename.decode('utf-8')
+
     gcs_filepath = f'exported/{data_type}/{os.path.basename(filename)}'
 
     local_filepath = Variable.get('output_path') + filename
