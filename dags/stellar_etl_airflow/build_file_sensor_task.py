@@ -1,3 +1,6 @@
+'''
+This file contains functions for creating Airflow tasks to sense when new files are available.
+'''
 import os
 from stellar_etl_airflow.glob_file_operator import GlobFileSensor
 from airflow.models import Variable
