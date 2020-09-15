@@ -32,7 +32,7 @@ def generate_etl_cmd(command, base_filename, cmd_type):
         the generated etl command; name of the file that contains the exported data
     '''
 
-    # These are JIJNA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
+    # These are JINJA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
     # Then, it is turned into a JSON object with fromjson, and then the start or end field is accessed.
     start_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"]}}'
     end_ledger = '{{(ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["end"]}}'
