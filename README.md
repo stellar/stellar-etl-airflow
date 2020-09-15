@@ -17,12 +17,12 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 4. Run Airflow scheduler: `airflow scheduler`
 5. Run Airflow web server: `airflow webserver`
 6. Add required Airflow variables through [CLI](https://airflow.apache.org/docs/stable/cli-ref#variables) or the [Airflow UI](https://airflow.apache.org/docs/stable/ui.html#variable-view)
-    - api_key_path: path to the Google Cloud Platform API key (see [here](https://cloud.google.com/docs/authentication/api-keys?authuser=1) for more information about API keys)
-    - bq_dataset: name of the BigQuery dataset (see [here](https://cloud.google.com/bigquery/docs/datasets) for information on BigQuery datasets)
-    - bq_project: name of the BigQuery project (see [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console) for information on BigQuery projects)
-    - core_cfg_path: path to the stellar core configuration (see [here](https://www.stellar.org/developers/stellar-core/software/admin.html#configuring) for instructions on configuring stellar-core)
-    - core_exec_path: filepath to the stellar core executable (see [here](https://github.com/stellar/stellar-core/blob/master/INSTALL.md) for instructions on installing stellar-core)
-    - gcs_bucket_name: name of the Google Cloud Storage bucket that will store exported data (see [here](https://cloud.google.com/storage/docs/creating-buckets) for information on cloud storage buckets)
+    - api_key_path: path to the Google Cloud Platform [API key](https://cloud.google.com/docs/authentication/api-keys?authuser=1)
+    - bq_dataset: name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)
+    - bq_project: name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)
+    - core_cfg_path: path to the [stellar core configuration](https://www.stellar.org/developers/stellar-core/software/admin.html#configuring)
+    - core_exec_path: filepath to the [stellar core executable](https://github.com/stellar/stellar-core/blob/master/INSTALL.md)
+    - gcs_bucket_name: name of the Google Cloud Storage [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data
     - image_name: name of the ETL's Docker image
     - image_output_path: local output path within the ETL image
     - output_file_names: JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure
