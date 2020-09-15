@@ -1,7 +1,5 @@
 '''
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
-In order for these tasks to work, the stellar-etl must be installed, and the GOBIN needs
-to be added to the PATH env variable.
 '''
 
 import json
