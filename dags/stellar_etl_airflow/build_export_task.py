@@ -3,8 +3,6 @@ This file contains functions for creating Airflow tasks to run stellar-etl expor
 '''
 
 import json
-import logging
-
 from airflow import AirflowException
 from airflow.models import Variable
 from airflow.providers.docker.operators.docker import DockerOperator
@@ -42,7 +40,6 @@ def generate_etl_cmd(command, base_filename, cmd_type):
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
     batched_path = image_output_path + batch_filename
     base_path = image_output_path + base_filename
-    full_cmd = f'stellar-etl {command} '
 
     switch = {
         'archive': (f'stellar-etl {command} -s {start_ledger} -e {end_ledger} -o {batched_path}', batch_filename),
@@ -73,7 +70,7 @@ def build_export_task(dag, cmd_type, command, filename):
 
     # echo the output file so it can be captured by xcom; have to run bash to combine commands
     full_cmd = f'bash -c "{etl_cmd} && echo {output_file}"'
-
+    
     return DockerOperator(
             task_id=command + '_task',
             image=Variable.get('image_name'),

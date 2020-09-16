@@ -5,7 +5,7 @@ to stop exporting. This end ledger  is determined by when the Airflow DAG is run
 when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 '''
 import json
-
+import logging
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.build_load_task import build_load_task
@@ -24,6 +24,7 @@ dag = DAG(
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
+logger = logging.getLogger("airflow.task")
 
 time_task = build_time_task(dag, use_next_exec_time=False)
 
@@ -36,18 +37,18 @@ The load tasks receive the location of the exported file through Airflow's XCOM 
 Then, the task loads the file into Google Cloud Storage. Finally, the file is deleted
 from local storage.
 '''
-load_acc_task = build_load_task(dag, 'ledgers', 'export_ledgers_task')
-load_off_task = build_load_task(dag, 'transactions', 'export_transactions_task')
-load_trust_task = build_load_task(dag, 'operations', 'export_operations_task')
+load_acc_task = build_load_task(dag, logging, 'ledgers', 'export_ledgers_task')
+load_off_task = build_load_task(dag, logging, 'transactions', 'export_transactions_task')
+load_trust_task = build_load_task(dag, logging, 'operations', 'export_operations_task')
 
 '''
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
 Entries are updated, deleted, or inserted as needed.
 '''
-apply_account_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'accounts')
-apply_offer_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'offers')
-apply_trustline_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'trustlines')
+apply_account_changes_task = build_apply_gcs_changes_to_bq_task(dag, logging, 'accounts')
+apply_offer_changes_task = build_apply_gcs_changes_to_bq_task(dag, logging, 'offers')
+apply_trustline_changes_task = build_apply_gcs_changes_to_bq_task(dag, logging, 'trustlines')
 
 time_task >> export_acc_task >> load_acc_task >> apply_account_changes_task
 time_task >> export_off_task >> load_off_task >> apply_offer_changes_task

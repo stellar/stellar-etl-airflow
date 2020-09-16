@@ -3,7 +3,7 @@ The history_archive_export DAG exports ledgers, transactions, operations, and tr
 It is scheduled to export information to BigQuery every 5 minutes. 
 '''
 import json
-
+import logging
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
@@ -21,6 +21,7 @@ dag = DAG(
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
+logger = logging.getLogger("airflow.task")
 file_names = Variable.get('output_file_names', deserialize_json=True)
 
 '''
@@ -44,10 +45,10 @@ The load tasks receive the location of the exported file through Airflow's XCOM 
 Then, the task loads the file into Google Cloud Storage. Finally, the file is deleted
 from local storage.
 '''
-load_ledger_task = build_load_task(dag, 'ledgers', 'export_ledgers_task')
-load_tx_task = build_load_task(dag, 'transactions', 'export_transactions_task')
-load_op_task = build_load_task(dag, 'operations', 'export_operations_task')
-load_trade_task = build_load_task(dag, 'trades', 'export_trades_task')
+load_ledger_task = build_load_task(dag, logger, 'ledgers', 'export_ledgers_task')
+load_tx_task = build_load_task(dag, logger, 'transactions', 'export_transactions_task')
+load_op_task = build_load_task(dag, logger, 'operations', 'export_operations_task')
+load_trade_task = build_load_task(dag, logger, 'trades', 'export_trades_task')
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.

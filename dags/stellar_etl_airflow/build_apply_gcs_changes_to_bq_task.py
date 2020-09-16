@@ -3,7 +3,7 @@ This file contains functions for creating Airflow tasks to merge data on ledger 
 a file in Google Cloud storage into a BigQuery table.
 '''
 import json
-
+import logging
 from airflow.models import Variable
 from airflow import AirflowException
 from airflow.operators.python_operator import PythonOperator
@@ -14,21 +14,26 @@ from google.oauth2 import service_account
 
 
 
-def read_gcs_schema(data_type):
+def read_gcs_schema(data_type, logger):
     '''
     Reads the schema file corresponding to data_type from Google Cloud Storage and parses it.
     Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', or 'trustlines'.
 
     Parameters:
-        data_type - type of the data being uploaded; should be string 
+        data_type - type of the data being uploaded; should be string
+        logger - Airflow logger 
     Returns:
         the parsed schema
     '''
 
     gcs_hook = GoogleCloudStorageHook(google_cloud_storage_conn_id='google_cloud_platform_connection')
+    schema_filepath = f'schemas/{data_type}_schema.json'
+    
+    logger.info(f'Loading schema file at {schema_filepath} from GCS bucket {Variable.get("gcs_bucket_name")}')
+
     schema_fields = json.loads(gcs_hook.download(
-        Variable.get('gcs_bucket_name'),
-        f'schemas/{data_type}_schema.json').decode("utf-8"))
+        Variable.get('gcs_bucket_name'), 
+        schema_filepath).decode("utf-8"))
     return schema_fields
 
 def generate_insert_query(schema, source_table_alias):
@@ -117,7 +122,7 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
 
     return query
 
-def apply_gcs_changes(data_type, **kwargs):
+def apply_gcs_changes(data_type, logger, **kwargs):
     '''
     Sets up a file in Google Cloud Storage as an temporary table, and merges it with an existing table in BigQuery.
     The file's location in GCS is retrieved through XCOM, and the schema for the temporary table is loaded from GCS.
@@ -125,6 +130,7 @@ def apply_gcs_changes(data_type, **kwargs):
 
     Parameters:
         data_type - type of the data being uploaded; should be string 
+        logger - Airflow logger 
     Returns:
         N/A
     '''
@@ -134,22 +140,43 @@ def apply_gcs_changes(data_type, **kwargs):
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
     gcs_filename = kwargs['task_instance'].xcom_pull(task_ids=f'load_{data_type}_to_gcs')
-    schema = read_gcs_schema(data_type)
+    schema = read_gcs_schema(data_type, logger)
     external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
     external_config.source_uris = [f'gs://{gcs_filename}']
     external_config.schema = [bigquery.SchemaField(field['name'], field['type'], mode=field['mode']) for field in schema]
     table_id = f'{data_type}_temp_table'
     job_config = bigquery.QueryJobConfig(table_definitions={table_id: external_config})
 
-    sql = create_merge_query(table_id, data_type, schema)
+    sql_query = create_merge_query(table_id, data_type, schema)
+    logger.info(f'Merge query is: {sql_query}')
+    logger.info(f'Running BigQuery job with config: {job_config}')
 
-    query_job = client.query(sql, job_config=job_config)
+    query_job = client.query(sql_query, job_config=job_config)
+    result_rows = query_job.result()
+    if query_job.error_result:
+        raise AirflowException(f'Query job failed: {query_job.error_result}')
+    logger.info(f'Job timeline: {query_job.timeline}')
+    logger.info(f'{query_job.total_bytes_billed} bytes billed at billing tier {query_job.billing_tier}')
+    logger.info(f'Total rows: {result_rows.total_rows}')
 
-def build_apply_gcs_changes_to_bq_task(dag, data_type):
+
+def build_apply_gcs_changes_to_bq_task(dag, logger, data_type):
+    '''
+    Creates a task that applies changes from a Google Cloud Storage file to a BigQuery table.
+    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
+    
+    Parameters:
+        dag - the parent dag
+        logger - Airflow logger
+        data_type - type of the data being uploaded; should be string
+    Returns:
+        the newly created task
+    '''
+
     return PythonOperator(
         task_id='apply_' + data_type + '_changes_to_bq',
         python_callable=apply_gcs_changes,
-        op_kwargs={'data_type': data_type},
+        op_kwargs={'data_type': data_type, 'logger': logger},
         dag=dag,
         provide_context=True,
     )
