@@ -3,7 +3,7 @@ This file contains functions for creating Airflow tasks to merge data on ledger 
 a file in Google Cloud storage into a BigQuery table.
 '''
 import json
-
+import logging
 from airflow.models import Variable
 from airflow import AirflowException
 from airflow.operators.python_operator import PythonOperator
@@ -20,15 +20,19 @@ def read_gcs_schema(data_type):
     Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', or 'trustlines'.
 
     Parameters:
-        data_type - type of the data being uploaded; should be string 
+        data_type - type of the data being uploaded; should be string
     Returns:
         the parsed schema
     '''
 
     gcs_hook = GoogleCloudStorageHook(google_cloud_storage_conn_id='google_cloud_platform_connection')
+    schema_filepath = f'schemas/{data_type}_schema.json'
+    
+    logging.info(f'Loading schema file at {schema_filepath} from GCS bucket {Variable.get("gcs_bucket_name")}')
+
     schema_fields = json.loads(gcs_hook.download(
-        Variable.get('gcs_bucket_name'),
-        f'schemas/{data_type}_schema.json').decode("utf-8"))
+        Variable.get('gcs_bucket_name'), 
+        schema_filepath).decode("utf-8"))
     return schema_fields
 
 def generate_insert_query(schema, source_table_alias):
@@ -124,7 +128,7 @@ def apply_gcs_changes(data_type, **kwargs):
     Data types should be: 'accounts', 'offers', or 'trustlines'.
 
     Parameters:
-        data_type - type of the data being uploaded; should be string 
+        data_type - type of the data being uploaded; should be string
     Returns:
         N/A
     '''
@@ -141,11 +145,31 @@ def apply_gcs_changes(data_type, **kwargs):
     table_id = f'{data_type}_temp_table'
     job_config = bigquery.QueryJobConfig(table_definitions={table_id: external_config})
 
-    sql = create_merge_query(table_id, data_type, schema)
+    sql_query = create_merge_query(table_id, data_type, schema)
+    logging.info(f'Merge query is: {sql_query}')
+    logging.info(f'Running BigQuery job with config: {job_config}')
 
-    query_job = client.query(sql, job_config=job_config)
+    query_job = client.query(sql_query, job_config=job_config)
+    result_rows = query_job.result()
+    if query_job.error_result:
+        raise AirflowException(f'Query job failed: {query_job.error_result}')
+    logging.info(f'Job timeline: {query_job.timeline}')
+    logging.info(f'{query_job.total_bytes_billed} bytes billed at billing tier {query_job.billing_tier}')
+    logging.info(f'Total rows: {result_rows.total_rows}')
+
 
 def build_apply_gcs_changes_to_bq_task(dag, data_type):
+    '''
+    Creates a task that applies changes from a Google Cloud Storage file to a BigQuery table.
+    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
+    
+    Parameters:
+        dag - the parent dag
+        data_type - type of the data being uploaded; should be string
+    Returns:
+        the newly created task
+    '''
+
     return PythonOperator(
         task_id='apply_' + data_type + '_changes_to_bq',
         python_callable=apply_gcs_changes,

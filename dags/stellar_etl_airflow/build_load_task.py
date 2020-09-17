@@ -47,7 +47,7 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
     storage_service = build_storage_service()
     if os.path.getsize(local_filepath) > 10 * 2 ** 20:
         media = MediaFileUpload(local_filepath, mime_type, resumable=True)
-
+        logging.info('File is large, uploading to GCS in chunks')
         try:
             request = storage_service.objects().insert(bucket=bucket_name, name=gcs_filepath, media_body=media)
             response = None
@@ -60,7 +60,7 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
             raise AirflowException("Unable to upload large file to gcs", e)
     else:
         media = MediaFileUpload(local_filepath, mime_type)
-
+        logging.info('File is small, uploading to GCS all at once')
         try:
             storage_service.objects().insert(bucket=bucket_name, name=gcs_filepath, media_body=media).execute()
             return True
@@ -70,10 +70,10 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
 def upload_to_gcs(data_type, prev_task_id, **kwargs):
     '''
     Uploads a local file to Google Cloud Storage and deletes the local file if the upload is successful.
-
+    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
     
     Parameters:
-        data_type - type of the data being uploaded (transaction, ledger, etc)
+        data_type - type of the data being uploade; should be string
         prev_task_id - the task id to get the filename from
     Returns:
         the full filepath in Google Cloud Storage of the uploaded file
@@ -89,9 +89,11 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
     local_filepath = Variable.get('output_path') + filename
     bucket_name = Variable.get('gcs_bucket_name')
 
+    logging.info(f'Attempting to upload local file at {local_filepath} to Google Cloud Storage path {gcs_filepath} in bucket {bucket_name}')
     success = attempt_upload(local_filepath, gcs_filepath, bucket_name)
     if success:
         #TODO: consider adding backups or integrity checking before uploading/deleting
+        logging.info(f'Upload successful, removing file at {local_filepath}')
         os.remove(local_filepath)
 
     return gcs_filepath
@@ -103,7 +105,7 @@ def build_load_task(dag, data_type, prev_task_id):
     
     Parameters:
         dag - the parent dag
-        data_type - type of the data being uploaded (transaction, ledger, etc)
+        data_type - type of the data being uploaded; should be string
         prev_task_id - the task id to get the filename from 
     Returns:
         the newly created task
