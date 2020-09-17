@@ -20,7 +20,6 @@ dag = DAG(
     schedule_interval='@once',
 )
 
-logger = logging.getLogger("airflow.task")
 
 account_sensor = build_file_sensor_task(dag, 'accounts')
 offer_sensor = build_file_sensor_task(dag, 'offers')
@@ -31,18 +30,18 @@ The load tasks receive the location of the exported file through Airflow's XCOM 
 Then, the task loads the file into Google Cloud Storage. Finally, the file is deleted
 from local storage.
 '''
-load_accounts_task = build_load_task(dag, logger, 'accounts', 'accounts_file_sensor')
-load_offers_task = build_load_task(dag, logger, 'offers', 'offers_file_sensor')
-load_trustlines_task = build_load_task(dag, logger, 'trustlines', 'trustlines_file_sensor')
+load_accounts_task = build_load_task(dag, 'accounts', 'accounts_file_sensor')
+load_offers_task = build_load_task(dag, 'offers', 'offers_file_sensor')
+load_trustlines_task = build_load_task(dag, 'trustlines', 'trustlines_file_sensor')
 
 '''
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
 Entries are updated, deleted, or inserted as needed.
 '''
-apply_account_changes_task = build_apply_gcs_changes_to_bq_task(dag, logger, 'accounts')
-apply_offer_changes_task = build_apply_gcs_changes_to_bq_task(dag, logger, 'offers')
-apply_trustline_changes_task = build_apply_gcs_changes_to_bq_task(dag, logger, 'trustlines')
+apply_account_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'accounts')
+apply_offer_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'offers')
+apply_trustline_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'trustlines')
 
 
 '''
