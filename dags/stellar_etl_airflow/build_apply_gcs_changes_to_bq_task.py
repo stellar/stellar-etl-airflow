@@ -42,7 +42,7 @@ def generate_insert_query(schema, source_table_alias):
         the insert query
     '''
 
-    insert_list = ', '.join([f'{field["name"]} = {source_table_alias}.{field["name"]}' for field in schema])
+    insert_list = ', '.join([field['name'] for field in schema])
     return f'INSERT ({insert_list}) VALUES ({insert_list})'
 
 def generate_update_query(schema, source_table_alias):
@@ -56,8 +56,8 @@ def generate_update_query(schema, source_table_alias):
         the update query
     '''
 
-    updated_list = ', '.join([field['name'] for field in schema])
-    return f'UPDATE SET {updated_list}'
+    update_list = ', '.join([f'{field["name"]} = {source_table_alias}.{field["name"]}' for field in schema])
+    return f'UPDATE SET {update_list}'
 
 def generate_equality_comparison(data_type, source_table_alias, dest_table_alias):
     '''
