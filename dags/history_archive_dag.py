@@ -3,7 +3,6 @@ The history_archive_export DAG exports ledgers, transactions, operations, and tr
 It is scheduled to export information to BigQuery every 5 minutes. 
 '''
 import json
-import logging
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args

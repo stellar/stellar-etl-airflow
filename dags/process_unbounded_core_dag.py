@@ -4,7 +4,6 @@ data in batches to a folder as the network progresses. The process_unbounded_cor
 batches as they are written. Once a batch is read, it is loaded into Google Cloud Storage and loaded into BigQuery.
 This DAG is scheduled to run once, and it triggers a new run with the trigger_next every time a batch is processed.
 '''
-import logging
 from stellar_etl_airflow.build_file_sensor_task import build_file_sensor_task
 from stellar_etl_airflow.build_load_task import build_load_task
 from stellar_etl_airflow.default import get_default_dag_args
@@ -19,7 +18,6 @@ dag = DAG(
     description='This DAG reads data from the unbounded stellar-core instance. The exported accounts, offers, and trustlines are uploaded BigQuery.',
     schedule_interval='@once',
 )
-
 
 account_sensor = build_file_sensor_task(dag, 'accounts')
 offer_sensor = build_file_sensor_task(dag, 'offers')

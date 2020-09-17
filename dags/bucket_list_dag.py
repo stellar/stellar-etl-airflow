@@ -5,7 +5,6 @@ to stop exporting. This end ledger  is determined by when the Airflow DAG is run
 when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 '''
 import json
-import logging
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.build_load_task import build_load_task

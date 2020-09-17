@@ -128,7 +128,7 @@ def apply_gcs_changes(data_type, **kwargs):
     Data types should be: 'accounts', 'offers', or 'trustlines'.
 
     Parameters:
-        data_type - type of the data being uploaded; should be string  
+        data_type - type of the data being uploaded; should be string
     Returns:
         N/A
     '''
