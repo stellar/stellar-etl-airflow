@@ -159,8 +159,11 @@ def apply_gcs_changes(data_type, **kwargs):
 
     query_job = client.query(sql_query, job_config=job_config)
     result_rows = query_job.result()
+
     if query_job.error_result:
+        logging.info(f'Query errors: {query_job.errors}')
         raise AirflowException(f'Query job failed: {query_job.error_result}')
+
     logging.info(f'Job timeline: {[t._properties for t in query_job.timeline]}')
     logging.info(f'{query_job.total_bytes_billed} bytes billed at billing tier {query_job.billing_tier}')
     logging.info(f'Total rows affected: {query_job.num_dml_affected_rows}')
