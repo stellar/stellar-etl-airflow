@@ -12,6 +12,8 @@ from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
+from os.path import splitext, basename
+
 
 
 def read_gcs_schema(data_type):
@@ -99,7 +101,7 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
     Returns:
         the newly created task
     '''
-
+    project_name = Variable.get('bq_project')
     dataset_name = Variable.get('bq_dataset')
     true_table_id = Variable.get('table_ids', deserialize_json=True)[data_type]
     dest_alias = 'T'
@@ -109,8 +111,8 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
     update_query = generate_update_query(schema_fields, source_alias)
     equality_comparison = generate_equality_comparison(data_type, source_alias, dest_alias)
 
-    query = f'''MERGE {dataset_name}.{true_table_id} {dest_alias}
-                USING {dataset_name}.{temp_table_id} {source_alias}
+    query = f'''MERGE `{project_name}.{dataset_name}.{true_table_id}` {dest_alias}
+                USING `{temp_table_id}` {source_alias}
                 ON {equality_comparison}
                 WHEN MATCHED AND {source_alias}.deleted THEN
                     DELETE
@@ -137,26 +139,31 @@ def apply_gcs_changes(data_type, **kwargs):
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
-    gcs_filename = kwargs['task_instance'].xcom_pull(task_ids=f'load_{data_type}_to_gcs')
+    gcs_bucket_name = Variable.get('gcs_bucket_name')
+    gcs_filepath = kwargs['task_instance'].xcom_pull(task_ids=f'load_{data_type}_to_gcs')
     schema = read_gcs_schema(data_type)
+
     external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
-    external_config.source_uris = [f'gs://{gcs_filename}']
+    external_config.source_uris = [f'gs://{gcs_bucket_name}/{gcs_filepath}']
     external_config.schema = [bigquery.SchemaField(field['name'], field['type'], mode=field['mode']) for field in schema]
-    table_id = f'{data_type}_temp_table'
+
+    # The temporary table is is equal to the name of the file used to create it. Table ids cannot have '-'. Instead they have '_'
+    table_id = f'{splitext(basename(gcs_filepath))[0]}'
+    table_id = table_id.replace('-', '_')
+
     job_config = bigquery.QueryJobConfig(table_definitions={table_id: external_config})
 
     sql_query = create_merge_query(table_id, data_type, schema)
     logging.info(f'Merge query is: {sql_query}')
-    logging.info(f'Running BigQuery job with config: {job_config}')
+    logging.info(f'Running BigQuery job with config: {job_config._properties}')
 
     query_job = client.query(sql_query, job_config=job_config)
     result_rows = query_job.result()
     if query_job.error_result:
         raise AirflowException(f'Query job failed: {query_job.error_result}')
-    logging.info(f'Job timeline: {query_job.timeline}')
+    logging.info(f'Job timeline: {[t._properties for t in query_job.timeline]}')
     logging.info(f'{query_job.total_bytes_billed} bytes billed at billing tier {query_job.billing_tier}')
-    logging.info(f'Total rows: {result_rows.total_rows}')
-
+    logging.info(f'Total rows affected: {query_job.num_dml_affected_rows}')
 
 def build_apply_gcs_changes_to_bq_task(dag, data_type):
     '''
