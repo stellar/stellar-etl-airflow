@@ -95,6 +95,8 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
         #TODO: consider adding backups or integrity checking before uploading/deleting
         logging.info(f'Upload successful, removing file at {local_filepath}')
         os.remove(local_filepath)
+    else: 
+        raise AirflowException('Upload was not successful')
 
     return gcs_filepath
 
