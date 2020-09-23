@@ -1,0 +1,97 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "history_operation_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "order",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_closed_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "offer_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_account_address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_asset_code",
+    "type": "STRING"
+  },
+  {
+     "mode": "NULLABLE",
+     "name": "base_asset_issuer",
+     "type": "STRING"
+  },
+  {
+     "mode": "NULLABLE",
+     "name": "base_asset_type",
+     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_amount",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "counter_account_address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "counter_asset_code",
+    "type": "STRING"
+  },
+  {
+     "mode": "NULLABLE",
+     "name": "counter_asset_issuer",
+     "type": "STRING"
+  },
+  {
+     "mode": "NULLABLE",
+     "name": "counter_asset_type",
+     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "counter_amount",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_is_seller",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "price_n",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "price_d",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_offer_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "counter_offer_id",
+    "type": "INTEGER"
+  }
+]

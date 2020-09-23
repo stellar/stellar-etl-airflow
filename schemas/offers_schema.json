@@ -1,0 +1,57 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "seller_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "offer_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "selling_asset",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "buying_asset",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "amount",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "pricen",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "priced",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "price",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "flags",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_modified_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "deleted",
+    "type": "BOOLEAN"
+  }
+]
