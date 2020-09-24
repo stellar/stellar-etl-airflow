@@ -17,7 +17,7 @@ def build_gcs_to_bq_task(dag, data_type):
         the newly created task
     '''
     
-    bucket_name = Variable.get('gcs_bucket_name')
+    bucket_name = Variable.get('gcs_exported_data_bucket_name')
     project_name = Variable.get('bq_project')
     dataset_name = Variable.get('bq_dataset')
     table_ids = Variable.get('table_ids', deserialize_json=True)
