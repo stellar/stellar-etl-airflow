@@ -34,4 +34,5 @@ def build_time_task(dag, use_next_exec_time=True):
         do_xcom_push=True,
         is_delete_operator_pod=True,
         in_cluster=True,
+        affinity=get_default_kubernetes_affinity(),
     )
