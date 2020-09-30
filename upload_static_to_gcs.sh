@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -eo pipefail
 
 airflow_bucket=${1}
@@ -8,5 +10,5 @@ if [ -z "${airflow_bucket}" ]; then
     exit 1
 fi
 
-gsutil cp -r dags/* gs://${airflow_bucket}/dags/
-gsutil cp -r schemas/* gs://${airflow_bucket}/schemas/
+gsutil cp -r dags/* gs://"${airflow_bucket}"/dags/
+gsutil cp -r schemas/* gs://"${airflow_bucket}"/schemas/
