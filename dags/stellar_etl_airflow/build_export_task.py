@@ -5,14 +5,13 @@ This file contains functions for creating Airflow tasks to run stellar-etl expor
 import json
 from airflow import AirflowException
 from airflow.models import Variable
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from stellar_etl_airflow.default import get_default_kubernetes_affinity, get_default_kubernetes_volumes, get_default_kubernetes_volume_mounts
+from stellar_etl_airflow.docker_operator import DockerOperator 
 
 def get_path_variables():
     '''
         Returns the image output path, core executable path, and core config path.
     '''
-    return '/etl/exported_data/', '/usr/bin/stellar-core', '/etl/stellar-core.cfg'
+    return Variable.get('image_output_path'), '/usr/bin/stellar-core', '/etl/stellar-core.cfg'
 
 def select_correct_filename(cmd_type, base_name, batched_name):
     switch = {
@@ -83,31 +82,14 @@ def build_export_task(dag, cmd_type, command, filename):
     '''
 
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
-
-    # KubernetesPodOperators can only load JSON values into XCOM
-    #output_file_dict = json.dumps({"output_file": output_file})
-    output_file_dict =  '{{\\"output_file\\": \\"{filename}\\"}}'.format(filename = output_file)
-
-    # echo the output file so it can be captured by xcom; have to run bash to combine commands
-    cmd = ["/bin/sh"]# [etl_cmd[0]]#['bash', '-c']
-    #args = [f'\"mkdir -p /airflow/xcom && ls /airflow\"']
-    args = ["-c", f"mkdir -p {get_path_variables()[0]} && {' '.join(etl_cmd)} && mkdir -p /airflow/xcom/ && echo {output_file_dict} > /airflow/xcom/return.json && ls {get_path_variables()[0]}"]#etl_cmd[1:]#[f'\"{etl_cmd} && echo etl command finished\"']
-    #args = ['\"echo \'{\\"output_file\\": \\"filename5.txt\\"}\ > /airflow/xcom/return.json\"']
-
-    return KubernetesPodOperator(
-            task_id=command + '_task',
-            name=command + '_task',
-            namespace='etl-tasks',
-            image=Variable.get('image_name'),
-            cmds=cmd,
-            arguments=args, 
-            dag=dag,
-            do_xcom_push=True,
-            is_delete_operator_pod=False,
-            in_cluster=True,
-            #affinity=get_default_kubernetes_affinity(),
-            volume_mounts=get_default_kubernetes_volume_mounts(),
-            volumes=get_default_kubernetes_volumes(),
+    etl_cmd_string = ' '.join(etl_cmd)
+    full_cmd = f'bash -c "{etl_cmd_string} && echo \"{output_file}\""'
+    return DockerOperator(
+        task_id=command + '_task',
+        image=Variable.get('image_name'),
+        command=full_cmd, 
+        volumes=[f'{Variable.get("local_output_path")}:{Variable.get("image_output_path")}'],
+        dag=dag,
+        xcom_push=True,
+        auto_remove=True,
     )
-
-    # f'{Variable.get("output_path")}:{get_path_variables()[0]}'
