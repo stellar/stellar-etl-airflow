@@ -17,7 +17,9 @@
 # specific language governing permissions and limitations
 # under the License.
 """
-Implements Docker operator
+Implements Docker operator. This is the Docker Operator from Airflow v1.10.11.
+Cloud Composer does not support this version yet, but it includes an important
+bug fix that allows the operator to pull new Docker images.
 """
 
 import ast
