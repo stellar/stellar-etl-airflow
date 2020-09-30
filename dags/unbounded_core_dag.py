@@ -18,7 +18,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     description='This DAG runs an unbounded stellar-core instance, which allows it to export accounts, offers, and trustlines to BigQuery. The core instance will \
         continue running and exporting in the background.',
-    schedule_interval='@once',
+    schedule_interval=None,
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 

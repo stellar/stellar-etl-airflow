@@ -1,0 +1,286 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "source_account",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "type",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "application_order",
+    "type": "INTEGER"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "account",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "amount",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "authorize",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "buying_asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "buying_asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "buying_asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "from",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "funder",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "high_threshold",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "home_domain",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "inflation_dest",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "into",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "limit",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "low_threshold",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "master_key_weight",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "med_threshold",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "offer_id",
+        "type": "INTEGER"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "asset_code",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "asset_issuer",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "asset_type",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "path",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "price",
+        "type": "FLOAT"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "d",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "n",
+            "type": "INTEGER"
+          }
+        ],
+        "mode": "NULLABLE",
+        "name": "price_r",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "selling_asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "selling_asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "selling_asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "set_flags",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "set_flags_s",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "signer_key",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "signer_weight",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "source_amount",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "source_asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "source_asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "source_asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "source_max",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "starting_balance",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "to",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "trustee",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "trustor",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "value",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "clear_flags",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "clear_flags_s",
+        "type": "STRING"
+      },
+      {
+        "name": "destination_min",
+        "type": "STRING"
+      },
+      {
+        "name": "bump_to",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "details",
+    "type": "RECORD"
+  }
+]

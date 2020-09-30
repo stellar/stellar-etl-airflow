@@ -139,7 +139,7 @@ def apply_gcs_changes(data_type, **kwargs):
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
-    gcs_bucket_name = Variable.get('gcs_bucket_name')
+    gcs_bucket_name = Variable.get('gcs_exported_data_bucket_name')
     gcs_filepath = kwargs['task_instance'].xcom_pull(task_ids=f'load_{data_type}_to_gcs')
     schema = read_gcs_schema(data_type)
 

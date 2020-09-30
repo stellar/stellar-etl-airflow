@@ -1,0 +1,62 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_key",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "account_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "asset_type",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "asset_issuer",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "asset_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "balance",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "trust_line_limit",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "buying_liabilities",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "selling_liabilities",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "flags",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_modified_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "deleted",
+    "type": "BOOLEAN"
+  }
+]

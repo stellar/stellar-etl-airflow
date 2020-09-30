@@ -10,3 +10,20 @@ def get_default_dag_args():
     'retries': 5,
     'retry_delay': timedelta(minutes=5),
 }
+
+def get_default_kubernetes_affinity():
+    return {
+                'nodeAffinity': {
+                'requiredDuringSchedulingIgnoredDuringExecution': {
+                    'nodeSelectorTerms': [{
+                        'matchExpressions': [{
+                            'key': 'cloud.google.com/gke-nodepool',
+                            'operator': 'In',
+                            'values': [
+                                Variable.get('pool_name')
+                            ]
+                        }]
+                    }]
+                }
+                }
+            }

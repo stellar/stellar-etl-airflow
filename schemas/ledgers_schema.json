@@ -1,0 +1,87 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "sequence",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "previous_ledger_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_count",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_count",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "closed_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "total_coins",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fee_pool",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_fee",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_reserve",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "max_tx_set_size",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "protocol_version",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_header",
+    "type": "BYTES"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "successful_transaction_count",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "failed_transaction_count",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_set_operation_count",
+    "type": "INTEGER"
+  }
+]

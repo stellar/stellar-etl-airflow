@@ -2,7 +2,8 @@
 This file contains functions for creating Airflow tasks to convert from a time range to a ledger range.
 '''
 
-from airflow.providers.docker.operators.docker import DockerOperator
+from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from stellar_etl_airflow.default import get_default_kubernetes_affinity
 from airflow.models import Variable
 
 def build_time_task(dag, use_next_exec_time=True):
@@ -18,13 +19,20 @@ def build_time_task(dag, use_next_exec_time=True):
     Returns:
         the newly created task
     '''
-
+    
     end_time = '{{ next_execution_date.isoformat() }}' if use_next_exec_time else '{{ ts }}'
-    return DockerOperator(
+    command = ["stellar-etl"]
+    args = [ "get_ledger_range_from_times", "-s", "{{ ts }}", "-o", "/airflow/xcom/return.json", '-e', end_time]
+    return KubernetesPodOperator(
         task_id='get_ledger_range_from_times',
+        name='get_ledger_range_from_times',
+        namespace='etl-tasks',
         image=Variable.get('image_name'),
-        command='stellar-etl get_ledger_range_from_times -s {{ ts }} --stdout -e ' + end_time,
+        cmds=command,
+        arguments=args,
         dag=dag,
         do_xcom_push=True,
-        auto_remove=True,
+        is_delete_operator_pod=True,
+        in_cluster=True,
+        affinity=get_default_kubernetes_affinity(),
     )

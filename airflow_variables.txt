@@ -1,0 +1,32 @@
+{
+    "api_key_path": "/home/airflow/gcs/data/apiKey.json",
+    "bq_dataset": "test_dataset",
+    "bq_project": "stellar-testing-281223",
+    "gcs_bucket_name": "us-east1-etl-testing-2fca78f7-bucket",
+    "gcs_exported_data_bucket_name": "stellar-testing-us",
+    "image_name": "stellar/stellar-etl:latest",
+    "image_output_path": "/etl/exported_data/",
+    "local_output_path": "/home/airflow/etlData/",
+    "output_file_names": {
+        "accounts": "accounts.txt",
+        "changes": "changes_folder",
+        "ledgers": "ledgers.txt",
+        "offers": "offers.txt",
+        "operations": "operations.txt",
+        "trades": "trades.txt",
+        "transactions": "transactions.txt",
+        "trustlines": "trustlines.txt"
+    },
+    "output_path": "/home/airflow/gcs/data/",
+    "owner": "SDF",
+    "pool_name": "etl-data",
+    "table_ids": {
+        "accounts": "acc_table",
+        "ledgers": "ledger_table",
+        "offers": "off_table",
+        "operations": "op_table",
+        "trades": "trade_table",
+        "transactions": "tx_table",
+        "trustlines": "trust_table"
+    }
+}
