@@ -85,6 +85,8 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
     logging.info(type(filename))
     if isinstance(filename, dict):
         filename = filename["output_file"]
+    elif isinstance(filename, bytes):
+        filename = filename.decode('utf-8')
     logging.info(f'Pulling filename from task {prev_task_id}; result is {filename}')
 
     gcs_filepath = f'exported/{data_type}/{os.path.basename(filename)}'
