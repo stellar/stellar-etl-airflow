@@ -18,7 +18,7 @@
         "trustlines": "trustlines.txt"
     },
     "output_path": "/home/airflow/gcs/data/",
-    "owner": "Isaiah Turner",
+    "owner": "SDF",
     "pool_name": "etl-data",
     "table_ids": {
         "accounts": "acc_table",
