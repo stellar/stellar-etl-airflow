@@ -26,7 +26,7 @@ def build_time_task(dag, use_next_exec_time=True):
     return KubernetesPodOperator(
         task_id='get_ledger_range_from_times',
         name='get_ledger_range_from_times',
-        namespace='etl-tasks',
+        namespace=Variable.get('namespace'),
         image=Variable.get('image_name'),
         cmds=command,
         arguments=args,
