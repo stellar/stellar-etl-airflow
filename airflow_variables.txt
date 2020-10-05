@@ -7,6 +7,7 @@
     "image_name": "stellar/stellar-etl:latest",
     "image_output_path": "/etl/exported_data/",
     "local_output_path": "/home/airflow/etlData/",
+    "namespace": "default",
     "output_file_names": {
         "accounts": "accounts.txt",
         "changes": "changes_folder",
@@ -19,7 +20,7 @@
     },
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
-    "pool_name": "etl-data",
+    "pool_name": "default-pool",
     "table_ids": {
         "accounts": "acc_table",
         "ledgers": "ledger_table",
