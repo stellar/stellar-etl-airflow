@@ -2,6 +2,7 @@
 This file contains functions for creating Airflow tasks to merge data on ledger entry changes from
 a file in Google Cloud storage into a BigQuery table.
 '''
+import os
 import json
 import logging
 from airflow.models import Variable
@@ -16,9 +17,9 @@ from os.path import splitext, basename
 
 
 
-def read_gcs_schema(data_type):
+def read_local_schema(data_type):
     '''
-    Reads the schema file corresponding to data_type from Google Cloud Storage and parses it.
+    Reads the schema file corresponding to data_type and parses it.
     Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', or 'trustlines'.
 
     Parameters:
@@ -27,14 +28,14 @@ def read_gcs_schema(data_type):
         the parsed schema
     '''
 
-    gcs_hook = GoogleCloudStorageHook(google_cloud_storage_conn_id='google_cloud_platform_connection')
-    schema_filepath = f'schemas/{data_type}_schema.json'
+    # since the dags folder is shared among airflow workers and the webservers, schemas are stored in the dags folder
+    schema_filepath = os.path.join('/home/airflow/gcs/dags', f'schemas/{data_type}_schema.json') 
     
-    logging.info(f'Loading schema file at {schema_filepath} from GCS bucket {Variable.get("gcs_bucket_name")}')
+    logging.info(f'Loading schema file at {schema_filepath}')
+ 
+    with open(schema_filepath, 'r') as schema_file:
+        schema_fields = json.loads(schema_file.read())
 
-    schema_fields = json.loads(gcs_hook.download(
-        Variable.get('gcs_bucket_name'), 
-        schema_filepath).decode("utf-8"))
     return schema_fields
 
 def generate_insert_query(schema, source_table_alias):
@@ -141,7 +142,7 @@ def apply_gcs_changes(data_type, **kwargs):
 
     gcs_bucket_name = Variable.get('gcs_exported_data_bucket_name')
     gcs_filepath = kwargs['task_instance'].xcom_pull(task_ids=f'load_{data_type}_to_gcs')
-    schema = read_gcs_schema(data_type)
+    schema = read_local_schema(data_type)
 
     external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
     external_config.source_uris = [f'gs://{gcs_bucket_name}/{gcs_filepath}']

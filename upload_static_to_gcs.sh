@@ -11,4 +11,4 @@ if [ -z "${airflow_bucket}" ]; then
 fi
 
 gsutil cp -r dags/* gs://"${airflow_bucket}"/dags/
-gsutil cp -r schemas/* gs://"${airflow_bucket}"/schemas/
+gsutil cp -r schemas/* gs://"${airflow_bucket}"/dags/schemas/
