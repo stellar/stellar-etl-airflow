@@ -71,7 +71,8 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
 def upload_to_gcs(data_type, prev_task_id, **kwargs):
     '''
     Uploads a local file to Google Cloud Storage and deletes the local file if the upload is successful.
-    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
+    Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', 'trustlines',
+    'dimAccounts', 'dimOffers', 'dimMarkets', or 'factEvents'.
     
     Parameters:
         data_type - type of the data being uploade; should be string
@@ -108,7 +109,8 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
 def build_load_task(dag, data_type, prev_task_id):
     '''
     Creates a task that loads a local file into Google Cloud Storage.
-    Data types should be: accounts, ledgers, offers, operations, trades, transactions, or trustlines.
+    Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', 'trustlines',
+    'dimAccounts', 'dimOffers', 'dimMarkets', or 'factEvents'.
     
     Parameters:
         dag - the parent dag
