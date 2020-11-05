@@ -11,9 +11,14 @@
     "output_file_names": {
         "accounts": "accounts.txt",
         "changes": "changes_folder",
+        "dimAccounts": "dimAccounts.txt",
+        "dimMarkets": "dimMarkets.txt",
+        "dimOffers": "dimOffers.txt",
+        "factEvents": "factEvents.txt",
         "ledgers": "ledgers.txt",
         "offers": "offers.txt",
         "operations": "operations.txt",
+        "orderbooks": "orderbook_folder",
         "trades": "trades.txt",
         "transactions": "transactions.txt",
         "trustlines": "trustlines.txt"
@@ -23,6 +28,10 @@
     "pool_name": "default-pool",
     "table_ids": {
         "accounts": "acc_table",
+        "dimAccounts": "dim_accounts",
+        "dimMarkets": "dim_markets",
+        "dimOffers": "dim_offers",
+        "factEvents": "fact_offer_events",
         "ledgers": "ledger_table",
         "offers": "off_table",
         "operations": "op_table",

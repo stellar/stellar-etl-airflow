@@ -1,6 +1,6 @@
 '''
-The process_unbounded_core DAG reads information from the unbounded_core_export DAG. The unbounded_core_export exports 
-data in batches to a folder as the network progresses. The process_unbounded_core DAG uses file sensors to read these
+The process_unbounded_core_changes DAG reads information from the unbounded_core_changes_export DAG. The unbounded_core_changes_export exports 
+data in batches to a folder as the network progresses. The process_unbounded_core_changes DAG uses file sensors to read these
 batches as they are written. Once a batch is read, it is loaded into Google Cloud Storage and loaded into BigQuery.
 This DAG is scheduled to run once, and it triggers a new run with the trigger_next every time a batch is processed.
 '''
@@ -13,15 +13,15 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 
 dag = DAG(
-    'process_unbounded_core',
+    'process_unbounded_core_changes',
     default_args=get_default_dag_args(),
     description='This DAG reads data from the unbounded stellar-core instance. The exported accounts, offers, and trustlines are uploaded BigQuery.',
     schedule_interval='@once',
 )
 
-account_sensor = build_file_sensor_task(dag, 'accounts')
-offer_sensor = build_file_sensor_task(dag, 'offers')
-trustline_sensor = build_file_sensor_task(dag, 'trustlines') 
+account_sensor = build_file_sensor_task(dag, 'accounts', is_change=True)
+offer_sensor = build_file_sensor_task(dag, 'offers', is_change=True)
+trustline_sensor = build_file_sensor_task(dag, 'trustlines', is_change=True) 
 
 '''
 The load tasks receive the location of the exported file through Airflow's XCOM system.

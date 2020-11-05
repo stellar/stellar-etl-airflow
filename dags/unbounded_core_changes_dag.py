@@ -1,7 +1,7 @@
 '''
-The unbounded_core_export DAG instantiates a long-running stellar-core instance. This stellar-core instance
+The unbounded_core_changes_export DAG instantiates a long-running stellar-core instance. This stellar-core instance
 exports accounts, offers, and trustlines to a local folder. For each batch of 64 ledgers that is added to the
-network, 3 files are created in the folder. There is one folder for each data type. Since this is a long-running 
+network, 3 files are created in the folder. There is one file for each data type. Since this is a long-running 
 background task, it should be triggered once manually.
 '''
 import json
@@ -14,7 +14,7 @@ from airflow import DAG
 from airflow.models import Variable
 
 dag = DAG(
-    'unbounded_core_export',
+    'unbounded_core_changes_export',
     default_args=get_default_dag_args(),
     description='This DAG runs an unbounded stellar-core instance, which allows it to export accounts, offers, and trustlines to BigQuery. The core instance will \
         continue running and exporting in the background.',
