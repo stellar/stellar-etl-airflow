@@ -46,8 +46,8 @@ def generate_etl_cmd(command, base_filename, cmd_type):
 
     # These are JINJA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
     # Then, it is turned into a JSON object with fromjson, and then the start or end field is accessed.
-    start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
-    end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"] }}'
+    start_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"] }}'
+    end_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") |fromjson)["end"] }}'
 
     image_output_path, core_exec, core_cfg = get_path_variables()
 
@@ -92,4 +92,5 @@ def build_export_task(dag, cmd_type, command, filename):
         dag=dag,
         xcom_push=True,
         auto_remove=True,
+        force_pull=True,
     )
