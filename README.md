@@ -8,8 +8,9 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 	  - [Manual Installation](#manual-installation)
   - [Task Explanations](#task-explanations)
   - [DAG Diagrams](#dag-diagrams)
-  - [Execution Procedures](#execution-procedures)
-  - [Remaining Project TODOs](#remaining-project-todos)
+	- [Execution Procedures](#execution-procedures)
+	- [Extensions](#extensions)
+	- [Remaining Project TODOs](#remaining-project-todos)
 
 ## Installation and Setup
 ### Cloud Composer
@@ -279,6 +280,14 @@ The airflow_variables.txt file provides a set of default values for variables.
 ### Bucket List Export DAG
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bucket_list_dag.py) exports from Stellar's bucket list, which contains data on accounts, offers, and trustlines. Exports from this DAG always begins from the genesis ledger and end at the ledger that includes the DAG's execution date.
 ![Bucket List DAG](https://i.ibb.co/RPM21dS/Bucket-List-DAG.png)
+### Unbounded Orderbook Export DAG
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_orderbook_dag.py) connects to a stellar-core instance and exports accounts, offers, and trustlines. This DAG is a long-running process that continually exports new information as the Stellar network progresses.
+
+![Unbounded Orderbook DAG](https://i.ibb.co/YQscrdK/Orderbook-DAG.png)
+
+### Process Unbounded Orderbook DAG  
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_changes_dag.py) processes the output of the unbounded orderbook DAG. File sensors watch the folder where the unbounded core DAG sends its exported information. Once a file is seen, it is loaded into Google Cloud Storage and applied to BigQuery. Once a batch has been exported completely, the DAG triggers itself again.
+![Unbounded Orderbook DAG](https://i.ibb.co/vcR8dxB/Process-Orderbook-DAG.png)
 
 ## Execution Procedures
 1. Ensure that the Airflow scheduler is running: `airflow scheduler`
@@ -308,6 +317,39 @@ The airflow_variables.txt file provides a set of default values for variables.
 ### build_apply_gcs_changes_to_bq_task
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_apply_gcs_changes_to_bq_task.py) contains methods for creating apply tasks. Apply tasks are used to merge a file from Google Cloud Storage into a BigQuery table. Apply tasks differ from the other task that appends in that they apply changes. This means that they update, delete, and insert rows. These tasks are used for accounts, offers, and trustlines, as the BigQuery table represents the point in time state of these data structures. This means that, for example, a merge task could alter the account balance field in the table if a user performed a transaction, delete a row in the table if a user deleted their account, or add a new row if a new account was created.
 
+## Extensions
+This section covers some possible extensions or further work that can be done.
+
+### Adding New DAGs
+Adding new DAGs is a fairly straightforward process. Create a new python file in the `dags` folder. Create your dag object using the code below: 
+```
+dag = DAG(
+	'dag_id',
+	default_args=get_default_dag_args(),
+	description='DAG description.',
+	schedule_interval=None,
+)
+```
+The get_default_dag_args() is defined in the `dags/stellar-etl-airflow/default.py` file.
+
+Feel free to add more arguments or customize the existing ones. The documentation for a DAG is available [here](https://airflow.apache.org/docs/stable/_api/airflow/models/dag/index.html).
+
+### Adding New Tasks
+Adding new tasks is a more involved process. You likely need to add a new python file in the `dags/stellar_etl_airflow` folder. This file should include a function that creates and returns the new task, as well as any auxiliary functions related to the task.
+
+Airflow has a variety of operators. The ones that are most likely to be used are:
+
+ - [DockerOperator](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/docker_operator.py), which can be used to run stellar-etl commands
+ - [PythonOperator](https://airflow.apache.org/docs/stable/howto/operator/python.html), which can run Python functions
+ - [GlobFileSensor](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/glob_file_operator.py), which can detect files
+
+You may also find this list of [Google-related operators](https://airflow.apache.org/docs/stable/howto/operator/gcp/index.html) useful for interacting with Google Cloud Storage or BigQuery.
+
+An example of a simple task is the [time task](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py). This task converts a time into a ledger range using a stellar-etl command. Since it needs to use the stellar-etl, we need a DockerOperator. We provide the operator with the command, the task_id, the parent DAG, and some parameters specific to DockerOperators, like the volume. 
+
+More complex tasks might require a good amount of extra code to set up variables, authenticate, or check for errors. However, keep in mind that tasks should be idempotent. This means that tasks should produce the same output even if they are run multiple times. The same input should always produce the same output.
+
+You may find that you need to pass small amounts of information, like filenames or numbers, from one task to another. You can do so with Airflow's [XCOM system](https://airflow.apache.org/docs/stable/concepts.html?highlight=xcom#xcoms).
 
 ## Remaining Project TODOs
 - More detailed logging in DAGs ([#4](https://github.com/stellar/stellar-etl-airflow/issues/4))
