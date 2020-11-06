@@ -330,10 +330,9 @@ dag = DAG(
 	schedule_interval=None,
 )
 ```
-Feel free to add more arguments or customize the existing ones. The documentation for a DAG is available [here](https://airflow.apache.org/docs/stable/_api/airflow/models/dag/index.html).
+The get_default_dag_args() is defined in the `dags/stellar-etl-airflow/default.py` file.
 
-### Adding tasks to existing DAGs
-If you have created a new DAG, or wish to extend an existing DAG, you can add tasks to it by calling the various `create_X_task` functions that are in the repository. See [here](https://airflow.apache.org/docs/stable/concepts.html#relations-between-tasks) for details on how to create dependencies between tasks.
+Feel free to add more arguments or customize the existing ones. The documentation for a DAG is available [here](https://airflow.apache.org/docs/stable/_api/airflow/models/dag/index.html).
 
 ### Adding New Tasks
 Adding new tasks is a more involved process. You likely need to add a new python file in the `dags/stellar_etl_airflow` folder. This file should include a function that creates and returns the new task, as well as any auxiliary functions related to the task.
@@ -345,6 +344,12 @@ Airflow has a variety of operators. The ones that are most likely to be used are
  - [GlobFileSensor](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/glob_file_operator.py), which can detect files
 
 You may also find this list of [Google-related operators](https://airflow.apache.org/docs/stable/howto/operator/gcp/index.html) useful for interacting with Google Cloud Storage or BigQuery.
+
+An example of a simple task is the [time task](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py). This task converts a time into a ledger range using a stellar-etl command. Since it needs to use the stellar-etl, we need a DockerOperator. We provide the operator with the command, the task_id, the parent DAG, and some parameters specific to DockerOperators, like the volume. 
+
+More complex tasks might require a good amount of extra code to set up variables, authenticate, or check for errors. However, keep in mind that tasks should be idempotent. This means that tasks should produce the same output even if they are run multiple times. The same input should always produce the same output.
+
+You may find that you need to pass small amounts of information, like filenames or numbers, from one task to another. You can do so with Airflow's [XCOM system](https://airflow.apache.org/docs/stable/concepts.html?highlight=xcom#xcoms).
 
 ## Remaining Project TODOs
 - More detailed logging in DAGs ([#4](https://github.com/stellar/stellar-etl-airflow/issues/4))
