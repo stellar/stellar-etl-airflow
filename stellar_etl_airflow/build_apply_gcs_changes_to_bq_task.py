@@ -32,7 +32,7 @@ def read_local_schema(data_type):
 
     # since the dags folder is shared among airflow workers and the webservers, schemas are stored in the dags folder
     #schema_filepath = os.path.join('/home/airflow/gcs/dags', f'schemas/{data_type}_schema.json') 
-    schema_filepath = f'/Users/isaiahturner/Local/schemas/{data_type}_schema.json'
+    schema_filepath = f'{Variable.get("schema_path")}/{data_type}_schema.json'
     logging.info(f'Loading schema file at {schema_filepath}')
  
     with open(schema_filepath, 'r') as schema_file:
