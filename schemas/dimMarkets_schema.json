@@ -1,0 +1,27 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "counter_issuer",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "counter_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_issuer",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "market_id",
+    "type": "FLOAT"
+  }
+]
