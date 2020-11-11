@@ -1,4 +1,4 @@
-apache_airflow==1.10.11
+
 six==1.15.0
 docker_py==1.10.6
 google_api_python_client==1.12.5
