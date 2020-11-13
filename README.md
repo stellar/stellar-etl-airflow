@@ -9,7 +9,7 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
   - [Task Explanations](#task-explanations)
   - [DAG Diagrams](#dag-diagrams)
 	- [Execution Procedures](#execution-procedures)
-	- [Extensions](#extensions)
+  - [Extensions](#extensions)
 	- [Remaining Project TODOs](#remaining-project-todos)
 
 ## Installation and Setup
