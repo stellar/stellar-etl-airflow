@@ -7,6 +7,9 @@ from airflow import AirflowException
 from airflow.models import Variable
 from stellar_etl_airflow.docker_operator import DockerOperator 
 
+from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator 
+from airflow.kubernetes.volume import Volume
+from airflow.kubernetes.volume_mount import VolumeMount
 def get_path_variables():
     '''
         Returns the image output path, core executable path, and core config path.
@@ -46,8 +49,11 @@ def generate_etl_cmd(command, base_filename, cmd_type):
 
     # These are JINJA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
     # Then, it is turned into a JSON object with fromjson, and then the start or end field is accessed.
-    start_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"] }}'
-    end_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") |fromjson)["end"] }}'
+    #start_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"] }}'
+    #end_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") |fromjson)["end"] }}'
+
+    start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
+    end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"] }}'
 
     image_output_path, core_exec, core_cfg = get_path_variables()
 
@@ -80,7 +86,35 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
-
+    data_mount = VolumeMount('etl-data', Variable.get("image_output_path"), '', False)
+    volume_config = {
+        'hostPath':
+        {
+            'path': Variable.get("local_output_path"),
+            'type': 'DirectoryOrCreate'
+        }   
+    }
+    data_volume = Volume('etl-data', volume_config)
+    etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
+    etl_cmd_string = ' '.join(etl_cmd)
+    cmd = ['bash']
+    args = ['-c', f'{etl_cmd_string} && mkdir -p /airflow/xcom/ && echo \'{{"output_file":"{output_file}"}}\' >> /airflow/xcom/return.json']
+    return KubernetesPodOperator(
+         task_id=command + '_task',
+         name=command + '_task',
+         namespace=Variable.get('namespace'),
+         image=Variable.get('image_name'),
+         cmds=cmd,
+         arguments=args,
+         dag=dag,
+         do_xcom_push=True,
+         is_delete_operator_pod=True,
+         in_cluster=False,
+         config_file="/Users/isaiahturner/.kube/config",
+         volume_mounts=[data_mount],
+         volumes=[data_volume]
+     ) 
+    '''
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
     etl_cmd_string = ' '.join(etl_cmd)
     full_cmd = f'bash -c "{etl_cmd_string} && echo \"{output_file}\""'
@@ -93,4 +127,4 @@ def build_export_task(dag, cmd_type, command, filename):
         xcom_push=True,
         auto_remove=True,
         force_pull=True,
-    )
+    )'''
