@@ -4,12 +4,12 @@ This file contains functions for creating Airflow tasks to run stellar-etl expor
 
 import json
 from airflow import AirflowException
-from airflow.models import Variable
-from stellar_etl_airflow.docker_operator import DockerOperator 
+from airflow.models import Variable 
 
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator 
 from airflow.kubernetes.volume import Volume
 from airflow.kubernetes.volume_mount import VolumeMount
+
 def get_path_variables():
     '''
         Returns the image output path, core executable path, and core config path.
@@ -114,17 +114,3 @@ def build_export_task(dag, cmd_type, command, filename):
          volume_mounts=[data_mount],
          volumes=[data_volume]
      ) 
-    '''
-    etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
-    etl_cmd_string = ' '.join(etl_cmd)
-    full_cmd = f'bash -c "{etl_cmd_string} && echo \"{output_file}\""'
-    return DockerOperator(
-        task_id=command + '_task',
-        image=Variable.get('image_name'),
-        command=full_cmd, 
-        volumes=[f'{Variable.get("local_output_path")}:{Variable.get("image_output_path")}'],
-        dag=dag,
-        xcom_push=True,
-        auto_remove=True,
-        force_pull=True,
-    )'''
