@@ -47,11 +47,7 @@ def generate_etl_cmd(command, base_filename, cmd_type):
         the generated etl command; name of the file that contains the exported data
     '''
 
-    # These are JINJA templates, which are filled by airflow at runtime. The string from get_ledger_range_from_times is pulled from XCOM. 
-    # Then, it is turned into a JSON object with fromjson, and then the start or end field is accessed.
-    #start_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") | fromjson)["start"] }}'
-    #end_ledger = '{{ (ti.xcom_pull(task_ids="get_ledger_range_from_times") |fromjson)["end"] }}'
-
+    # These are JINJA templates, which are filled by airflow at runtime. The json from get_ledger_range_from_times is pulled from XCOM. 
     start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
     end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"] }}'
 
@@ -86,15 +82,14 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
-    data_mount = VolumeMount('etl-data', Variable.get("image_output_path"), '', False)
+    data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
     volume_config = {
-        'hostPath':
+        'persistentVolumeClaim':
         {
-            'path': Variable.get("local_output_path"),
-            'type': 'DirectoryOrCreate'
+            'claimName': Variable.get('volume_claim_name')
         }   
     }
-    data_volume = Volume('etl-data', volume_config)
+    data_volume = Volume(Variable.get('volume_name'), volume_config)
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
     etl_cmd_string = ' '.join(etl_cmd)
     cmd = ['bash']
@@ -112,5 +107,6 @@ def build_export_task(dag, cmd_type, command, filename):
          in_cluster=False,
          config_file="/Users/isaiahturner/.kube/config",
          volume_mounts=[data_mount],
-         volumes=[data_volume]
+         volumes=[data_volume],
+         affinity=Variable.get('affinity', deserialize_json=True)
      ) 

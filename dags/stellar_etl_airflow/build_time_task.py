@@ -33,5 +33,6 @@ def build_time_task(dag, use_next_exec_time=True):
          do_xcom_push=True,
          is_delete_operator_pod=True,
          in_cluster=False,
-         config_file="/Users/isaiahturner/.kube/config"
+         config_file="/Users/isaiahturner/.kube/config",
+         affinity=Variable.get('affinity', deserialize_json=True)
      ) 
