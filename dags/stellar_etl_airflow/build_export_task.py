@@ -94,6 +94,10 @@ def build_export_task(dag, cmd_type, command, filename):
     etl_cmd_string = ' '.join(etl_cmd)
     cmd = ['bash']
     args = ['-c', f'{etl_cmd_string} && mkdir -p /airflow/xcom/ && echo \'{{"output_file":"{output_file}"}}\' >> /airflow/xcom/return.json']
+    
+    config_file_location = Variable.get('kube_config_location')
+    in_cluster = False if config_file_location else True
+    
     return KubernetesPodOperator(
          task_id=command + '_task',
          name=command + '_task',
@@ -104,8 +108,8 @@ def build_export_task(dag, cmd_type, command, filename):
          dag=dag,
          do_xcom_push=True,
          is_delete_operator_pod=True,
-         in_cluster=False,
-         config_file="/Users/isaiahturner/.kube/config",
+         in_cluster=in_cluster,
+         config_file=config_file_location,
          volume_mounts=[data_mount],
          volumes=[data_volume],
          affinity=Variable.get('affinity', deserialize_json=True)

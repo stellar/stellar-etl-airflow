@@ -22,6 +22,8 @@ def build_time_task(dag, use_next_exec_time=True):
     end_time = '{{ next_execution_date.isoformat() }}' if use_next_exec_time else '{{ ts }}'
     command = ["stellar-etl"]
     args = [ "get_ledger_range_from_times", "-s", "{{ ts }}", "-o", "/airflow/xcom/return.json", '-e', end_time]
+    config_file_location = Variable.get('kube_config_location')
+    in_cluster = False if config_file_location else True
     return KubernetesPodOperator(
          task_id='get_ledger_range_from_times',
          name='get_ledger_range_from_times',
@@ -32,7 +34,7 @@ def build_time_task(dag, use_next_exec_time=True):
          dag=dag,
          do_xcom_push=True,
          is_delete_operator_pod=True,
-         in_cluster=False,
-         config_file="/Users/isaiahturner/.kube/config",
+         in_cluster=in_cluster,
+         config_file=config_file_location,
          affinity=Variable.get('affinity', deserialize_json=True)
      ) 

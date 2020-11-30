@@ -7,6 +7,7 @@
     "gcs_exported_data_bucket_name": "stellar-testing-us",
     "image_name": "stellar/stellar-etl:latest",
     "image_output_path": "/etl/exported_data/",
+    "kube_config_location": "",
     "local_output_path": "/home/airflow/etlData/",
     "namespace": "default",
     "output_file_names": {
