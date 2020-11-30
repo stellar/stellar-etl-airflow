@@ -1,5 +1,5 @@
 {
-    "affinity": "{}"
+    "affinity": "{}",
     "api_key_path": "/home/airflow/gcs/data/apiKey.json",
     "bq_dataset": "test_dataset",
     "bq_project": "stellar-testing-281223",
