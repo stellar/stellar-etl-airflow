@@ -1,4 +1,5 @@
 {
+    "affinity": "{}"
     "api_key_path": "/home/airflow/gcs/data/apiKey.json",
     "bq_dataset": "test_dataset",
     "bq_project": "stellar-testing-281223",
@@ -6,6 +7,7 @@
     "gcs_exported_data_bucket_name": "stellar-testing-us",
     "image_name": "stellar/stellar-etl:latest",
     "image_output_path": "/etl/exported_data/",
+    "kube_config_location": "",
     "local_output_path": "/home/airflow/etlData/",
     "namespace": "default",
     "output_file_names": {
@@ -38,5 +40,7 @@
         "trades": "trade_table",
         "transactions": "tx_table",
         "trustlines": "trust_table"
-    }
+    },
+    "volume_claim_name": "etl-data-claim",
+    "volume_name": "etl-data"
 }
