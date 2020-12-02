@@ -4,9 +4,9 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 ## Table of Contents
 - [Stellar ETL Airflow](#stellar-etl-airflow)
 	- [Installation and Setup](#installation-and-setup)
-		- [Cloud Composer](#cloud-composer)
-	  - [Custom Kubernetes Setup](#custom-kubernetes-setup)
-		- [Manual Installation](#manual-installation)
+    - [Cloud Composer](#cloud-composer)
+    - [Custom Kubernetes Setup](#custom-kubernetes-setup)
+    - [Manual Installation](#manual-installation)
 	- [Task Explanations](#task-explanations)
 	- [DAG Diagrams](#dag-diagrams)
 	- [Execution Procedures](#execution-procedures)
