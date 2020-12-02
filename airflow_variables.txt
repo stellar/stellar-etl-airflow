@@ -27,7 +27,6 @@
     },
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
-    "pool_name": "default-pool",
     "table_ids": {
         "accounts": "acc_table",
         "dimAccounts": "dim_accounts",
@@ -41,6 +40,7 @@
         "transactions": "tx_table",
         "trustlines": "trust_table"
     },
+    "use_kubernetes_pod_exporter": "False",
     "volume_claim_name": "etl-data-claim",
     "volume_name": "etl-data"
 }
