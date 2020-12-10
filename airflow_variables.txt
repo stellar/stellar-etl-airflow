@@ -27,6 +27,7 @@
     },
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
+    "schema_filepath": "/home/airflow/gcs/dags/schemas/",
     "table_ids": {
         "accounts": "acc_table",
         "dimAccounts": "dim_accounts",
