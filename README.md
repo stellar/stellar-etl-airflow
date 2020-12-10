@@ -272,6 +272,7 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 | output_file_names             | JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure                      | Yes, if desired. Make sure each type has a different filename.        |
 | output_path                   | shared output path for exported data                                                                                                               | No, unless you have a different shared storage solution.              |
 | owner                         | the name of the owner of the Airflow DAGs                                                                                                          | Yes.                                                                  |
+| schema_filepath                     | file path to schema folder      | No, unless schemas are in a different location
 | table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                                           | Yes, if desired. Make sure each type has a different table name.      |
 
 #### Kubernetes-Specific Variables
