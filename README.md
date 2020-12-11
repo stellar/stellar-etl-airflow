@@ -54,7 +54,7 @@ Remember to adjust the disk size, machine type, and node count to fit your needs
 > **_TROUBLESHOOTING:_** If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with Owner permissions and use it to create the Composer environment.
 
 Cloud Composer may take a while to setup the environment. Once the process is finished, you can view the environment by going to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments).
-> **_NOTE:_** Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console. This name corresponds to the Airflow variable "gcs_bucket_name".
+> **_NOTE:_** Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
 
 #### Upload DAGs and Schemas to Cloud Composer
 After the environment is created, select the environment and navigate to the environment configuration tab. Look for the value under **DAGs folder**. It will be of the form `gs://airflow_bucket/dags`. The `airflow_bucket` value will be used in this step and the next . Run the command below in order to upload the DAGs and schemas to your Airflow bucket.
@@ -263,7 +263,6 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 | api_key_path                  | path to the Google Cloud Platform [API key](https://cloud.google.com/docs/authentication/api-keys?authuser=1)                                      | No, unless your filename is different.                                |
 | bq_dataset                    | name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                                    | Yes. Change to your dataset name.                                     |
 | bq_project                    | name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                                  | Yes. Change to your project name.                                     |
-| gcs_bucket_name               | name of the Google Cloud Storage  [bucket](https://cloud.google.com/storage/docs/creating-buckets)  that is associated with Cloud Composer         | Yes. Change to your Cloud Composer bucket name.                       |
 | gcs_exported_data_bucket_name | name of the Google Cloud Storage  [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data                   | Yes. Change to the name of the bucket you made.                       |
 | image_name                    | name of the ETL's Docker image                                                                                                                     | No, unless you need a specific image version.                         |
 | image_output_path             | local output path within the ETL image                                                                                                             | No.                                                                   |
