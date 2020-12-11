@@ -7,8 +7,6 @@ from airflow import AirflowException
 from airflow.models import Variable 
 
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator 
-from airflow.kubernetes.volume import Volume
-from airflow.kubernetes.volume_mount import VolumeMount
 
 def get_path_variables():
     '''
@@ -69,10 +67,82 @@ def generate_etl_cmd(command, base_filename, cmd_type):
     if cmd is None:
         raise AirflowException("Command type is not supported: ", cmd_type)
     return cmd, correct_filename
+    
+def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
+    '''
+    Creates the export task using a KubernetesPodOperator.
+    Parameters:
+        dag - the parent dag
+        command - stellar-etl command type (ex. export_ledgers, export_accounts)
+        etl_cmd_string - a string of the fully formed command that includes all flags and arguments to be sent to the etl
+        output_file - filename for the output file or folder
+    Returns:
+        the KubernetesPodOperator for the export task
+    '''
+    from airflow.kubernetes.volume import Volume
+    from airflow.kubernetes.volume_mount import VolumeMount
+
+    data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
+    volume_config = {
+        'persistentVolumeClaim':
+        {
+            'claimName': Variable.get('volume_claim_name')
+        }   
+    }
+    data_volume = Volume(Variable.get('volume_name'), volume_config)
+
+    cmd = ['bash']
+    args = ['-c', f'{etl_cmd_string} && mkdir -p /airflow/xcom/ && echo \'{{"output_file":"{output_file}"}}\' >> /airflow/xcom/return.json']
+    
+    config_file_location = Variable.get('kube_config_location')
+    in_cluster = False if config_file_location else True
+    
+    return KubernetesPodOperator(
+        task_id=command + '_task',
+        name=command + '_task',
+        namespace=Variable.get('namespace'),
+        image=Variable.get('image_name'),
+        cmds=cmd,
+        arguments=args,
+        dag=dag,
+        do_xcom_push=True,
+        is_delete_operator_pod=True,
+        in_cluster=in_cluster,
+        config_file=config_file_location,
+        volume_mounts=[data_mount],
+        volumes=[data_volume],
+        affinity=Variable.get('affinity', deserialize_json=True)
+    )
+
+def build_docker_exporter(dag, command, etl_cmd_string, output_file):
+    '''
+    Creates the export task using a DockerOperator.
+    Parameters:
+        dag - the parent dag
+        command - stellar-etl command type (ex. export_ledgers, export_accounts)
+        etl_cmd_string - a string of the fully formed command that includes all flags and arguments to be sent to the etl
+        output_file - filename for the output file or folder
+    Returns:
+        the DockerOperator for the export task
+    '''
+    from stellar_etl_airflow.docker_operator import DockerOperator 
+
+    full_cmd = f'bash -c "{etl_cmd_string} && echo \"{output_file}\""'
+    return DockerOperator(
+        task_id=command + '_task',
+        image=Variable.get('image_name'),
+        command=full_cmd, 
+        volumes=[f'{Variable.get("local_output_path")}:{Variable.get("image_output_path")}'],
+        dag=dag,
+        xcom_push=True,
+        auto_remove=True,
+    ) 
 
 def build_export_task(dag, cmd_type, command, filename):
     '''
     Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
+    Can either return a DockerOperator or a KubernetesPodOperator, depending on the value of the 
+    use_kubernetes_pod_exporter variable.
     
     Parameters:
         dag - the parent dag
@@ -82,35 +152,10 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
-    data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
-    volume_config = {
-        'persistentVolumeClaim':
-        {
-            'claimName': Variable.get('volume_claim_name')
-        }   
-    }
-    data_volume = Volume(Variable.get('volume_name'), volume_config)
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
     etl_cmd_string = ' '.join(etl_cmd)
-    cmd = ['bash']
-    args = ['-c', f'{etl_cmd_string} && mkdir -p /airflow/xcom/ && echo \'{{"output_file":"{output_file}"}}\' >> /airflow/xcom/return.json']
-    
-    config_file_location = Variable.get('kube_config_location')
-    in_cluster = False if config_file_location else True
-    
-    return KubernetesPodOperator(
-         task_id=command + '_task',
-         name=command + '_task',
-         namespace=Variable.get('namespace'),
-         image=Variable.get('image_name'),
-         cmds=cmd,
-         arguments=args,
-         dag=dag,
-         do_xcom_push=True,
-         is_delete_operator_pod=True,
-         in_cluster=in_cluster,
-         config_file=config_file_location,
-         volume_mounts=[data_mount],
-         volumes=[data_volume],
-         affinity=Variable.get('affinity', deserialize_json=True)
-     ) 
+    if Variable.get('use_kubernetes_pod_exporter') == 'True':
+        return build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file)
+    else:
+        return build_docker_exporter(dag, command, etl_cmd_string, output_file)
+         
