@@ -41,6 +41,6 @@
         "trustlines": "trust_table"
     },
     "use_kubernetes_pod_exporter": "False",
-    "volume_claim_name": "etl-data-claim",
+    "volume_config": "{}",
     "volume_name": "etl-data"
 }
