@@ -279,8 +279,13 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
 | use_kubernetes_pod_exporter | Boolean variable. If set to True, the KubernetesPodOperator is used, and the rest of the variables in the table need to be set. If False, the DockerOperator is used.                                                                                                                       | Yes, if you want to use the KubernetesPodOperator            |
 | kube_config_location        | Location of the kubernetes config file. See [here](https://www.astronomer.io/docs/cloud/stable/develop/kubepodoperator-local#get-your-kube-config) for a guide on finding the Kube config file. If you are running the pods in the same cluster as Airflow, you can leave this value blank. | No, unless the pods are in a different cluster than Airflow. |
-| volume_claim_name           | Name of the persistent volume claim to attach to the pods.                                                                                                                                                                                                                                  | Yes. Change to your claim name.                              |
+| volume_config           | JSON objects representing the configuration for your Kubernetes volume.                                                                                                                                                                                                                                  | Yes. Change configs to match your volume (see below for example configs)                              |
 | volume_name                 | Name of the persistent ReadWriteMany volume associated with the claim.                                                                                                                                                                                                                      | Yes. Change to your volume name.                             |
+Here are some example `volume_config` values. Note that a ReadWriteMany volume is required when tasks run in parallel.
+ - For a an NFS volume set `volume_config={"nfs": {"path": "/", "server": "my-server.provider.cloud"}}`.
+ - In order to set up a persistent volume claim, set `volume_config={"persistentVolumeClaim":{"claimName": <claim>}`
+ - In order to set up a host path volume, set `volume_config="hostPath":{"path": <path>, "type": "DirectoryOrCreate"}}`
+
 ## DAG Diagrams
 
 ### History Archive Export TAG

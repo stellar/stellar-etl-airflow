@@ -83,12 +83,8 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
     from airflow.kubernetes.volume_mount import VolumeMount
 
     data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
-    volume_config = {
-        'persistentVolumeClaim':
-        {
-            'claimName': Variable.get('volume_claim_name')
-        }   
-    }
+    volume_config = Variable.get('volume_config', deserialize_json=True)
+
     data_volume = Volume(Variable.get('volume_name'), volume_config)
 
     cmd = ['bash']
