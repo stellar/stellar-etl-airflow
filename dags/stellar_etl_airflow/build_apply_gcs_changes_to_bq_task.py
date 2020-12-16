@@ -49,6 +49,10 @@ def generate_insert_query(schema, source_table_alias):
     Returns:
         the insert query
     '''
+    # trades have an order field, which is also a SQL keyword. BigQuery interprets `order` as the column
+    for field in schema:
+        if field['name'] == 'order':
+            field['name'] = '`order`'
 
     insert_list = ', '.join([field['name'] for field in schema])
     return f'INSERT ({insert_list}) VALUES ({insert_list})'
@@ -70,7 +74,8 @@ def generate_update_query(schema, source_table_alias):
 def generate_equality_comparison(data_type, source_table_alias, dest_table_alias):
     '''
     Generates the equality comparison used to determine if two rows are the same.
-    Data types should be: 'accounts', 'offers', 'trustlines', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
+    Data types should be: 'accounts', 'offers', 'trustlines', 'ledgers', 'transactions', 'operations',
+    'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
     Parameters:
         data_type - type of the data being uploaded; should be string
         source_table_alias - the name of the table being used as a data source
@@ -87,7 +92,11 @@ def generate_equality_comparison(data_type, source_table_alias, dest_table_alias
         AND {dest_table_alias}.asset_issuer = {source_table_alias}.asset_issuer AND {dest_table_alias}.asset_code = {source_table_alias}.asset_code',
         'dimAccounts': f'{dest_table_alias}.account_id = {source_table_alias}.account_id',
         'dimOffers': f'{dest_table_alias}.dim_offer_id = {source_table_alias}.dim_offer_id',
-        'dimMarkets': f'{dest_table_alias}.market_id = {source_table_alias}.market_id'
+        'dimMarkets': f'{dest_table_alias}.market_id = {source_table_alias}.market_id',
+        'ledgers': f'{dest_table_alias}.ledger_hash = {source_table_alias}.ledger_hash',
+        'transactions': f'{dest_table_alias}.transaction_hash = {source_table_alias}.transaction_hash',
+        'operations': f'{dest_table_alias}.id = {source_table_alias}.id',
+        'trades': f'{dest_table_alias}.history_operation_id = {source_table_alias}.history_operation_id AND {dest_table_alias}.order = {source_table_alias}.order'
     }
 
     equality_comparison = switch.get(data_type, 'No comparison')
@@ -130,7 +139,8 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
 
 def create_insert_unique_query(temp_table_id, data_type, schema_fields):
     '''
-    Creates the string representation of the insert unique query. Data types should be: 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
+    Creates the string representation of the insert unique query. Data types should be: 'ledgers', 
+    'transactions', 'operations', 'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
     
     Parameters:
         temp_table_id - the id of the temporary table where the external data is located 
@@ -160,7 +170,8 @@ def apply_gcs_changes(data_type, **kwargs):
     '''
     Sets up a file in Google Cloud Storage as an temporary table, and merges it with an existing table in BigQuery.
     The file's location in GCS is retrieved through XCOM, and the schema for the temporary table is loaded from GCS.
-    Data types should be: 'accounts', 'offers', 'trustlines', 'dimAccounts', 'dimOffers', or 'dimMarkets'.
+    Data types should be: 'accounts', 'offers', 'trustlines', 'ledgers', 'transactions', 'operations',
+    'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
 
     Parameters:
         data_type - type of the data being uploaded; should be string
@@ -175,7 +186,7 @@ def apply_gcs_changes(data_type, **kwargs):
     gcs_bucket_name = Variable.get('gcs_exported_data_bucket_name')
     gcs_filepath = kwargs['task_instance'].xcom_pull(task_ids=f'load_{data_type}_to_gcs')
     schema_dict = read_local_schema(data_type)
-    bq_schema_list = [bigquery.SchemaField(field['name'], field['type'], mode=field['mode']) for field in schema_dict] 
+    bq_schema_list = [bigquery.SchemaField.from_api_repr(field) for field in schema_dict]
 
     external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
     external_config.source_uris = [f'gs://{gcs_bucket_name}/{gcs_filepath}']
@@ -199,7 +210,7 @@ def apply_gcs_changes(data_type, **kwargs):
     if data_type in ['accounts', 'offers', 'trustlines']:
         logging.info('Using merge query...')
         sql_query = create_merge_query(table_id, data_type, schema_dict)
-    elif data_type in ['dimAccounts', 'dimOffers', 'dimMarkets']:
+    elif data_type in ['ledgers', 'transactions', 'operations', 'trades', 'dimAccounts', 'dimOffers', 'dimMarkets']:
         logging.info('Using insert unique query...')
         sql_query = create_insert_unique_query(table_id, data_type, schema_dict)
     else:
@@ -221,7 +232,8 @@ def apply_gcs_changes(data_type, **kwargs):
 def build_apply_gcs_changes_to_bq_task(dag, data_type):
     '''
     Creates a task that applies changes from a Google Cloud Storage file to a BigQuery table.
-    Data types should be: 'accounts', 'offers', 'trustlines', 'dimAccounts', 'dimOffers', or 'dimMarkets'.
+    Data types should be: 'accounts', 'offers', 'trustlines', 'ledgers', 'transactions', 'operations',
+    'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
     
     Parameters:
         dag - the parent dag
