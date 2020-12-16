@@ -8,17 +8,17 @@ import json
 
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
-from stellar_etl_airflow.default import get_default_dag_args
+from stellar_etl_airflow.default import get_orderbook_dag_args
 
 from airflow import DAG
 from airflow.models import Variable
 
 dag = DAG(
     'unbounded_core_orderbook_export',
-    default_args=get_default_dag_args(),
+    default_args=get_orderbook_dag_args(),
     description='This DAG runs an unbounded stellar-core instance, which allows it to export orderbooks to BigQuery. The core instance will \
         continue running and exporting in the background.',
-    schedule_interval=None,
+    schedule_interval="@once",
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
