@@ -7,7 +7,7 @@ from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_load_task import build_load_task
-from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import build_apply_gcs_changes_to_bq_task
 
 from airflow import DAG
 from airflow.models import Variable
@@ -50,12 +50,12 @@ load_trade_task = build_load_task(dag, 'trades', 'export_trades_task')
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task appends the entries in the file to the corresponding table in BigQuery. 
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, 'ledgers')
-send_txs_to_bq_task = build_gcs_to_bq_task(dag, 'transactions')
-send_ops_to_bq_task = build_gcs_to_bq_task(dag, 'operations')
-send_trades_to_bq_task = build_gcs_to_bq_task(dag, 'trades')
+send_ledgers_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'ledgers')
+send_txs_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'transactions')
+send_ops_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'operations')
+send_trades_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'trades')
 
 time_task >> ledger_export_task >> load_ledger_task >> send_ledgers_to_bq_task
 time_task >> tx_export_task >> load_tx_task  >> send_txs_to_bq_task
