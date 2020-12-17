@@ -35,9 +35,9 @@ The load tasks receive the location of the exported file through Airflow's XCOM 
 Then, the task loads the file into Google Cloud Storage. Finally, the file is deleted
 from local storage.
 '''
-load_acc_task = build_load_task(dag, 'ledgers', 'export_ledgers_task')
-load_off_task = build_load_task(dag, 'transactions', 'export_transactions_task')
-load_trust_task = build_load_task(dag, 'operations', 'export_operations_task')
+load_acc_task = build_load_task(dag, 'accounts', 'export_accounts_task')
+load_off_task = build_load_task(dag, 'offers', 'export_offers_task')
+load_trust_task = build_load_task(dag, 'trustlines', 'export_trustlines_task')
 
 '''
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
