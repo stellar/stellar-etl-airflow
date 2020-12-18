@@ -11,6 +11,7 @@
     "namespace": "default",
     "output_file_names": {
         "accounts": "accounts.txt",
+        "assets": "assets.txt",
         "changes": "changes_folder",
         "dimAccounts": "dimAccounts.txt",
         "dimMarkets": "dimMarkets.txt",
@@ -29,6 +30,7 @@
     "schema_filepath": "/home/airflow/gcs/dags/schemas/",
     "table_ids": {
         "accounts": "acc_table",
+        "assets": "asset_table",
         "dimAccounts": "dim_accounts",
         "dimMarkets": "dim_markets",
         "dimOffers": "dim_offers",
