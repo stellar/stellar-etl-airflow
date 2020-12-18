@@ -21,7 +21,7 @@ from os.path import splitext, basename
 def read_local_schema(data_type):
     '''
     Reads the schema file corresponding to data_type and parses it.
-    Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', 'trustlines',
+    Data types should be: 'accounts', 'assets', 'ledgers', 'offers', 'operations', 'trades', 'transactions', 'trustlines',
     'dimAccounts', 'dimOffers', 'dimMarkets', or 'factEvents'.
 
     Parameters:
@@ -75,7 +75,7 @@ def generate_equality_comparison(data_type, source_table_alias, dest_table_alias
     '''
     Generates the equality comparison used to determine if two rows are the same.
     Data types should be: 'accounts', 'offers', 'trustlines', 'ledgers', 'transactions', 'operations',
-    'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
+    'trades', 'assets', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
     Parameters:
         data_type - type of the data being uploaded; should be string
         source_table_alias - the name of the table being used as a data source
@@ -96,7 +96,8 @@ def generate_equality_comparison(data_type, source_table_alias, dest_table_alias
         'ledgers': f'{dest_table_alias}.ledger_hash = {source_table_alias}.ledger_hash',
         'transactions': f'{dest_table_alias}.transaction_hash = {source_table_alias}.transaction_hash',
         'operations': f'{dest_table_alias}.id = {source_table_alias}.id',
-        'trades': f'{dest_table_alias}.history_operation_id = {source_table_alias}.history_operation_id AND {dest_table_alias}.order = {source_table_alias}.order'
+        'trades': f'{dest_table_alias}.history_operation_id = {source_table_alias}.history_operation_id AND {dest_table_alias}.order = {source_table_alias}.order',
+        'assets': f'{dest_table_alias}.id = {source_table_alias}.id',
     }
 
     equality_comparison = switch.get(data_type, 'No comparison')
@@ -140,7 +141,7 @@ def create_merge_query(temp_table_id, data_type, schema_fields):
 def create_insert_unique_query(temp_table_id, data_type, schema_fields):
     '''
     Creates the string representation of the insert unique query. Data types should be: 'ledgers', 
-    'transactions', 'operations', 'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
+    'transactions', 'operations', 'trades', 'assets', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
     
     Parameters:
         temp_table_id - the id of the temporary table where the external data is located 
@@ -171,7 +172,7 @@ def apply_gcs_changes(data_type, **kwargs):
     Sets up a file in Google Cloud Storage as an temporary table, and merges it with an existing table in BigQuery.
     The file's location in GCS is retrieved through XCOM, and the schema for the temporary table is loaded from GCS.
     Data types should be: 'accounts', 'offers', 'trustlines', 'ledgers', 'transactions', 'operations',
-    'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
+    'trades', 'assets', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
 
     Parameters:
         data_type - type of the data being uploaded; should be string
@@ -210,7 +211,7 @@ def apply_gcs_changes(data_type, **kwargs):
     if data_type in ['accounts', 'offers', 'trustlines']:
         logging.info('Using merge query...')
         sql_query = create_merge_query(table_id, data_type, schema_dict)
-    elif data_type in ['ledgers', 'transactions', 'operations', 'trades', 'dimAccounts', 'dimOffers', 'dimMarkets']:
+    elif data_type in ['ledgers', 'transactions', 'operations', 'trades', 'assets', 'dimAccounts', 'dimOffers', 'dimMarkets']:
         logging.info('Using insert unique query...')
         sql_query = create_insert_unique_query(table_id, data_type, schema_dict)
     else:
@@ -233,7 +234,7 @@ def build_apply_gcs_changes_to_bq_task(dag, data_type):
     '''
     Creates a task that applies changes from a Google Cloud Storage file to a BigQuery table.
     Data types should be: 'accounts', 'offers', 'trustlines', 'ledgers', 'transactions', 'operations',
-    'trades', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
+    'trades', 'assets', 'dimAccounts', 'dimOffers', or 'dimMarkets'. 
     
     Parameters:
         dag - the parent dag

@@ -37,6 +37,7 @@ ledger_export_task = build_export_task(dag, 'archive', 'export_ledgers', file_na
 tx_export_task = build_export_task(dag, 'archive', 'export_transactions', file_names['transactions'])
 op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'])
 trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_names['trades'])
+asset_export_task = build_export_task(dag, 'archive', 'export_assets', file_names['assets'])
 
 '''
 The load tasks receive the location of the exported file through Airflow's XCOM system.
@@ -47,6 +48,7 @@ load_ledger_task = build_load_task(dag, 'ledgers', 'export_ledgers_task')
 load_tx_task = build_load_task(dag, 'transactions', 'export_transactions_task')
 load_op_task = build_load_task(dag, 'operations', 'export_operations_task')
 load_trade_task = build_load_task(dag, 'trades', 'export_trades_task')
+load_asset_task = build_load_task(dag, 'assets', 'export_assets_task')
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
@@ -56,8 +58,10 @@ send_ledgers_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'ledgers')
 send_txs_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'transactions')
 send_ops_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'operations')
 send_trades_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'trades')
+send_assets_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'assets')
 
 time_task >> ledger_export_task >> load_ledger_task >> send_ledgers_to_bq_task
 time_task >> tx_export_task >> load_tx_task  >> send_txs_to_bq_task
 time_task >> op_export_task >> load_op_task  >> send_ops_to_bq_task
 time_task >> trade_export_task >> load_trade_task  >> send_trades_to_bq_task
+time_task >> asset_export_task >> load_asset_task  >> send_assets_to_bq_task
