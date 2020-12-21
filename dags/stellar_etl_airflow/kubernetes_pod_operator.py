@@ -8,7 +8,8 @@ xcom sidecar image location
 import re
 
 from airflow.exceptions import AirflowException
-from airflow.kubernetes import kube_client, pod_generator, pod_launcher
+from airflow.kubernetes import kube_client, pod_launcher
+from stellar_etl_airflow import pod_generator
 from airflow.kubernetes.k8s_model import append_to_pod
 from airflow.kubernetes.pod import Resources
 from airflow.models import BaseOperator
@@ -185,7 +186,6 @@ class KubernetesPodOperator(BaseOperator):  # pylint: disable=too-many-instance-
         self.pod = None
         self.do_xcom_push = do_xcom_push
         self.sidecar_xcom_image = sidecar_xcom_image
-        self.docker_repository = docker_repository
         self.image = image
         self.namespace = namespace
         self.cmds = cmds or []

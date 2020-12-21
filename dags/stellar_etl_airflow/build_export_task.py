@@ -6,8 +6,6 @@ import json
 from airflow import AirflowException
 from airflow.models import Variable 
 
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator 
-
 def get_path_variables():
     '''
         Returns the image output path, core executable path, and core config path.
@@ -81,6 +79,7 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
     '''
     from airflow.kubernetes.volume import Volume
     from airflow.kubernetes.volume_mount import VolumeMount
+    from stellar_etl_airflow.kubernetes_pod_operator import KubernetesPodOperator
 
     data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
     volume_config = Variable.get('volume_config', deserialize_json=True)
@@ -102,6 +101,7 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
         arguments=args,
         dag=dag,
         do_xcom_push=True,
+        sidecar_xcom_image=Variable.get("sidecar-image", default_var=None),
         is_delete_operator_pod=True,
         in_cluster=in_cluster,
         config_file=config_file_location,
