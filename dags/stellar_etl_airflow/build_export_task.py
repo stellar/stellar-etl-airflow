@@ -101,7 +101,7 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
         arguments=args,
         dag=dag,
         do_xcom_push=True,
-        sidecar_xcom_image=Variable.get("sidecar-image", default_var=None),
+        sidecar_xcom_image=Variable.get('kubernetes_sidecar_image'),
         is_delete_operator_pod=True,
         in_cluster=in_cluster,
         config_file=config_file_location,
