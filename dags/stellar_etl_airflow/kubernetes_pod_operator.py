@@ -127,9 +127,9 @@ class KubernetesPodOperator(BaseOperator):  # pylint: disable=too-many-instance-
         /airflow/xcom/return.json in the container will also be pushed to an
         XCom when the container completes.
     :type do_xcom_push: bool
-    :param docker_repository: Docker repository used to prefix image if set. Defaults to None,
-         but if set, image will be fully qualified, this is also used to qualify side car image if needed.
-    :type docker_repository: str
+    :param sidecar_xcom_image: Sidecar XCOM image. Defaults to None,
+         but if set, this image will replace the default.
+    :type sidecar_xcom_image: Optional[str]
     :param pod_template_file: path to pod template file
     :type pod_template_file: str
     """
@@ -173,6 +173,7 @@ class KubernetesPodOperator(BaseOperator):  # pylint: disable=too-many-instance-
                  init_containers=None,
                  log_events_on_failure=False,
                  do_xcom_push=False,
+                 sidecar_xcom_image=None,
                  pod_template_file=None,
                  priority_class_name=None,
                  *args,
@@ -183,6 +184,8 @@ class KubernetesPodOperator(BaseOperator):  # pylint: disable=too-many-instance-
 
         self.pod = None
         self.do_xcom_push = do_xcom_push
+        self.sidecar_xcom_image = sidecar_xcom_image
+        self.docker_repository = docker_repository
         self.image = image
         self.namespace = namespace
         self.cmds = cmds or []
@@ -336,6 +339,7 @@ class KubernetesPodOperator(BaseOperator):  # pylint: disable=too-many-instance-
             name=self.name,
             envs=self.env_vars,
             extract_xcom=self.do_xcom_push,
+            sidecar_xcom_image=self.sidecar_xcom_image,
             image_pull_policy=self.image_pull_policy,
             node_selectors=self.node_selectors,
             annotations=self.annotations,
