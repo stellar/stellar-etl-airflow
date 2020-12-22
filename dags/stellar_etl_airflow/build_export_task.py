@@ -115,7 +115,9 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
         config_file=config_file_location,
         volume_mounts=[data_mount],
         volumes=[data_volume],
-        affinity=Variable.get('affinity', deserialize_json=True)
+        affinity=Variable.get('affinity', deserialize_json=True),
+        resources=Variable.get('resources', default_var=None, deserialize_json=True),
+        image_pull_policy=Variable.get('image_pull_policy')
     )
 
 def build_docker_exporter(dag, command, etl_cmd_string, output_file):
@@ -132,6 +134,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
     from stellar_etl_airflow.docker_operator import DockerOperator 
 
     full_cmd = f'bash -c "{etl_cmd_string} && echo \"{output_file}\""'
+    force_pull = True if Variable.get('image_pull_policy')=='Always' else False
     return DockerOperator(
         task_id=command + '_task',
         image=Variable.get('image_name'),
@@ -140,6 +143,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
         dag=dag,
         xcom_push=True,
         auto_remove=True,
+        force_pull=force_pull,
     ) 
 
 def build_export_task(dag, cmd_type, command, filename):
