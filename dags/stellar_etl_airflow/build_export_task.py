@@ -47,7 +47,13 @@ def generate_etl_cmd(command, base_filename, cmd_type):
 
     # These are JINJA templates, which are filled by airflow at runtime. The json from get_ledger_range_from_times is pulled from XCOM. 
     start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
-    end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"] }}'
+    
+    end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]}}'
+    
+    # For history archives, the start time of the next 5 minute interval is the same as the end time of the current interval, leading to a 1 ledger overlap
+    # We need to subtract 1 ledger so that there is no overlap
+    if cmd_type == 'archive':
+        end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]-1}}'
 
     image_output_path, core_exec, core_cfg = get_path_variables()
 
