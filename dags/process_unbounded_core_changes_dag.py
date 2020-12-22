@@ -44,9 +44,13 @@ apply_trustline_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'trustlin
 
 '''
 This task triggers the next run of this DAG once accounts, offers, and trustlines have been processed.
+Since the trigger_rule is all_done, this task happens even if a processing failure occurs. This means
+that the next process event will always trigger.
 '''
 trigger_next = BashOperator(task_id="trigger_next", 
-           bash_command="airflow trigger_dag 'process_unbounded_core_changes'", dag=dag)
+           bash_command="airflow trigger_dag 'process_unbounded_core_changes'",
+           dag=dag,
+           trigger_rule='all_done')
 
 account_sensor >> load_accounts_task >> apply_account_changes_task >> trigger_next
 offer_sensor >> load_offers_task >> apply_offer_changes_task >> trigger_next

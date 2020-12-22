@@ -48,9 +48,13 @@ send_fact_events_to_bq_task = build_gcs_to_bq_task(dag, 'factEvents')
 
 '''
 This task triggers the next run of this DAG once accounts, offers, and trustlines have been processed.
+Since the trigger_rule is all_done, this task happens even if a processing failure occurs. This means
+that the next process event will always trigger.
 '''
 trigger_next = BashOperator(task_id="trigger_next", 
-           bash_command="airflow trigger_dag 'process_unbounded_core_orderbooks'", dag=dag)
+           bash_command="airflow trigger_dag 'process_unbounded_core_orderbooks'", 
+           dag=dag,
+           trigger_rule='all_done')
 
 dim_account_sensor >> load_dim_accounts_task >> apply_dim_account_changes_task >> trigger_next
 dim_offer_sensor >> load_dim_offers_task >> apply_dim_offer_changes_task >> trigger_next
