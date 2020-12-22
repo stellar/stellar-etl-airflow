@@ -6,6 +6,7 @@
     "gcs_exported_data_bucket_name": "stellar-testing-us",
     "image_name": "stellar/stellar-etl:latest",
     "image_output_path": "/etl/exported_data/",
+    "image_pull_policy": "Always",
     "kube_config_location": "",
     "kubernetes_sidecar_image": "alpine",
     "local_output_path": "/home/airflow/etlData/",
@@ -28,6 +29,13 @@
     },
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
+    "resources": {
+        "request_memory": "64Mi",
+        "limit_memory": "3Gi",
+        "request_cpu": "50m",
+        "limit_cpu": "0.5",
+        "limit_ephemeral_storage": "2Gi"
+    },
     "schema_filepath": "/home/airflow/gcs/dags/schemas/",
     "table_ids": {
         "accounts": "acc_table",
