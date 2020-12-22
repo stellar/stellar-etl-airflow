@@ -12,12 +12,12 @@
   {
     "mode": "NULLABLE",
     "name": "selling_asset",
-    "type": "STRING"
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
     "name": "buying_asset",
-    "type": "STRING"
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
