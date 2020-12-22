@@ -1,4 +1,8 @@
 """
+Base code taken from https://github.com/apache/airflow/blob/7aa0f472b57985a952a3e3d0a38f1b2535d93413/airflow/kubernetes/pod_generator.py 
+Adapted with changes from https://github.com/apache/airflow/pull/10606/files to add ability to modify
+xcom sidecar image location
+
 This module provides an interface between the previous Pod
 API and outputs a kubernetes.client.models.V1Pod.
 The advantage being that the full Kubernetes API
