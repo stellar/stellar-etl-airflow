@@ -37,6 +37,6 @@ def build_time_task(dag, use_next_exec_time=True):
          in_cluster=in_cluster,
          config_file=config_file_location,
          affinity=Variable.get('affinity', deserialize_json=True),
-         resources=Variable.get('resources', deserialize_json=True),
+         resources=Variable.get('resources', default_var=None, deserialize_json=True),
          image_pull_policy=Variable.get('image_pull_policy')
      ) 
