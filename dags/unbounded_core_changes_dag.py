@@ -26,5 +26,6 @@ date_task = build_time_task(dag, use_next_exec_time=False)
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 changes_task = build_export_task(dag, 'unbounded-core', 'export_ledger_entry_changes', file_names['changes'])
+changes_task.retries = 0
 
 date_task >> changes_task

@@ -43,7 +43,7 @@ Entries are updated, deleted, or inserted as needed.
 apply_dim_account_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'dimAccounts')
 apply_dim_offer_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'dimOffers')
 apply_dim_markets_changes_task = build_apply_gcs_changes_to_bq_task(dag, 'dimMarkets')
-send_fact_events_to_bq_task = build_gcs_to_bq_task(dag, 'factEvents')
+send_fact_events_to_bq_task = build_apply_gcs_changes_to_bq_task(dag, 'factEvents')
 
 
 '''
