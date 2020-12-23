@@ -10,6 +10,10 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 	  - [Normal Variables](#normal-variables)
 	  - [Kubernetes Specific Variables](#kubernetes-specific-variables) 
 - [Execution Procedures](#execution-procedures)
+	- [Starting Up](#starting-up)
+	- [Handling Failures](#handling-failures)
+		- [Clearing Failures](#clearing-failures)
+		- [Long-Running Task Failures](#long-running-task-failures)
 - [Understanding the Setup](#understanding-the-setup)
   - [DAG Diagrams](#dag-diagrams)
   - [Task Explanations](#task-explanations)
@@ -276,37 +280,42 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 
 ## Airflow Variables Explanation
 ### Normal Variables
-| Variable name                 | Description                                                                                                                                        | Should be changed?                                                    |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| Variable name                 | Description                                                                                                                                         | Should be changed?                                                    |
+|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | affinity                      | JSON object that represents the pod's [affinity](https://cloud.google.com/composer/docs/how-to/using/using-kubernetes-pod-operator#affinity-config) | Yes, if you followed the optional step and made a new node pool.      |
-| api_key_path                  | path to the Google Cloud Platform [API key](https://cloud.google.com/docs/authentication/api-keys?authuser=1)                                      | No, unless your filename is different.                                |
-| bq_dataset                    | name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                                    | Yes. Change to your dataset name.                                     |
-| bq_project                    | name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                                  | Yes. Change to your project name.                                     |
-| gcs_exported_data_bucket_name | name of the Google Cloud Storage  [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data                   | Yes. Change to the name of the bucket you made.                       |
-| image_name                    | name of the ETL's Docker image                                                                                                                     | No, unless you need a specific image version.                         |
-| image_output_path             | local output path within the ETL image                                                                                                             | No.                                                                   |
-| local_output_path             | local output path within the airflow-worker that is used for temporary storage                                                                     | No, unless you changed the path when modifying the Kubernetes config. |
-| namespace                     | namespace name for ETL tasks that generate Kubernetes pods                                                                                         | Yes, if you followed the optional step and made a new namespace       |
-| output_file_names             | JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure                      | Yes, if desired. Make sure each type has a different filename.        |
-| output_path                   | shared output path for exported data                                                                                                               | No, unless you have a different shared storage solution.              |
-| owner                         | the name of the owner of the Airflow DAGs                                                                                                          | Yes.                                                                  |
-| schema_filepath                     | file path to schema folder      | No, unless schemas are in a different location
-| table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                                           | Yes, if desired. Make sure each type has a different table name.      |
+| api_key_path                  | path to the Google Cloud Platform [API key](https://cloud.google.com/docs/authentication/api-keys?authuser=1)                                       | No, unless your filename is different.                                |
+| bq_dataset                    | name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                                     | Yes. Change to your dataset name.                                     |
+| bq_project                    | name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                                   | Yes. Change to your project name.                                     |
+| gcs_exported_data_bucket_name | name of the Google Cloud Storage  [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data                    | Yes. Change to the name of the bucket you made.                       |
+| image_name                    | name of the ETL's Docker image                                                                                                                      | No, unless you need a specific image version.                         |
+| image_output_path             | local output path within the ETL image                                                                                                              | No.                                                                   |
+| image_pull_policy             | Specifies how image pull behavior. Valid values are: "Always", "IfNotPresent", or "Never"                                                           | No, unless you handle image updates manually.                         |
+| local_output_path             | local output path within the airflow-worker that is used for temporary storage                                                                      | No, unless you changed the path when modifying the Kubernetes config. |
+| namespace                     | namespace name for ETL tasks that generate Kubernetes pods                                                                                          | Yes, if you followed the optional step and made a new namespace       |
+| output_file_names             | JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure                       | Yes, if desired. Make sure each type has a different filename.        |
+| output_path                   | shared output path for exported data                                                                                                                | No, unless you have a different shared storage solution.              |
+| owner                         | the name of the owner of the Airflow DAGs                                                                                                           | Yes.                                                                  |
+| schema_filepath               | file path to schema folder                                                                                                                          | No, unless schemas are in a different location                        |
+| table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                                            | Yes, if desired. Make sure each type has a different table name.      |
 
 ### Kubernetes-Specific Variables
-| Variable name               | Description                                                                                                                                                                                                                                                                                 | Should be changed?                                           |
-|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| use_kubernetes_pod_exporter | Boolean variable. If set to True, the KubernetesPodOperator is used, and the rest of the variables in the table need to be set. If False, the DockerOperator is used.                                                                                                                       | Yes, if you want to use the KubernetesPodOperator            |
-| kube_config_location        | Location of the kubernetes config file. See [here](https://www.astronomer.io/docs/cloud/stable/develop/kubepodoperator-local#get-your-kube-config) for a guide on finding the Kube config file. If you are running the pods in the same cluster as Airflow, you can leave this value blank. | No, unless the pods are in a different cluster than Airflow. |
-| kubernetes_sidecar_image        | Image used for xcom sidecar | No, unless you want to pull a different alpine-based image. |
-| volume_config           | JSON objects representing the configuration for your Kubernetes volume.                                                                                                                                                                                                                                  | Yes. Change configs to match your volume (see below for example configs)                              |
-| volume_name                 | Name of the persistent ReadWriteMany volume associated with the claim.                                                                                                                                                                                                                      | Yes. Change to your volume name.      
+| Variable name               | Description                                                                                                                                                                                                                                                                                 | Should be changed?                                                       |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| use_kubernetes_pod_exporter | Boolean variable. If set to True, the KubernetesPodOperator is used, and the rest of the variables in the table need to be set. If False, the DockerOperator is used.                                                                                                                       | Yes, if you want to use the KubernetesPodOperator                        |
+| resources                   | Resources to request and allocate to Kubernetes Pods.                                                                                                                                                                                                                                       | No, unless pods need more resources                                      |
+| kube_config_location        | Location of the kubernetes config file. See [here](https://www.astronomer.io/docs/cloud/stable/develop/kubepodoperator-local#get-your-kube-config) for a guide on finding the Kube config file. If you are running the pods in the same cluster as Airflow, you can leave this value blank. | No, unless the pods are in a different cluster than Airflow.             |
+| kubernetes_sidecar_image    | Image used for xcom sidecar                                                                                                                                                                                                                                                                 | No, unless you want to pull a different alpine-based image.              |
+| volume_config               | JSON objects representing the configuration for your Kubernetes volume.                                                                                                                                                                                                                     | Yes. Change configs to match your volume (see below for example configs) |
+| volume_name                 | Name of the persistent ReadWriteMany volume associated with the claim.                                                                                                                                                                                                                      | Yes. Change to your volume name.                                         |
+
 Here are some example `volume_config` values. Note that a ReadWriteMany volume is required when tasks run in parallel.
  - For a an NFS volume set `volume_config={"nfs": {"path": "/", "server": "my-server.provider.cloud"}}`.
  - In order to set up a persistent volume claim, set `volume_config={"persistentVolumeClaim":{"claimName": <claim>}`
  -  In order to set up a host path volume, set `volume_config="hostPath":{"path": <path>, "type": "DirectoryOrCreate"}}`
 
 # Execution Procedures
+
+## Starting Up
 First, this image has a shows the Airflow web UI components for pausing and triggering DAGs: 
 ![Airflow UI](documentation/images/AirflowUI.png)
 1. Ensure that the Airflow scheduler is running: `airflow scheduler`
@@ -329,6 +338,18 @@ First, this image has a shows the Airflow web UI components for pausing and trig
 	airflow unpause unbounded_core_orderbook_export 
 	airflow unpause process_unbounded_core_orderbooks
 	```
+## Handling Failures
+
+### Clearing Failures
+You can clear failed tasks in the [task-instance context menu](https://airflow.apache.org/docs/apache-airflow/1.10.14/ui.html#task-instance-context-menu) in the Airflow UI. Clearing failed tasks gives them a chance to run again without requiring you to run the entire DAG again.
+
+### Long-Running Task Failures
+We have two long-running DAGs: the [unbounded_core_changes_export](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_changes_dag.py) DAG and the [unbounded_core_orderbook_export](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_orderbook_dag.py) DAG. Each one of these has a captive stellar-core instance, which it uses to export information perpetually. The information each DAG exports is picked up and loaded into BigQuery by the [process_unbounded_core_changes](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_changes_dag.py) DAG and the [process_unbound_core_orderbooks](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_orderbooks_dag.py) DAG.
+
+If a long running pod fails, look at the most recent successful DAG run of the associated process DAG. Take a look at the log of the file sensors, where you will see a line:
+`Relative path of the earliest file is: changes_folder/<START>-<END>-accounts.txt`
+
+This line indicates the last ledger that was processed. Now you can go to [Stellar Expert](https://stellar.expert/explorer/public) to get the close time of the end ledger. Then, manually create a DAG run at that time by going to Browse->DAG Runs->Create. Set the DAG id to the DAG that failed, and the Execution Time to the close time of the end ledger.
 # Understanding the Setup
 This section contains information about the Airflow setup. It includes our DAG diagrams and explanations of tasks. For general Airflow knowledge, check out the Airflow [concepts overview](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html) or the Airflow [tutorial](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html).
 
