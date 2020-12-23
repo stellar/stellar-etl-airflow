@@ -26,5 +26,6 @@ date_task = build_time_task(dag, use_next_exec_time=False)
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 orderbook_task = build_export_task(dag, 'unbounded-core', 'export_orderbooks', file_names['orderbooks'])
+orderbook_task.retries = 0
 
 date_task >> orderbook_task
