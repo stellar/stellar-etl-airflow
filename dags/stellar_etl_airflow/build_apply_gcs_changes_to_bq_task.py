@@ -98,6 +98,7 @@ def generate_equality_comparison(data_type, source_table_alias, dest_table_alias
         'operations': f'{dest_table_alias}.id = {source_table_alias}.id',
         'trades': f'{dest_table_alias}.history_operation_id = {source_table_alias}.history_operation_id AND {dest_table_alias}.order = {source_table_alias}.order',
         'assets': f'{dest_table_alias}.id = {source_table_alias}.id',
+        'factEvents': f'{dest_table_alias}.offer_instance_id = {source_table_alias}.offer_instance_id AND {dest_table_alias}.ledger_id = {source_table_alias}.ledger_id '
     }
 
     equality_comparison = switch.get(data_type, 'No comparison')
@@ -211,7 +212,7 @@ def apply_gcs_changes(data_type, **kwargs):
     if data_type in ['accounts', 'offers', 'trustlines']:
         logging.info('Using merge query...')
         sql_query = create_merge_query(table_id, data_type, schema_dict)
-    elif data_type in ['ledgers', 'transactions', 'operations', 'trades', 'assets', 'dimAccounts', 'dimOffers', 'dimMarkets']:
+    elif data_type in ['ledgers', 'transactions', 'operations', 'trades', 'assets', 'dimAccounts', 'dimOffers', 'dimMarkets', 'factEvents']:
         logging.info('Using insert unique query...')
         sql_query = create_insert_unique_query(table_id, data_type, schema_dict)
     else:
