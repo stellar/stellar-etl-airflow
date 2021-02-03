@@ -109,7 +109,7 @@ To find the value of `<airflow_worker_namespace>`, select your Cloud Composer en
 ### Modify Kubernetes Config for Airflow Workers
 Find the Kubernetes cluster workloads that are used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the **GKE cluster** section. Click on the link that says "view cluster workloads."
 
-A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Click the edit button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow-worker_config.yaml). 
+A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Click the edit button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow_worker_config.yaml). 
 
 > **_WARNING:_** You shouldn't copy the example file directly because it has environment variables and config values that are set up for a different project.
 
