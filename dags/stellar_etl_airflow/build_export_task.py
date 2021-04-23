@@ -133,7 +133,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
     '''
     from stellar_etl_airflow.docker_operator import DockerOperator 
 
-    full_cmd = f'bash -c "{etl_cmd_string} && echo \"{output_file}\""'
+    full_cmd = f'bash -c "{etl_cmd_string} >> /dev/null && echo \"{output_file}\""'
     force_pull = True if Variable.get('image_pull_policy')=='Always' else False
     return DockerOperator(
         task_id=command + '_task',
