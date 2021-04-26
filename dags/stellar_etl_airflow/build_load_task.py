@@ -46,6 +46,7 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
     '''
 
     storage_service = build_storage_service()
+    logging.info('File size is: %s kb' % str(os.path.getsize(local_filepath) / 1000))
     if os.path.getsize(local_filepath) > 10 * 2 ** 20:
         media = MediaFileUpload(local_filepath, mime_type, resumable=True)
         logging.info('File is large, uploading to GCS in chunks')
