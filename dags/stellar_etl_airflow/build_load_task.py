@@ -46,6 +46,7 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
     '''
 
     storage_service = build_storage_service()
+    logging.info('File size is: %s kb' % str(os.path.getsize(local_filepath) / 1000))
     if os.path.getsize(local_filepath) > 10 * 2 ** 20:
         media = MediaFileUpload(local_filepath, mime_type, resumable=True)
         logging.info('File is large, uploading to GCS in chunks')
@@ -96,11 +97,20 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
     bucket_name = Variable.get('gcs_exported_data_bucket_name')
 
     logging.info(f'Attempting to upload local file at {local_filepath} to Google Cloud Storage path {gcs_filepath} in bucket {bucket_name}')
-    success = attempt_upload(local_filepath, gcs_filepath, bucket_name)
+    # TODO: consider adding a sanity check to make sure the filename shouldn't exist (ie no data to upload)
+    if os.path.exists(local_filepath):
+        success = attempt_upload(local_filepath, gcs_filepath, bucket_name)
+        fileExists = True
+    else:
+        logging.info('File does no exist, no data to upload')
+        success = True
+        fileExists = False
+    
     if success:
         #TODO: consider adding backups or integrity checking before uploading/deleting
-        logging.info(f'Upload successful, removing file at {local_filepath}')
-        os.remove(local_filepath)
+        if fileExists:
+            logging.info(f'Upload successful, removing file at {local_filepath}')
+            os.remove(local_filepath)
     else: 
         raise AirflowException('Upload was not successful')
 
