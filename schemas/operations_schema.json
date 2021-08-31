@@ -113,7 +113,7 @@
               {
                 "mode": "NULLABLE",
                 "name": "abs_before",
-                "type": "TIMESTAMP"
+                "type": "STRING"
               },
               {
                 "mode": "NULLABLE",
@@ -125,7 +125,7 @@
                   {
                     "mode": "NULLABLE",
                     "name": "abs_before",
-                    "type": "TIMESTAMP"
+                    "type": "STRING"
                   },
                   {
                     "mode": "NULLABLE",
@@ -142,17 +142,65 @@
                       {
                         "mode": "NULLABLE",
                         "name": "abs_before",
-                        "type": "TIMESTAMP"
+                        "type": "STRING"
                       },
                       {
                         "mode": "NULLABLE",
                         "name": "rel_before",
                         "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
                       }
-
                     ],
                     "mode": "REPEATED",
                     "name": "not",
+                    "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "or",
+                    "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "and",
                     "type": "RECORD"
                   }
                 ],
@@ -165,17 +213,61 @@
                   {
                     "mode": "NULLABLE",
                     "name": "abs_before",
-                    "type": "TIMESTAMP"
+                    "type": "STRING"
                   },
                   {
                     "mode": "NULLABLE",
                     "name": "rel_before",
                     "type": "INTEGER"
-                  }, 
+                  },
                   {
                     "mode": "NULLABLE",
                     "name": "unconditional",
                     "type": "BOOLEAN"
+                  },
+                  {
+                    "fields": [
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before",
+                      "type": "STRING" 
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "rel_before",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "unconditional",
+                      "type": "BOOLEAN"
+                    }
+                  ],
+                  "mode": "REPEATED",
+                  "name": "and",
+                  "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before",
+                      "type": "STRING" 
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "rel_before",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "unconditional",
+                      "type": "BOOLEAN"
+                    }
+                  ],
+                  "mode": "REPEATED",
+                  "name": "or",
+                  "type": "RECORD"
                   }
                 ],
                 "mode": "REPEATED",
@@ -187,7 +279,7 @@
                   {
                     "mode": "NULLABLE",
                     "name": "abs_before",
-                    "type": "TIMESTAMP"
+                    "type": "STRING"
                   },
                   {
                     "mode": "NULLABLE",
@@ -195,18 +287,27 @@
                     "type": "INTEGER"
                   },
                   {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN" 
+                  },
+                  {
                     "fields": [
                       {
                         "mode": "NULLABLE",
                         "name": "abs_before",
-                        "type": "TIMESTAMP"
+                        "type": "STRING"
                       },
                       {
                         "mode": "NULLABLE",
                         "name": "rel_before",
                         "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
                       }
-
                     ],
                     "mode": "REPEATED",
                     "name": "not",
