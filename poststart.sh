@@ -1,11 +1,15 @@
 #!/bin/bash
 
 move_file_if_closed() {
-    fileSize=$(wc -c < "$1")
+    preFileSize=$(wc -c < "$1")
+    sleep 10;
+    postFileSize=$(wc -c < "$1")
     lsof "$1";
     # if lsof returns an error code of 1, it means the file is not opened by any other processes, allowing us to move it safely
-    if [[ $? == 1 && $fileSize -gt 0 ]]; then
-        mv "$1" /home/airflow/gcs/data/;
+    if [[ $? == 1 && $preFileSize -gt 0]]; then
+        if [[ $preFileSize == $postFileSize ]]; then
+            mv "$1" /home/airflow/gcs/data/;
+        fi
     fi
 }
 

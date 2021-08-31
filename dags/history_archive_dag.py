@@ -8,14 +8,11 @@ from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_load_task import build_load_task
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import build_apply_gcs_changes_to_bq_task
-import logging
-import sys
 import time
 
 from airflow import DAG
 from airflow.models import Variable
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 dag = DAG(
     'history_archive_export',
@@ -37,6 +34,10 @@ time_task = build_time_task(dag)
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
 The results of the comand are stored in a file. There is one task for each of the data types that 
 can be exported from the history archives.
+
+The DAG sleeps for 30 seconds after the export_task writes to the file to give the poststart.sh
+script time to copy the file over to the correct directory. If there is no sleep, the load task 
+starts prematurely and will not load data.
 '''
 ledger_export_task = build_export_task(dag, 'archive', 'export_ledgers', file_names['ledgers'])
 ledger_export_task.post_execute = lambda **x: time.sleep(30)

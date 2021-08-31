@@ -2,13 +2,9 @@
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
 '''
 
-import json
-import logging
-import sys
 from airflow import AirflowException
 from airflow.models import Variable 
 
-logger = logging.getLogger("airflow.task")
 
 def get_path_variables():
     '''
@@ -26,7 +22,6 @@ def select_correct_filename(cmd_type, base_name, batched_name):
     filename = switch.get(cmd_type, 'No file')
     if filename == 'No file':
         raise AirflowException("Command type is not supported: ", cmd_type)
-    logger.info(f"Final filename: {filename}")
     return filename
 
 def generate_etl_cmd(command, base_filename, cmd_type):
@@ -64,7 +59,6 @@ def generate_etl_cmd(command, base_filename, cmd_type):
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
     batched_path = image_output_path + batch_filename
-    logger.info(f'Batched file name: {batch_filename} batch file path: {batched_path}')
     base_path = image_output_path + base_filename
 
     correct_filename = select_correct_filename(cmd_type, base_filename, batch_filename)
