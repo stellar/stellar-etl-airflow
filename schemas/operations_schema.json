@@ -1,26 +1,6 @@
 [
   {
     "mode": "NULLABLE",
-    "name": "id",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "source_account",
-    "type": "STRING"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "transaction_id",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "type",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
     "name": "application_order",
     "type": "INTEGER"
   },
@@ -33,8 +13,18 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "account_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "amount",
         "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset",
+        "type": "STRING"
       },
       {
         "mode": "NULLABLE",
@@ -58,6 +48,11 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "balance_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "buying_asset_code",
         "type": "STRING"
       },
@@ -69,6 +64,157 @@
       {
         "mode": "NULLABLE",
         "name": "buying_asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "claimable_balance_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "claimant",
+        "type": "STRING"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "destination",
+            "type": "STRING"
+          },
+          {
+            "fields": [
+              {
+                "mode": "NULLABLE",
+                "name": "unconditional",
+                "type": "BOOLEAN"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before",
+                "type": "STRING"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "rel_before",
+                "type": "INTEGER"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      }
+
+                    ],
+                    "mode": "REPEATED",
+                    "name": "not",
+                    "type": "RECORD"
+                  }
+                ],
+                "mode": "REPEATED",
+                "name": "and",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  }, 
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  }
+                ],
+                "mode": "REPEATED",
+                "name": "not",
+                "type": "RECORD" 
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      }
+
+                    ],
+                    "mode": "REPEATED",
+                    "name": "not",
+                    "type": "RECORD"
+                  }
+                ],
+                "mode": "REPEATED",
+                "name": "or",
+                "type": "RECORD"
+              }
+            ],
+            "mode": "REPEATED",
+            "name": "predicate",
+            "type": "RECORD"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "claimants",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "data_account_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "data_name",
         "type": "STRING"
       },
       {
@@ -202,6 +348,11 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "signer_account_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "signer_key",
         "type": "STRING"
       },
@@ -252,6 +403,16 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "trustline_account_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "trustline_asset",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "trustor",
         "type": "STRING"
       },
@@ -271,16 +432,58 @@
         "type": "STRING"
       },
       {
+        "mode": "NULLABLE",
         "name": "destination_min",
         "type": "STRING"
       },
       {
+        "mode": "NULLABLE",
         "name": "bump_to",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "authorize_to_maintain_liabilities",
+        "type": "BOOLEAN"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sponsor",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sponsored_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "begin_sponsor",
         "type": "STRING"
       }
     ],
     "mode": "NULLABLE",
     "name": "details",
     "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "source_account",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "type",
+    "type": "INTEGER"
   }
 ]

@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from airflow.models import Variable
 
 def get_base_dag_args():
@@ -11,10 +11,10 @@ def get_base_dag_args():
 
 def get_default_dag_args():
     base = get_base_dag_args()
-    base['start_date'] = "2015-09-30T16:41:54+00:00"
+    base['start_date'] = datetime(2021, 8, 16)
     return base
 
 def get_orderbook_dag_args():
     base = get_base_dag_args()
-    base['start_date'] = "2015-09-30T17:26:17+00:00"
+    base['start_date'] = datetime(2021, 8, 16)
     return base

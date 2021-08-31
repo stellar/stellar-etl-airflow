@@ -8,15 +8,20 @@ from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_load_task import build_load_task
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import build_apply_gcs_changes_to_bq_task
+import logging
+import sys
+import time
 
 from airflow import DAG
 from airflow.models import Variable
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 dag = DAG(
     'history_archive_export',
     default_args=get_default_dag_args(),
     description='This DAG exports ledgers, transactions, operations, and trades from the history archive to BigQuery.',
-    schedule_interval="*/5 * * * *",
+    schedule_interval="0 */3 * * *",
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
@@ -34,10 +39,15 @@ The results of the comand are stored in a file. There is one task for each of th
 can be exported from the history archives.
 '''
 ledger_export_task = build_export_task(dag, 'archive', 'export_ledgers', file_names['ledgers'])
+ledger_export_task.post_execute = lambda **x: time.sleep(30)
 tx_export_task = build_export_task(dag, 'archive', 'export_transactions', file_names['transactions'])
+tx_export_task.post_execute = lambda **x: time.sleep(30)
 op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'])
+op_export_task.post_execute = lambda **x: time.sleep(30)
 trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_names['trades'])
+trade_export_task.post_execute = lambda **x: time.sleep(30)
 asset_export_task = build_export_task(dag, 'archive', 'export_assets', file_names['assets'])
+asset_export_task.post_execute = lambda **x: time.sleep(30)
 
 '''
 The load tasks receive the location of the exported file through Airflow's XCOM system.

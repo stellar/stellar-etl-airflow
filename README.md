@@ -51,13 +51,13 @@ Create a new Cloud Composer environment using the command below or the [UI](http
 ```bash
 gcloud composer environments create <environment_name> --location=<project_location> \
 --zone=<project_zone> --disk-size=100GB --machine-type=n1-standard-4 \
---node-count=3 --python-version=3 --image-version=composer-1.12.0-airflow-1.10.10 \
---oauth-scopes=['https://www.googleapis.com/auth/cloud-platform'] \
+--node-count=3 --python-version=3 --image-version=composer-<version>-airflow-<version> \
 --service-account=<service_account>
 
 gcloud composer environments update <environment_name> \
 --location=<project_location> --update-pypi-package=docker==3.7.3
 ```
+_Note_: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
 Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-1.12.0-airflow-1.10.10` or later. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
 > **_TROUBLESHOOTING:_** If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with Owner permissions and use it to create the Composer environment.
 
@@ -65,7 +65,7 @@ Cloud Composer may take a while to setup the environment. Once the process is fi
 > **_NOTE:_** Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
 
 ### Upload DAGs and Schemas to Cloud Composer
-After the environment is created, select the environment and navigate to the environment configuration tab. Look for the value under **DAGs folder**. It will be of the form `gs://airflow_bucket/dags`. The `airflow_bucket` value will be used in this step and the next . Run the command below in order to upload the DAGs and schemas to your Airflow bucket.
+After the environment is created, select the environment and navigate to the environment configuration tab. Look for the value under **DAGs folder**. It will be of the form `gs://airflow_bucket/dags`. The `airflow_bucket` value will be used in this step and the next. Run the command below in order to upload the DAGs and schemas to your Airflow bucket.
 ```bash
 > bash upload_static_to_gcs.sh <airflow_bucket>
 ```

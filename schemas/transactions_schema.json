@@ -68,5 +68,30 @@
     "mode": "NULLABLE",
     "name": "fee_charged",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "inner_transaction_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fee_account",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "new_max_fee",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "account_muxed",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fee_account_muxed",
+    "type": "STRING"
   }
 ]

@@ -198,7 +198,9 @@ def apply_gcs_changes(data_type, **kwargs):
     table_id = f'{splitext(basename(gcs_filepath))[0]}'
     table_id = table_id.replace('-', '_')
 
-    job_config = bigquery.QueryJobConfig(table_definitions={table_id: external_config})
+    job_config = bigquery.QueryJobConfig(
+        table_definitions={table_id: external_config}
+    )
 
     #check if the table already exists; if it does not then we need to create it using the schema that we have already read in
     true_table_id = f'{Variable.get("bq_project")}.{Variable.get("bq_dataset")}.{Variable.get("table_ids", deserialize_json=True)[data_type]}'

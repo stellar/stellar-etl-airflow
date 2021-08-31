@@ -3,8 +3,12 @@ This file contains functions for creating Airflow tasks to run stellar-etl expor
 '''
 
 import json
+import logging
+import sys
 from airflow import AirflowException
 from airflow.models import Variable 
+
+logger = logging.getLogger("airflow.task")
 
 def get_path_variables():
     '''
@@ -22,6 +26,7 @@ def select_correct_filename(cmd_type, base_name, batched_name):
     filename = switch.get(cmd_type, 'No file')
     if filename == 'No file':
         raise AirflowException("Command type is not supported: ", cmd_type)
+    logger.info(f"Final filename: {filename}")
     return filename
 
 def generate_etl_cmd(command, base_filename, cmd_type):
@@ -59,6 +64,7 @@ def generate_etl_cmd(command, base_filename, cmd_type):
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
     batched_path = image_output_path + batch_filename
+    logger.info(f'Batched file name: {batch_filename} batch file path: {batched_path}')
     base_path = image_output_path + base_filename
 
     correct_filename = select_correct_filename(cmd_type, base_filename, batch_filename)
@@ -87,8 +93,7 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
     '''
     from airflow.kubernetes.volume import Volume
     from airflow.kubernetes.volume_mount import VolumeMount
-    from stellar_etl_airflow.kubernetes_pod_operator import KubernetesPodOperator
-
+    from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
     data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
     volume_config = Variable.get('volume_config', deserialize_json=True)
 
@@ -131,7 +136,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
     Returns:
         the DockerOperator for the export task
     '''
-    from stellar_etl_airflow.docker_operator import DockerOperator 
+    from airflow.operators.docker_operator import DockerOperator 
 
     full_cmd = f'bash -c "{etl_cmd_string} >> /dev/null && echo \"{output_file}\""'
     force_pull = True if Variable.get('image_pull_policy')=='Always' else False
@@ -143,6 +148,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
         dag=dag,
         xcom_push=True,
         auto_remove=True,
+        tty=True,
         force_pull=force_pull,
     ) 
 
