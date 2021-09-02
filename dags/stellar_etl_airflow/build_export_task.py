@@ -2,9 +2,9 @@
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
 '''
 
-import json
 from airflow import AirflowException
 from airflow.models import Variable 
+
 
 def get_path_variables():
     '''
@@ -87,8 +87,7 @@ def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
     '''
     from airflow.kubernetes.volume import Volume
     from airflow.kubernetes.volume_mount import VolumeMount
-    from stellar_etl_airflow.kubernetes_pod_operator import KubernetesPodOperator
-
+    from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
     data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
     volume_config = Variable.get('volume_config', deserialize_json=True)
 
@@ -131,7 +130,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
     Returns:
         the DockerOperator for the export task
     '''
-    from stellar_etl_airflow.docker_operator import DockerOperator 
+    from airflow.operators.docker_operator import DockerOperator 
 
     full_cmd = f'bash -c "{etl_cmd_string} >> /dev/null && echo \"{output_file}\""'
     force_pull = True if Variable.get('image_pull_policy')=='Always' else False
@@ -143,6 +142,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
         dag=dag,
         xcom_push=True,
         auto_remove=True,
+        tty=True,
         force_pull=force_pull,
     ) 
 
