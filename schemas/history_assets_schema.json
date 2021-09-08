@@ -18,5 +18,20 @@
     "mode": "NULLABLE",
     "name": "asset_issuer",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
   }
 ]
