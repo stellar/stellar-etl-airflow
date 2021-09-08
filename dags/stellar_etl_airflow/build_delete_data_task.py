@@ -27,3 +27,4 @@ def build_delete_data_task(dag, table):
             }
         }
     )
+    

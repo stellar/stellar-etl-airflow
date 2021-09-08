@@ -170,3 +170,4 @@ def build_load_task(dag, data_type, prev_task_id, batch_stats=False):
             dag=dag,
             provide_context=True,
         )
+        

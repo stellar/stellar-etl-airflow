@@ -47,3 +47,4 @@ def build_gcs_to_bq_task(dag, data_type, partition):
         time_partitioning=time_partition,
         dag=dag,
     )
+    

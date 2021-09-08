@@ -28,3 +28,4 @@ def build_batch_stats(dag, table):
             }
         }
     )
+    
