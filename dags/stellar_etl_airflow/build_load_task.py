@@ -130,8 +130,8 @@ def upload_to_gcs(data_type, prev_task_id, batch_stats, **kwargs):
             append_batch_stats(local_filepath, kwargs['run_id'], batch_date)
             # remove original file since batch_stats writes out a new .jsonl file
             os.remove(local_filepath)
-            local_filepath = os.path.splitext(local_filepath)[0] + '.jsonl'
-        success = attempt_upload(local_filepath, gcs_filepath, bucket_name)
+            batch_stats_filepath = os.path.splitext(local_filepath)[0] + '.jsonl'
+        success = attempt_upload(batch_stats_filepath, gcs_filepath, bucket_name)
         fileExists = True
     else:
         logging.info('File does no exist, no data to upload')
@@ -141,8 +141,13 @@ def upload_to_gcs(data_type, prev_task_id, batch_stats, **kwargs):
     if success:
         #TODO: consider adding backups or integrity checking before uploading/deleting
         if fileExists:
-            logging.info(f'Upload successful, removing file at {local_filepath}')
-            os.remove(local_filepath)
+            if batch_stats:
+                logging.info(f'Upload successful, removing file at {batch_stats_filepath}')
+                os.remove(batch_stats_filepath)
+            else:
+                logging.info(f'Upload successful, removing file at {local_filepath}')
+                os.remove(local_filepath)
+
     else: 
         raise AirflowException('Upload was not successful')
 
