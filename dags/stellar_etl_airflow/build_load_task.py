@@ -3,8 +3,10 @@ This file contains function to build Airflow tasks that load local files into Go
 These load tasks become part of larger DAGs in the overall ETL process.
 '''
 
+import jsonlines
 import os
 import logging
+from datetime import datetime
 from google.oauth2 import service_account
 
 from airflow import AirflowException
@@ -15,6 +17,28 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient import errors
 from googleapiclient.discovery import build
 from stellar_etl_airflow.build_export_task import select_correct_filename
+
+def append_batch_stats(filename, batch_id, batch_date):
+    '''
+    When specified in the DAG, will append batch metadata information for each table. This
+    information can be useful in debugging and maintenance of the data pipeline over time.
+    Fields appended are batch_id (DAG run_id), batch_run_date and batch_insert_ts. 
+
+    Parameters:
+        filename - fully qualified path to exported data
+        batch_id - DAG run id
+        batch_date - DAG execution date (prev_execution_date)
+    Returns: 
+        N/A (writes new .jsonl file to GCS data mount)
+    '''
+    base_name = os.path.splitext(filename)[0]
+
+    with jsonlines.open(filename) as reader, jsonlines.open(f"{base_name}.jsonl", mode='w') as writer:
+        for line in reader:
+            line['batch_id'] = batch_id
+            line['batch_run_date'] = batch_date
+            line['batch_insert_ts'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            writer.write(line)
 
 def build_storage_service():
     '''
@@ -69,7 +93,7 @@ def attempt_upload(local_filepath, gcs_filepath, bucket_name, mime_type='text/pl
         except errors.HttpError as e:
             raise AirflowException("Unable to upload file to gcs", e)
 
-def upload_to_gcs(data_type, prev_task_id, **kwargs):
+def upload_to_gcs(data_type, prev_task_id, batch_stats, **kwargs):
     '''
     Uploads a local file to Google Cloud Storage and deletes the local file if the upload is successful.
     Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', 'trustlines',
@@ -78,6 +102,7 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
     Parameters:
         data_type - type of the data being uploade; should be string
         prev_task_id - the task id to get the filename from
+        batch_stats - boolean if the user wants batch metadata appended to table 
     Returns:
         the full filepath in Google Cloud Storage of the uploaded file
     '''
@@ -99,7 +124,14 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
     logging.info(f'Attempting to upload local file at {local_filepath} to Google Cloud Storage path {gcs_filepath} in bucket {bucket_name}')
     # TODO: consider adding a sanity check to make sure the filename shouldn't exist (ie no data to upload)
     if os.path.exists(local_filepath):
-        success = attempt_upload(local_filepath, gcs_filepath, bucket_name)
+        if batch_stats:
+            logging.info('Adding batch stats metadata to file.')
+            batch_date = kwargs['prev_execution_date'].to_datetime_string()
+            append_batch_stats(local_filepath, kwargs['run_id'], batch_date)
+            # remove original file since batch_stats writes out a new .jsonl file
+            os.remove(local_filepath)
+            batch_stats_filepath = os.path.splitext(local_filepath)[0] + '.jsonl'
+        success = attempt_upload(batch_stats_filepath, gcs_filepath, bucket_name)
         fileExists = True
     else:
         logging.info('File does no exist, no data to upload')
@@ -109,14 +141,19 @@ def upload_to_gcs(data_type, prev_task_id, **kwargs):
     if success:
         #TODO: consider adding backups or integrity checking before uploading/deleting
         if fileExists:
-            logging.info(f'Upload successful, removing file at {local_filepath}')
-            os.remove(local_filepath)
+            if batch_stats:
+                logging.info(f'Upload successful, removing file at {batch_stats_filepath}')
+                os.remove(batch_stats_filepath)
+            else:
+                logging.info(f'Upload successful, removing file at {local_filepath}')
+                os.remove(local_filepath)
+
     else: 
         raise AirflowException('Upload was not successful')
 
     return gcs_filepath
 
-def build_load_task(dag, data_type, prev_task_id):
+def build_load_task(dag, data_type, prev_task_id, batch_stats=False):
     '''
     Creates a task that loads a local file into Google Cloud Storage.
     Data types should be: 'accounts', 'ledgers', 'offers', 'operations', 'trades', 'transactions', 'trustlines',
@@ -126,6 +163,7 @@ def build_load_task(dag, data_type, prev_task_id):
         dag - the parent dag
         data_type - type of the data being uploaded; should be string
         prev_task_id - the task id to get the filename from 
+        batch_stats - boolean if the user wants batch metadata appended to table
     Returns:
         the newly created task
     '''
@@ -133,7 +171,8 @@ def build_load_task(dag, data_type, prev_task_id):
     return PythonOperator(
             task_id='load_' + data_type + '_to_gcs',
             python_callable=upload_to_gcs,
-            op_kwargs={'data_type': data_type, 'prev_task_id': prev_task_id},
+            op_kwargs={'data_type': data_type, 'prev_task_id': prev_task_id, 'batch_stats': batch_stats},
             dag=dag,
             provide_context=True,
         )
+        

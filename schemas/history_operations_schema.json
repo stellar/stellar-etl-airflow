@@ -287,6 +287,28 @@
                     "type": "INTEGER"
                   },
                   {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "not",
+                    "type": "RECORD"
+                  },
+                  {
                     "mode": "NULLABLE",
                     "name": "unconditional",
                     "type": "BOOLEAN" 
@@ -310,7 +332,29 @@
                       }
                     ],
                     "mode": "REPEATED",
-                    "name": "not",
+                    "name": "or",
+                    "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "and",
                     "type": "RECORD"
                   }
                 ],
@@ -687,5 +731,20 @@
     "mode": "NULLABLE",
     "name": "type",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
   }
 ]

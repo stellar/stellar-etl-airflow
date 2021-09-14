@@ -11,10 +11,10 @@ def get_base_dag_args():
 
 def get_default_dag_args():
     base = get_base_dag_args()
-    base['start_date'] = datetime(2021, 8, 16)
+    base['start_date'] = datetime(2021, 8, 31)
     return base
 
 def get_orderbook_dag_args():
     base = get_base_dag_args()
-    base['start_date'] = datetime(2021, 8, 16)
+    base['start_date'] = datetime(2021, 8, 31)
     return base

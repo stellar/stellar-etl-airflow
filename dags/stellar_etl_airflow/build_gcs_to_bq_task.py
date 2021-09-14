@@ -6,7 +6,7 @@ from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOper
 from airflow.models import Variable
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 
-def build_gcs_to_bq_task(dag, data_type):
+def build_gcs_to_bq_task(dag, data_type, partition):
     '''
     Creates a task to load a file from Google Cloud Storage into BigQuery. 
     The name of the file being loaded is retrieved through Airflow's Xcom.
@@ -15,6 +15,7 @@ def build_gcs_to_bq_task(dag, data_type):
     Parameters:
         dag - parent dag that the task will be attached to 
         data_type - type of the data being uploaded; should be string
+        partition - bool if the table is partitioned
     Returns:
         the newly created task
     '''
@@ -24,7 +25,12 @@ def build_gcs_to_bq_task(dag, data_type):
     dataset_name = Variable.get('bq_dataset')
     table_ids = Variable.get('table_ids', deserialize_json=True)
     prev_task_id = f'load_{data_type}_to_gcs'
-    schema_fields = read_local_schema(data_type)
+    schema_fields = read_local_schema(f'history_{data_type}')
+    time_partition = {}
+    if partition: 
+        time_partition['type'] = 'MONTH'
+        time_partition['field'] = 'batch_run_date'
+
     return GoogleCloudStorageToBigQueryOperator(
         task_id=f'send_{data_type}_to_bq',
         google_cloud_storage_conn_id='google_cloud_platform_connection',
@@ -37,5 +43,7 @@ def build_gcs_to_bq_task(dag, data_type):
         destination_project_dataset_table=f'{project_name}.{dataset_name}.{table_ids[data_type]}',
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
+        time_partitioning=time_partition,
         dag=dag,
     )
+    
