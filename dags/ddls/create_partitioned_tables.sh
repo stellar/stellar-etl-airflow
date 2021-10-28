@@ -1,11 +1,25 @@
 # /bin/bash -e 
+#
+#
+###############################################################################
+# Ad Hoc script to update existing Bigquery tables for schema changes
+#
+# Author: Sydney Wiseman
+# Date: 1 October 2021
+#
+# Script will read an updated schema from the /schemas directory
+# and create history archives tables. The largest tables are partitioned by 
+# batch execution date, which is a proxy for ledger closed date. The smaller
+# tables do not need to be partitioned. This script is intended for test env
+# use when setting up a sandbox.
+###############################################################################
  
 cd ../../
 WORKDIR="$(pwd)"
 echo "Current working directory: $WORKDIR"
 
-PROJECT_ID=test-hubble-319619
-DATASET_ID=test_gcp_airflow_internal
+PROJECT_ID=test-hubble-261722
+DATASET_ID=crypto_stellar_internal_2
 SCHEMA_DIR=$WORKDIR/schemas/
 PARTITION_TABLES=(history_operations history_transactions history_ledgers)
 TABLES=(history_assets history_trades)
