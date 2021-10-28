@@ -1,7 +1,7 @@
 # bin/bash -e 
 
-PROJECT_ID = test-hubble-319619
-DATASET_ID = test_gcp_airflow_internal
+PROJECT_ID=test-hubble-319619
+DATASET_ID=test_gcp_airflow_internal_partitioned
 
 set -eo pipefail
 
@@ -14,4 +14,4 @@ if [ -z "${table}" ]; then
 fi
 
 
-bq update $PROJECT_ID:$DATASET_ID."${table}" schemas/history_"${table}"_schema.json 
+bq update ${PROJECT_ID}:${DATASET_ID}."${table}" schemas/"${table}"_schema.json
