@@ -16,63 +16,53 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "offer_id",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "base_account_address",
+    "name": "selling_account_address",
     "type": "STRING"
   },
   {
     "mode": "NULLABLE",
-    "name": "base_asset_code",
+    "name": "selling_asset_code",
     "type": "STRING"
   },
   {
      "mode": "NULLABLE",
-     "name": "base_asset_issuer",
+     "name": "selling_asset_issuer",
      "type": "STRING"
   },
   {
      "mode": "NULLABLE",
-     "name": "base_asset_type",
+     "name": "selling_asset_type",
      "type": "STRING"
   },
   {
     "mode": "NULLABLE",
-    "name": "base_amount",
-    "type": "INTEGER"
+    "name": "selling_amount",
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
-    "name": "counter_account_address",
+    "name": "buying_account_address",
     "type": "STRING"
   },
   {
     "mode": "NULLABLE",
-    "name": "counter_asset_code",
+    "name": "buying_asset_code",
     "type": "STRING"
   },
   {
      "mode": "NULLABLE",
-     "name": "counter_asset_issuer",
+     "name": "buying_asset_issuer",
      "type": "STRING"
   },
   {
      "mode": "NULLABLE",
-     "name": "counter_asset_type",
+     "name": "buying_asset_type",
      "type": "STRING"
   },
   {
     "mode": "NULLABLE",
-    "name": "counter_amount",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "base_is_seller",
-    "type": "BOOLEAN"
+    "name": "buying_amount",
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
@@ -86,12 +76,12 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "base_offer_id",
+    "name": "selling_offer_id",
     "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
-    "name": "counter_offer_id",
+    "name": "buying_offer_id",
     "type": "INTEGER"
   },
   {
@@ -108,5 +98,15 @@
     "mode": "NULLABLE",
     "name": "batch_insert_ts",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "selling_liquidity_pool_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "liquidity_pool_fee",
+    "type": "INTEGER"
   }
 ]

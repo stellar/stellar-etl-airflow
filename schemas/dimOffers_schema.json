@@ -22,7 +22,7 @@
   {
     "mode": "NULLABLE",
     "name": "base_amount",
-    "type": "INTEGER"
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
