@@ -7,17 +7,17 @@
   {
     "mode": "NULLABLE",
     "name": "balance",
-    "type": "INTEGER"
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
     "name": "buying_liabilities",
-    "type": "INTEGER"
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
     "name": "selling_liabilities",
-    "type": "INTEGER"
+    "type": "FLOAT"
   },
   {
     "mode": "NULLABLE",
@@ -71,7 +71,27 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "ledger_entry_change",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "deleted",
     "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
   }
 ]

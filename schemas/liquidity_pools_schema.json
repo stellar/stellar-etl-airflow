@@ -1,0 +1,97 @@
+[
+    {
+        "mode": "NULLABLE",
+        "name": "liquidity_pool_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "fee",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustline_count",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "pool_share_count",
+        "type": "FLOAT"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_a_type",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_a_code",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_a_issuer",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_a_amount",
+        "type": "FLOAT"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_b_type",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_b_code",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_b_issuer",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_b_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "last_modified_ledger",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "ledger_entry_change",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "deleted",
+        "type": "BOOLEAN"   
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "batch_id",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "batch_run_date",
+      "type": "DATETIME"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "batch_insert_ts",
+      "type": "TIMESTAMP"
+    }
+]
