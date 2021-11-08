@@ -25,11 +25,16 @@ def build_gcs_to_bq_task(dag, data_type, partition):
     dataset_name = Variable.get('bq_dataset')
     table_ids = Variable.get('table_ids', deserialize_json=True)
     prev_task_id = f'load_{data_type}_to_gcs'
-    schema_fields = read_local_schema(f'history_{data_type}')
     time_partition = {}
     if partition: 
         time_partition['type'] = 'MONTH'
         time_partition['field'] = 'batch_run_date'
+
+    if data_type in ['ledgers', 'assets', 'transactions', 'operations', 'trades']:
+        schema_fields = read_local_schema(f'history_{data_type}')
+    else:
+        schema_fields = read_local_schema(f'{data_type}')
+
 
     return GoogleCloudStorageToBigQueryOperator(
         task_id=f'send_{data_type}_to_bq',

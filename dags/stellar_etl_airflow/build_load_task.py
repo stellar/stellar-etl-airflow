@@ -40,6 +40,29 @@ def append_batch_stats(filename, batch_id, batch_date):
             line['batch_insert_ts'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
             writer.write(line)
 
+def create_filename(data_type, prev_task_id, **kwargs):
+    '''
+    Creates the filename of the object that will be written to GCS. 
+    Parameters:
+        data_type - type of data to upload; string
+        prev_task_id - the task id of the upstream DAG processing job
+    Returns:
+        string instance of filename
+    '''
+    filename = kwargs['task_instance'].xcom_pull(task_ids=prev_task_id)
+    if isinstance(filename, dict):
+        if 'start' in filename.keys():
+            filename = f'{filename["start"]}-{filename["start"]+63}-{data_type}.txt'
+        else:
+            filename = filename["output_file"]
+    elif isinstance(filename, bytes):
+        filename = filename.decode('utf-8')
+    logging.info(f'Pulling filename from task {prev_task_id}; result is {filename}')
+
+    return filename
+
+
+
 def build_storage_service():
     '''
     Creates a storage service object that uses the credentials specified by the Airflow api_key_path variable.
@@ -108,13 +131,7 @@ def upload_to_gcs(data_type, prev_task_id, batch_stats, **kwargs):
     '''
 
     # when getting the filename from the file sensor tasks, we get a string filename
-    filename = kwargs['task_instance'].xcom_pull(task_ids=prev_task_id)
-    logging.info(type(filename))
-    if isinstance(filename, dict):
-        filename = filename["output_file"]
-    elif isinstance(filename, bytes):
-        filename = filename.decode('utf-8')
-    logging.info(f'Pulling filename from task {prev_task_id}; result is {filename}')
+    filename = create_filename(data_type, prev_task_id, **kwargs)
 
     gcs_filepath = f'exported/{data_type}/{os.path.basename(filename)}'
 
@@ -173,6 +190,7 @@ def build_load_task(dag, data_type, prev_task_id, batch_stats=False):
             python_callable=upload_to_gcs,
             op_kwargs={'data_type': data_type, 'prev_task_id': prev_task_id, 'batch_stats': batch_stats},
             dag=dag,
+            retries=1,
             provide_context=True,
         )
         
