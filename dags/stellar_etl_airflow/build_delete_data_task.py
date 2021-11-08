@@ -5,7 +5,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 
 def build_delete_data_task(dag, table):
     PROJECT_ID = Variable.get('bq_project')
-    DATASET_ID = 'test_gcp_airflow_internal_partitioned'
+    DATASET_ID = Variable.get('bq_dataset')
     batch_id = '{{ run_id }}'
     batch_date = '{{ prev_execution_date.to_datetime_string() }}'
 

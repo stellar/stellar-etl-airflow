@@ -10,7 +10,7 @@ def get_path_variables():
     '''
         Returns the image output path, core executable path, and core config path.
     '''
-    return Variable.get('image_output_path'), '/usr/bin/stellar-core', '/etl/stellar-core.cfg'
+    return Variable.get('image_output_path'), '/usr/bin/stellar-core', '/etl/docker/stellar-core.cfg'
 
 def select_correct_filename(cmd_type, base_name, batched_name):
     switch = {

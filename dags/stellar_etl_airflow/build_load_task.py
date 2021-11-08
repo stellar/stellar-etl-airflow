@@ -111,7 +111,10 @@ def upload_to_gcs(data_type, prev_task_id, batch_stats, **kwargs):
     filename = kwargs['task_instance'].xcom_pull(task_ids=prev_task_id)
     logging.info(type(filename))
     if isinstance(filename, dict):
-        filename = filename["output_file"]
+        if 'start' in filename.keys():
+            filename = f'{filename["start"]}-{filename["start"]+63}-{data_type}.txt'
+        else:
+            filename = filename["output_file"]
     elif isinstance(filename, bytes):
         filename = filename.decode('utf-8')
     logging.info(f'Pulling filename from task {prev_task_id}; result is {filename}')
@@ -173,6 +176,7 @@ def build_load_task(dag, data_type, prev_task_id, batch_stats=False):
             python_callable=upload_to_gcs,
             op_kwargs={'data_type': data_type, 'prev_task_id': prev_task_id, 'batch_stats': batch_stats},
             dag=dag,
+            retries=1,
             provide_context=True,
         )
         
