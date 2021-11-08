@@ -1,3 +1,7 @@
+-- Finds the latest state of each trustline in the `trust_lines` table.
+-- Ranks each record (grain: trust line per account per asset) using 
+-- last modified ledger sequence number. View includes all trust lines.
+-- (Deleted and Existing). View matches the Horizon snapshotted state tables.
 WITH current_tls AS 
 (
     SELECT TL.account_id,

@@ -1,3 +1,7 @@
+-- View reports trading for relevant assets only
+-- Both AMM and DEX trades are found in the view
+-- and both the buy and sell side of the trade must
+-- be considered relevant to appear 
 WITH find_relevant_sales AS 
 (
     SELECT *

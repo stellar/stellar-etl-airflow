@@ -1,3 +1,4 @@
+-- Create a liquidity provider view to track provider positions
 WITH total_providers AS 
 (
     SELECT op.source_account, 
@@ -8,6 +9,7 @@ WITH total_providers AS
     FROM `PROJECT.DATASET.history_operations` op
     JOIN `PROJECT.DATASET.history_transactions` txn
         ON op.transaction_id = txn.id
+    -- Protocol 18 ops are 22 (deposit) and 23 (withdraw)
     WHERE (op.type=22 OR op.type=23)
         AND (txn.successful = true OR txn.successful IS NULL)
     GROUP BY liquidity_pool_id, 
@@ -23,6 +25,7 @@ SELECT A.liquidity_pool_id,
 FROM total_providers A
 JOIN `PROJECT.DATASET.v_liquidity_pools_current` B 
     ON A.liquidity_pool_id = B.liquidity_pool_id
+-- Filter for active pool providers
 WHERE total_shares > 0
 GROUP BY A.liquidity_pool_id, 
     B.asset_pair, 

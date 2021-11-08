@@ -1,9 +1,14 @@
+-- Finds the latest state of each pool in the `liquidity_pool` table.
+-- Ranks each record (grain: pool id) using last modified ledger sequence 
+-- number. View includes all liquidity pools. (Deleted and Existing)
+-- View matches the Horizon snapshotted state tables.
 WITH current_lps AS 
 (
     SELECT LP.liquidity_pool_id, 
         LP.fee,
         LP.trustline_count,
         LP.pool_share_count,
+        -- XLM asset codes are null. Transform to XLM for readibility
         CASE WHEN LP.asset_a_type = 'native' THEN CONCAT('XLM:',LP.asset_b_code)  
             ELSE CONCAT(LP.asset_a_code,':',LP.asset_b_code) END AS asset_pair,
         LP.asset_a_code, 

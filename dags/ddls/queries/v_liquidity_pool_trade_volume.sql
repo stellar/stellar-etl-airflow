@@ -1,3 +1,7 @@
+-- Finds the trade volume of liquidity pools only (No DEX trades)
+-- Prices are stated in base and quote price to make price tracking
+-- easy. Fees are also subtracted from the trade amount and stated as its
+-- own column so that fees and APR can be evaluated.
 WITH trade_volume AS (
     SELECT T.ledger_closed_at, 
         T.selling_liquidity_pool_id, 
