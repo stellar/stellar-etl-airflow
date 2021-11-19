@@ -1,16 +1,21 @@
 '''
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
 '''
-
+import datetime
+import logging
+import os
 from airflow import AirflowException
 from airflow.models import Variable 
 
 
-def get_path_variables():
+def get_path_variables(use_testnet=False):
     '''
         Returns the image output path, core executable path, and core config path.
     '''
-    return Variable.get('image_output_path'), '/usr/bin/stellar-core', '/etl/docker/stellar-core.cfg'
+    config = '/etl/docker/stellar-core.cfg'
+    if use_testnet:
+        config = '/etl/docker/stellar-core_testnet.cfg'
+    return Variable.get('image_output_path'), '/usr/bin/stellar-core', config
 
 def select_correct_filename(cmd_type, base_name, batched_name):
     switch = {
@@ -24,7 +29,7 @@ def select_correct_filename(cmd_type, base_name, batched_name):
         raise AirflowException("Command type is not supported: ", cmd_type)
     return filename
 
-def generate_etl_cmd(command, base_filename, cmd_type):
+def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testnet=False):
     '''
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
     The supported command types are: 
@@ -42,7 +47,6 @@ def generate_etl_cmd(command, base_filename, cmd_type):
     Returns:
         the generated etl command; name of the file that contains the exported data
     '''
-
     # These are JINJA templates, which are filled by airflow at runtime. The json from get_ledger_range_from_times is pulled from XCOM. 
     start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
     end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]}}'
@@ -55,11 +59,15 @@ def generate_etl_cmd(command, base_filename, cmd_type):
     if cmd_type == 'archive':
         end_ledger = '{{ [ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]-1, ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"]] | max}}'
 
-    image_output_path, core_exec, core_cfg = get_path_variables()
+    image_output_path, core_exec, core_cfg = get_path_variables(use_testnet)
 
     batch_filename = '-'.join([start_ledger, end_ledger, base_filename])
-    batched_path = image_output_path + batch_filename
-    base_path = image_output_path + base_filename
+    run_id = '{{ run_id }}'
+    filepath = ""
+    if use_gcs:
+        filepath = os.path.join(Variable.get('gcs_exported_object_prefix'), run_id)
+    batched_path = os.path.join(filepath, batch_filename)
+    base_path = os.path.join(filepath, base_filename)
 
     correct_filename = select_correct_filename(cmd_type, base_filename, batch_filename)
     switch = {
@@ -72,7 +80,16 @@ def generate_etl_cmd(command, base_filename, cmd_type):
     cmd = switch.get(cmd_type, None)
     if cmd is None:
         raise AirflowException("Command type is not supported: ", cmd_type)
-    return cmd, correct_filename
+    if use_gcs:
+        cmd.extend(['--gcs-bucket', Variable.get('gcs_exported_data_bucket_name')])
+        batch_date = '{{ prev_execution_date.to_datetime_string() }}'
+        batch_insert_ts = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        metadata = f'batch_id={run_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'
+        cmd.extend(['-u', metadata])
+    if use_testnet:
+        cmd.append('--testnet')
+    cmd.append('--strict-export')
+    return cmd, os.path.join(filepath, correct_filename)
     
 def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
     '''
@@ -146,7 +163,7 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
         force_pull=force_pull,
     ) 
 
-def build_export_task(dag, cmd_type, command, filename):
+def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testnet=False):
     '''
     Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
     Can either return a DockerOperator or a KubernetesPodOperator, depending on the value of the 
@@ -160,10 +177,7 @@ def build_export_task(dag, cmd_type, command, filename):
     Returns:
         the newly created task
     '''
-    etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type)
+    etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type, use_gcs, use_testnet)
     etl_cmd_string = ' '.join(etl_cmd)
-    if Variable.get('use_kubernetes_pod_exporter') == 'True':
-        return build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file)
-    else:
-        return build_docker_exporter(dag, command, etl_cmd_string, output_file)
+    return build_docker_exporter(dag, command, etl_cmd_string, output_file)
          
