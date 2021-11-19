@@ -7,7 +7,6 @@ when initializing the tables in order to catch up to the current state in the ne
 import json
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
-from stellar_etl_airflow.build_load_task import build_load_task
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
