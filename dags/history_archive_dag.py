@@ -1,12 +1,11 @@
 '''
-The history_archive_export DAG exports ledgers, transactions, operations, and trades from the history archives. 
-It is scheduled to export information to BigQuery every 5 minutes. 
+The history_archive_export DAG exports ledgers and transactions from the history archives. 
+It is scheduled to export information to BigQuery at regular intervals.
 '''
+import ast
 import datetime
-import distutils
-import distutils.util
 import json
-import time
+
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
@@ -19,16 +18,16 @@ from airflow.models import Variable
 
 
 dag = DAG(
-    'history_archive_export',
+    'history_archive_without_captive_core',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 11, 18),
+    start_date=datetime.datetime(2021, 11, 29, 21),
     description='This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads',
     schedule_interval='*/6 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
-use_testnet = bool(distutils.util.strtobool(Variable.get("use_testnet")))
+use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
 The time task reads in the execution time of the current run, as well as the next

@@ -91,50 +91,6 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
     cmd.append('--strict-export')
     return cmd, os.path.join(filepath, correct_filename)
     
-def build_kubernetes_pod_exporter(dag, command, etl_cmd_string, output_file):
-    '''
-    Creates the export task using a KubernetesPodOperator.
-    Parameters:
-        dag - the parent dag
-        command - stellar-etl command type (ex. export_ledgers, export_accounts)
-        etl_cmd_string - a string of the fully formed command that includes all flags and arguments to be sent to the etl
-        output_file - filename for the output file or folder
-    Returns:
-        the KubernetesPodOperator for the export task
-    '''
-    from airflow.kubernetes.volume import Volume
-    from airflow.kubernetes.volume_mount import VolumeMount
-    from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-    data_mount = VolumeMount(Variable.get('volume_name'), Variable.get("image_output_path"), '', False)
-    volume_config = Variable.get('volume_config', deserialize_json=True)
-
-    data_volume = Volume(Variable.get('volume_name'), volume_config)
-
-    cmd = ['bash']
-    args = ['-c', f'{etl_cmd_string} && mkdir -p /airflow/xcom/ && echo \'{{"output_file":"{output_file}"}}\' >> /airflow/xcom/return.json']
-    
-    config_file_location = Variable.get('kube_config_location')
-    in_cluster = False if config_file_location else True
-    
-    return KubernetesPodOperator(
-        task_id=command + '_task',
-        name=command + '_task',
-        namespace=Variable.get('namespace'),
-        image=Variable.get('image_name'),
-        cmds=cmd,
-        arguments=args,
-        dag=dag,
-        do_xcom_push=True,
-        sidecar_xcom_image=Variable.get('kubernetes_sidecar_image'),
-        is_delete_operator_pod=True,
-        in_cluster=in_cluster,
-        config_file=config_file_location,
-        volume_mounts=[data_mount],
-        volumes=[data_volume],
-        affinity=Variable.get('affinity', deserialize_json=True),
-        resources=Variable.get('resources', default_var=None, deserialize_json=True),
-        image_pull_policy=Variable.get('image_pull_policy')
-    )
 
 def build_docker_exporter(dag, command, etl_cmd_string, output_file):
     '''

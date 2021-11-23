@@ -4,16 +4,16 @@ bucket list. As a result, it is faster than stellar-core. Bucket list commands r
 to stop exporting. This end ledger  is determined by when the Airflow DAG is run. This DAG should be triggered manually 
 when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 '''
+import ast
+import datetime
 import json
+import time
+
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
-import datetime
-import distutils
-import distutils.util
-import time
 
 from airflow import DAG
 from airflow.models import Variable
@@ -22,13 +22,14 @@ dag = DAG(
     'bucket_list_export',
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2021, 10, 15),
+    end_date=datetime.datetime(2021, 10, 15),
     description='This DAG loads a point forward view of state tables. Caution: Does not capture historical changes!',
     schedule_interval='@daily',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
-use_testnet = bool(distutils.util.strtobool(Variable.get("use_testnet")))
+use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
 The time task reads in the execution time of the current run, as well as the next

@@ -1,22 +1,17 @@
 '''
-The bounded_core_export DAG exports ledger entry changes (accounts, offers, and trustlines) within a bounded range using stellar-core. 
-This DAG should be triggered manually if it is required to export entry changes within a specified time range. For consistent updates, use
-the unbounded version.
+The state_table_export DAG exports ledger entry changes (accounts, offers, and trustlines) within a bounded range using stellar-core. 
+This DAG should be triggered manually if it is required to export entry changes within a specified time range. 
 '''
+import ast
+import datetime
 import json
-from time import time
+import logging
 
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
-
-import datetime
-import distutils
-import distutils.util
-import logging
-import time
 
 from airflow import DAG
 from airflow.models import Variable
@@ -26,15 +21,15 @@ logger = logging.getLogger('airflow.task')
 logger.setLevel(logging.INFO)
 
 dag = DAG(
-    'bounded_core_export',
+    'state_table_export',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 10, 14),
+    start_date=datetime.datetime(2021, 11, 22, 3),#datetime.datetime(2021, 11, 29, 20),
     description='This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.',
     schedule_interval='*/30 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
-use_testnet = bool(distutils.util.strtobool(Variable.get("use_testnet")))
+use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 file_names = Variable.get('output_file_names', deserialize_json=True)
 
 date_task = build_time_task(dag)

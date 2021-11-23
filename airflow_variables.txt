@@ -54,7 +54,6 @@
         "transactions": "history_transactions",
         "trustlines": "trust_lines"
     },
-    "use_kubernetes_pod_exporter": "False",
     "use_testnet": "False",
     "volume_config": "{}",
     "volume_name": "etl-data"
