@@ -1,12 +1,12 @@
 '''
 This file contains functions for creating Airflow tasks to load files from Google Cloud Storage into BigQuery.
 '''
-
+import logging
 from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
 from airflow.models import Variable
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 
-def build_gcs_to_bq_task(dag, data_type, partition):
+def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, partition):
     '''
     Creates a task to load a file from Google Cloud Storage into BigQuery. 
     The name of the file being loaded is retrieved through Airflow's Xcom.
@@ -14,7 +14,8 @@ def build_gcs_to_bq_task(dag, data_type, partition):
 
     Parameters:
         dag - parent dag that the task will be attached to 
-        data_type - type of the data being uploaded; should be string
+        export_task_id - id of export task that this should consume the XCOM return value of
+        source_object_suffix - string, suffix of source object path
         partition - bool if the table is partitioned
     Returns:
         the newly created task
@@ -24,7 +25,6 @@ def build_gcs_to_bq_task(dag, data_type, partition):
     project_name = Variable.get('bq_project')
     dataset_name = Variable.get('bq_dataset')
     table_ids = Variable.get('table_ids', deserialize_json=True)
-    prev_task_id = f'load_{data_type}_to_gcs'
     time_partition = {}
     if partition: 
         time_partition['type'] = 'MONTH'
@@ -35,7 +35,6 @@ def build_gcs_to_bq_task(dag, data_type, partition):
     else:
         schema_fields = read_local_schema(f'{data_type}')
 
-
     return GoogleCloudStorageToBigQueryOperator(
         task_id=f'send_{data_type}_to_bq',
         google_cloud_storage_conn_id='google_cloud_platform_connection',
@@ -44,7 +43,7 @@ def build_gcs_to_bq_task(dag, data_type, partition):
         schema_fields=schema_fields,
         autodetect=False,
         source_format='NEWLINE_DELIMITED_JSON',
-        source_objects=["{{ task_instance.xcom_pull(task_ids='"+ prev_task_id +"') }}"],
+        source_objects=["{{ task_instance.xcom_pull(task_ids='"+ export_task_id +"') }}" + source_object_suffix],
         destination_project_dataset_table=f'{project_name}.{dataset_name}.{table_ids[data_type]}',
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
