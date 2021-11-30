@@ -84,7 +84,7 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
         cmd.extend(['--gcs-bucket', Variable.get('gcs_exported_data_bucket_name')])
         batch_date = '{{ prev_execution_date.to_datetime_string() }}'
         batch_insert_ts = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-        metadata = f'batch_id={run_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'
+        metadata = f"'batch_id={run_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'"
         cmd.extend(['-u', metadata])
     if use_testnet:
         cmd.append('--testnet')

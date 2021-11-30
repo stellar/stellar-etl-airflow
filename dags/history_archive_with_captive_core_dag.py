@@ -20,7 +20,7 @@ from airflow.models import Variable
 dag = DAG(
     'history_archive_with_captive_core',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 11, 29, 21),
+    start_date=datetime.datetime(2021, 11, 29, 22),
     description='This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.',
     schedule_interval='*/30 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},

@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 dag = DAG(
     'state_table_export',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 11, 22, 3),#datetime.datetime(2021, 11, 29, 20),
+    start_date=datetime.datetime(2021, 11, 29, 22, 30),
     description='This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.',
     schedule_interval='*/30 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
