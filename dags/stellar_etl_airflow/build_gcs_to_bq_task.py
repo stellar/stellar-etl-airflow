@@ -47,6 +47,7 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
         destination_project_dataset_table=f'{project_name}.{dataset_name}.{table_ids[data_type]}',
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
+        max_bad_records=10,
         time_partitioning=time_partition,
         dag=dag,
     )
