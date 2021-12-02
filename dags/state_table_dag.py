@@ -11,6 +11,7 @@ from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
+from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
 
 from airflow import DAG
@@ -46,6 +47,15 @@ write_pool_stats = build_batch_stats(dag, 'liquidity_pools')
 write_trust_stats = build_batch_stats(dag, 'trust_lines')
 
 '''
+The delete partition task checks to see if the given partition/batch id exists in 
+Bigquery. If it does, the records are deleted prior to reinserting the batch.
+'''
+delete_acc_task = build_delete_data_task(dag, 'accounts')
+delete_off_task = build_delete_data_task(dag, 'offers')
+delete_pool_task = build_delete_data_task(dag, 'liquidity_pools')
+delete_trust_task = build_delete_data_task(dag, 'trust_lines')
+
+'''
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
 Entries are updated, deleted, or inserted as needed.
@@ -55,7 +65,7 @@ send_off_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'offers', 
 send_pool_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id,'liquidity_pools', '/*-liquidity_pools.txt', partition=False)
 send_trust_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'trustlines', '/*-trustlines.txt', partition=False)
 
-date_task >> changes_task >> write_acc_stats >> send_acc_to_bq_task
-date_task >> changes_task >> write_off_stats >> send_off_to_bq_task
-date_task >> changes_task >> write_pool_stats >> send_pool_to_bq_task
-date_task >> changes_task >> write_trust_stats >> send_trust_to_bq_task
+date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
+date_task >> changes_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
+date_task >> changes_task >> write_pool_stats >> delete_pool_task >> send_pool_to_bq_task
+date_task >> changes_task >> write_trust_stats >> delete_trust_task >> send_trust_to_bq_task
