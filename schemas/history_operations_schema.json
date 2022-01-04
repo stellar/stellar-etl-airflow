@@ -121,6 +121,11 @@
                 "type": "INTEGER"
               },
               {
+                "mode": "NULLABLE",
+                "name": "abs_before_epoch",
+                "type": "INTEGER" 
+              },
+              {
                 "fields": [
                   {
                     "mode": "NULLABLE",
@@ -138,6 +143,11 @@
                     "type": "BOOLEAN"
                   },
                   {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER" 
+                  },
+                  {
                     "fields": [
                       {
                         "mode": "NULLABLE",
@@ -153,6 +163,11 @@
                         "mode": "NULLABLE",
                         "name": "unconditional",
                         "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
                       }
                     ],
                     "mode": "REPEATED",
@@ -175,6 +190,11 @@
                         "mode": "NULLABLE",
                         "name": "unconditional",
                         "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
                       }
                     ],
                     "mode": "REPEATED",
@@ -197,6 +217,11 @@
                         "mode": "NULLABLE",
                         "name": "unconditional",
                         "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
                       }
                     ],
                     "mode": "REPEATED",
@@ -226,6 +251,11 @@
                     "type": "BOOLEAN"
                   },
                   {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER" 
+                  },
+                  {
                     "fields": [
                     {
                       "mode": "NULLABLE",
@@ -241,6 +271,11 @@
                       "mode": "NULLABLE",
                       "name": "unconditional",
                       "type": "BOOLEAN"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before_epoch",
+                      "type": "INTEGER" 
                     }
                   ],
                   "mode": "REPEATED",
@@ -263,6 +298,11 @@
                       "mode": "NULLABLE",
                       "name": "unconditional",
                       "type": "BOOLEAN"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before_epoch",
+                      "type": "INTEGER" 
                     }
                   ],
                   "mode": "REPEATED",
@@ -285,6 +325,11 @@
                       "mode": "NULLABLE",
                       "name": "unconditional",
                       "type": "BOOLEAN"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before_epoch",
+                      "type": "INTEGER" 
                     }
                   ],
                   "mode": "REPEATED",
@@ -309,6 +354,11 @@
                     "type": "INTEGER"
                   },
                   {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER" 
+                  },
+                  {
                     "fields": [
                       {
                         "mode": "NULLABLE",
@@ -324,6 +374,11 @@
                         "mode": "NULLABLE",
                         "name": "unconditional",
                         "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
                       }
                     ],
                     "mode": "REPEATED",
@@ -351,6 +406,11 @@
                         "mode": "NULLABLE",
                         "name": "unconditional",
                         "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
                       }
                     ],
                     "mode": "REPEATED",
@@ -375,6 +435,11 @@
                         "type": "BOOLEAN"
                       },
                       {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      },
+                      {
                         "fields": [
                           {
                             "mode": "NULLABLE",
@@ -390,6 +455,11 @@
                             "mode": "NULLABLE",
                             "name": "unconditional",
                             "type": "BOOLEAN"
+                          },
+                          {
+                            "mode": "NULLABLE",
+                            "name": "abs_before_epoch",
+                            "type": "INTEGER" 
                           } 
                         ],
                         "mode": "REPEATED",
