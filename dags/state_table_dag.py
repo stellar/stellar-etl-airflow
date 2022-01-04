@@ -42,6 +42,7 @@ start and end ledgers so that reconciliation and data validation are easier. The
 record is written to an internal dataset for data eng use only.
 '''
 write_acc_stats = build_batch_stats(dag, 'accounts')
+write_bal_stats = build_batch_stats(dag, 'claimable_balances')
 write_off_stats = build_batch_stats(dag, 'offers')
 write_pool_stats = build_batch_stats(dag, 'liquidity_pools')
 write_trust_stats = build_batch_stats(dag, 'trust_lines')
@@ -51,6 +52,7 @@ The delete partition task checks to see if the given partition/batch id exists i
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
 delete_acc_task = build_delete_data_task(dag, 'accounts')
+delete_bal_task = build_delete_data_task(dag, 'claimable_balances')
 delete_off_task = build_delete_data_task(dag, 'offers')
 delete_pool_task = build_delete_data_task(dag, 'liquidity_pools')
 delete_trust_task = build_delete_data_task(dag, 'trust_lines')
@@ -61,11 +63,13 @@ Then, the task merges the entries in the file with the entries in the correspond
 Entries are updated, deleted, or inserted as needed.
 '''
 send_acc_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'accounts', '/*-accounts.txt', partition=False)
+send_bal_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'claimable_balances', '/*-claimable_balances.txt', partition=False)
 send_off_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'offers', '/*-offers.txt', partition=False)
 send_pool_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id,'liquidity_pools', '/*-liquidity_pools.txt', partition=False)
 send_trust_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'trustlines', '/*-trustlines.txt', partition=False)
 
 date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
+date_task >> changes_task >> write_bal_stats >> delete_bal_task >> send_bal_to_bq_task
 date_task >> changes_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
 date_task >> changes_task >> write_pool_stats >> delete_pool_task >> send_pool_to_bq_task
 date_task >> changes_task >> write_trust_stats >> delete_trust_task >> send_trust_to_bq_task
