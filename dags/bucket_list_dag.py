@@ -35,7 +35,7 @@ use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 The time task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
 '''
-time_task = build_time_task(dag, use_next_exec_time=False)
+time_task = build_time_task(dag, use_testnet=use_testnet, use_next_exec_time=False)
 
 '''
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.

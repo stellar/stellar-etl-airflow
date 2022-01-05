@@ -5,7 +5,7 @@ This file contains functions for creating Airflow tasks to convert from a time r
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator 
 from airflow.models import Variable
 
-def build_time_task(dag, use_next_exec_time=True):
+def build_time_task(dag, use_testnet=False, use_next_exec_time=True):
     '''
     Creates a task to run the get_ledger_range_from_times command from the stellar-etl Docker image. The start time is the previous
     execution time. Since checkpoints are only written to History Archives every 64 ledgers, we have to account for a 5-6 min delay.
@@ -24,6 +24,8 @@ def build_time_task(dag, use_next_exec_time=True):
     end_time = '{{ ts }}' if use_next_exec_time else '{{ prev_execution_date.isoformat() }}'
     command = ["stellar-etl"]
     args = [ "get_ledger_range_from_times", "-s", start_time, "-o", "/airflow/xcom/return.json", '-e', end_time]
+    if use_testnet:
+        args.append("--testnet")
     config_file_location = Variable.get('kube_config_location')
     in_cluster = False if config_file_location else True
     return KubernetesPodOperator(
