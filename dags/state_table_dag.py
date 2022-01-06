@@ -33,7 +33,7 @@ dag = DAG(
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 file_names = Variable.get('output_file_names', deserialize_json=True)
 
-date_task = build_time_task(dag)
+date_task = build_time_task(dag, use_testnet=use_testnet)
 changes_task = build_export_task(dag, 'bounded-core', 'export_ledger_entry_changes', file_names['changes'], use_testnet=use_testnet, use_gcs=True)
 
 '''
