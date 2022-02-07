@@ -22,11 +22,12 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2021, 11, 29, 22, 30),
     description='This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads',
-    schedule_interval='*/6 * * * *',
+    schedule_interval='*/15 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
+table_names = Variable.get('table_ids', deserialize_json=True)
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
@@ -40,13 +41,13 @@ The write batch stats task will take a snapshot of the DAG run_id, execution dat
 start and end ledgers so that reconciliation and data validation are easier. The 
 record is written to an internal dataset for data eng use only.
 '''
-write_ledger_stats = build_batch_stats(dag, 'history_ledgers')
-write_tx_stats = build_batch_stats(dag, 'history_transactions')
-write_asset_stats = build_batch_stats(dag, 'history_assets')
+write_ledger_stats = build_batch_stats(dag, table_names['ledgers'])
+write_tx_stats = build_batch_stats(dag, table_names['transactions'])
+write_asset_stats = build_batch_stats(dag, table_names['assets'])
 
 '''
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
-The results of the comand are stored in a file. There is one task for each of the data types that 
+The results of the command are stored in a file. There is one task for each of the data types that
 can be exported from the history archives.
 
 The DAG sleeps for 30 seconds after the export_task writes to the file to give the poststart.sh
@@ -61,17 +62,17 @@ asset_export_task = build_export_task(dag, 'archive', 'export_assets', file_name
 The delete partition task checks to see if the given partition/batch id exists in 
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
-delete_old_ledger_task = build_delete_data_task(dag, 'history_ledgers')
-delete_old_tx_task = build_delete_data_task(dag, 'history_transactions')
-delete_old_asset_task = build_delete_data_task(dag, 'history_assets')
+delete_old_ledger_task = build_delete_data_task(dag, table_names['ledgers'])
+delete_old_tx_task = build_delete_data_task(dag, table_names['transactions'])
+delete_old_asset_task = build_delete_data_task(dag, table_names['assets'])
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, 'ledgers', '', partition=True)
-send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, 'transactions', '', partition=True)
-send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, 'assets', '', partition=False)
+send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, table_names['ledgers'], '', partition=True)
+send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, table_names['transactions'], '', partition=True)
+send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, table_names['assets'], '', partition=False)
  
 time_task >> write_ledger_stats >> ledger_export_task >> delete_old_ledger_task >> send_ledgers_to_bq_task
 time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task

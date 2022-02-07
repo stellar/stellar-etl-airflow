@@ -19,7 +19,7 @@ def get_orderbook_dag_args():
     base['start_date'] = datetime(2021, 8, 31)
     return base
 
-def get_claimable_balances_dag_args():
+def get_account_signers_dag_args():
     base = get_base_dag_args()
     base['start_date'] = datetime(2021, 10, 1)
     return base

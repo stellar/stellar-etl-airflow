@@ -24,7 +24,6 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
     bucket_name = Variable.get('gcs_exported_data_bucket_name')
     project_name = Variable.get('bq_project')
     dataset_name = Variable.get('bq_dataset')
-    table_ids = Variable.get('table_ids', deserialize_json=True)
     time_partition = {}
     if partition: 
         time_partition['type'] = 'MONTH'
@@ -44,7 +43,7 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
         autodetect=False,
         source_format='NEWLINE_DELIMITED_JSON',
         source_objects=["{{ task_instance.xcom_pull(task_ids='"+ export_task_id +"') }}" + source_object_suffix],
-        destination_project_dataset_table=f'{project_name}.{dataset_name}.{table_ids[data_type]}',
+        destination_project_dataset_table=f'{project_name}.{dataset_name}.{data_type}',
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
         max_bad_records=10,
