@@ -1,0 +1,52 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "account_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "signer",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "weight",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sponsor",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_modified_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_entry_change",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "deleted",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  }
+]

@@ -27,6 +27,7 @@ dag = DAG(
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
+table_names = Variable.get('table_ids', deserialize_json=True)
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
@@ -40,12 +41,12 @@ The write batch stats task will take a snapshot of the DAG run_id, execution dat
 start and end ledgers so that reconciliation and data validation are easier. The 
 record is written to an internal dataset for data eng use only.
 '''
-write_op_stats = build_batch_stats(dag, 'history_operations')
-write_trade_stats = build_batch_stats(dag, 'history_trades')
+write_op_stats = build_batch_stats(dag, table_names['operations'])
+write_trade_stats = build_batch_stats(dag, table_names['trades'])
 
 '''
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
-The results of the comand are stored in a file. There is one task for each of the data types that 
+The results of the command are stored in a file. There is one task for each of the data types that
 can be exported from the history archives.
 
 The DAG sleeps for 30 seconds after the export_task writes to the file to give the poststart.sh
@@ -59,15 +60,15 @@ trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_name
 The delete partition task checks to see if the given partition/batch id exists in 
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
-delete_old_op_task = build_delete_data_task(dag, 'history_operations')
-delete_old_trade_task = build_delete_data_task(dag, 'history_trades')
+delete_old_op_task = build_delete_data_task(dag, table_names['operations'])
+delete_old_trade_task = build_delete_data_task(dag, table_names['trades'])
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, 'operations', '', partition=True)
-send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, 'trades', '', partition=False)
+send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, table_names['operations'], '', partition=True)
+send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, table_names['trades'], '', partition=False)
  
 time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task

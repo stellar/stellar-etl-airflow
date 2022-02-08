@@ -5,7 +5,7 @@
     "bq_project": "test-hubble-319619",
     "gcs_exported_data_bucket_name": "us-central1-internal-airflo-8d08728f-bucket",
     "gcs_exported_object_prefix": "dag-exported",
-    "image_name": "stellar/stellar-etl:03f28fd",
+    "image_name": "stellar/stellar-etl:2426e93",
     "image_output_path": "/etl/exported_data/",
     "image_pull_policy": "IfNotPresent",
     "kube_config_location": "",
@@ -26,6 +26,7 @@
         "offers": "offers.txt",
         "operations": "operations.txt",
         "orderbooks": "orderbook_folder",
+        "signers": "account_signers.txt",
         "trades": "trades.txt",
         "transactions": "transactions.txt",
         "trustlines": "trustlines.txt"
@@ -48,6 +49,7 @@
         "liquidity_pools": "liquidity_pools",
         "offers": "offers",
         "operations": "history_operations",
+        "signers": "account_signers",
         "trades": "history_trades",
         "transactions": "history_transactions",
         "trustlines": "trust_lines"
