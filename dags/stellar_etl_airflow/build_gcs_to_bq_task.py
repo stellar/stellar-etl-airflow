@@ -42,7 +42,7 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
         schema_fields=schema_fields,
         autodetect=False,
         source_format='NEWLINE_DELIMITED_JSON',
-        source_objects=["{{ task_instance.xcom_pull(task_ids='"+ export_task_id +"') }}" + source_object_suffix],
+        source_objects=["{{ task_instance.xcom_pull(task_ids='"+ export_task_id +"')[\"output\"] }}" + source_object_suffix],
         destination_project_dataset_table=f'{project_name}.{dataset_name}.{data_type}',
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
