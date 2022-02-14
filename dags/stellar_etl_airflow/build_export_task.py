@@ -48,6 +48,7 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
         the generated etl command; name of the file that contains the exported data
     '''
     # These are JINJA templates, which are filled by airflow at runtime. The json from get_ledger_range_from_times is pulled from XCOM. 
+    logging.info("Pulling ledger start and end times.....")
     start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
     end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]}}'
 
@@ -103,17 +104,25 @@ def build_docker_exporter(dag, command, etl_cmd_string, output_file):
     Returns:
         the DockerOperator for the export task
     '''
-    from airflow.operators.docker_operator import DockerOperator 
+    from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
     full_cmd = f'bash -c "{etl_cmd_string} >> /dev/null && echo \"{output_file}\""'
+    config_file_location = Variable.get('kube_config_location')
+    in_cluster = False if config_file_location else True
     force_pull = True if Variable.get('image_pull_policy')=='Always' else False
-    return DockerOperator(
+    return KubernetesPodOperator(
         task_id=command + '_task',
+        name=command + '_task',
+        namespace=Variable.get('namespace'),
         image=Variable.get('image_name'),
         command=full_cmd, 
-        volumes=[f'{Variable.get("local_output_path")}:{Variable.get("image_output_path")}'],
+        # volumes=[f'{Variable.get("local_output_path")}:{Variable.get("image_output_path")}'],
         dag=dag,
-        xcom_push=True,
+        do_xcom_push=True,
+        is_delete_operator_pod=True,
+        in_cluster=in_cluster,
+        config_file=config_file_location,
+        affinity=Variable.get('affinity', deserialize_json=True),
         auto_remove=True,
         tty=True,
         force_pull=force_pull,

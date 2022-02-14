@@ -20,9 +20,9 @@ from airflow.models import Variable
 dag = DAG(
     'history_archive_without_captive_core',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 11, 29, 22, 30),
+    start_date=datetime.datetime(2021, 12, 22, 17, 15),
     description='This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads',
-    schedule_interval='*/6 * * * *',
+    schedule_interval='*/15 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
