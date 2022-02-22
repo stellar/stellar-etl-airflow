@@ -8,7 +8,7 @@ import json
 
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
-from stellar_etl_airflow.default import get_default_dag_args
+from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
@@ -16,6 +16,7 @@ from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
 from airflow import DAG
 from airflow.models import Variable
 
+init_sentry()
 
 dag = DAG(
     'history_archive_with_captive_core',

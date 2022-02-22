@@ -40,6 +40,8 @@
         "limit_cpu": "0.5",
         "limit_ephemeral_storage": "2Gi"
     },
+    "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.sentry.io/6190849",
+    "sentry_environment": "development",
     "schema_filepath": "/home/airflow/gcs/dags/schemas/",
     "table_ids": {
         "accounts": "accounts",
