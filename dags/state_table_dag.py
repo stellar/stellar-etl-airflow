@@ -30,10 +30,11 @@ dag = DAG(
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
 )
 
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 file_names = Variable.get('output_file_names', deserialize_json=True)
+table_names = Variable.get('table_ids', deserialize_json=True)
+use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
-date_task = build_time_task(dag)
+date_task = build_time_task(dag, use_testnet=use_testnet)
 changes_task = build_export_task(dag, 'bounded-core', 'export_ledger_entry_changes', file_names['changes'], use_testnet=use_testnet, use_gcs=True)
 
 '''
@@ -41,31 +42,39 @@ The write batch stats task will take a snapshot of the DAG run_id, execution dat
 start and end ledgers so that reconciliation and data validation are easier. The 
 record is written to an internal dataset for data eng use only.
 '''
-write_acc_stats = build_batch_stats(dag, 'accounts')
-write_off_stats = build_batch_stats(dag, 'offers')
-write_pool_stats = build_batch_stats(dag, 'liquidity_pools')
-write_trust_stats = build_batch_stats(dag, 'trust_lines')
+write_acc_stats = build_batch_stats(dag, table_names['accounts'])
+write_bal_stats = build_batch_stats(dag, table_names['claimable_balances'])
+write_off_stats = build_batch_stats(dag, table_names['offers'])
+write_pool_stats = build_batch_stats(dag, table_names['liquidity_pools'])
+write_sign_stats = build_batch_stats(dag, table_names['signers'])
+write_trust_stats = build_batch_stats(dag, table_names['trustlines'])
 
 '''
 The delete partition task checks to see if the given partition/batch id exists in 
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
-delete_acc_task = build_delete_data_task(dag, 'accounts')
-delete_off_task = build_delete_data_task(dag, 'offers')
-delete_pool_task = build_delete_data_task(dag, 'liquidity_pools')
-delete_trust_task = build_delete_data_task(dag, 'trust_lines')
+delete_acc_task = build_delete_data_task(dag, table_names['accounts'])
+delete_bal_task = build_delete_data_task(dag, table_names['claimable_balances'])
+delete_off_task = build_delete_data_task(dag, table_names['offers'])
+delete_pool_task = build_delete_data_task(dag, table_names['liquidity_pools'])
+delete_sign_task = build_delete_data_task(dag, table_names['signers'])
+delete_trust_task = build_delete_data_task(dag, table_names['trustlines'])
 
 '''
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
 Entries are updated, deleted, or inserted as needed.
 '''
-send_acc_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'accounts', '/*-accounts.txt', partition=False)
-send_off_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'offers', '/*-offers.txt', partition=False)
-send_pool_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id,'liquidity_pools', '/*-liquidity_pools.txt', partition=False)
-send_trust_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, 'trustlines', '/*-trustlines.txt', partition=False)
+send_acc_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, table_names['accounts'], '/*-accounts.txt', partition=False)
+send_bal_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, table_names['claimable_balances'], '/*-claimable_balances.txt', partition=False)
+send_off_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, table_names['offers'], '/*-offers.txt', partition=False)
+send_pool_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id,table_names['liquidity_pools'], '/*-liquidity_pools.txt', partition=False)
+send_sign_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, table_names['signers'], '/*-signers.txt', partition=False)
+send_trust_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, table_names['trustlines'], '/*-trustlines.txt', partition=False)
 
 date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
+date_task >> changes_task >> write_bal_stats >> delete_bal_task >> send_bal_to_bq_task
 date_task >> changes_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
 date_task >> changes_task >> write_pool_stats >> delete_pool_task >> send_pool_to_bq_task
+date_task >> changes_task >> write_sign_stats >> delete_sign_task >> send_sign_to_bq_task
 date_task >> changes_task >> write_trust_stats >> delete_trust_task >> send_trust_to_bq_task

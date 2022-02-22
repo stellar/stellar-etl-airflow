@@ -1,6 +1,7 @@
 '''
 This file contains functions for creating Airflow tasks to convert from a time range to a ledger range.
 '''
+import ast
 import logging
 
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator 
@@ -44,6 +45,8 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True):
          dag=dag,
          do_xcom_push=True,
          is_delete_operator_pod=True,
+         startup_timeout_seconds=720,
+         resources=ast.literal_eval(Variable.get('resources')),
          in_cluster=in_cluster,
          config_file=config_file_location,
          affinity=Variable.get('affinity', deserialize_json=True),
