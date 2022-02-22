@@ -34,11 +34,10 @@
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
     "resources": {
-        "request_memory": "64Mi",
-        "limit_memory": "3Gi",
-        "request_cpu": "50m",
-        "limit_cpu": "0.5",
-        "limit_ephemeral_storage": "2Gi"
+        "request_memory": "5Gi",
+        "limit_memory": "15Gi",
+        "request_cpu": "1.2",
+        "limit_ephemeral_storage": "12Gi"
     },
     "schema_filepath": "/home/airflow/gcs/dags/schemas/",
     "table_ids": {
