@@ -1,6 +1,7 @@
 '''
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
 '''
+import ast
 import datetime
 import logging
 import os
@@ -120,6 +121,8 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
+        startup_timeout_seconds=720,
+        resources=ast.literal_eval(Variable.get('resources')),
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=Variable.get('affinity', deserialize_json=True),
