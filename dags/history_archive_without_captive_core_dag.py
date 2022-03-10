@@ -12,6 +12,7 @@ from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow import macros
 
 from airflow import DAG
 from airflow.models import Variable
@@ -21,10 +22,14 @@ init_sentry()
 dag = DAG(
     'history_archive_without_captive_core',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 11, 29, 22, 30),
+    start_date=datetime.datetime(2022, 3, 11, 18, 30),
     description='This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads',
     schedule_interval='*/15 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
+    user_defined_macros={
+        'subtract_data_interval': macros.subtract_data_interval,
+        'batch_run_date_as_datetime_string': macros.batch_run_date_as_datetime_string,
+    },
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)

@@ -2,7 +2,7 @@
 This file contains functions for creating Airflow tasks to load files from Google Cloud Storage into BigQuery.
 '''
 import logging
-from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.models import Variable
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 
@@ -34,10 +34,8 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
     else:
         schema_fields = read_local_schema(f'{data_type}')
 
-    return GoogleCloudStorageToBigQueryOperator(
+    return GCSToBigQueryOperator(
         task_id=f'send_{data_type}_to_bq',
-        google_cloud_storage_conn_id='google_cloud_platform_connection',
-        bigquery_conn_id='google_cloud_platform_connection',
         bucket=bucket_name,
         schema_fields=schema_fields,
         autodetect=False,
