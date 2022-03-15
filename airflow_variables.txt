@@ -1,5 +1,17 @@
 {
-    "affinity": "{}",
+    "affinity": {
+        "nodeAffinity": { 
+            "requiredDuringSchedulingIgnoredDuringExecution": { 
+                "nodeSelectorTerms": [{ 
+                    "matchExpressions": [{ 
+                        "key": "cloud.google.com/gke-nodepool", 
+                        "operator": "In", 
+                        "values": ["hubble-etl"] 
+                        }] 
+                    }] 
+                } 
+            } 
+        },
     "api_key_path": "/home/airflow/gcs/data/apiKey.json",
     "bq_dataset": "crypto_stellar_internal_2",
     "bq_project": "hubble-261722",

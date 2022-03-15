@@ -77,7 +77,9 @@ The Airflow DAGs require service account keys to perform their operations. Gener
 
 > **_NOTE:_** The name of the key file corresponds to the Airflow variable "api_key_path". The data folder in Cloud Storage corresponds to the path "/home/airflow/gcs/data/", but ensure that the variable has the correct filename.
 
-### (Optional) Add Kubernetes Node Pool
+### Add Kubernetes Node Pool
+If the Kubernetes pods contain long-running or resource intensive operations, it is best to create a separate node pool for task execution. Executing the tasks on the same node pool as the `airflow-scheduler` will contribute to resource starvation and transient failures in the DAG.
+
 Find the Kubernetes cluster name that is used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the value of **GKE cluster**. The cluster name is the final part of this path.
 
 Then, run the command:
@@ -87,9 +89,30 @@ gcloud container node-pools create <pool_name> --cluster <cluster_name> \
 --zone <composer_zone> --project <project_id>
 ```
 
-> **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
+Alternatively, node pools can be created through the UI with the `Add Node Pool` button. Security can only be applied upon pool creation, so ensure that your security account and scopes are correct. If they need to be updated, you will need to delete the node pool and recreate it.
 
-### Create Namespace for ETL Tasks
+> **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
+> 
+> A sample affinity configuration is below, as well as defined in the `airflow_variables.txt`. The user must supply the node pool name in `values`.
+
+```
+"affinity": {
+        "nodeAffinity": { 
+            "requiredDuringSchedulingIgnoredDuringExecution": { 
+                "nodeSelectorTerms": [{ 
+                    "matchExpressions": [{ 
+                        "key": "cloud.google.com/gke-nodepool", 
+                        "operator": "In", 
+                        "values": [<node-pool-1>, 
+						           <node-pool-2>,] 
+                        }] 
+                    }] 
+                } 
+            } 
+        },
+```
+
+### (Optional) Create Namespace for ETL Tasks
 Open the Google [Cloud Shell](https://cloud.google.com/shell). Run these commands:
 ```bash
 gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
