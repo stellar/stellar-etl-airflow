@@ -13,6 +13,7 @@ from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow import macros
 
 from airflow import DAG
 from airflow.models import Variable
@@ -26,10 +27,14 @@ logger.setLevel(logging.INFO)
 dag = DAG(
     'state_table_export',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 11, 29, 22, 30),
+    start_date=datetime.datetime(2022, 3, 11, 19, 00),
     description='This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.',
     schedule_interval='*/30 * * * *',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
+    user_defined_macros={
+        'subtract_data_interval': macros.subtract_data_interval,
+        'batch_run_date_as_datetime_string': macros.batch_run_date_as_datetime_string,
+    },
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
@@ -37,7 +42,7 @@ table_names = Variable.get('table_ids', deserialize_json=True)
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 date_task = build_time_task(dag, use_testnet=use_testnet)
-changes_task = build_export_task(dag, 'bounded-core', 'export_ledger_entry_changes', file_names['changes'], use_testnet=use_testnet, use_gcs=True)
+changes_task = build_export_task(dag, 'bounded-core', 'export_ledger_entry_changes', file_names['changes'], use_testnet=use_testnet, use_gcs=True, resource_cfg='state')
 
 '''
 The write batch stats task will take a snapshot of the DAG run_id, execution date, 

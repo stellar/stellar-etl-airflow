@@ -1,14 +1,12 @@
 '''
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
 '''
-import ast
 import datetime
 import logging
 import os
 from airflow import AirflowException
 from airflow.models import Variable
-
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
 def get_path_variables(use_testnet=False):
     '''
@@ -85,7 +83,9 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
         raise AirflowException("Command type is not supported: ", cmd_type)
     if use_gcs:
         cmd.extend(['--gcs-bucket', Variable.get('gcs_exported_data_bucket_name')])
-        batch_date = '{{ prev_execution_date.to_datetime_string() }}'
+        if cmd_type == 'bucket':
+            run_id = '{}-bucket'.format(run_id)
+        batch_date = '{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}'
         batch_insert_ts = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         metadata = f"'batch_id={run_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'"
         cmd.extend(['-u', metadata])
@@ -94,7 +94,7 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
     cmd.append('--strict-export')
     return cmd, os.path.join(filepath, correct_filename)
 
-def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testnet=False):
+def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testnet=False, resource_cfg='default'):
     '''
     Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
     Runs in a KubernetesPodOperator.
@@ -107,14 +107,18 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
     Returns:
         the newly created task
     '''
+
     etl_cmd, output_file = generate_etl_cmd(command, filename, cmd_type, use_gcs, use_testnet)
     etl_cmd_string = ' '.join(etl_cmd)
     config_file_location = Variable.get('kube_config_location')
     in_cluster = False if config_file_location else True
+    resources = Variable.get('resources', deserialize_json=True).get(resource_cfg)
+    affinity = Variable.get('affinity', deserialize_json=True).get(resource_cfg)
     return KubernetesPodOperator(
+        service_account_name=Variable.get('k8s_service_account'),
+        namespace=Variable.get('k8s_namespace'),
         task_id=command + '_task',
         name=command + '_task',
-        namespace=Variable.get('namespace'),
         image=Variable.get('image_name'),
         cmds=['bash', '-c'],
         arguments=[f'''{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json'''],
@@ -122,11 +126,9 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        resources=ast.literal_eval(Variable.get('resources')),
+        resources=resources,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=Variable.get('affinity', deserialize_json=True),
-        auto_remove=True,
-        tty=True,
+        affinity=affinity,
         image_pull_policy=Variable.get('image_pull_policy')
     )

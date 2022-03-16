@@ -12,6 +12,7 @@ from stellar_etl_airflow.default import init_sentry, get_account_signers_dag_arg
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow import macros
 
 from airflow import DAG
 from airflow.models import Variable
@@ -30,6 +31,10 @@ dag = DAG(
     description='This DAG loads account signers from archives to BigQuery tables.',
     schedule_interval='@daily',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
+    user_defined_macros={
+        'subtract_data_interval': macros.subtract_data_interval,
+        'batch_run_date_as_datetime_string': macros.batch_run_date_as_datetime_string,
+    },
 )
 
 use_testnet = ast.literal_eval(Variable.get('use_testnet'))
@@ -37,7 +42,7 @@ file_names = Variable.get('output_file_names', deserialize_json=True)
 table_names = Variable.get('table_ids', deserialize_json=True)
 signers_table = table_names['signers']
 
-date_task = build_time_task(dag)
+date_task = build_time_task(dag, use_testnet=use_testnet, use_next_exec_time=False)
 export_sign_task = build_export_task(dag, 'bucket', 'export_signers', file_names['signers'], use_testnet=use_testnet, use_gcs=True)
 
 '''

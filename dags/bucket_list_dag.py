@@ -14,6 +14,7 @@ from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow import macros
 
 from airflow import DAG
 from airflow.models import Variable
@@ -28,11 +29,15 @@ dag = DAG(
     description='This DAG loads a point forward view of state tables. Caution: Does not capture historical changes!',
     schedule_interval='@daily',
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
+    user_defined_macros={
+        'subtract_data_interval': macros.subtract_data_interval,
+        'batch_run_date_as_datetime_string': macros.batch_run_date_as_datetime_string,
+    },
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 table_names = Variable.get('table_ids', deserialize_json=True)
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_testnet = ast.literal_eval(Variable.get('use_testnet'))
 
 '''
 The time task reads in the execution time of the current run, as well as the next
