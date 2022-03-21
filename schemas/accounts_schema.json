@@ -93,5 +93,20 @@
     "mode": "NULLABLE",
     "name": "batch_insert_ts",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sponsor",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "num_sponsored",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "num_sponsoring",
+    "type": "INTEGER"
   }
 ]
