@@ -25,6 +25,9 @@ dag = DAG(
     start_date=datetime.datetime(2022, 3, 11, 18, 30),
     description='This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads',
     schedule_interval='*/15 * * * *',
+    params={
+        'alias': 'archive',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
     user_defined_macros={
         'subtract_data_interval': macros.subtract_data_interval,

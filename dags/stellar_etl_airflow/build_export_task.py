@@ -7,6 +7,7 @@ import os
 from airflow import AirflowException
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from stellar_etl_airflow import macros
 
 def get_path_variables(use_testnet=False):
     '''
@@ -83,11 +84,10 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
         raise AirflowException("Command type is not supported: ", cmd_type)
     if use_gcs:
         cmd.extend(['--gcs-bucket', Variable.get('gcs_exported_data_bucket_name')])
-        if cmd_type == 'bucket':
-            run_id = '{}-bucket'.format(run_id)
+        batch_id = macros.get_batch_id()
         batch_date = '{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}'
         batch_insert_ts = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-        metadata = f"'batch_id={run_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'"
+        metadata = f"'batch_id={batch_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'"
         cmd.extend(['-u', metadata])
     if use_testnet:
         cmd.append('--testnet')
