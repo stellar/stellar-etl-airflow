@@ -25,6 +25,9 @@ dag = DAG(
     start_date=datetime.datetime(2022, 3, 11, 18, 30),
     description='This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.',
     schedule_interval='*/30 * * * *',
+    params={
+        'alias': 'cc',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
     user_defined_macros={
         'subtract_data_interval': macros.subtract_data_interval,

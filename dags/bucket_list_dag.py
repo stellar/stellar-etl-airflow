@@ -28,6 +28,9 @@ dag = DAG(
     end_date=datetime.datetime(2021, 10, 15),
     description='This DAG loads a point forward view of state tables. Caution: Does not capture historical changes!',
     schedule_interval='@daily',
+    params={
+        'alias': 'bucket',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
     user_defined_macros={
         'subtract_data_interval': macros.subtract_data_interval,

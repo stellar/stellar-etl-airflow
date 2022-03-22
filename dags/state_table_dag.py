@@ -30,6 +30,9 @@ dag = DAG(
     start_date=datetime.datetime(2022, 3, 11, 19, 00),
     description='This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.',
     schedule_interval='*/30 * * * *',
+    params={
+        'alias': 'state',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
     user_defined_macros={
         'subtract_data_interval': macros.subtract_data_interval,

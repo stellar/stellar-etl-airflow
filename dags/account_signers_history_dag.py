@@ -30,6 +30,9 @@ dag = DAG(
     end_date=datetime.datetime(2022, 3, 11, 19, 0),
     description='This DAG loads account_signers from archives to BigQuery tables.',
     schedule_interval='0 */4 * * *',
+    params={
+        'alias': 'state',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
     user_defined_macros={
         'subtract_data_interval': macros.subtract_data_interval,
