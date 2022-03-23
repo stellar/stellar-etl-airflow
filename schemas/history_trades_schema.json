@@ -108,5 +108,20 @@
     "mode": "NULLABLE",
     "name": "liquidity_pool_fee",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "trade_type",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "rounding_slippage",
+    "type": "INTEGER" 
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "seller_is_exact",
+    "type": "BOOLEAN"
   }
 ]
