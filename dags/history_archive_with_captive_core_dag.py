@@ -37,6 +37,10 @@ dag = DAG(
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 table_names = Variable.get('table_ids', deserialize_json=True)
+internal_project = Variable.get('bq_project')
+internal_dataset = Variable.get('bq_dataset')
+public_project = Variable.get('public_project')
+public_dataset = Variable.get('public_dataset')
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
@@ -76,8 +80,17 @@ delete_old_trade_task = build_delete_data_task(dag, table_names['trades'])
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, table_names['operations'], '', partition=True)
-send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, table_names['trades'], '', partition=False)
+send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, internal_project, internal_dataset, table_names['operations'], '', partition=True, cluster=False)
+send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, internal_project, internal_dataset, table_names['trades'], '', partition=False, cluster=False)
+
+'''
+The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+'''
+send_ops_to_pub_task = build_gcs_to_bq_task(dag, op_export_task.task_id, public_project, public_dataset, table_names['operations'], '', partition=True, cluster=True)
+send_trades_to_pub_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, public_project, public_dataset, table_names['trades'], '', partition=True, cluster=True)
  
 time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task
+delete_old_op_task >> send_ops_to_pub_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task
+delete_old_trade_task >> send_trades_to_pub_task
