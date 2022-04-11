@@ -40,6 +40,10 @@ dag = DAG(
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 table_names = Variable.get('table_ids', deserialize_json=True)
+internal_project = Variable.get('bq_project')
+internal_dataset = Variable.get('bq_dataset')
+public_project = Variable.get('public_project')
+public_dataset = Variable.get('public_dataset')
 use_testnet = ast.literal_eval(Variable.get('use_testnet'))
 
 '''
@@ -87,17 +91,34 @@ The apply tasks receive the location of the file in Google Cloud storage through
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
 Entries are updated, deleted, or inserted as needed.
 '''
-send_acc_to_bq_task = build_gcs_to_bq_task(dag, export_acc_task.task_id, table_names['accounts'], '', partition=False)
-send_bal_to_bq_task = build_gcs_to_bq_task(dag, export_bal_task.task_id, table_names['claimable_balances'], '', partition=False)
-send_off_to_bq_task = build_gcs_to_bq_task(dag, export_off_task.task_id, table_names['offers'], '', partition=False)
-send_pool_to_bq_task = build_gcs_to_bq_task(dag, export_pool_task.task_id, table_names['liquidity_pools'], '', partition=False)
-send_sign_to_bq_task = build_gcs_to_bq_task(dag, export_trust_task.task_id, table_names['signers'], '',  partition=False)
-send_trust_to_bq_task = build_gcs_to_bq_task(dag, export_trust_task.task_id, table_names['trustlines'], '',  partition=False)
+send_acc_to_bq_task = build_gcs_to_bq_task(dag, export_acc_task.task_id, internal_project, internal_dataset, table_names['accounts'], '', partition=False, cluster=False)
+send_bal_to_bq_task = build_gcs_to_bq_task(dag, export_bal_task.task_id, internal_project, internal_dataset, table_names['claimable_balances'], '', partition=False, cluster=False)
+send_off_to_bq_task = build_gcs_to_bq_task(dag, export_off_task.task_id, internal_project, internal_dataset, table_names['offers'], '', partition=False, cluster=False)
+send_pool_to_bq_task = build_gcs_to_bq_task(dag, export_pool_task.task_id, internal_project, internal_dataset, table_names['liquidity_pools'], '', partition=False, cluster=False)
+send_sign_to_bq_task = build_gcs_to_bq_task(dag, export_trust_task.task_id, internal_project, internal_dataset, table_names['signers'], '',  partition=False, cluster=False)
+send_trust_to_bq_task = build_gcs_to_bq_task(dag, export_trust_task.task_id, internal_project, internal_dataset, table_names['trustlines'], '',  partition=False, cluster=False)
 
+'''
+The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
+Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
+Entries are updated, deleted, or inserted as needed.
+'''
+send_acc_to_pub_task = build_gcs_to_bq_task(dag, export_acc_task.task_id, public_project, public_dataset, table_names['accounts'], '', partition=True, cluster=True)
+send_bal_to_pub_task = build_gcs_to_bq_task(dag, export_bal_task.task_id, public_project, public_dataset, table_names['claimable_balances'], '', partition=True, cluster=True)
+send_off_to_pub_task = build_gcs_to_bq_task(dag, export_off_task.task_id, public_project, public_dataset, table_names['offers'], '', partition=True, cluster=True)
+send_pool_to_pub_task = build_gcs_to_bq_task(dag, export_pool_task.task_id, public_project, public_dataset, table_names['liquidity_pools'], '', partition=True, cluster=True)
+send_sign_to_pub_task = build_gcs_to_bq_task(dag, export_trust_task.task_id, public_project, public_dataset, table_names['signers'], '',  partition=True, cluster=True)
+send_trust_to_pub_task = build_gcs_to_bq_task(dag, export_trust_task.task_id, public_project, public_dataset, table_names['trustlines'], '',  partition=True, cluster=True)
 
 time_task >> export_acc_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
+delete_acc_task >> send_acc_to_pub_task
 time_task >> export_bal_task >> write_bal_stats >> delete_bal_task >> send_bal_to_bq_task
+delete_bal_task >> send_bal_to_pub_task
 time_task >> export_off_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
+delete_off_task >> send_off_to_pub_task
 time_task >> export_pool_task >> write_pool_stats >> delete_pool_task >> send_pool_to_bq_task
+delete_pool_task >> send_pool_to_pub_task
 time_task >> export_sign_task >> write_sign_stats >> delete_sign_task >> send_sign_to_bq_task
+delete_sign_task >> send_sign_to_pub_task
 time_task >> export_trust_task >> write_trust_stats >> delete_trust_task >> send_trust_to_bq_task
+delete_trust_task >> send_trust_to_pub_task

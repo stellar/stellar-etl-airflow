@@ -35,6 +35,19 @@
     "api_key_path": "/home/airflow/gcs/data/apiKey.json",
     "bq_dataset": "crypto_stellar_internal_2",
     "bq_project": "hubble-261722",
+    "cluster_fields": { 
+        "accounts": ["account_id","last_modified_ledger"], 
+        "account_signers": ["account_id","last_modified_ledger"], 
+        "claimable_balances": ["balance_id","last_modified_ledger","sponsor"], 
+        "history_assets": ["asset_code","asset_type"], 
+        "history_ledgers": ["sequence","closed_at"], 
+        "history_operations": ["id","transaction_id","source_account"], 
+        "history_trades": ["history_operation_id","ledger_closed_at"], 
+        "history_transactions": ["id","ledger_sequence","account"], 
+        "offers": ["seller_id","last_modified_ledger"], 
+        "liquidity_pools": ["liquidity_pool_id","last_modified_ledger"], 
+        "trust_lines": ["account_id","last_modified_ledger"] 
+    },
     "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
     "gcs_exported_object_prefix": "dag-exported",
     "image_name": "stellar/stellar-etl:e4935a4",
@@ -67,6 +80,8 @@
     },
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
+    "public_dataset": "crypto_stellar_2",
+    "public_project": "crypto-stellar",
     "resources": {
         "default": {
             "request_cpu": "1.2",

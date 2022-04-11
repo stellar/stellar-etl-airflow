@@ -6,7 +6,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQue
 from airflow.models import Variable
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 
-def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, partition):
+def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, source_object_suffix, partition, cluster):
     '''
     Creates a task to load a file from Google Cloud Storage into BigQuery. 
     The name of the file being loaded is retrieved through Airflow's Xcom.
@@ -22,8 +22,17 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
     '''
     
     bucket_name = Variable.get('gcs_exported_data_bucket_name')
-    project_name = Variable.get('bq_project')
-    dataset_name = Variable.get('bq_dataset')
+    if cluster:
+        cluster_fields = Variable.get('cluster_fields', deserialize_json=True)
+        cluster_fields = cluster_fields[data_type]
+    else:
+        cluster_fields = None
+    project_name = project
+    if dataset == 'crypto_stellar_2':
+        dataset_type = 'pub'
+    else:
+        dataset_type = 'bq'
+    dataset_name = dataset
     time_partition = {}
     if partition: 
         time_partition['type'] = 'MONTH'
@@ -35,7 +44,7 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
         schema_fields = read_local_schema(f'{data_type}')
 
     return GCSToBigQueryOperator(
-        task_id=f'send_{data_type}_to_bq',
+        task_id=f'send_{data_type}_to_{dataset_type}',
         bucket=bucket_name,
         schema_fields=schema_fields,
         autodetect=False,
@@ -46,6 +55,7 @@ def build_gcs_to_bq_task(dag, export_task_id, data_type, source_object_suffix, p
         create_disposition='CREATE_IF_NEEDED',
         max_bad_records=10,
         time_partitioning=time_partition,
+        cluster_fields=cluster_fields,
         dag=dag,
     )
     
