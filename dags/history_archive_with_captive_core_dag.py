@@ -12,6 +12,8 @@ from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
+from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
 from stellar_etl_airflow import macros
 
 from airflow import DAG
@@ -73,8 +75,12 @@ trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_name
 The delete partition task checks to see if the given partition/batch id exists in 
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
-delete_old_op_task = build_delete_data_task(dag, table_names['operations'])
-delete_old_trade_task = build_delete_data_task(dag, table_names['trades'])
+delete_old_op_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['operations'])
+delete_old_op_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['operations'])
+delete_old_trade_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['trades'])
+delete_old_trade_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['trades'])
+delete_enrich_op_task = build_delete_data_task(dag, internal_project, internal_dataset, 'enriched_history_operations')
+delete_enrich_op_pub_task = build_delete_data_task(dag, public_project, public_dataset, 'enriched_history_operations')
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
@@ -89,8 +95,16 @@ Then, the task merges the unique entries in the file into the corresponding tabl
 '''
 send_ops_to_pub_task = build_gcs_to_bq_task(dag, op_export_task.task_id, public_project, public_dataset, table_names['operations'], '', partition=True, cluster=True)
 send_trades_to_pub_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, public_project, public_dataset, table_names['trades'], '', partition=True, cluster=True)
- 
-time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task
-delete_old_op_task >> send_ops_to_pub_task
+
+'''
+Batch loading of derived table, `enriched_history_operations` which denormalizes ledgers, transactions and operations data.
+Must wait on history_archive_without_captive_core_dag to finish before beginning the job.
+'''
+wait_on_dag = build_cross_deps(dag, "wait_on_ledgers_txs", "history_archive_without_captive_core")
+insert_enriched_hist_task = build_bq_insert_job(dag, internal_project, internal_dataset, 'enriched_history_operations')
+insert_enriched_hist_pub_task = build_bq_insert_job(dag, public_project, public_dataset, 'enriched_history_operations')
+
+time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> insert_enriched_hist_task
+op_export_task >> delete_old_op_pub_task >> send_ops_to_pub_task >> wait_on_dag >> insert_enriched_hist_pub_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task
-delete_old_trade_task >> send_trades_to_pub_task
+trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task

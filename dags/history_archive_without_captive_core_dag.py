@@ -75,9 +75,12 @@ asset_export_task = build_export_task(dag, 'archive', 'export_assets', file_name
 The delete partition task checks to see if the given partition/batch id exists in 
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
-delete_old_ledger_task = build_delete_data_task(dag, table_names['ledgers'])
-delete_old_tx_task = build_delete_data_task(dag, table_names['transactions'])
-delete_old_asset_task = build_delete_data_task(dag, table_names['assets'])
+delete_old_ledger_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['ledgers'])
+delete_old_ledger_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['ledgers'])
+delete_old_tx_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['transactions'])
+delete_old_tx_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['transactions'])
+delete_old_asset_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['assets'])
+delete_old_asset_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['assets'])
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
@@ -96,8 +99,8 @@ send_txs_to_pub_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, public_
 send_assets_to_pub_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, public_project, public_dataset, table_names['assets'], '', partition=True, cluster=True)
 
 time_task >> write_ledger_stats >> ledger_export_task >> delete_old_ledger_task >> send_ledgers_to_bq_task
-delete_old_ledger_task >> send_ledgers_to_pub_task
+ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task
 time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task
-delete_old_tx_task >> send_txs_to_pub_task
+tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task
 time_task >> write_asset_stats >> asset_export_task  >> delete_old_asset_task >> send_assets_to_bq_task
-delete_old_asset_task >> send_assets_to_pub_task
+asset_export_task >> delete_old_asset_pub_task >> send_assets_to_pub_task
