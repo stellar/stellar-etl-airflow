@@ -8,27 +8,39 @@ import json
 
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
-from stellar_etl_airflow.default import get_default_dag_args
+from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow import macros
 
 from airflow import DAG
 from airflow.models import Variable
 
+init_sentry()
 
 dag = DAG(
     'history_archive_with_captive_core',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2022, 1, 4),
-    end_date=datetime.datetime(2022, 1, 4, 4),
+    start_date=datetime.datetime(2022, 3, 11, 18, 30),
     description='This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.',
     schedule_interval='*/30 * * * *',
+    params={
+        'alias': 'cc',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
+    user_defined_macros={
+        'subtract_data_interval': macros.subtract_data_interval,
+        'batch_run_date_as_datetime_string': macros.batch_run_date_as_datetime_string,
+    },
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 table_names = Variable.get('table_ids', deserialize_json=True)
+internal_project = Variable.get('bq_project')
+internal_dataset = Variable.get('bq_dataset')
+public_project = Variable.get('public_project')
+public_dataset = Variable.get('public_dataset')
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
@@ -54,8 +66,8 @@ The DAG sleeps for 30 seconds after the export_task writes to the file to give t
 script time to copy the file over to the correct directory. If there is no sleep, the load task 
 starts prematurely and will not load data.
 '''
-op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'], use_testnet=use_testnet, use_gcs=True)
-trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_names['trades'], use_testnet=use_testnet, use_gcs=True)
+op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
+trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_names['trades'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
 
 '''
 The delete partition task checks to see if the given partition/batch id exists in 
@@ -68,8 +80,17 @@ delete_old_trade_task = build_delete_data_task(dag, table_names['trades'])
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, table_names['operations'], '', partition=True)
-send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, table_names['trades'], '', partition=False)
+send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, internal_project, internal_dataset, table_names['operations'], '', partition=True, cluster=False)
+send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, internal_project, internal_dataset, table_names['trades'], '', partition=False, cluster=False)
+
+'''
+The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+'''
+send_ops_to_pub_task = build_gcs_to_bq_task(dag, op_export_task.task_id, public_project, public_dataset, table_names['operations'], '', partition=True, cluster=True)
+send_trades_to_pub_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, public_project, public_dataset, table_names['trades'], '', partition=True, cluster=True)
  
 time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task
+delete_old_op_task >> send_ops_to_pub_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task
+delete_old_trade_task >> send_trades_to_pub_task

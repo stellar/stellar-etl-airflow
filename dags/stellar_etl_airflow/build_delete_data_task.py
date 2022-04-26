@@ -1,13 +1,13 @@
 from datetime import datetime
 from airflow.models import Variable
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator 
-
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from stellar_etl_airflow import macros
 
 def build_delete_data_task(dag, table):
     PROJECT_ID = Variable.get('bq_project')
     DATASET_ID = Variable.get('bq_dataset')
-    batch_id = '{{ run_id }}'
-    batch_date = '{{ prev_execution_date.to_datetime_string() }}'
+    batch_id = macros.get_batch_id()
+    batch_date = '{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}'
 
     # Adding the partition to the filter clause prunes the query
     # if the table is partitioned (tables partitioned by batch_run_date)

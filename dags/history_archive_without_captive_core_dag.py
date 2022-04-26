@@ -8,26 +8,39 @@ import json
 
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_time_task import build_time_task
-from stellar_etl_airflow.default import get_default_dag_args
+from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow import macros
 
 from airflow import DAG
 from airflow.models import Variable
 
+init_sentry()
 
 dag = DAG(
     'history_archive_without_captive_core',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 12, 22, 17, 15),
+    start_date=datetime.datetime(2022, 3, 11, 18, 30),
     description='This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads',
     schedule_interval='*/15 * * * *',
+    params={
+        'alias': 'archive',
+    },
     user_defined_filters={'fromjson': lambda s: json.loads(s)},
+    user_defined_macros={
+        'subtract_data_interval': macros.subtract_data_interval,
+        'batch_run_date_as_datetime_string': macros.batch_run_date_as_datetime_string,
+    },
 )
 
 file_names = Variable.get('output_file_names', deserialize_json=True)
 table_names = Variable.get('table_ids', deserialize_json=True)
+internal_project = Variable.get('bq_project')
+internal_dataset = Variable.get('bq_dataset')
+public_project = Variable.get('public_project')
+public_dataset = Variable.get('public_dataset')
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
 '''
@@ -70,10 +83,21 @@ delete_old_asset_task = build_delete_data_task(dag, table_names['assets'])
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, table_names['ledgers'], '', partition=True)
-send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, table_names['transactions'], '', partition=True)
-send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, table_names['assets'], '', partition=False)
- 
+send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, internal_project, internal_dataset, table_names['ledgers'], '', partition=True, cluster=False)
+send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, internal_project, internal_dataset, table_names['transactions'], '', partition=True, cluster=False)
+send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, internal_project, internal_dataset, table_names['assets'], '', partition=False, cluster=False)
+
+'''
+The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+'''
+send_ledgers_to_pub_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, public_project, public_dataset, table_names['ledgers'], '', partition=True, cluster=True)
+send_txs_to_pub_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, public_project, public_dataset, table_names['transactions'], '', partition=True, cluster=True)
+send_assets_to_pub_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, public_project, public_dataset, table_names['assets'], '', partition=True, cluster=True)
+
 time_task >> write_ledger_stats >> ledger_export_task >> delete_old_ledger_task >> send_ledgers_to_bq_task
+delete_old_ledger_task >> send_ledgers_to_pub_task
 time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task
+delete_old_tx_task >> send_txs_to_pub_task
 time_task >> write_asset_stats >> asset_export_task  >> delete_old_asset_task >> send_assets_to_bq_task
+delete_old_asset_task >> send_assets_to_pub_task

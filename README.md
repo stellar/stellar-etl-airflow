@@ -47,7 +47,7 @@ Cloud Composer is the preferred method of deployment. [Cloud Composer](https://c
 > **_WARNING:_** Make sure that you adhere to the [location requirements](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage) for Cloud Storage buckets and BigQuery datasets. Otherwise, it will not be possible to upload data to BigQuery.
 
 ### Create Google Cloud Composer environment
-Create a new Cloud Composer environment using the command below or the [UI](https://cloud.google.com/composer/docs/how-to/managing/creating#creating_a_new_environment):
+Create a new Cloud Composer environment using the [UI](https://cloud.google.com/composer/docs/how-to/managing/creating#creating_a_new_environment):
 ```bash
 gcloud composer environments create <environment_name> --location=<project_location> \
 --zone=<project_zone> --disk-size=100GB --machine-type=n1-standard-4 \
@@ -57,6 +57,11 @@ gcloud composer environments create <environment_name> --location=<project_locat
 gcloud composer environments update <environment_name> \
 --location=<project_location> --update-pypi-package=docker==3.7.3
 ```
+
+> **_For AIRFLOW 2.x:_** Be wary of choosing "autopilot" for environment resource management. The ephemeral storage provided by autopilot-ed containers is capped at 10GB, which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`), or any task that runs captive core.
+You can add a second node pool to your Composer 1 environment, and configure it to be managed by autopilot if desired.
+Composer 2 environments use autopilot exclusively for resource management.
+
 _Note_: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
 Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-1.16.11-airflow-1.10.14` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
 > **_TROUBLESHOOTING:_** If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with Owner permissions and use it to create the Composer environment.
@@ -77,7 +82,9 @@ The Airflow DAGs require service account keys to perform their operations. Gener
 
 > **_NOTE:_** The name of the key file corresponds to the Airflow variable "api_key_path". The data folder in Cloud Storage corresponds to the path "/home/airflow/gcs/data/", but ensure that the variable has the correct filename.
 
-### (Optional) Add Kubernetes Node Pool
+### Add Kubernetes Node Pool
+If the Kubernetes pods contain long-running or resource intensive operations, it is best to create a separate node pool for task execution. Executing the tasks on the same node pool as the `airflow-scheduler` will contribute to resource starvation and transient failures in the DAG.
+
 Find the Kubernetes cluster name that is used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the value of **GKE cluster**. The cluster name is the final part of this path.
 
 Then, run the command:
@@ -87,9 +94,30 @@ gcloud container node-pools create <pool_name> --cluster <cluster_name> \
 --zone <composer_zone> --project <project_id>
 ```
 
-> **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
+Alternatively, node pools can be created through the UI with the `Add Node Pool` button. Security can only be applied upon pool creation, so ensure that your security account and scopes are correct. If they need to be updated, you will need to delete the node pool and recreate it.
 
-### Create Namespace for ETL Tasks
+> **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
+> 
+> A sample affinity configuration is below, as well as defined in the `airflow_variables.txt`. The user must supply the node pool name in `values`.
+
+```
+"affinity": {
+        "nodeAffinity": { 
+            "requiredDuringSchedulingIgnoredDuringExecution": { 
+                "nodeSelectorTerms": [{ 
+                    "matchExpressions": [{ 
+                        "key": "cloud.google.com/gke-nodepool", 
+                        "operator": "In", 
+                        "values": [<node-pool-1>, 
+						           <node-pool-2>,] 
+                        }] 
+                    }] 
+                } 
+            } 
+        },
+```
+
+### (Optional) Create Namespace for ETL Tasks
 Open the Google [Cloud Shell](https://cloud.google.com/shell). Run these commands:
 ```bash
 gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
@@ -97,7 +125,7 @@ gcloud container clusters get-credentials <cluster_name> --region=<composer_regi
 kubectl create ns <namespace_name>
 
 kubectl create clusterrolebinding default-admin --clusterrole cluster-admin \
---serviceaccount=<airflow_worker_namespace>:default --namespace <namespace_name>
+--serviceaccount=composer-1-18-1-airflow-2-2-3-d948d67b:default --namespace hubble-composer
 ```
 
 The first command acquires credentials, allowing you to execute the next commands. The second command creates the new namespace, and the third allows the service account that executes tasks to act in the new namespace.
@@ -105,6 +133,53 @@ The first command acquires credentials, allowing you to execute the next command
 To find the value of `<airflow_worker_namespace>`, select your Cloud Composer environment, navigate to environment configuration, and look for the value of **GKE cluster**. Click on the link that says "view cluster workloads." A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Look for the value of **Namespace**.
 
 > **_NOTE:_** The name of the newly created namespace corresponds to the Airflow variable "namespace".
+
+### Authenticating Tasks in an Autopilot-Managed Environment
+
+There are a few extra hoops to jump through to configure Workload Identity, so that `export` tasks have permissions to upload files to GCS.
+You will be creating a Kubernetes service account, and bind it to a Google service account that your task is authenticated as.
+Steps taken from this [doc](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#authenticating_to).
+
+* Create a namespace in the k8s cluster where the Composer env is running:
+
+```bash
+kubectl create namespace hubble-composer
+```
+
+* Create a k8s service account:
+```bash
+kubectl create serviceaccount hubble-composer-service-account \
+    --namespace hubble-composer
+```
+
+* Create a Google service account, if one doesn't already exist:
+```bash
+gcloud iam service-accounts create hubble-service-account \
+    --project=hubble-261722
+```
+
+* Grant the Google service account that you're using `storage.objectAdmin` permissions, it doesn't already have it.
+```bash
+  gcloud projects add-iam-policy-binding hubble-261722 \
+  --member "serviceAccount:hubble-service-account@hubble-261722.iam.gserviceaccount.com" \
+  --role "roles/storage.objectAdmin"
+```
+
+* Associate the Google and k8s service accounts:
+```bash
+  gcloud iam service-accounts add-iam-policy-binding hubble-service-account@hubble-261722.iam.gserviceaccount.com \
+  --role roles/iam.workloadIdentityUser \
+  --member "serviceAccount:hubble-261722.svc.id.goog[hubble-composer/hubble-composer-service-account]"
+  ```
+
+* Annotate the k8s service account with the Google service account:
+```bash
+  kubectl annotate serviceaccount hubble-composer-service-account \
+    --namespace hubble-composer \
+    iam.gke.io/gcp-service-account=hubble-service-account@hubble-261722.iam.gserviceaccount.com
+```
+
+* Set the corresponding airflow variables (`k8s_namespace` and `k8s_service_account`) for tasks running on `KubernetesPodOperator`.
 
 ### Modify Kubernetes Config for Airflow Workers
 Find the Kubernetes cluster workloads that are used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the **GKE cluster** section. Click on the link that says "view cluster workloads."
@@ -301,10 +376,11 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 ### Kubernetes-Specific Variables
 | Variable name               | Description                                                                                                                                                                                                                                                                                 | Should be changed?                                                       |
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| use_kubernetes_pod_exporter | Boolean variable. If set to True, the KubernetesPodOperator is used, and the rest of the variables in the table need to be set. If False, the DockerOperator is used.                                                                                                                       | Yes, if you want to use the KubernetesPodOperator                        |
 | resources                   | Resources to request and allocate to Kubernetes Pods.                                                                                                                                                                                                                                       | No, unless pods need more resources                                      |
 | kube_config_location        | Location of the kubernetes config file. See [here](https://www.astronomer.io/docs/cloud/stable/develop/kubepodoperator-local#get-your-kube-config) for a guide on finding the Kube config file. If you are running the pods in the same cluster as Airflow, you can leave this value blank. | No, unless the pods are in a different cluster than Airflow.             |
 | kubernetes_sidecar_image    | Image used for xcom sidecar                                                                                                                                                                                                                                                                 | No, unless you want to pull a different alpine-based image.              |
+| k8s_namespace               | Namespace to run the task in                                                                                                                                                                                                                                                                | No, unless the pods are moved into a new namespace                       |
+| k8s_service_account         | K8s service account the task runs as                                                                                                                                                                                                                                                        | No, unless k8s authentication is modified, and is likely linked to the associated GCP service account.  |
 | volume_config               | JSON objects representing the configuration for your Kubernetes volume.                                                                                                                                                                                                                     | Yes. Change configs to match your volume (see below for example configs) |
 | volume_name                 | Name of the persistent ReadWriteMany volume associated with the claim.                                                                                                                                                                                                                      | Yes. Change to your volume name.                                         |
 
