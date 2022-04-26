@@ -28,7 +28,7 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
     else:
         cluster_fields = None
     project_name = project
-    if dataset == 'crypto_stellar_2':
+    if dataset == Variable.get('public_dataset'):
         dataset_type = 'pub'
     else:
         dataset_type = 'bq'

@@ -4,7 +4,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from stellar_etl_airflow import macros
 
 def build_delete_data_task(dag, project, dataset, table):
-    if dataset == 'test_crypto_stellar_2':
+    if dataset == Variable.get('public_dataset'):
         dataset_type = 'pub'
     else:
         dataset_type = 'bq'

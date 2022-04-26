@@ -101,8 +101,8 @@ Batch loading of derived table, `enriched_history_operations` which denormalizes
 Must wait on history_archive_without_captive_core_dag to finish before beginning the job.
 '''
 wait_on_dag = build_cross_deps(dag, "wait_on_ledgers_txs", "history_archive_without_captive_core")
-insert_enriched_hist_task = build_bq_insert_job(dag, internal_project, internal_dataset, 'enriched_history_operations')
-insert_enriched_hist_pub_task = build_bq_insert_job(dag, public_project, public_dataset, 'enriched_history_operations')
+insert_enriched_hist_task = build_bq_insert_job(dag, internal_project, internal_dataset, "enriched_history_operations", partition=True)
+insert_enriched_hist_pub_task = build_bq_insert_job(dag, public_project, public_dataset, "enriched_history_operations", partition=True)
 
 time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> insert_enriched_hist_task
 op_export_task >> delete_old_op_pub_task >> send_ops_to_pub_task >> wait_on_dag >> insert_enriched_hist_pub_task

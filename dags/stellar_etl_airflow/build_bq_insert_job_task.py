@@ -18,8 +18,8 @@ def file_to_string(sql_path):
     with open(sql_path, "r") as sql_file:
         return sql_file.read()
 
-def build_bq_insert_job(dag, project, dataset, table):
-    if dataset == 'test_crypto_stellar_2':
+def build_bq_insert_job(dag, project, dataset, table, partition):
+    if dataset == Variable.get('public_dataset'):
         dataset_type = 'pub'
     else:
         dataset_type = 'bq'
@@ -36,6 +36,10 @@ def build_bq_insert_job(dag, project, dataset, table):
                   'prev_batch_run_date': prev_batch_run_date,
                   'next_batch_run_date': next_batch_run_date}
     query = query.format(**sql_params)
+    if partition:
+        partition_fields = Variable.get("partition_fields", deserialize_json=True)
+    else:
+        partition_fields = None
 
     return BigQueryInsertJobOperator(
         task_id=f"insert_records_{table}_{dataset_type}",
@@ -49,6 +53,7 @@ def build_bq_insert_job(dag, project, dataset, table):
                 },
                 "useLegacySql": False,
                 "writeDisposition": "WRITE_APPEND",
+                "time_partitioning": partition_fields[table],
             },
         }
     )
