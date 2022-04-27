@@ -80,6 +80,12 @@
     },
     "output_path": "/home/airflow/gcs/data/",
     "owner": "SDF",
+    "partition_fields": {
+        "enriched_history_operations": {
+            "type": "MONTH",
+            "field": "closed_at",
+        },
+    },
     "public_dataset": "crypto_stellar_2",
     "public_project": "crypto-stellar",
     "resources": {
