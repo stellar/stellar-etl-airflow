@@ -81,6 +81,7 @@ delete_old_trade_task = build_delete_data_task(dag, internal_project, internal_d
 delete_old_trade_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['trades'])
 delete_enrich_op_task = build_delete_data_task(dag, internal_project, internal_dataset, 'enriched_history_operations')
 delete_enrich_op_pub_task = build_delete_data_task(dag, public_project, public_dataset, 'enriched_history_operations')
+delete_enrich_ma_op_task = build_delete_data_task(dag, internal_project, internal_dataset, 'enriched_meaningful_history_operations')
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
@@ -99,12 +100,14 @@ send_trades_to_pub_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, p
 '''
 Batch loading of derived table, `enriched_history_operations` which denormalizes ledgers, transactions and operations data.
 Must wait on history_archive_without_captive_core_dag to finish before beginning the job.
+The internal dataset also creates a filtered table, `enriched_meaningful_history_operations` which filters down to only relevant asset ops.
 '''
 wait_on_dag = build_cross_deps(dag, "wait_on_ledgers_txs", "history_archive_without_captive_core")
 insert_enriched_hist_task = build_bq_insert_job(dag, internal_project, internal_dataset, "enriched_history_operations", partition=True)
 insert_enriched_hist_pub_task = build_bq_insert_job(dag, public_project, public_dataset, "enriched_history_operations", partition=True)
+insert_enriched_ma_hist_task = build_bq_insert_job(dag, internal_project, internal_dataset, "enriched_meaningful_history_operations", partition=True)
 
-time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> insert_enriched_hist_task
+time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> insert_enriched_hist_task >> delete_enrich_ma_op_task >> insert_enriched_ma_hist_task
 op_export_task >> delete_old_op_pub_task >> send_ops_to_pub_task >> wait_on_dag >> insert_enriched_hist_pub_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task
 trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
