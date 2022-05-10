@@ -1,6 +1,7 @@
 '''
 This file contains functions for creating Airflow tasks to convert from a time range to a ledger range.
 '''
+import logging
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.models import Variable
 from kubernetes.client import models as k8s
@@ -23,6 +24,7 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
     end_time = '{{ subtract_data_interval(dag, data_interval_end).isoformat() }}' if use_next_exec_time else '{{ ts }}'
     command = ["stellar-etl"]
     args = [ "get_ledger_range_from_times", "-s", start_time, "-o", "/airflow/xcom/return.json", '-e', end_time]
+    logging.info(f'Constructing command with args: {args}')
     if use_testnet:
         args.append("--testnet")
     config_file_location = Variable.get('kube_config_location')

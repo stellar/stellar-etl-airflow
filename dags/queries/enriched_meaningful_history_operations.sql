@@ -15,6 +15,5 @@ INNER JOIN `{project_id}.{dataset_id}.meaningful_assets` ma ON
   (eho.source_asset_code = ma.code AND eho.source_asset_issuer = ma.issuer) OR
   (eho.selling_asset_code = ma.code AND eho.selling_asset_issuer = ma.issuer) OR
   (eho.buying_asset_code = ma.code AND eho.buying_asset_issuer = ma.issuer)
-WHERE (eho.successful=true OR eho.successful IS NOT NULL)
-    AND eho.batch_id = '{batch_id}'
+WHERE eho.batch_id = '{batch_id}'
     AND eho.batch_run_date = '{batch_run_date}'
