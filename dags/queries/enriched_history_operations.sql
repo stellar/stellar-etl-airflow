@@ -1,3 +1,11 @@
+/*
+Query denormalizes the history_ledgers, history_transactions and history_operations tables at
+the `history_operation_id` level. Table is loaded using an append-only load pattern by batch_id.
+Note: as attributes are added to the `details` blob in history_operations, it is recommended
+to add relevant data as a new field in the enriched_history_operations table.
+
+Table is heavily used for KPI calculation and Metabase Dashboards.
+*/
 SELECT
 -- expanded operations details fields
 details.account, details.amount, details.asset_code, details.asset_issuer, details.asset_type, details.authorize,
