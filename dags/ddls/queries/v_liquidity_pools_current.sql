@@ -20,7 +20,7 @@ WITH current_lps AS
         LP.last_modified_ledger,
         L.closed_at,
         LP.deleted,
-        DENSE_RANK() OVER(PARTITION BY liquidity_pool_id ORDER BY LP.last_modified_ledger DESC) AS rank_number
+        DENSE_RANK() OVER(PARTITION BY liquidity_pool_id ORDER BY LP.last_modified_ledger DESC LP.batch_insert_ts DESC) AS rank_number
     FROM `PROJECT.DATASET.liquidity_pools` LP
     JOIN `PROJECT.DATASET.history_ledgers` L
         ON LP.last_modified_ledger = L.sequence
@@ -41,4 +41,20 @@ SELECT liquidity_pool_id,
     deleted
 FROM current_lps 
 WHERE rank_number = 1
+group by liquidity_pool_id, 
+    fee, 
+    trustline_count, 
+    pool_share_count,
+    asset_pair, 
+    asset_a_code,
+    asset_a_issuer,
+    asset_a_type,
+    asset_b_code, 
+    asset_b_issuer, 
+    asset_b_type,
+    asset_a_amount, 
+    asset_b_amount,
+    last_modified_ledger, 
+    closed_at,
+    deleted
     

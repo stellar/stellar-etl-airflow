@@ -9,6 +9,8 @@ WITH current_accts AS
         A.buying_liabilities,
         A.selling_liabilities,
         A.sequence_number,
+        A.sequence_ledger,
+        A.sequence_time,
         A.num_subentries,
         A.inflation_destination,
         A.flags,
@@ -21,6 +23,7 @@ WITH current_accts AS
         A.ledger_entry_change,
         L.closed_at,
         A.deleted,
+        sponsor,
         DENSE_RANK() OVER(PARTITION BY A.account_id ORDER BY A.last_modified_ledger DESC) AS rank_number
     FROM `hubble-261722.crypto_stellar_internal_2.accounts` A
     JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
@@ -30,6 +33,8 @@ WITH current_accts AS
         buying_liabilities, 
         selling_liabilities, 
         sequence_number,
+        sequence_ledger,
+        sequence_time,
         num_subentries, 
         inflation_destination, 
         flags, 
@@ -43,13 +48,16 @@ WITH current_accts AS
         last_modified_ledger, 
         ledger_entry_change,
         closed_at,
-        deleted
+        deleted,
+        sponsor
     )
 SELECT account_id, 
     balance,
     buying_liabilities, 
     selling_liabilities, 
     sequence_number,
+    sequence_ledger,
+    sequence_time,
     num_subentries, 
     inflation_destination, 
     flags,    
@@ -61,6 +69,7 @@ SELECT account_id,
     last_modified_ledger, 
     ledger_entry_change,
     closed_at,
-    deleted
+    deleted,
+    sponsor
 FROM current_accts   
 WHERE rank_number = 1

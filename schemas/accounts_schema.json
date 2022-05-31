@@ -108,5 +108,15 @@
     "mode": "NULLABLE",
     "name": "num_sponsoring",
     "type": "INTEGER"
+  },
+  { 
+    "mode": "NULLABLE",
+    "name": "sequence_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sequence_time",
+    "type": "TIMESTAMP"
   }
 ]
