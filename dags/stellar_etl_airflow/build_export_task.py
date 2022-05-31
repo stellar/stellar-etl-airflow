@@ -59,7 +59,7 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
     We need to subtract 1 ledger from the end so that there is no overlap. However, sometimes the start ledger equals the end ledger.
     By setting the end=max(start, end-1), we ensure every range is valid.
     '''
-    if cmd_type == 'archive':
+    if cmd_type in ('archive', 'bounded-core'):
         end_ledger = '{{ [ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]-1, ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"]] | max}}'
 
     image_output_path, core_exec, core_cfg = get_path_variables(use_testnet)

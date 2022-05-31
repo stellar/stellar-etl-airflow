@@ -1,0 +1,63 @@
+WITH current_offers AS 
+(
+    SELECT O.seller_id,
+        O.offer_id,
+        O.selling_asset_type,
+        O.selling_asset_code,
+        O.selling_asset_issuer,
+        O.buying_asset_type,
+        O.buying_asset_code,
+        O.buying_asset_issuer,
+        O.amount,
+        O.pricen,
+        O.priced,
+        O.price,
+        O.flags,
+        O.last_modified_ledger,
+        L.closed_at,
+        O.ledger_entry_change,
+        O.deleted,
+        O.sponsor,
+        DENSE_RANK() OVER(PARTITION BY O.seller_id, O.offer_id ORDER BY O.last_modified_ledger DESC) AS rank_number
+    FROM `hubble-261722.crypto_stellar_internal_2.offers` O
+    JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
+        ON O.last_modified_ledger = L.sequence
+    GROUP BY seller_id,
+        offer_id,
+        selling_asset_type,
+        selling_asset_code,
+        selling_asset_issuer,
+        buying_asset_type,
+        buying_asset_code,
+        buying_asset_issuer,
+        amount,
+        pricen,
+        priced,
+        price,
+        flags,
+        last_modified_ledger,
+        closed_at,
+        ledger_entry_change,
+        deleted,
+        sponsor
+    )
+SELECT seller_id,
+    offer_id,
+    selling_asset_type,
+    selling_asset_code,
+    selling_asset_issuer,
+    buying_asset_type,
+    buying_asset_code,
+    buying_asset_issuer,
+    amount,
+    pricen,
+    priced,
+    price,
+    flags,
+    last_modified_ledger,
+    closed_at,
+    ledger_entry_change,
+    deleted,
+    sponsor
+FROM current_offers 
+WHERE rank_number = 1
