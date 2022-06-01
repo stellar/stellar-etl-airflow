@@ -35,7 +35,11 @@ memo_type, memo, time_bounds, successful, fee_charged, fee_account, new_max_fee,
 ledger_hash, previous_ledger_hash, transaction_count, hl.operation_count as ledger_operation_count, closed_at,
 hl.id as ledger_id, total_coins,
 fee_pool, base_fee, base_reserve, max_tx_set_size, protocol_version, successful_transaction_count, failed_transaction_count,
-ho.batch_id as batch_id, ho.batch_run_date as batch_run_date, current_timestamp() as batch_insert_ts
+ho.batch_id as batch_id, ho.batch_run_date as batch_run_date, current_timestamp() as batch_insert_ts,
+--new protocol 19 fields for transaction preconditions
+ht.ledger_bounds as ledger_bounds, ht.min_account_sequence as min_account_sequence, 
+ht.min_account_sequence_age as min_account_sequence_age, ht.min_account_sequence_ledger_gap as min_account_sequence_ledger_gap,
+ht.extra_signers as extra_signers
 FROM `{project_id}.{dataset_id}.history_operations` ho
 JOIN `{project_id}.{dataset_id}.history_transactions` ht
     on ho.transaction_id=ht.id

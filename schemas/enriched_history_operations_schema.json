@@ -1,0 +1,639 @@
+[
+    {
+        "mode": "NULLABLE",
+        "name": "account",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "asset_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "asset_issuer",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "asset_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "authorize",
+        "type": "BOOLEAN"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "balance_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "buying_asset_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "buying_asset_issuer",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "buying_asset_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "from",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "funder",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "high_threshold",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "home_domain",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "inflation_dest",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "into",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "limit",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "low_threshold",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "master_key_weight",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "med_threshold",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "offer_id",
+        "type": "INTEGER"
+    },
+    {
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "asset_code",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "asset_issuer",
+                "type": "STRING"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "asset_type",
+                "type": "STRING"
+            }
+        ],
+        "mode": "REPEATED",
+        "name": "path",
+        "type": "RECORD"
+        
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "price",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "d",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "n",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "selling_asset_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "selling_asset_issuer",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "selling_asset_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "REPEATED",
+        "name": "set_flags",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "REPEATED",
+        "name": "set_flags_s",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "signer_key",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "signer_weight",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "source_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "source_asset_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "source_asset_issuer",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "source_asset_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "source_max",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "starting_balance",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "to",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustee",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustor",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustline_asset",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "value",
+        "type": "STRING"
+    },
+    {
+        "mode": "REPEATED",
+        "name": "clear_flags",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "REPEATED",
+        "name": "clear_flags_s",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "destination_min",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "bump_to",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "sponsor",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "sponsored_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "begin_sponsor",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "authorize_to_maintain_liabilities",
+        "type": "BOOLEAN"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "clawback_enabled",
+        "type": "BOOLEAN"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "liquidity_pool_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_asset_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_asset_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_asset_issuer",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_max_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_deposit_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_asset_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_asset_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_asset_issuer",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_max_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_deposit_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "min_price",
+        "type": "FLOAT"
+    },
+    {
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "d",
+                "type": "INTEGER"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "n",
+                "type": "INTEGER"
+            }
+        ],
+        "mode": "REPEATED",
+        "name": "min_price_r",
+        "type": "RECORD"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "max_price",
+        "type": "FLOAT"
+    },
+    {
+        "fields": [
+            {
+                "mode": "NULLABLE",
+                "name": "d",
+                "type": "INTEGER"
+            },
+            {
+                "mode": "NULLABLE",
+                "name": "n",
+                "type": "INTEGER"
+            }
+        ],
+        "mode": "REPEATED",
+        "name": "max_price_r",
+        "type": "RECORD"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "shares_received",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_min_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_min_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "shares",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_a_withdraw_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_withdraw_amount",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "op_application_order",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "op_id",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "op_source_account",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "op_source_account_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "transaction_id",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "transaction_hash",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "ledger_sequence",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "txn_application_order",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "txn_account",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "account_sequence",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "max_fee",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "txn_operation_count",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "txn_created_at",
+        "type": "TIMESTAMP"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "memo_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "memo",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "time_bounds",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "successful",
+        "type": "BOOLEAN"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "fee_charged",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "fee_account",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "new_max_fee",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "account_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "fee_account_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "ledger_hash",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "previous_ledger_hash",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "transaction_count",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "ledger_operation_count",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "closed_at",
+        "type": "TIMESTAMP"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "ledger_id",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "total_coins",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "fee_pool",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "base_fee",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "base_reserve",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "max_tx_set_size",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "protocol_version",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "successful_transaction_count",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "failed_transaction_count",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "batch_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "batch_run_date",
+        "type": "DATETIME"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "batch_insert_ts",
+        "type": "TIMESTAMP"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "ledger_bounds",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "min_account_sequence",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "min_account_sequence_age",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "min_account_sequence_ledger_gap",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "REPEATED",
+        "name": "extra_signers",
+        "type": "STRING"
+    }
+]
