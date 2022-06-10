@@ -1,8 +1,7 @@
 '''
 This file contains functions for creating Airflow tasks to run stellar-etl export functions.
 '''
-import ast
-import datetime
+from datetime import datetime, timedelta
 import logging
 import os
 from airflow import AirflowException
@@ -87,7 +86,7 @@ def generate_etl_cmd(command, base_filename, cmd_type, use_gcs=False, use_testne
         cmd.extend(['--gcs-bucket', Variable.get('gcs_exported_data_bucket_name')])
         batch_id = macros.get_batch_id()
         batch_date = '{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}'
-        batch_insert_ts = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        batch_insert_ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         metadata = f"'batch_id={batch_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'"
         cmd.extend(['-u', metadata])
     if use_testnet:
@@ -119,6 +118,7 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         service_account_name=Variable.get('k8s_service_account'),
         namespace=Variable.get('k8s_namespace'),
         task_id=command + '_task',
+        execution_timeout=timedelta(minutes=180),
         name=command + '_task',
         image=Variable.get('image_name'),
         cmds=['bash', '-c'],

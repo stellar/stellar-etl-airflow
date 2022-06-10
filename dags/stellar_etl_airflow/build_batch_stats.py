@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator 
 from stellar_etl_airflow import macros
@@ -20,6 +20,7 @@ def build_batch_stats(dag, table):
 
     return BigQueryInsertJobOperator(
         project_id=PROJECT_ID,
+        execution_timeout=timedelta(seconds=180),
         task_id=f"insert_batch_stats_{table}",
         configuration={
             "query": {

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 # import config
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
@@ -43,6 +44,7 @@ def build_bq_insert_job(dag, project, dataset, table, partition):
 
     return BigQueryInsertJobOperator(
         task_id=f"insert_records_{table}_{dataset_type}",
+        execution_timeout=timedelta(seconds=180),
         configuration={
             "query": {
                 "query": query,

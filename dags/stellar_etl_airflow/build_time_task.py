@@ -1,6 +1,7 @@
 '''
 This file contains functions for creating Airflow tasks to convert from a time range to a ledger range.
 '''
+from datetime import timedelta
 import logging
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.models import Variable
@@ -35,6 +36,7 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
     return KubernetesPodOperator(
          task_id='get_ledger_range_from_times',
          name='get_ledger_range_from_times',
+         execution_timeout=timedelta(seconds=120),
          namespace=Variable.get('k8s_namespace'),
          service_account_name=Variable.get('k8s_service_account'),
          image=Variable.get('image_name'),
