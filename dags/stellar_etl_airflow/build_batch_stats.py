@@ -20,8 +20,8 @@ def build_batch_stats(dag, table):
 
     return BigQueryInsertJobOperator(
         project_id=PROJECT_ID,
-        execution_timeout=timedelta(seconds=180),
         task_id=f"insert_batch_stats_{table}",
+        execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_batch_stats.__name__]),
         configuration={
             "query": {
                 "query": INSERT_ROWS_QUERY,

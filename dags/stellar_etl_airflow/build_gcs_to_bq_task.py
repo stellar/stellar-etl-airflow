@@ -45,7 +45,7 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
 
     return GCSToBigQueryOperator(
         task_id=f'send_{data_type}_to_{dataset_type}',
-        execution_timeout=timedelta(seconds=300),
+        execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_gcs_to_bq_task.__name__]),
         bucket=bucket_name,
         schema_fields=schema_fields,
         autodetect=False,

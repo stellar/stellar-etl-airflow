@@ -36,7 +36,7 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
     return KubernetesPodOperator(
          task_id='get_ledger_range_from_times',
          name='get_ledger_range_from_times',
-         execution_timeout=timedelta(seconds=120),
+         execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_time_task.__name__]),
          namespace=Variable.get('k8s_namespace'),
          service_account_name=Variable.get('k8s_service_account'),
          image=Variable.get('image_name'),

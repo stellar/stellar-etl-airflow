@@ -118,7 +118,7 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         service_account_name=Variable.get('k8s_service_account'),
         namespace=Variable.get('k8s_namespace'),
         task_id=command + '_task',
-        execution_timeout=timedelta(minutes=180),
+        execution_timeout=timedelta(minutes=Variable.get('task_timeout', deserialize_json=True)[build_export_task.__name__]),
         name=command + '_task',
         image=Variable.get('image_name'),
         cmds=['bash', '-c'],

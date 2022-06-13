@@ -22,7 +22,7 @@ def build_delete_data_task(dag, project, dataset, table):
     return BigQueryInsertJobOperator(
         project_id=project,
         task_id=f"delete_old_partition_{table}_{dataset_type}",
-        execution_timeout=timedelta(seconds=180),
+        execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_delete_data_task.__name__]),
         configuration={
             "query": {
                 "query": DELETE_ROWS_QUERY,
