@@ -121,6 +121,14 @@
         "transactions": "history_transactions",
         "trustlines": "trust_lines"
     },
+    "task_timeout": {
+        "build_batch_stats": 180,
+        "build_bq_insert_job": 180,
+        "build_delete_data_task": 180,
+        "build_export_task": 180,
+        "build_gcs_to_bq_task": 300,
+        "build_time_task": 120
+    },
     "use_testnet": "False",
     "volume_config": "{}",
     "volume_name": "etl-data"
