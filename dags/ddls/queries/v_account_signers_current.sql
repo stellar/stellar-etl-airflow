@@ -12,7 +12,7 @@ WITH current_signers AS
         L.closed_at,
         S.ledger_entry_change,
         S.deleted,
-        DENSE_RANK() OVER(PARTITION BY S.account_id, S.signer ORDER BY S.last_modified_ledger DESC) AS rank_number
+        DENSE_RANK() OVER(PARTITION BY S.account_id, S.signer ORDER BY S.last_modified_ledger DESC, S.ledger_entry_change DESC) AS rank_number
     FROM `hubble-261722.crypto_stellar_internal_2.account_signers` S
     JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
         ON S.last_modified_ledger = L.sequence

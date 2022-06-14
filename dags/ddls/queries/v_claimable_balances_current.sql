@@ -15,7 +15,7 @@ WITH current_balances AS
         B.ledger_entry_change,
         L.closed_at,
         B.deleted,
-        DENSE_RANK() OVER(PARTITION BY B.balance_id ORDER BY B.last_modified_ledger DESC) AS rank_number
+        DENSE_RANK() OVER(PARTITION BY B.balance_id ORDER BY B.last_modified_ledger DESC, B.ledger_entry_change DESC) AS rank_number
     FROM `hubble-261722.crypto_stellar_internal_2.claimable_balances` B
     JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
         ON B.last_modified_ledger = L.sequence

@@ -24,7 +24,7 @@ WITH current_accts AS
         L.closed_at,
         A.deleted,
         sponsor,
-        DENSE_RANK() OVER(PARTITION BY A.account_id ORDER BY A.last_modified_ledger DESC) AS rank_number
+        DENSE_RANK() OVER(PARTITION BY A.account_id ORDER BY A.last_modified_ledger DESC, A.ledger_entry_change DESC) AS rank_number
     FROM `hubble-261722.crypto_stellar_internal_2.accounts` A
     JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
         ON A.last_modified_ledger = L.sequence

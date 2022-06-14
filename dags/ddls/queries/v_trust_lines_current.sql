@@ -16,9 +16,10 @@ WITH current_tls AS
         TL.sponsor,
         TL.trust_line_limit,
         TL.last_modified_ledger,
+        TL.ledger_entry_change,
         L.closed_at,
         TL.deleted,
-        DENSE_RANK() OVER(PARTITION BY TL.account_id, TL.asset_code, TL.asset_issuer, TL.liquidity_pool_id ORDER BY TL.last_modified_ledger DESC) AS rank_number
+        DENSE_RANK() OVER(PARTITION BY TL.account_id, TL.asset_code, TL.asset_issuer, TL.liquidity_pool_id ORDER BY TL.last_modified_ledger DESC, TL.ledger_entry_change DESC) AS rank_number
     FROM `PROJECT.DATASET.trust_lines` TL
     JOIN `PROJECT.DATASET.history_ledgers` L
         ON TL.last_modified_ledger = L.sequence
@@ -34,6 +35,7 @@ WITH current_tls AS
         sponsor, 
         trust_line_limit,
         last_modified_ledger, 
+        ledger_entry_change,
         closed_at, 
         deleted
     )
@@ -49,6 +51,7 @@ SELECT account_id,
     sponsor, 
     trust_line_limit, 
     last_modified_ledger, 
+    ledger_entry_change,
     closed_at,
     deleted
 FROM current_tls  

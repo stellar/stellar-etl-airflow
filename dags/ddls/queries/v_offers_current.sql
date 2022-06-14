@@ -18,7 +18,7 @@ WITH current_offers AS
         O.ledger_entry_change,
         O.deleted,
         O.sponsor,
-        DENSE_RANK() OVER(PARTITION BY O.seller_id, O.offer_id ORDER BY O.last_modified_ledger DESC) AS rank_number
+        DENSE_RANK() OVER(PARTITION BY O.seller_id, O.offer_id ORDER BY O.last_modified_ledger DESC, O.ledger_entry_change DESC) AS rank_number
     FROM `hubble-261722.crypto_stellar_internal_2.offers` O
     JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
         ON O.last_modified_ledger = L.sequence
