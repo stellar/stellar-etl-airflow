@@ -36,6 +36,7 @@ SELECT
   , details.from_muxed_id
   , details.funder
   , details.funder_muxed
+  , details.funder_muxed_id
   , details.high_threshold
   , details.home_domain
   , details.inflation_dest
