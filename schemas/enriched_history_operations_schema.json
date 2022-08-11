@@ -1033,7 +1033,7 @@
     },
     {
         "mode": "NULLABLE",
-        "name": "transaction_account_muxed",
+        "name": "account_muxed",
         "type": "STRING"
     },
     {
