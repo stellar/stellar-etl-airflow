@@ -6,8 +6,28 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "op_account_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "op_account_muxed_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "op_account_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "amount",
         "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "asset",
+        "type": "STRING"
     },
     {
         "mode": "NULLABLE",
@@ -51,12 +71,447 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "claimant",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "claimant_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "claimant_muxed_id",
+        "type": "STRING"
+    },
+    {
+      "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "destination",
+            "type": "STRING"
+          },
+          {
+            "fields": [
+              {
+                "mode": "NULLABLE",
+                "name": "unconditional",
+                "type": "BOOLEAN"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before",
+                "type": "STRING"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "rel_before",
+                "type": "INTEGER"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before_epoch",
+                "type": "INTEGER" 
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER" 
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "not",
+                    "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "or",
+                    "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "and",
+                    "type": "RECORD"
+                  }
+                ],
+                "mode": "REPEATED",
+                "name": "and",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER" 
+                  },
+                  {
+                    "fields": [
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before",
+                      "type": "STRING" 
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "rel_before",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "unconditional",
+                      "type": "BOOLEAN"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before_epoch",
+                      "type": "INTEGER" 
+                    }
+                  ],
+                  "mode": "REPEATED",
+                  "name": "and",
+                  "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before",
+                      "type": "STRING" 
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "rel_before",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "unconditional",
+                      "type": "BOOLEAN"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before_epoch",
+                      "type": "INTEGER" 
+                    }
+                  ],
+                  "mode": "REPEATED",
+                  "name": "or",
+                  "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before",
+                      "type": "STRING" 
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "rel_before",
+                      "type": "INTEGER"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "unconditional",
+                      "type": "BOOLEAN"
+                    },
+                    {
+                      "mode": "NULLABLE",
+                      "name": "abs_before_epoch",
+                      "type": "INTEGER" 
+                    }
+                  ],
+                  "mode": "REPEATED",
+                  "name": "not",
+                  "type": "RECORD"
+                  }
+                ],
+                "mode": "REPEATED",
+                "name": "not",
+                "type": "RECORD" 
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER" 
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "not",
+                    "type": "RECORD"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN" 
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "or",
+                    "type": "RECORD"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER" 
+                      },
+                      {
+                        "fields": [
+                          {
+                            "mode": "NULLABLE",
+                            "name": "abs_before",
+                            "type": "STRING"
+                          },
+                          {
+                            "mode": "NULLABLE",
+                            "name": "rel_before",
+                            "type": "INTEGER"
+                          },
+                          {
+                            "mode": "NULLABLE",
+                            "name": "unconditional",
+                            "type": "BOOLEAN"
+                          },
+                          {
+                            "mode": "NULLABLE",
+                            "name": "abs_before_epoch",
+                            "type": "INTEGER" 
+                          } 
+                        ],
+                        "mode": "REPEATED",
+                        "name": "not",
+                        "type": "RECORD"
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "and",
+                    "type": "RECORD"
+                  }
+                ],
+                "mode": "REPEATED",
+                "name": "or",
+                "type": "RECORD"
+              }
+            ],
+            "mode": "REPEATED",
+            "name": "predicate",
+            "type": "RECORD"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "claimants",
+        "type": "RECORD"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "data_account_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "data_name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "from",
         "type": "STRING"
     },
     {
         "mode": "NULLABLE",
+        "name": "from_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "from_muxed_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "funder",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "funder_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "funder_muxed_id",
         "type": "STRING"
     },
     {
@@ -77,6 +532,16 @@
     {
         "mode": "NULLABLE",
         "name": "into",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "into_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "into_muxed_id",
         "type": "STRING"
     },
     {
@@ -174,6 +639,11 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "signer_account_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "signer_key",
         "type": "STRING"
     },
@@ -219,12 +689,47 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "to_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "to_muxed_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "trustee",
         "type": "STRING"
     },
     {
         "mode": "NULLABLE",
+        "name": "trustee_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustee_muxed_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "trustor",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustor_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustor_muxed_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "trustline_account_id",
         "type": "STRING"
     },
     {
@@ -270,6 +775,16 @@
     {
         "mode": "NULLABLE",
         "name": "begin_sponsor",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "begin_sponsor_muxed",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "begin_sponsor_muxed_id",
         "type": "STRING"
     },
     {
@@ -518,7 +1033,7 @@
     },
     {
         "mode": "NULLABLE",
-        "name": "account_muxed",
+        "name": "transaction_account_muxed",
         "type": "STRING"
     },
     {
