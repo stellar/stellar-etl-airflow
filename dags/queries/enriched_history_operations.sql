@@ -112,7 +112,6 @@ SELECT
   , details.reserve_a_withdraw_amount
   , details.reserve_b_withdraw_amount
 -- operation fields
-  , ho.application_order AS op_application_order
   , ho.id AS op_id
   , source_account AS op_source_account
   , source_account_muxed AS op_source_account_muxed
