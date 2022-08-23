@@ -972,6 +972,11 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "type_string",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "batch_id",
     "type": "STRING"
   },
