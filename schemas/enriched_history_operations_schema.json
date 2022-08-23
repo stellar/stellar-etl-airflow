@@ -928,11 +928,6 @@
     },
     {
         "mode": "NULLABLE",
-        "name": "op_application_order",
-        "type": "INTEGER"
-    },
-    {
-        "mode": "NULLABLE",
         "name": "op_id",
         "type": "INTEGER"
     },
@@ -955,6 +950,11 @@
         "mode": "NULLABLE",
         "name": "type",
         "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "type_string",
+        "type": "string"
     },
     {
         "mode": "NULLABLE",
