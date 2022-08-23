@@ -117,6 +117,7 @@ SELECT
   , source_account_muxed AS op_source_account_muxed
   , transaction_id
   , type
+  , type_string
   -- transaction fields
   , transaction_hash
   , ledger_sequence
