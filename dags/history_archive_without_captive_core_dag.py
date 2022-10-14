@@ -67,7 +67,6 @@ script time to copy the file over to the correct directory. If there is no sleep
 starts prematurely and will not load data.
 '''
 ledger_export_task = build_export_task(dag, 'archive', 'export_ledgers', file_names['ledgers'], use_testnet=use_testnet, use_gcs=True)
-tx_export_task = build_export_task(dag, 'archive', 'export_transactions', file_names['transactions'], use_testnet=use_testnet, use_gcs=True)
 asset_export_task = build_export_task(dag, 'archive', 'export_assets', file_names['assets'], use_testnet=use_testnet, use_gcs=True)
 
 '''
