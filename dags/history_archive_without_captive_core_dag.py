@@ -55,7 +55,6 @@ start and end ledgers so that reconciliation and data validation are easier. The
 record is written to an internal dataset for data eng use only.
 '''
 write_ledger_stats = build_batch_stats(dag, table_names['ledgers'])
-write_tx_stats = build_batch_stats(dag, table_names['transactions'])
 write_asset_stats = build_batch_stats(dag, table_names['assets'])
 
 '''
@@ -77,8 +76,6 @@ Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
 delete_old_ledger_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['ledgers'])
 delete_old_ledger_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['ledgers'])
-delete_old_tx_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['transactions'])
-delete_old_tx_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['transactions'])
 delete_old_asset_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['assets'])
 delete_old_asset_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['assets'])
 
@@ -87,7 +84,6 @@ The send tasks receive the location of the file in Google Cloud storage through 
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
 send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, internal_project, internal_dataset, table_names['ledgers'], '', partition=True, cluster=False)
-send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, internal_project, internal_dataset, table_names['transactions'], '', partition=True, cluster=False)
 send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, internal_project, internal_dataset, table_names['assets'], '', partition=False, cluster=False)
 
 '''
@@ -95,12 +91,9 @@ The send tasks receive the location of the file in Google Cloud storage through 
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
 send_ledgers_to_pub_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, public_project, public_dataset, table_names['ledgers'], '', partition=True, cluster=True)
-send_txs_to_pub_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, public_project, public_dataset, table_names['transactions'], '', partition=True, cluster=True)
 send_assets_to_pub_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, public_project, public_dataset, table_names['assets'], '', partition=True, cluster=True)
 
 time_task >> write_ledger_stats >> ledger_export_task >> delete_old_ledger_task >> send_ledgers_to_bq_task
 ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task
-time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task
-tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task
 time_task >> write_asset_stats >> asset_export_task  >> delete_old_asset_task >> send_assets_to_bq_task
 asset_export_task >> delete_old_asset_pub_task >> send_assets_to_pub_task
