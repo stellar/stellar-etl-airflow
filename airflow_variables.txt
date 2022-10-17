@@ -90,19 +90,25 @@
     "public_project": "crypto-stellar",
     "resources": {
         "default": {
-            "request_cpu": "1.2",
-            "request_memory": "5Gi",
-            "request_ephemeral_storage": "10Mi"
+            "requests": {
+                "cpu": "1.2",
+                "memory": "5Gi",
+                "ephemeral_storage": "10Mi",
+            },
         },
         "cc": {
-            "request_cpu": "1.2",
-            "request_memory": "15Gi",
-            "request_ephemeral_storage": "10Gi"
+            "requests": {
+                "cpu": "1.2",
+                "memory": "15Gi",
+                "ephemeral_storage": "10Gi",
+            },
         },
         "state": {
-            "request_cpu": "1.2",
-            "request_memory": "20Gi",
-            "request_ephemeral_storage": "12Gi"
+            "requests": {
+                "cpu": "1.2",
+                "memory": "20Gi",
+                "ephemeral_storage": "12Gi",
+            },
         }
     },
     "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.sentry.io/6190849",
