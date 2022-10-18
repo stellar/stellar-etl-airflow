@@ -30,7 +30,7 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
         args.append("--testnet")
     config_file_location = Variable.get('kube_config_location')
     in_cluster = False if config_file_location else True
-    resources = Variable.get('resources', deserialize_json=True).get(resource_cfg)
+    resources_requests = Variable.get('resources', deserialize_json=True).get(resource_cfg).get('requests')
     affinity = Variable.get('affinity', deserialize_json=True).get(resource_cfg)
 
     return KubernetesPodOperator(
@@ -49,6 +49,6 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
          in_cluster=in_cluster,
          config_file=config_file_location,
          affinity=affinity,
-         resources=k8s.V1ResourceRequirements(**resources),
+         resources=k8s.V1ResourceRequirements(requests=resources_requests),
          image_pull_policy=Variable.get('image_pull_policy')
      ) 

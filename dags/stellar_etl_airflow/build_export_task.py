@@ -113,7 +113,7 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
     etl_cmd_string = ' '.join(etl_cmd)
     config_file_location = Variable.get('kube_config_location')
     in_cluster = False if config_file_location else True
-    resources = Variable.get('resources', deserialize_json=True).get(resource_cfg)
+    resources_requests = Variable.get('resources', deserialize_json=True).get(resource_cfg).get('requests')
     affinity = Variable.get('affinity', deserialize_json=True).get(resource_cfg)
     return KubernetesPodOperator(
         service_account_name=Variable.get('k8s_service_account'),
@@ -128,7 +128,7 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        resources=k8s.V1ResourceRequirements(**resources),
+        resources=k8s.V1ResourceRequirements(requests=resources_requests),
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
