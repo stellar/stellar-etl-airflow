@@ -8,6 +8,7 @@ from airflow import AirflowException
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from stellar_etl_airflow import macros
+from kubernetes.client import models as k8s
 
 def get_path_variables(use_testnet=False):
     '''
@@ -127,7 +128,7 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        resources=resources,
+        container_resources=k8s.V1ResourceRequirements(**resources),
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
