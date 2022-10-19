@@ -93,21 +93,21 @@
             "requests": {
                 "cpu": "1.2",
                 "memory": "5Gi",
-                "ephemeral_storage": "10Mi",
+                "ephemeral-storage": "10Mi",
             },
         },
         "cc": {
             "requests": {
                 "cpu": "1.2",
                 "memory": "15Gi",
-                "ephemeral_storage": "10Gi",
+                "ephemeral-storage": "10Gi",
             },
         },
         "state": {
             "requests": {
                 "cpu": "1.2",
                 "memory": "20Gi",
-                "ephemeral_storage": "12Gi",
+                "ephemeral-storage": "12Gi",
             },
         }
     },
