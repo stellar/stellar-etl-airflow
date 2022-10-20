@@ -88,6 +88,10 @@
             "type": "MONTH",
             "field": "closed_at",
         },
+        "history_assets": {
+            "type": "MONTH",
+            "field": "batch_run_date"
+        }
     },
     "public_dataset": "test_crypto_stellar_2",
     "public_project": "test-hubble-319619",
