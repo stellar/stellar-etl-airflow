@@ -57,7 +57,8 @@ def build_bq_insert_job(dag, project, dataset, table, partition):
         cluster_fields = Variable.get('cluster_fields', deserialize_json=True)
         configuration['query']['writeDisposition'] = 'WRITE_TRUNCATE'
         configuration['query']['createDisposition'] = 'CREATE_IF_NEEDED'
-        configuration['query']['clustering'] = {
+        if dataset_type == 'pub':
+            configuration['query']['clustering'] = {
             "fields": cluster_fields[table]
         }
 
