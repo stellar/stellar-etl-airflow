@@ -84,6 +84,10 @@
             "type": "MONTH",
             "field": "closed_at",
         },
+        "enriched_meaningful_history_operations": {
+            "type": "MONTH",
+            "field": "closed_at",
+        },
     },
     "public_dataset": "test_crypto_stellar_2",
     "public_project": "test-hubble-319619",
@@ -97,14 +101,14 @@
         },
         "cc": {
             "requests": {
-                "cpu": "1.2",
+                "cpu": "3.5",
                 "memory": "15Gi",
                 "ephemeral-storage": "10Gi",
             },
         },
         "state": {
             "requests": {
-                "cpu": "1.2",
+                "cpu": "3.5",
                 "memory": "20Gi",
                 "ephemeral-storage": "12Gi",
             },
