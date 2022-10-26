@@ -18,7 +18,7 @@ def file_to_string(sql_path):
     with open(sql_path, "r") as sql_file:
         return sql_file.read()
 
-def build_bq_insert_job(dag, project, dataset, table, partition):
+def build_bq_insert_job(dag, project, dataset, table, partition, cluster=False):
     if dataset == Variable.get('public_dataset'):
         dataset_type = 'pub'
     else:
@@ -53,14 +53,14 @@ def build_bq_insert_job(dag, project, dataset, table, partition):
     if partition:
         partition_fields = Variable.get('partition_fields', deserialize_json=True)
         configuration['query']['time_partitioning'] = partition_fields[table]
-    if table == 'history_assets':
+    if cluster:
         cluster_fields = Variable.get('cluster_fields', deserialize_json=True)
-        configuration['query']['writeDisposition'] = 'WRITE_TRUNCATE'
-        configuration['query']['createDisposition'] = 'CREATE_IF_NEEDED'
-        if dataset_type == 'pub':
-            configuration['query']['clustering'] = {
+        configuration['query']['clustering'] = {
             "fields": cluster_fields[table]
         }
+    if table == 'history_assets':
+        configuration['query']['writeDisposition'] = 'WRITE_TRUNCATE'
+        configuration['query']['createDisposition'] = 'CREATE_IF_NEEDED'
 
     return BigQueryInsertJobOperator(
         task_id=f'insert_records_{table}_{dataset_type}',
