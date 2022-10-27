@@ -18,7 +18,7 @@ def file_to_string(sql_path):
     with open(sql_path, "r") as sql_file:
         return sql_file.read()
 
-def build_bq_insert_job(dag, project, dataset, table, partition, cluster=False):
+def build_bq_insert_job(dag, project, dataset, table, partition, cluster=False, create=False):
     if dataset == Variable.get('public_dataset'):
         dataset_type = 'pub'
     else:
@@ -58,8 +58,7 @@ def build_bq_insert_job(dag, project, dataset, table, partition, cluster=False):
         configuration['query']['clustering'] = {
             "fields": cluster_fields[table]
         }
-    if table == 'history_assets':
-        configuration['query']['writeDisposition'] = 'WRITE_TRUNCATE'
+    if create:
         configuration['query']['createDisposition'] = 'CREATE_IF_NEEDED'
 
     return BigQueryInsertJobOperator(
