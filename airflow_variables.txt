@@ -124,7 +124,7 @@
     "schema_filepath": "/home/airflow/gcs/dags/schemas/",
     "table_ids": {
         "accounts": "accounts",
-        "assets": "history_assets",
+        "assets": "history_assets_staging",
         "claimable_balances": "claimable_balances",
         "ledgers": "history_ledgers",
         "liquidity_pools": "liquidity_pools",
