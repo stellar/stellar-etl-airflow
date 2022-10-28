@@ -12,6 +12,7 @@ from stellar_etl_airflow.default import init_sentry, get_default_dag_args
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
 from stellar_etl_airflow import macros
 
 from airflow import DAG
@@ -98,9 +99,16 @@ send_ledgers_to_pub_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id,
 send_txs_to_pub_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, public_project, public_dataset, table_names['transactions'], '', partition=True, cluster=True)
 send_assets_to_pub_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, public_project, public_dataset, table_names['assets'], '', partition=True, cluster=True)
 
+'''
+The tasks below use a job in BigQuery to deduplicate the table history_assets_stg.
+The job refreshes the table history_assets with only new records.
+'''
+dedup_assets_bq_task = build_bq_insert_job(dag, internal_project, internal_dataset, table_names['assets'], partition=False, cluster=False, create=True)
+dedup_assets_pub_task = build_bq_insert_job(dag, public_project, public_dataset, table_names['assets'], partition=True, cluster=True, create=True)
+
 time_task >> write_ledger_stats >> ledger_export_task >> delete_old_ledger_task >> send_ledgers_to_bq_task
 ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task
 time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task
-time_task >> write_asset_stats >> asset_export_task  >> delete_old_asset_task >> send_assets_to_bq_task
-asset_export_task >> delete_old_asset_pub_task >> send_assets_to_pub_task
+time_task >> write_asset_stats >> asset_export_task  >> delete_old_asset_task >> send_assets_to_bq_task >> dedup_assets_bq_task
+asset_export_task >> delete_old_asset_pub_task >> send_assets_to_pub_task >> dedup_assets_pub_task

@@ -39,7 +39,7 @@
         "accounts": ["account_id","last_modified_ledger"], 
         "account_signers": ["account_id","last_modified_ledger"], 
         "claimable_balances": ["balance_id","last_modified_ledger","sponsor"], 
-        "history_assets": ["asset_code","asset_type"], 
+        "history_assets": ["asset_code","asset_type","asset_issuer"], 
         "history_ledgers": ["sequence","closed_at"], 
         "history_operations": ["id","transaction_id","source_account"], 
         "history_trades": ["history_operation_id","ledger_closed_at"], 
@@ -85,6 +85,14 @@
             "type": "MONTH",
             "field": "closed_at",
         },
+        "enriched_meaningful_history_operations": {
+            "type": "MONTH",
+            "field": "closed_at",
+        },
+        "history_assets": {
+            "type": "MONTH",
+            "field": "batch_run_date"
+        }
     },
     "public_dataset": "crypto_stellar_2",
     "public_project": "crypto-stellar",
@@ -98,14 +106,14 @@
         },
         "cc": {
             "requests": {
-                "cpu": "1.2",
+                "cpu": "3.5",
                 "memory": "15Gi",
                 "ephemeral-storage": "10Gi",
             },
         },
         "state": {
             "requests": {
-                "cpu": "1.2",
+                "cpu": "3.5",
                 "memory": "20Gi",
                 "ephemeral-storage": "12Gi",
             },
