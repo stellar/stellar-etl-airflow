@@ -38,10 +38,11 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
         time_partition['type'] = 'MONTH'
         time_partition['field'] = 'batch_run_date'
     staging_table_suffix = ''
+    if data_type == 'history_assets':
+            staging_table_suffix = '_staging'
     if data_type in ['ledgers', 'assets', 'transactions', 'operations', 'trades']:
         schema_fields = read_local_schema(f'history_{data_type}')
-        if data_type == 'assets':
-            staging_table_suffix = '_stg'
+        
     else:
         schema_fields = read_local_schema(f'{data_type}')
 
