@@ -20,7 +20,7 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
     Returns:
         the newly created task
     '''
-    
+
     bucket_name = Variable.get('gcs_exported_data_bucket_name')
     if cluster:
         cluster_fields = Variable.get('cluster_fields', deserialize_json=True)
@@ -34,12 +34,15 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
         dataset_type = 'bq'
     dataset_name = dataset
     time_partition = {}
-    if partition: 
+    if partition:
         time_partition['type'] = 'MONTH'
         time_partition['field'] = 'batch_run_date'
-
+    staging_table_suffix = ''
+    if data_type == 'history_assets':
+            staging_table_suffix = '_staging'
     if data_type in ['ledgers', 'assets', 'transactions', 'operations', 'trades']:
         schema_fields = read_local_schema(f'history_{data_type}')
+        
     else:
         schema_fields = read_local_schema(f'{data_type}')
 
@@ -51,7 +54,7 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
         autodetect=False,
         source_format='NEWLINE_DELIMITED_JSON',
         source_objects=["{{ task_instance.xcom_pull(task_ids='"+ export_task_id +"')[\"output\"] }}" + source_object_suffix],
-        destination_project_dataset_table=f'{project_name}.{dataset_name}.{data_type}',
+        destination_project_dataset_table=f'{project_name}.{dataset_name}.{data_type}{staging_table_suffix}',
         write_disposition='WRITE_APPEND',
         create_disposition='CREATE_IF_NEEDED',
         max_bad_records=10,
@@ -59,4 +62,4 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
         cluster_fields=cluster_fields,
         dag=dag,
     )
-    
+
