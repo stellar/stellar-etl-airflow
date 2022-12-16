@@ -50,7 +50,7 @@
     },
     "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
     "gcs_exported_object_prefix": "dag-exported",
-    "image_name": "techindicium/stellar-etl@sha256:4164014fce82a3f235581bffbf2ad6ce0b625d383c61c90b1c8905795f19e079",
+    "image_name": "stellar/stellar-etl:ed30904",
     "image_output_path": "/etl/exported_data/",
     "image_pull_policy": "IfNotPresent",
     "kube_config_location": "",
