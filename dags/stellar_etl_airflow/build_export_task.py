@@ -14,9 +14,9 @@ def get_path_variables(use_testnet=False):
     '''
         Returns the image output path, core executable path, and core config path.
     '''
-    config = '/home/stellar/etl/docker/stellar-core.cfg'
+    config = '/etl/docker/stellar-core.cfg'
     if use_testnet:
-        config = '/home/stellar/etl/docker/stellar-core_testnet.cfg'
+        config = '/etl/docker/stellar-core_testnet.cfg'
     return Variable.get('image_output_path'), '/usr/bin/stellar-core', config
 
 def select_correct_filename(cmd_type, base_name, batched_name):
