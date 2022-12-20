@@ -28,7 +28,7 @@ details.reserve_a_withdraw_amount, details.reserve_b_withdraw_amount,
 ho.application_order as op_application_order, ho.id as op_id, source_account as op_source_account,
 source_account_muxed as op_source_account_muxed, transaction_id, type,
 -- transaction fields
-transaction_hash, ledger_sequence, ht.application_order as txn_application_order, ht.account as txn_account,
+transaction_hash, ledger_sequence, ht.account as txn_account,
 account_sequence, max_fee, ht.operation_count as txn_operation_count, ht.created_at as txn_created_at,
 memo_type, memo, time_bounds, successful, fee_charged, fee_account, new_max_fee, account_muxed, fee_account_muxed,
 -- ledger fields
