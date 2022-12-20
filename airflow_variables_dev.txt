@@ -50,7 +50,7 @@
     },
     "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
     "gcs_exported_object_prefix": "dag-exported",
-    "image_name": "stellar/stellar-etl:0a9e995",
+    "image_name": "stellar/stellar-etl:0f2fd70",
     "image_output_path": "/etl/exported_data/",
     "image_pull_policy": "IfNotPresent",
     "kube_config_location": "",
