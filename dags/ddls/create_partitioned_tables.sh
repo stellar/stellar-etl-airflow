@@ -21,7 +21,7 @@ echo "Current working directory: $WORKDIR"
 PROJECT_ID=crypto-stellar
 DATASET_ID=crypto_stellar_2
 SCHEMA_DIR=$WORKDIR/schemas/
-PARTITION_TABLES=(history_operations history_transactions history_ledgers history_assets history_tradesaccounts claimable_balances offers liquidity_pools account_signers trust_lines)
+PARTITION_TABLES=(history_operations history_transactions history_ledgers history_assets history_trades history_effects accounts claimable_balances offers liquidity_pools account_signers trust_lines)
 
 # make partitioned tables
 for table in ${PARTITION_TABLES[@]}
@@ -33,6 +33,8 @@ do
         cluster=id,ledger_sequence,account
     elif [ "$table" = "history_ledgers" ]; then
         cluster=sequence,closed_at
+    elif [ "$table" = "history_effects" ]; then
+        cluster=address,address_muxed,operation_id
     elif [ "$table" = "history_assets" ]; then
         cluster=asset_code,asset_type,asset_issuer
     elif [ "$table" = "accounts" ]; then
