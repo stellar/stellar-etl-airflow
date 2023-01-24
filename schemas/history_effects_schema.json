@@ -342,8 +342,8 @@
       },
       {
         "mode": "NULLABLE",
-		    "name": "seller",
-		    "type": "STRING"
+        "name": "seller",
+        "type": "STRING"
       },
       {
         "mode": "NULLABLE",
@@ -473,3 +473,4 @@
     "type": "TIMESTAMP"
   }
 ]
+
