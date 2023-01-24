@@ -1,0 +1,149 @@
+{
+    "affinity": {
+        "default": {},
+        "cc": {
+            "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                    "nodeSelectorTerms": [{
+                        "matchExpressions": [{
+                            "key": "cloud.google.com/gke-nodepool",
+                            "operator": "In",
+                            "values": [
+                                "hubble-etl"
+                            ]
+                        }]
+                    }]
+                }
+            }
+        },
+        "state": {
+            "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                    "nodeSelectorTerms": [{
+                        "matchExpressions": [{
+                            "key": "cloud.google.com/gke-nodepool",
+                            "operator": "In",
+                            "values": [
+                                "default-pool"
+                            ]
+                        }]
+                    }]
+                }
+            }
+        }
+    },
+    "api_key_path": "/home/airflow/gcs/data/apiKey.json",
+    "bq_dataset": "crypto_stellar_internal_2",
+    "bq_project": "hubble-261722",
+    "cluster_fields": { 
+        "accounts": ["account_id","last_modified_ledger"], 
+        "account_signers": ["account_id","last_modified_ledger"], 
+        "claimable_balances": ["balance_id","last_modified_ledger","sponsor"], 
+        "history_assets": ["asset_code","asset_type","asset_issuer"], 
+        "history_ledgers": ["sequence","closed_at"], 
+        "history_operations": ["id","transaction_id","source_account"], 
+        "history_trades": ["history_operation_id","ledger_closed_at"], 
+        "history_transactions": ["id","ledger_sequence","account"], 
+        "offers": ["seller_id","last_modified_ledger"], 
+        "liquidity_pools": ["liquidity_pool_id","last_modified_ledger"], 
+        "trust_lines": ["account_id","last_modified_ledger"] 
+    },
+    "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
+    "gcs_exported_object_prefix": "dag-exported",
+    "image_name": "stellar/stellar-etl:0f2fd70",
+    "image_output_path": "/etl/exported_data/",
+    "image_pull_policy": "IfNotPresent",
+    "kube_config_location": "",
+    "kubernetes_sidecar_image": "alpine",
+    "k8s_namespace": "hubble-composer",
+    "k8s_service_account": "hubble-composer-service-account",
+    "local_output_path": "/home/airflow/etlData/",
+    "namespace": "default",
+    "output_file_names": {
+        "accounts": "accounts.txt",
+        "assets": "assets.txt",
+        "changes": "changes_folder",
+        "claimable_balances": "claimable_balances.txt",
+        "dimAccounts": "dimAccounts.txt",
+        "dimMarkets": "dimMarkets.txt",
+        "dimOffers": "dimOffers.txt",
+        "factEvents": "factEvents.txt",
+        "ledgers": "ledgers.txt",
+        "liquidity_pools": "liquidity_pools.txt",
+        "offers": "offers.txt",
+        "operations": "operations.txt",
+        "orderbooks": "orderbook_folder",
+        "signers": "account_signers.txt",
+        "trades": "trades.txt",
+        "transactions": "transactions.txt",
+        "trustlines": "trustlines.txt"
+    },
+    "output_path": "/home/airflow/gcs/data/",
+    "owner": "SDF",
+    "partition_fields": {
+        "enriched_history_operations": {
+            "type": "MONTH",
+            "field": "closed_at",
+        },
+        "enriched_meaningful_history_operations": {
+            "type": "MONTH",
+            "field": "closed_at",
+        },
+        "history_assets": {
+            "type": "MONTH",
+            "field": "batch_run_date"
+        }
+    },
+    "public_dataset": "crypto_stellar_2",
+    "public_project": "crypto-stellar",
+    "resources": {
+        "default": {
+            "requests": {
+                "cpu": "1.2",
+                "memory": "5Gi",
+                "ephemeral-storage": "10Mi",
+            },
+        },
+        "cc": {
+            "requests": {
+                "cpu": "3.5",
+                "memory": "15Gi",
+                "ephemeral-storage": "10Gi",
+            },
+        },
+        "state": {
+            "requests": {
+                "cpu": "3.5",
+                "memory": "20Gi",
+                "ephemeral-storage": "12Gi",
+            },
+        }
+    },
+    "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.sentry.io/6190849",
+    "sentry_environment": "production",
+    "schema_filepath": "/home/airflow/gcs/dags/schemas/",
+    "table_ids": {
+        "accounts": "accounts",
+        "assets": "history_assets",
+        "claimable_balances": "claimable_balances",
+        "ledgers": "history_ledgers",
+        "liquidity_pools": "liquidity_pools",
+        "offers": "offers",
+        "operations": "history_operations",
+        "signers": "account_signers",
+        "trades": "history_trades",
+        "transactions": "history_transactions",
+        "trustlines": "trust_lines"
+    },
+    "task_timeout": {
+        "build_batch_stats": 180,
+        "build_bq_insert_job": 180,
+        "build_delete_data_task": 180,
+        "build_export_task": 180,
+        "build_gcs_to_bq_task": 300,
+        "build_time_task": 120
+    },
+    "use_testnet": "False",
+    "volume_config": "{}",
+    "volume_name": "etl-data"
+}
