@@ -71,7 +71,7 @@ starts prematurely and will not load data.
 '''
 op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
 trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_names['trades'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
-effects_export_task = build_export_task(dag, 'archive', 'export_effects', 'effects.txt', use_testnet=use_testnet, use_gcs=True, resource_cfg='backfill')
+effects_export_task = build_export_task(dag, 'archive', 'export_effects', 'effects.txt', use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
 
 '''
 The delete partition task checks to see if the given partition/batch id exists in 
