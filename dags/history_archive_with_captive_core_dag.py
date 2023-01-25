@@ -97,7 +97,7 @@ Then, the task merges the unique entries in the file into the corresponding tabl
 '''
 send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, internal_project, internal_dataset, table_names['operations'], '', partition=True, cluster=False)
 send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, internal_project, internal_dataset, table_names['trades'], '', partition=False, cluster=False)
-send_effects_to_bq_task = build_gcs_to_bq_task(dag, effects_export_task.task_id, internal_project, internal_dataset, table_names['effects'], '', partition=False, cluster=False)
+send_effects_to_bq_task = build_gcs_to_bq_task(dag, effects_export_task.task_id, internal_project, internal_dataset, table_names['effects'], '', partition=True, cluster=True)
 send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, internal_project, internal_dataset, table_names['transactions'], '', partition=True, cluster=False)
 
 '''
