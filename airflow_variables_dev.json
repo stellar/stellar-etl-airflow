@@ -62,6 +62,11 @@
       "asset_type",
       "asset_issuer"
     ],
+    "history_effects": [
+      "operation_id",
+      "type",
+      "address"
+    ],
     "history_ledgers": [
       "sequence",
       "closed_at"

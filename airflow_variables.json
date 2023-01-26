@@ -82,9 +82,9 @@
       "asset_issuer"
     ],
     "history_effects": [
-      "address",
-      "address_muxed",
-      "operation_id"
+      "operation_id",
+      "type",
+      "address"
     ],
     "history_ledgers": [
       "sequence",
