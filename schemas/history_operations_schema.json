@@ -1,5 +1,10 @@
 [
   {
+    "mode": "NULLABLE",
+    "name": "application_order",
+    "type": "INTEGER"
+  },
+  {
     "fields": [
       {
         "mode": "NULLABLE",
@@ -14,7 +19,7 @@
       {
         "mode": "NULLABLE",
         "name": "account_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -89,7 +94,7 @@
       {
         "mode": "NULLABLE",
         "name": "claimant_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "fields": [
@@ -504,7 +509,7 @@
       {
         "mode": "NULLABLE",
         "name": "from_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -519,7 +524,7 @@
       {
         "mode": "NULLABLE",
         "name": "funder_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -549,7 +554,7 @@
       {
         "mode": "NULLABLE",
         "name": "into_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -708,7 +713,7 @@
       {
         "mode": "NULLABLE",
         "name": "to_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -723,7 +728,7 @@
       {
         "mode": "NULLABLE",
         "name": "trustee_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -748,7 +753,7 @@
       {
         "mode": "NULLABLE",
         "name": "trustor_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -808,7 +813,7 @@
       {
         "mode": "NULLABLE",
         "name": "begin_sponsor_muxed_id",
-        "type": "STRING"
+        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",
@@ -969,11 +974,6 @@
     "mode": "NULLABLE",
     "name": "type",
     "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "type_string",
-    "type": "STRING"
   },
   {
     "mode": "NULLABLE",
