@@ -968,11 +968,6 @@
     },
     {
         "mode": "NULLABLE",
-        "name": "txn_application_order",
-        "type": "INTEGER"
-    },
-    {
-        "mode": "NULLABLE",
         "name": "txn_account",
         "type": "STRING"
     },
