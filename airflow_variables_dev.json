@@ -63,9 +63,9 @@
       "asset_issuer"
     ],
     "history_effects": [
+      "address",
       "operation_id",
-      "type",
-      "address"
+      "type"
     ],
     "history_ledgers": [
       "sequence",

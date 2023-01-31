@@ -34,7 +34,7 @@ do
     elif [ "$table" = "history_ledgers" ]; then
         cluster=sequence,closed_at
     elif [ "$table" = "history_effects" ]; then
-        cluster=operation_id,type,address
+        cluster=address,operation_id,type
     elif [ "$table" = "history_assets" ]; then
         cluster=asset_code,asset_type,asset_issuer
     elif [ "$table" = "accounts" ]; then
