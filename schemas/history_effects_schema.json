@@ -1,0 +1,811 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "address_muxed",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "type",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "type_string",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "fee_bp",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "id",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "total_shares",
+            "type": "NUMERIC"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "total_trustlines",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "STRING"
+          },
+          {
+            "fields": [
+              {
+                "mode": "NULLABLE",
+                "name": "asset",
+                "type": "STRING"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "amount",
+                "type": "NUMERIC"
+              }
+            ],
+            "mode": "REPEATED",
+            "name": "reserves",
+            "type": "RECORD"
+          }
+        ],
+        "mode": "NULLABLE",
+        "name": "liquidity_pool",
+        "type": "RECORD"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "asset",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "amount",
+            "type": "NUMERIC"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "reserves_received",
+        "type": "RECORD"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "asset",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "amount",
+            "type": "NUMERIC"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "reserves_deposited",
+        "type": "RECORD"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "asset",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "amount",
+            "type": "NUMERIC"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "claimable_balance_id",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "reserves_revoked",
+        "type": "RECORD"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "asset",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "amount",
+            "type": "NUMERIC"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "bought",
+        "type": "RECORD"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "asset",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "amount",
+            "type": "NUMERIC"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "sold",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "shares_revoked",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "shares_received",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "shares_redeemed",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "liquidity_pool_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "balance_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "new_seq",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "value",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "trustor",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "limit",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "inflation_destination",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "authorized_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "auth_immutable_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "authorized_to_maintain_liabilites",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "auth_revocable_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "auth_required_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "auth_clawback_enabled_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "claimable_balance_clawback_enabled_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "clawback_enabled_flag",
+        "type": "BOOL"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "high_threshold",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "med_threshold",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "low_threshold",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "home_domain",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "signer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sponsor",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "new_sponsor",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "former_sponsor",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "weight",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "public_key",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "amount",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "starting_balance",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "seller",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "seller_muxed",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "seller_muxed_id",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "offer_id",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sold_amount",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sold_asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sold_asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "sold_asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "bought_amount",
+        "type": "NUMERIC"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "bought_asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "bought_asset_code",
+        "type": "STRING"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "unconditional",
+            "type": "BOOLEAN"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "abs_before",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "rel_before",
+            "type": "INTEGER"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "abs_before_epoch",
+            "type": "INTEGER"
+          },
+          {
+            "fields": [
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before",
+                "type": "STRING"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "rel_before",
+                "type": "INTEGER"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "unconditional",
+                "type": "BOOLEAN"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before_epoch",
+                "type": "INTEGER"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "not",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "or",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "and",
+                "type": "RECORD"
+              }
+            ],
+            "mode": "NULLABLE",
+            "name": "and",
+            "type": "RECORD"
+          },
+          {
+            "fields": [
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before",
+                "type": "STRING"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "rel_before",
+                "type": "INTEGER"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "unconditional",
+                "type": "BOOLEAN"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before_epoch",
+                "type": "INTEGER"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "and",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "or",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "not",
+                "type": "RECORD"
+              }
+            ],
+            "mode": "NULLABLE",
+            "name": "not",
+            "type": "RECORD"
+          },
+          {
+            "fields": [
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before",
+                "type": "STRING"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "rel_before",
+                "type": "INTEGER"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "abs_before_epoch",
+                "type": "INTEGER"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "not",
+                "type": "RECORD"
+              },
+              {
+                "mode": "NULLABLE",
+                "name": "unconditional",
+                "type": "BOOLEAN"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "or",
+                "type": "RECORD"
+              },
+              {
+                "fields": [
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before",
+                    "type": "STRING"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "rel_before",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "unconditional",
+                    "type": "BOOLEAN"
+                  },
+                  {
+                    "mode": "NULLABLE",
+                    "name": "abs_before_epoch",
+                    "type": "INTEGER"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER"
+                      }
+                    ],
+                    "mode": "NULLABLE",
+                    "name": "not",
+                    "type": "RECORD"
+                  }
+                ],
+                "mode": "NULLABLE",
+                "name": "and",
+                "type": "RECORD"
+              }
+            ],
+            "mode": "NULLABLE",
+            "name": "or",
+            "type": "RECORD"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "predicate",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "data_name",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "bought_asset_issuer",
+        "type": "STRING"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "details",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  }
+]

@@ -49,6 +49,6 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
          in_cluster=in_cluster,
          config_file=config_file_location,
          affinity=affinity,
-         resources=k8s.V1ResourceRequirements(requests=resources_requests),
+         container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
          image_pull_policy=Variable.get('image_pull_policy')
      ) 

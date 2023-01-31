@@ -1,5 +1,5 @@
 '''
-The history_archive_export DAG exports operations and trades from the history archives. 
+The history_archive_export DAG exports operations and trades from the history archives.
 It is scheduled to export information to BigQuery at regular intervals.
 '''
 import ast
@@ -17,7 +17,7 @@ from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
 from stellar_etl_airflow import macros
 
 from airflow import DAG
-from airflow.models import Variable
+from airflow.models.variable import Variable
 
 init_sentry()
 
@@ -52,12 +52,13 @@ execution time. It converts these two times into ledger ranges.
 time_task = build_time_task(dag, use_testnet=use_testnet)
 
 '''
-The write batch stats task will take a snapshot of the DAG run_id, execution date, 
-start and end ledgers so that reconciliation and data validation are easier. The 
+The write batch stats task will take a snapshot of the DAG run_id, execution date,
+start and end ledgers so that reconciliation and data validation are easier. The
 record is written to an internal dataset for data eng use only.
 '''
 write_op_stats = build_batch_stats(dag, table_names['operations'])
 write_trade_stats = build_batch_stats(dag, table_names['trades'])
+write_effects_stats = build_batch_stats(dag, table_names['effects'])
 write_tx_stats = build_batch_stats(dag, table_names['transactions'])
 
 '''
@@ -66,15 +67,16 @@ The results of the command are stored in a file. There is one task for each of t
 can be exported from the history archives.
 
 The DAG sleeps for 30 seconds after the export_task writes to the file to give the poststart.sh
-script time to copy the file over to the correct directory. If there is no sleep, the load task 
+script time to copy the file over to the correct directory. If there is no sleep, the load task
 starts prematurely and will not load data.
 '''
 op_export_task = build_export_task(dag, 'archive', 'export_operations', file_names['operations'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
 trade_export_task = build_export_task(dag, 'archive', 'export_trades', file_names['trades'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
+effects_export_task = build_export_task(dag, 'archive', 'export_effects', 'effects.txt', use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
 tx_export_task = build_export_task(dag, 'archive', 'export_transactions', file_names['transactions'], use_testnet=use_testnet, use_gcs=True, resource_cfg='cc')
 
 '''
-The delete partition task checks to see if the given partition/batch id exists in 
+The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 '''
 delete_old_op_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['operations'])
@@ -84,23 +86,27 @@ delete_old_trade_pub_task = build_delete_data_task(dag, public_project, public_d
 delete_enrich_op_task = build_delete_data_task(dag, internal_project, internal_dataset, 'enriched_history_operations')
 delete_enrich_op_pub_task = build_delete_data_task(dag, public_project, public_dataset, 'enriched_history_operations')
 delete_enrich_ma_op_task = build_delete_data_task(dag, internal_project, internal_dataset, 'enriched_meaningful_history_operations')
+delete_old_effects_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['effects'])
+delete_old_effects_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['effects'])
 delete_old_tx_task = build_delete_data_task(dag, internal_project, internal_dataset, table_names['transactions'])
 delete_old_tx_pub_task = build_delete_data_task(dag, public_project, public_dataset, table_names['transactions'])
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 '''
 send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, internal_project, internal_dataset, table_names['operations'], '', partition=True, cluster=False)
 send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, internal_project, internal_dataset, table_names['trades'], '', partition=False, cluster=False)
+send_effects_to_bq_task = build_gcs_to_bq_task(dag, effects_export_task.task_id, internal_project, internal_dataset, table_names['effects'], '', partition=True, cluster=True)
 send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, internal_project, internal_dataset, table_names['transactions'], '', partition=True, cluster=False)
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 '''
 send_ops_to_pub_task = build_gcs_to_bq_task(dag, op_export_task.task_id, public_project, public_dataset, table_names['operations'], '', partition=True, cluster=True)
 send_trades_to_pub_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, public_project, public_dataset, table_names['trades'], '', partition=True, cluster=True)
+send_effects_to_pub_task = build_gcs_to_bq_task(dag, effects_export_task.task_id, public_project, public_dataset, table_names['effects'], '', partition=True, cluster=True)
 send_txs_to_pub_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, public_project, public_dataset, table_names['transactions'], '', partition=True, cluster=True)
 
 '''
@@ -116,6 +122,9 @@ insert_enriched_ma_hist_task = build_bq_insert_job(dag, internal_project, intern
 time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> insert_enriched_hist_task >> delete_enrich_ma_op_task >> insert_enriched_ma_hist_task
 op_export_task >> delete_old_op_pub_task >> send_ops_to_pub_task >> wait_on_dag >> insert_enriched_hist_pub_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task
+trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
+time_task >> write_effects_stats >> effects_export_task >> delete_old_effects_task >> send_effects_to_bq_task
+time_task >> write_effects_stats >> effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
 trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
 time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task

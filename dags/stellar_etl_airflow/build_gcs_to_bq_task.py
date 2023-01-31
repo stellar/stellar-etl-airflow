@@ -40,7 +40,7 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
     staging_table_suffix = ''
     if data_type == 'history_assets':
             staging_table_suffix = '_staging'
-    if data_type in ['ledgers', 'assets', 'transactions', 'operations', 'trades']:
+    if data_type in ['ledgers', 'assets', 'transactions', 'operations', 'trades', 'effects']:
         schema_fields = read_local_schema(f'history_{data_type}')
         
     else:
