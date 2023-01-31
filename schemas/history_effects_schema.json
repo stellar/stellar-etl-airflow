@@ -467,7 +467,7 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "not",
                 "type": "RECORD"
               },
@@ -494,7 +494,7 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "or",
                 "type": "RECORD"
               },
@@ -521,12 +521,12 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "and",
                 "type": "RECORD"
               }
             ],
-            "mode": "REPEATED",
+            "mode": "NULLABLE",
             "name": "and",
             "type": "RECORD"
           },
@@ -575,7 +575,7 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "and",
                 "type": "RECORD"
               },
@@ -602,7 +602,7 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "or",
                 "type": "RECORD"
               },
@@ -629,12 +629,12 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "not",
                 "type": "RECORD"
               }
             ],
-            "mode": "REPEATED",
+            "mode": "NULLABLE",
             "name": "not",
             "type": "RECORD"
           },
@@ -678,7 +678,7 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "not",
                 "type": "RECORD"
               },
@@ -710,7 +710,7 @@
                     "type": "INTEGER"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "or",
                 "type": "RECORD"
               },
@@ -759,17 +759,17 @@
                         "type": "INTEGER"
                       }
                     ],
-                    "mode": "REPEATED",
+                    "mode": "NULLABLE",
                     "name": "not",
                     "type": "RECORD"
                   }
                 ],
-                "mode": "REPEATED",
+                "mode": "NULLABLE",
                 "name": "and",
                 "type": "RECORD"
               }
             ],
-            "mode": "REPEATED",
+            "mode": "NULLABLE",
             "name": "or",
             "type": "RECORD"
           }
