@@ -121,7 +121,6 @@ SELECT
   -- transaction fields
   , transaction_hash
   , ledger_sequence
-  , ht.application_order AS txn_application_order
   , ht.account AS txn_account
   , account_sequence
   , max_fee
