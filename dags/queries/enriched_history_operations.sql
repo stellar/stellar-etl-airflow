@@ -119,6 +119,10 @@ SELECT
   , type
   , type_string
   -- transaction fields
+  , ht.tx_envelope
+  , ht.tx_result
+  , ht.tx_meta
+  , ht.tx_fee_meta
   , transaction_hash
   , ledger_sequence
   , ht.account AS txn_account
