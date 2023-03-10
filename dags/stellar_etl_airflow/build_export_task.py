@@ -8,6 +8,7 @@ from airflow import AirflowException
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
 from kubernetes.client import models as k8s
 
 def get_path_variables(use_testnet=False):
@@ -132,5 +133,6 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
+        on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get('image_pull_policy')
     )
