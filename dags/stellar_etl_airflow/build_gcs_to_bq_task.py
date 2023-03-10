@@ -9,7 +9,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 from sentry_sdk import push_scope, capture_message
 
 class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
-    template_fields = list(GCSToBigQueryOperator.template_fields) + ["failed_transforms", "max_failed_transforms", "export_task_id"]
+    template_fields = list(GCSToBigQueryOperator.template_fields) + ['failed_transforms', 'max_failed_transforms', 'export_task_id']
 
     def __init__(self, failed_transforms, max_failed_transforms, export_task_id, **kwargs):
         self.failed_transforms = failed_transforms
@@ -21,14 +21,14 @@ class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
         if int(self.failed_transforms) > self.max_failed_transforms:
             with push_scope() as scope:
                 scope.set_tag('data-quality', 'max-failed-transforms')
-                scope.set_extra("failed_transforms", self.failed_transforms)
-                scope.set_extra("file", f"gs://{self.bucket}/{self.source_objects[0]}")
-                scope.set_extra("task_id", self.task_id)
-                scope.set_extra("export_task_id", self.export_task_id)
-                scope.set_extra("destination_table", self.destination_project_dataset_table)
+                scope.set_extra('failed_transforms', self.failed_transforms)
+                scope.set_extra('file', f"gs://{self.bucket}/{self.source_objects[0]}")
+                scope.set_extra('task_id', self.task_id)
+                scope.set_extra('export_task_id', self.export_task_id)
+                scope.set_extra('destination_table', self.destination_project_dataset_table)
                 capture_message(
-                    f"failed_transforms ({self.failed_transforms}) has exceeded the max value ({self.max_failed_transforms})",
-                    "error"
+                    f'failed_transforms ({self.failed_transforms}) has exceeded the max value ({self.max_failed_transforms})',
+                    'error'
                 )
         super().pre_execute(**kwargs)
 
