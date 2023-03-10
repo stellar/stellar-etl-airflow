@@ -13,7 +13,10 @@ SELECT
   , details.asset_issuer
   , details.asset_type
   , details.authorize
-  , CASE WHEN details.balance_id IS NOT NULL THEN details.balance_id ELSE details.claimable_balance_id END as balance_id
+  , CASE 
+      WHEN details.balance_id IS NOT NULL THEN details.balance_id 
+      ELSE details.claimable_balance_id 
+    END as balance_id
   , details.buying_asset_code
   , details.buying_asset_issuer
   , details.buying_asset_type
@@ -83,20 +86,20 @@ SELECT
   , details.reserve_b_withdraw_amount
   -- operation fields
   , null as op_application_order
-  , ho.id as op_id
-  , source_account as op_source_account
-  , source_account_muxed as op_source_account_muxed
+  , ho.id AS op_id
+  , source_account AS op_source_account
+  , source_account_muxed AS op_source_account_muxed
   , transaction_id
   , type
   -- transaction fields
   , transaction_hash
   , ledger_sequence
-  , null as txn_application_order
-  , ht.account as txn_account
+  , NULL AS txn_application_order
+  , ht.account AS txn_account
   , account_sequence
   , max_fee
-  , ht.operation_count as txn_operation_count
-  , ht.created_at as txn_created_at
+  , ht.operation_count AS txn_operation_count
+  , ht.created_at AS txn_created_at
   , memo_type
   , memo
   , time_bounds
@@ -110,9 +113,9 @@ SELECT
   , ledger_hash
   , previous_ledger_hash
   , transaction_count
-  , hl.operation_count as ledger_operation_count
+  , hl.operation_count AS ledger_operation_count
   , closed_at
-  ,hl.id as ledger_id
+  , hl.id AS ledger_id
   , total_coins
   , fee_pool
   , base_fee
@@ -121,20 +124,20 @@ SELECT
   , protocol_version
   , successful_transaction_count
   , failed_transaction_count
-  , ho.batch_id as batch_id
-  , ho.batch_run_date as batch_run_date
-  , current_timestamp() as batch_insert_ts
+  , ho.batch_id AS batch_id
+  , ho.batch_run_date AS batch_run_date
+  , current_timestamp() AS batch_insert_ts
   --new protocol 19 fields for transaction preconditions
-  , ht.ledger_bounds as ledger_bounds
-  , ht.min_account_sequence as min_account_sequence
-  , ht.min_account_sequence_age as min_account_sequence_age
-  , ht.min_account_sequence_ledger_gap as min_account_sequence_ledger_gap
-  , ht.extra_signers as extra_signers
+  , ht.ledger_bounds AS ledger_bounds
+  , ht.min_account_sequence AS min_account_sequence
+  , ht.min_account_sequence_age AS min_account_sequence_age
+  , ht.min_account_sequence_ledger_gap AS min_account_sequence_ledger_gap
+  , ht.extra_signers AS extra_signers
 FROM `{project_id}.{dataset_id}.history_operations` ho
 JOIN `{project_id}.{dataset_id}.history_transactions` ht
-    on ho.transaction_id=ht.id
+    ON ho.transaction_id=ht.id
 JOIN `{project_id}.{dataset_id}.history_ledgers` hl
-    on ht.ledger_sequence=hl.sequence
+    ON ht.ledger_sequence=hl.sequence
 WHERE ho.batch_id = '{batch_id}'
     AND ho.batch_run_date = '{batch_run_date}'
     AND hl.batch_run_date >= '{prev_batch_run_date}'
