@@ -5,6 +5,33 @@ from datetime import timedelta
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.models import Variable
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
+from stellar_etl_airflow.default import alert_after_max_retries
+from sentry_sdk import push_scope, capture_message
+
+class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
+    template_fields = list(GCSToBigQueryOperator.template_fields) + ["failed_transforms", "max_failed_transforms", "export_task_id"]
+
+    def __init__(self, failed_transforms, max_failed_transforms, export_task_id, **kwargs):
+        self.failed_transforms = failed_transforms
+        self.max_failed_transforms = max_failed_transforms
+        self.export_task_id = export_task_id
+        super().__init__(**kwargs)
+
+    def pre_execute(self, **kwargs):
+        if int(self.failed_transforms) > self.max_failed_transforms:
+            with push_scope() as scope:
+                scope.set_tag('data-quality', 'max-failed-transforms')
+                scope.set_extra("failed_transforms", self.failed_transforms)
+                scope.set_extra("file", f"gs://{self.bucket}/{self.source_objects[0]}")
+                scope.set_extra("task_id", self.task_id)
+                scope.set_extra("export_task_id", self.export_task_id)
+                scope.set_extra("destination_table", self.destination_project_dataset_table)
+                capture_message(
+                    f"failed_transforms ({self.failed_transforms}) has exceeded the max value ({self.max_failed_transforms})",
+                    "error"
+                )
+        super().pre_execute(**kwargs)
+
 
 def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, source_object_suffix, partition, cluster):
     '''
@@ -46,7 +73,7 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
     else:
         schema_fields = read_local_schema(f'{data_type}')
 
-    return GCSToBigQueryOperator(
+    return CustomGCSToBigQueryOperator(
         task_id=f'send_{data_type}_to_{dataset_type}',
         execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_gcs_to_bq_task.__name__]),
         bucket=bucket_name,
@@ -60,6 +87,10 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
         max_bad_records=10,
         time_partitioning=time_partition,
         cluster_fields=cluster_fields,
+        export_task_id=export_task_id,
+        failed_transforms="{{ task_instance.xcom_pull(task_ids='"+ export_task_id +"')[\"failed_transforms\"] }}",
+        max_failed_transforms=0,
+        on_failure_callback=alert_after_max_retries,
         dag=dag,
     )
 
