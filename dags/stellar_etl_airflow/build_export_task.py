@@ -124,7 +124,12 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         name=command + '_task',
         image=Variable.get('image_name'),
         cmds=['bash', '-c'],
-        arguments=[f'''{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json'''],
+        arguments=[
+            f'''
+            {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
+            \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
+            '''
+        ],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
