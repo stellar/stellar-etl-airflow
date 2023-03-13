@@ -134,7 +134,7 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        resources=k8s.V1ResourceRequirements(requests=resources_requests),
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
