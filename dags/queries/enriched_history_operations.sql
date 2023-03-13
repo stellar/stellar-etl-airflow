@@ -85,7 +85,6 @@ SELECT
   , details.reserve_a_withdraw_amount
   , details.reserve_b_withdraw_amount
   -- operation fields
-  , null as op_application_order
   , ho.id AS op_id
   , source_account AS op_source_account
   , source_account_muxed AS op_source_account_muxed
@@ -94,7 +93,6 @@ SELECT
   -- transaction fields
   , transaction_hash
   , ledger_sequence
-  , NULL AS txn_application_order
   , ht.account AS txn_account
   , account_sequence
   , max_fee
