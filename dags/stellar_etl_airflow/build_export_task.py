@@ -8,6 +8,7 @@ from airflow import AirflowException
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
 from kubernetes.client import models as k8s
 
 def get_path_variables(use_testnet=False):
@@ -123,14 +124,20 @@ def build_export_task(dag, cmd_type, command, filename, use_gcs=False, use_testn
         name=command + '_task',
         image=Variable.get('image_name'),
         cmds=['bash', '-c'],
-        arguments=[f'''{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json'''],
+        arguments=[
+            f'''
+            {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
+            \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
+            '''
+        ],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        resources=k8s.V1ResourceRequirements(requests=resources_requests),
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
+        on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get('image_pull_policy')
     )

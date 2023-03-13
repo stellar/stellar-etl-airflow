@@ -3,6 +3,7 @@ from datetime import timedelta
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
 
 def get_query_filepath(query_name):
     root = os.path.dirname(os.path.dirname(__file__))
@@ -64,5 +65,6 @@ def build_bq_insert_job(dag, project, dataset, table, partition, cluster=False, 
     return BigQueryInsertJobOperator(
         task_id=f'insert_records_{table}_{dataset_type}',
         execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_bq_insert_job.__name__]),
+        on_failure_callback=alert_after_max_retries,
         configuration=configuration
     )

@@ -100,7 +100,7 @@
   },
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:0f2fd70",
+  "image_name": "stellar/stellar-etl:a115c53",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -116,6 +116,7 @@
     "dimAccounts": "dimAccounts.txt",
     "dimMarkets": "dimMarkets.txt",
     "dimOffers": "dimOffers.txt",
+    "effects": "effects.txt",
     "factEvents": "factEvents.txt",
     "ledgers": "ledgers.txt",
     "liquidity_pools": "liquidity_pools.txt",
@@ -168,13 +169,14 @@
       }
     }
   },
-  "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.sentry.io/6190849",
   "sentry_environment": "development",
+  "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",
     "claimable_balances": "claimable_balances",
+    "effects": "history_effects",
     "ledgers": "history_ledgers",
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
