@@ -121,13 +121,13 @@
       "liquidity_pool_id", 
       "last_modified_ledger" 
     ], 
-    "enriched_history_operations_te": [
+    "enriched_history_operations": [
       "ledger_sequence", 
       "transaction_id", 
       "account", 
       "type"
     ], 
-    "enriched_meaningful_history_operations_te": [
+    "enriched_meaningful_history_operations": [
       "ledger_sequence", 
       "transaction_id", 
       "account", 

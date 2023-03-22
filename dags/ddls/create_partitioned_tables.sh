@@ -28,33 +28,45 @@ for table in ${PARTITION_TABLES[@]}
 do 
     echo "Creating partitioned table $table in $DATASET_ID"
     if [ "$table" = "history_operations" ]; then 
-        cluster=id,transaction_id,source_account
+        cluster=transaction_id,source_account,type
+        partition=batch_run_date
     elif [ "$table" = "history_transactions" ]; then
-        cluster=id,ledger_sequence,account
+        cluster=account,ledger_sequence,successful
+        partition=batch_run_date
     elif [ "$table" = "history_ledgers" ]; then
         cluster=sequence,closed_at
-    elif [ "$table" = "history_effects" ]; then
-        cluster=address,operation_id,type
+        partition=closed_at
     elif [ "$table" = "history_assets" ]; then
-        cluster=asset_code,asset_type,asset_issuer
-    elif [ "$table" = "accounts" ]; then
+        cluster=asset_code,asset_issuer,asset_type
+        partition=batch_run_date
+    elif [ "$table" = "history_trades" ]; then
+        cluster=selling_asset_id,buying_asset_id,trade_type
+        partition=ledger_closed_at
+    elif [ "$table" = "account" ]; then
         cluster=account_id,last_modified_ledger
+        partition=batch_run_date
     elif [ "$table" = "claimable_balances" ]; then
-        cluster=balance_id,last_modified_ledger,sponsor
+        cluster=asset_id,last_modified_ledger
+        partition=batch_run_date
     elif [ "$table" = "offers" ]; then
-        cluster=seller_id,last_modified_ledger
+        cluster=selling_asset_id,buying_asset_id,last_modified_ledger
+        partition=batch_run_date
     elif [ "$table" = "liquidity_pools" ]; then
-        cluster=liquidity_pool_id,last_modified_ledger
+        cluster=liquidity_pool_id,asset_a_id,asset_b_id,last_modified_ledger
+        partition=batch_run_date
     elif [ "$table" = "account_signers" ]; then
-        cluster=account_id,last_modified_ledger
+        cluster=account_id,signer,last_modified_ledger
+        partition=batch_run_date
     elif [ "$table" = "trust_lines" ]; then
-        cluster=account_id,last_modified_ledger
+        cluster=account_id,asset_id,liquidity_pool_id,last_modified_ledger
+        partition=batch_run_date
     else 
-        cluster=history_operation_id,ledger_closed_at
+        cluster=ledger_sequence,transaction_id,accounttype
+        partition=closed_at
     fi 
     bq mk --table \
     --schema $SCHEMA_DIR${table}_schema.json \
-    --time_partitioning_field batch_run_date \
+    --time_partitioning_field $partition \
     --time_partitioning_type MONTH \
     --clustering_fields $cluster \
     $PROJECT_ID:$DATASET_ID.$table
