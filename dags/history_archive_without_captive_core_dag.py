@@ -84,7 +84,7 @@ The send tasks receive the location of the file in Google Cloud storage through 
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
 send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, internal_project, internal_dataset, table_names['ledgers'], '', partition=True, cluster=False)
-send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, internal_project, internal_dataset, table_names['assets'], '', partition=False, cluster=False)
+send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, internal_project, internal_dataset, table_names['assets'], '', partition=True, cluster=True)
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
@@ -97,7 +97,7 @@ send_assets_to_pub_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, p
 The tasks below use a job in BigQuery to deduplicate the table history_assets_stg.
 The job refreshes the table history_assets with only new records.
 '''
-dedup_assets_bq_task = build_bq_insert_job(dag, internal_project, internal_dataset, table_names['assets'], partition=False, cluster=False, create=True)
+dedup_assets_bq_task = build_bq_insert_job(dag, internal_project, internal_dataset, table_names['assets'], partition=True, cluster=True, create=True)
 dedup_assets_pub_task = build_bq_insert_job(dag, public_project, public_dataset, table_names['assets'], partition=True, cluster=True, create=True)
 
 time_task >> write_ledger_stats >> ledger_export_task >> delete_old_ledger_task >> send_ledgers_to_bq_task

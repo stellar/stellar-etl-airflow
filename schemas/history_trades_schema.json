@@ -36,6 +36,11 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "selling_asset_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "selling_amount",
     "type": "FLOAT"
   },
@@ -58,6 +63,11 @@
      "mode": "NULLABLE",
      "name": "buying_asset_type",
      "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "buying_asset_id",
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",

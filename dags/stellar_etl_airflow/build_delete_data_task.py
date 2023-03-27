@@ -2,6 +2,7 @@ from datetime import timedelta
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_delete_data_task(dag, project, dataset, table):
     if dataset == Variable.get('public_dataset'):
@@ -23,6 +24,7 @@ def build_delete_data_task(dag, project, dataset, table):
         project_id=project,
         task_id=f"delete_old_partition_{table}_{dataset_type}",
         execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_delete_data_task.__name__]),
+        on_failure_callback=alert_after_max_retries,
         configuration={
             "query": {
                 "query": DELETE_ROWS_QUERY,

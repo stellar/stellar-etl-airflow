@@ -6,6 +6,7 @@ import logging
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.models import Variable
 from kubernetes.client import models as k8s
+from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cfg="default"):
     '''
@@ -49,6 +50,7 @@ def build_time_task(dag, use_testnet=False, use_next_exec_time=True, resource_cf
          in_cluster=in_cluster,
          config_file=config_file_location,
          affinity=affinity,
-         container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+         resources=k8s.V1ResourceRequirements(requests=resources_requests),
+         on_failure_callback=alert_after_max_retries,
          image_pull_policy=Variable.get('image_pull_policy')
      ) 

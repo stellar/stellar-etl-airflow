@@ -15,6 +15,7 @@ from google.oauth2 import service_account
 from google.cloud.exceptions import NotFound
 
 from os.path import splitext, basename
+from stellar_etl_airflow.default import alert_after_max_retries
 
 
 
@@ -252,4 +253,5 @@ def build_apply_gcs_changes_to_bq_task(dag, data_type):
         op_kwargs={'data_type': data_type},
         dag=dag,
         provide_context=True,
+        on_failure_callback=alert_after_max_retries,
     )

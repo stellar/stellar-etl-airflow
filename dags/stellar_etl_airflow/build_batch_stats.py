@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator 
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_batch_stats(dag, table):
     PROJECT_ID = Variable.get('bq_project')
@@ -22,6 +23,7 @@ def build_batch_stats(dag, table):
         project_id=PROJECT_ID,
         task_id=f"insert_batch_stats_{table}",
         execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_batch_stats.__name__]),
+        on_failure_callback=alert_after_max_retries,
         configuration={
             "query": {
                 "query": INSERT_ROWS_QUERY,

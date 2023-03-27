@@ -41,6 +41,11 @@
     },
     {   
         "mode": "NULLABLE",
+        "name": "asset_a_id",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
         "name": "asset_a_amount",
         "type": "FLOAT"
     },
@@ -57,6 +62,11 @@
     {   
         "mode": "NULLABLE",
         "name": "asset_b_issuer",
+        "type": "STRING"
+    },
+    {   
+        "mode": "NULLABLE",
+        "name": "asset_b_id",
         "type": "STRING"
     },
     {   

@@ -8,7 +8,9 @@ Table is heavily used for Partner Metabase Dashboards.
 NOTE: relevant assets are proprietary internal data and should not be shared externally.
 */
 SELECT
-  *
+  eho.*
+  , ma.code
+  , ma.issuer
 FROM `{project_id}.{dataset_id}.enriched_history_operations` eho
 INNER JOIN `{project_id}.{dataset_id}.meaningful_assets` ma ON
   eho.asset_id = ma.id OR

@@ -96,9 +96,9 @@ The send tasks receive the location of the file in Google Cloud storage through 
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 '''
 send_ops_to_bq_task = build_gcs_to_bq_task(dag, op_export_task.task_id, internal_project, internal_dataset, table_names['operations'], '', partition=True, cluster=True)
-send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, internal_project, internal_dataset, table_names['trades'], '', partition=False, cluster=False)
+send_trades_to_bq_task = build_gcs_to_bq_task(dag, trade_export_task.task_id, internal_project, internal_dataset, table_names['trades'], '', partition=True, cluster=True)
 send_effects_to_bq_task = build_gcs_to_bq_task(dag, effects_export_task.task_id, internal_project, internal_dataset, table_names['effects'], '', partition=True, cluster=True)
-send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, internal_project, internal_dataset, table_names['transactions'], '', partition=True, cluster=False)
+send_txs_to_bq_task = build_gcs_to_bq_task(dag, tx_export_task.task_id, internal_project, internal_dataset, table_names['transactions'], '', partition=True, cluster=True)
 
 '''
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
@@ -119,12 +119,13 @@ insert_enriched_hist_task = build_bq_insert_job(dag, internal_project, internal_
 insert_enriched_hist_pub_task = build_bq_insert_job(dag, public_project, public_dataset, "enriched_history_operations", partition=True, cluster=True)
 insert_enriched_ma_hist_task = build_bq_insert_job(dag, internal_project, internal_dataset, "enriched_meaningful_history_operations", partition=True, cluster=True)
 
-time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> insert_enriched_hist_task >> delete_enrich_ma_op_task >> insert_enriched_ma_hist_task
-op_export_task >> delete_old_op_pub_task >> send_ops_to_pub_task >> wait_on_dag >> insert_enriched_hist_pub_task
+time_task >> write_op_stats >> op_export_task >> delete_old_op_task >> send_ops_to_bq_task >> wait_on_dag >> delete_enrich_op_task 
+delete_enrich_op_task >> insert_enriched_hist_task >> delete_enrich_ma_op_task >> insert_enriched_ma_hist_task
+op_export_task >> delete_old_op_pub_task >> send_ops_to_pub_task >> wait_on_dag >> delete_enrich_op_pub_task >> insert_enriched_hist_pub_task
 time_task >> write_trade_stats >> trade_export_task  >> delete_old_trade_task >> send_trades_to_bq_task
 trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
 time_task >> write_effects_stats >> effects_export_task >> delete_old_effects_task >> send_effects_to_bq_task
 time_task >> write_effects_stats >> effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
 trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
-time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task
-tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task
+time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_to_bq_task >> wait_on_dag
+tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
