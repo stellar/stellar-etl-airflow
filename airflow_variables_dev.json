@@ -96,6 +96,18 @@
     "trust_lines": [
       "account_id",
       "last_modified_ledger"
+    ],
+    "enriched_history_operations": [
+      "ledger_sequence",
+      "transaction_id",
+      "account",
+      "operation_type"
+    ],
+    "enriched_meaningful_history_operations": [
+      "ledger_sequence",
+      "transaction_id",
+      "account",
+      "operation_type"
     ]
   },
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",

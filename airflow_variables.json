@@ -63,6 +63,18 @@
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_project": "hubble-261722",
   "cluster_fields": {
+    "enriched_history_operations": [
+      "ledger_sequence",
+      "transaction_id",
+      "account",
+      "operation_type"
+    ],
+    "enriched_meaningful_history_operations": [
+      "ledger_sequence",
+      "transaction_id",
+      "account",
+      "operation_type"
+    ],
     "accounts": [
       "account_id",
       "last_modified_ledger"
