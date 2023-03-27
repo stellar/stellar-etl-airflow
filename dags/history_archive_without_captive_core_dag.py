@@ -83,7 +83,7 @@ delete_old_asset_pub_task = build_delete_data_task(dag, public_project, public_d
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
 '''
-send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, internal_project, internal_dataset, table_names['ledgers'], '', partition=True, cluster=False)
+send_ledgers_to_bq_task = build_gcs_to_bq_task(dag, ledger_export_task.task_id, internal_project, internal_dataset, table_names['ledgers'], '', partition=True, cluster=True)
 send_assets_to_bq_task = build_gcs_to_bq_task(dag, asset_export_task.task_id, internal_project, internal_dataset, table_names['assets'], '', partition=True, cluster=True)
 
 '''

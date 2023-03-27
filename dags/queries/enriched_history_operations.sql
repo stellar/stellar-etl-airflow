@@ -12,6 +12,7 @@ SELECT
   , details.asset_code
   , details.asset_issuer
   , details.asset_type
+  , details.asset_id
   , details.authorize
   , CASE 
       WHEN details.balance_id IS NOT NULL THEN details.balance_id 
@@ -20,6 +21,7 @@ SELECT
   , details.buying_asset_code
   , details.buying_asset_issuer
   , details.buying_asset_type
+  , details.buying_asset_id
   , details.from
   , details.funder
   , details.high_threshold
@@ -39,6 +41,7 @@ SELECT
   , details.selling_asset_code
   , details.selling_asset_issuer
   , details.selling_asset_type
+  , details.selling_asset_id
   , details.set_flags
   , details.set_flags_s
   , details.signer_key
@@ -47,6 +50,7 @@ SELECT
   , details.source_asset_code
   , details.source_asset_issuer
   , details.source_asset_type
+  , details.source_asset_id
   , details.source_max
   , details.starting_balance
   , details.to
@@ -65,11 +69,13 @@ SELECT
   , details.clawback_enabled
   , details.liquidity_pool_id
   , details.reserve_a_asset_type
+  , details.reserve_a_asset_id
   , details.reserve_a_asset_code
   , details.reserve_a_asset_issuer
   , details.reserve_a_max_amount
   , details.reserve_a_deposit_amount
   , details.reserve_b_asset_type
+  , details.reserve_b_asset_id
   , details.reserve_b_asset_code
   , details.reserve_b_asset_issuer
   , details.reserve_b_max_amount
