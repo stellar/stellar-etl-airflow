@@ -46,6 +46,11 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "asset_id",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "authorize",
         "type": "BOOLEAN"
     },
@@ -68,6 +73,11 @@
         "mode": "NULLABLE",
         "name": "buying_asset_type",
         "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "buying_asset_id",
+        "type": "INTEGER"
     },
     {
         "mode": "NULLABLE",
@@ -628,6 +638,11 @@
         "type": "STRING"
     },
     {
+        "mode": "NULLABLE",
+        "name": "selling_asset_id",
+        "type": "INTEGER"
+    },
+    {
         "mode": "REPEATED",
         "name": "set_flags",
         "type": "INTEGER"
@@ -671,6 +686,11 @@
         "mode": "NULLABLE",
         "name": "source_asset_type",
         "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "source_asset_id",
+        "type": "INTEGER"
     },
     {
         "mode": "NULLABLE",
@@ -809,6 +829,11 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "reserve_a_asset_id",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "reserve_a_asset_code",
         "type": "STRING"
     },
@@ -831,6 +856,11 @@
         "mode": "NULLABLE",
         "name": "reserve_b_asset_type",
         "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "reserve_b_asset_id",
+        "type": "INTEGER"
     },
     {
         "mode": "NULLABLE",

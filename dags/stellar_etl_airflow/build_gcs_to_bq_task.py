@@ -49,9 +49,10 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
     '''
 
     bucket_name = Variable.get('gcs_exported_data_bucket_name')
+    history_tables = ['ledgers', 'assets', 'transactions', 'operations', 'trades', 'effects']
     if cluster:
         cluster_fields = Variable.get('cluster_fields', deserialize_json=True)
-        cluster_fields = cluster_fields[data_type]
+        cluster_fields = cluster_fields[f'history_{data_type}'] if data_type in history_tables else cluster_fields[data_type] 
     else:
         cluster_fields = None
     project_name = project
@@ -62,12 +63,14 @@ def build_gcs_to_bq_task(dag, export_task_id, project, dataset, data_type, sourc
     dataset_name = dataset
     time_partition = {}
     if partition:
-        time_partition['type'] = 'MONTH'
-        time_partition['field'] = 'batch_run_date'
+        partition_fields = Variable.get('partition_fields', deserialize_json=True)
+        partition_fields = partition_fields[f'history_{data_type}'] if data_type in history_tables else partition_fields[data_type]
+        time_partition['type'] = partition_fields['type']
+        time_partition['field'] = partition_fields['field']
     staging_table_suffix = ''
     if data_type == 'history_assets':
             staging_table_suffix = '_staging'
-    if data_type in ['ledgers', 'assets', 'transactions', 'operations', 'trades', 'effects']:
+    if data_type in history_tables:
         schema_fields = read_local_schema(f'history_{data_type}')
         
     else:

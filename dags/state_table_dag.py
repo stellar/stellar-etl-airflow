@@ -85,12 +85,12 @@ The apply tasks receive the location of the file in Google Cloud storage through
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
 Entries are updated, deleted, or inserted as needed.
 '''
-send_acc_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['accounts'], '/*-accounts.txt', partition=False, cluster=False)
-send_bal_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['claimable_balances'], '/*-claimable_balances.txt', partition=False, cluster=False)
-send_off_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['offers'], '/*-offers.txt', partition=False, cluster=False)
-send_pool_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['liquidity_pools'], '/*-liquidity_pools.txt', partition=False, cluster=False)
-send_sign_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['signers'], '/*-signers.txt', partition=False, cluster=False)
-send_trust_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['trustlines'], '/*-trustlines.txt', partition=False, cluster=False)
+send_acc_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['accounts'], '/*-accounts.txt', partition=True, cluster=True)
+send_bal_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['claimable_balances'], '/*-claimable_balances.txt', partition=True, cluster=True)
+send_off_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['offers'], '/*-offers.txt', partition=True, cluster=True)
+send_pool_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['liquidity_pools'], '/*-liquidity_pools.txt', partition=True, cluster=True)
+send_sign_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['signers'], '/*-signers.txt', partition=True, cluster=True)
+send_trust_to_bq_task = build_gcs_to_bq_task(dag, changes_task.task_id, internal_project, internal_dataset, table_names['trustlines'], '/*-trustlines.txt', partition=True, cluster=True)
 
 '''
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
