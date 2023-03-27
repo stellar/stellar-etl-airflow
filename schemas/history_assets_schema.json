@@ -21,6 +21,11 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "asset_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "batch_id",
     "type": "STRING"
   },
