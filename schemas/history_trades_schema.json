@@ -25,14 +25,14 @@
     "type": "STRING"
   },
   {
-     "mode": "NULLABLE",
-     "name": "selling_asset_issuer",
-     "type": "STRING"
+    "mode": "NULLABLE",
+    "name": "selling_asset_issuer",
+    "type": "STRING"
   },
   {
-     "mode": "NULLABLE",
-     "name": "selling_asset_type",
-     "type": "STRING"
+    "mode": "NULLABLE",
+    "name": "selling_asset_type",
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",
@@ -55,14 +55,14 @@
     "type": "STRING"
   },
   {
-     "mode": "NULLABLE",
-     "name": "buying_asset_issuer",
-     "type": "STRING"
+    "mode": "NULLABLE",
+    "name": "buying_asset_issuer",
+    "type": "STRING"
   },
   {
-     "mode": "NULLABLE",
-     "name": "buying_asset_type",
-     "type": "STRING"
+    "mode": "NULLABLE",
+    "name": "buying_asset_type",
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",
@@ -127,7 +127,7 @@
   {
     "mode": "NULLABLE",
     "name": "rounding_slippage",
-    "type": "INTEGER" 
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
