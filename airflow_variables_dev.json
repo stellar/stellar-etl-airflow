@@ -210,23 +210,23 @@
   "resources": {
     "default": {
       "requests": {
-        "cpu": "1.2",
-        "memory": "5Gi",
+        "cpu": "0.3",
+        "memory": "900Mi",
         "ephemeral-storage": "10Mi"
       }
     },
     "cc": {
       "requests": {
-        "cpu": "3.5",
-        "memory": "15Gi",
-        "ephemeral-storage": "10Gi"
+        "cpu": "0.3",
+        "memory": "900Mi",
+        "ephemeral-storage": "1Gi"
       }
     },
     "state": {
       "requests": {
-        "cpu": "3.5",
-        "memory": "20Gi",
-        "ephemeral-storage": "12Gi"
+        "cpu": "0.3",
+        "memory": "900Mi",
+        "ephemeral-storage": "1Gi"
       }
     }
   },
