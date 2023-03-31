@@ -2,45 +2,48 @@
 -- Ranks each record (grain: one row per balance id) using
 -- last modified ledger sequence number. View includes all claimable balances.
 -- (Deleted and Existing). View matches the Horizon snapshotted state tables.
-WITH current_balances AS
-(
-    SELECT B.balance_id,
-        B.asset_type,
-        B.asset_code,
-        B.asset_issuer,
-        B.asset_amount,
-        B.sponsor,
-        B.flags,
-        B.last_modified_ledger,
-        B.ledger_entry_change,
-        L.closed_at,
-        B.deleted,
-        DENSE_RANK() OVER(PARTITION BY B.balance_id ORDER BY B.last_modified_ledger DESC) AS rank_number
-    FROM `hubble-261722.crypto_stellar_internal_2.claimable_balances` B
-    JOIN `hubble-261722.crypto_stellar_internal_2.history_ledgers` L
-        ON B.last_modified_ledger = L.sequence
-    GROUP BY balance_id,
-        asset_type,
-        asset_code,
-        asset_issuer,
-        asset_amount,
-        sponsor,
-        flags,
-        last_modified_ledger,
-        ledger_entry_change,
-        closed_at,
-        deleted
+with
+    current_balances as (
+        select
+            b.balance_id
+            , b.asset_type
+            , b.asset_code
+            , b.asset_issuer
+            , b.asset_amount
+            , b.sponsor
+            , b.flags
+            , b.last_modified_ledger
+            , b.ledger_entry_change
+            , l.closed_at
+            , b.deleted
+            , dense_rank() over (partition by b.balance_id order by b.last_modified_ledger desc) as rank_number
+        from `hubble-261722.crypto_stellar_internal_2.claimable_balances` as b
+        join `hubble-261722.crypto_stellar_internal_2.history_ledgers` as l
+            on b.last_modified_ledger = l.sequence
+        group by
+            balance_id
+            , asset_type
+            , asset_code
+            , asset_issuer
+            , asset_amount
+            , sponsor
+            , flags
+            , last_modified_ledger
+            , ledger_entry_change
+            , closed_at
+            , deleted
     )
-SELECT balance_id,
-    asset_type,
-    asset_code,
-    asset_issuer,
-    asset_amount,
-    sponsor,
-    flags,
-    last_modified_ledger,
-    ledger_entry_change,
-    closed_at,
-    deleted
-FROM current_balances
-WHERE rank_number = 1
+select
+    balance_id
+    , asset_type
+    , asset_code
+    , asset_issuer
+    , asset_amount
+    , sponsor
+    , flags
+    , last_modified_ledger
+    , ledger_entry_change
+    , closed_at
+    , deleted
+from current_balances
+where rank_number = 1
