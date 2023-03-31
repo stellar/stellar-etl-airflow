@@ -1,6 +1,7 @@
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
+
 from airflow.models import Variable
-from sentry_sdk import set_tag, init, push_scope, capture_message
+from sentry_sdk import capture_message, init, push_scope, set_tag
 
 
 def init_sentry():

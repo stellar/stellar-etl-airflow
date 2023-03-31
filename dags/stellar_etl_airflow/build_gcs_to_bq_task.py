@@ -2,13 +2,14 @@
 This file contains functions for creating Airflow tasks to load files from Google Cloud Storage into BigQuery.
 """
 from datetime import timedelta
+
+from airflow.models import Variable
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
     GCSToBigQueryOperator,
 )
-from airflow.models import Variable
+from sentry_sdk import capture_message, push_scope
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 from stellar_etl_airflow.default import alert_after_max_retries
-from sentry_sdk import push_scope, capture_message
 
 
 class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):

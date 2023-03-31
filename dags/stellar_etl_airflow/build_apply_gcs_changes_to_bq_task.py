@@ -2,20 +2,20 @@
 This file contains functions for creating Airflow tasks to merge data on ledger entry changes from
 a file in Google Cloud storage into a BigQuery table.
 """
-import os
 import json
 import logging
-from airflow.models import Variable
-from airflow import AirflowException
-from airflow.operators.python_operator import PythonOperator
+import os
+from os.path import basename, splitext
+
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
-
+from airflow.models import Variable
+from airflow.operators.python_operator import PythonOperator
 from google.cloud import bigquery
-from google.oauth2 import service_account
 from google.cloud.exceptions import NotFound
-
-from os.path import splitext, basename
+from google.oauth2 import service_account
 from stellar_etl_airflow.default import alert_after_max_retries
+
+from airflow import AirflowException
 
 
 def read_local_schema(data_type):

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from stellar_etl_airflow import macros
