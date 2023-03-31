@@ -491,6 +491,26 @@ This section details further areas of development. It covers a basic guide on ho
 ## Extensions
 This section covers some possible extensions or further work that can be done.
 
+### Pre-commit Git hook scripts
+Git can run special scripts at various places in the Git workflow (which the system calls “hooks”).
+These scripts can do whatever you want and, in theory, can help a team with their development flow.
+
+`pre-commit` makes hook scripts extremely accessible to teams.
+
+1. Install `pre-commit`
+```bash
+# using pip
+$ pip install -r requirements-dev.txt
+```
+2. Set up the Git hook scripts
+```bash
+$ pre-commit install
+pre-commit installed at .git/hooks/pre-commit
+```
+
+That's it. Now `pre-commit` will run automatically on `git commit`!
+
+
 ### Adding New DAGs
 Adding new DAGs is a fairly straightforward process. Create a new python file in the `dags` folder. Create your dag object using the code below:
 ```
