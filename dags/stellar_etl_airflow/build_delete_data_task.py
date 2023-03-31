@@ -4,13 +4,14 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
+
 def build_delete_data_task(dag, project, dataset, table):
-    if dataset == Variable.get('public_dataset'):
-        dataset_type = 'pub'
+    if dataset == Variable.get("public_dataset"):
+        dataset_type = "pub"
     else:
-        dataset_type = 'bq'
+        dataset_type = "bq"
     batch_id = macros.get_batch_id()
-    batch_date = '{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}'
+    batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
     # Adding the partition to the filter clause prunes the query
     # if the table is partitioned (tables partitioned by batch_run_date)
@@ -23,13 +24,16 @@ def build_delete_data_task(dag, project, dataset, table):
     return BigQueryInsertJobOperator(
         project_id=project,
         task_id=f"delete_old_partition_{table}_{dataset_type}",
-        execution_timeout=timedelta(seconds=Variable.get('task_timeout', deserialize_json=True)[build_delete_data_task.__name__]),
+        execution_timeout=timedelta(
+            seconds=Variable.get("task_timeout", deserialize_json=True)[
+                build_delete_data_task.__name__
+            ]
+        ),
         on_failure_callback=alert_after_max_retries,
         configuration={
             "query": {
                 "query": DELETE_ROWS_QUERY,
                 "useLegacySql": False,
             }
-        }
+        },
     )
-    
