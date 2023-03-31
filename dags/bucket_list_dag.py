@@ -1,7 +1,7 @@
 """
-The bucket_list_export DAG exports ledger entry changes (accounts, offers, and trustlines) using the history archives' 
-bucket list. As a result, it is faster than stellar-core. Bucket list commands require an end ledger that determines when 
-to stop exporting. This end ledger  is determined by when the Airflow DAG is run. This DAG should be triggered manually 
+The bucket_list_export DAG exports ledger entry changes (accounts, offers, and trustlines) using the history archives'
+bucket list. As a result, it is faster than stellar-core. Bucket list commands require an end ledger that determines when
+to stop exporting. This end ledger  is determined by when the Airflow DAG is run. This DAG should be triggered manually
 when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 """
 import ast
@@ -160,7 +160,7 @@ delete_trust_pub_task = build_delete_data_task(
 
 """
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
+Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
 send_acc_to_bq_task = build_gcs_to_bq_task(
@@ -226,7 +226,7 @@ send_trust_to_bq_task = build_gcs_to_bq_task(
 
 """
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
+Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
 send_acc_to_pub_task = build_gcs_to_bq_task(

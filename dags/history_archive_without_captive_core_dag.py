@@ -1,5 +1,5 @@
 """
-The history_archive_export DAG exports ledgers and transactions from the history archives. 
+The history_archive_export DAG exports ledgers and transactions from the history archives.
 It is scheduled to export information to BigQuery at regular intervals.
 """
 import ast
@@ -51,8 +51,8 @@ execution time. It converts these two times into ledger ranges.
 time_task = build_time_task(dag, use_testnet=use_testnet)
 
 """
-The write batch stats task will take a snapshot of the DAG run_id, execution date, 
-start and end ledgers so that reconciliation and data validation are easier. The 
+The write batch stats task will take a snapshot of the DAG run_id, execution date,
+start and end ledgers so that reconciliation and data validation are easier. The
 record is written to an internal dataset for data eng use only.
 """
 write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
@@ -64,7 +64,7 @@ The results of the command are stored in a file. There is one task for each of t
 can be exported from the history archives.
 
 The DAG sleeps for 30 seconds after the export_task writes to the file to give the poststart.sh
-script time to copy the file over to the correct directory. If there is no sleep, the load task 
+script time to copy the file over to the correct directory. If there is no sleep, the load task
 starts prematurely and will not load data.
 """
 ledger_export_task = build_export_task(
@@ -85,7 +85,7 @@ asset_export_task = build_export_task(
 )
 
 """
-The delete partition task checks to see if the given partition/batch id exists in 
+The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 """
 delete_old_ledger_task = build_delete_data_task(
@@ -103,7 +103,7 @@ delete_old_asset_pub_task = build_delete_data_task(
 
 """
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
 send_ledgers_to_bq_task = build_gcs_to_bq_task(
     dag,
@@ -128,7 +128,7 @@ send_assets_to_bq_task = build_gcs_to_bq_task(
 
 """
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the unique entries in the file into the corresponding table in BigQuery. 
+Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
 send_ledgers_to_pub_task = build_gcs_to_bq_task(
     dag,

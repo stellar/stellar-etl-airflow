@@ -1,6 +1,6 @@
 """
-The state_table_export DAG exports ledger entry changes (accounts, offers, and trustlines) within a bounded range using stellar-core. 
-This DAG should be triggered manually if it is required to export entry changes within a specified time range. 
+The state_table_export DAG exports ledger entry changes (accounts, offers, and trustlines) within a bounded range using stellar-core.
+This DAG should be triggered manually if it is required to export entry changes within a specified time range.
 """
 import ast
 import datetime
@@ -60,8 +60,8 @@ changes_task = build_export_task(
 )
 
 """
-The write batch stats task will take a snapshot of the DAG run_id, execution date, 
-start and end ledgers so that reconciliation and data validation are easier. The 
+The write batch stats task will take a snapshot of the DAG run_id, execution date,
+start and end ledgers so that reconciliation and data validation are easier. The
 record is written to an internal dataset for data eng use only.
 """
 write_acc_stats = build_batch_stats(dag, table_names["accounts"])
@@ -72,7 +72,7 @@ write_sign_stats = build_batch_stats(dag, table_names["signers"])
 write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
 
 """
-The delete partition task checks to see if the given partition/batch id exists in 
+The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 """
 delete_acc_task = build_delete_data_task(
@@ -114,7 +114,7 @@ delete_trust_pub_task = build_delete_data_task(
 
 """
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
+Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
 send_acc_to_bq_task = build_gcs_to_bq_task(
@@ -180,7 +180,7 @@ send_trust_to_bq_task = build_gcs_to_bq_task(
 
 """
 The apply tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
-Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery. 
+Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
 send_acc_to_pub_task = build_gcs_to_bq_task(

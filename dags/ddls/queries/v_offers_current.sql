@@ -1,4 +1,4 @@
-WITH current_offers AS 
+WITH current_offers AS
 (
     SELECT O.seller_id,
         O.offer_id,
@@ -59,5 +59,5 @@ SELECT seller_id,
     ledger_entry_change,
     deleted,
     sponsor
-FROM current_offers 
+FROM current_offers
 WHERE rank_number = 1

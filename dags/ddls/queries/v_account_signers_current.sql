@@ -1,8 +1,8 @@
 -- Finds the latest state of each account signer in the `account_signers` table.
--- Ranks each record (grain: one row per account) using 
+-- Ranks each record (grain: one row per account) using
 -- last modified ledger sequence number. View includes all account signers.
 -- (Deleted and Existing). View matches the Horizon snapshotted state tables.
-WITH current_signers AS 
+WITH current_signers AS
 (
     SELECT S.account_id,
         S.signer,
@@ -20,18 +20,18 @@ WITH current_signers AS
         signer,
         weight,
         sponsor,
-        last_modified_ledger, 
+        last_modified_ledger,
         ledger_entry_change,
         closed_at,
         deleted
     )
-SELECT account_id, 
+SELECT account_id,
     signer,
     weight,
     sponsor
-    last_modified_ledger, 
+    last_modified_ledger,
     ledger_entry_change,
     closed_at,
     deleted
-FROM current_signers   
+FROM current_signers
 WHERE rank_number = 1

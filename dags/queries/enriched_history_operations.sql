@@ -14,9 +14,9 @@ SELECT
   , details.asset_type
   , details.asset_id
   , details.authorize
-  , CASE 
-      WHEN details.balance_id IS NOT NULL THEN details.balance_id 
-      ELSE details.claimable_balance_id 
+  , CASE
+      WHEN details.balance_id IS NOT NULL THEN details.balance_id
+      ELSE details.claimable_balance_id
     END as balance_id
   , details.buying_asset_code
   , details.buying_asset_issuer

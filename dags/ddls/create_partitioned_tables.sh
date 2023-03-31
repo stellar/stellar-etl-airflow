@@ -1,4 +1,4 @@
-#! /bin/bash -e 
+#! /bin/bash -e
 #
 #
 ###############################################################################
@@ -8,12 +8,12 @@
 # Date: 1 October 2021
 #
 # Script will read an updated schema from the /schemas directory
-# and create history archives tables. The largest tables are partitioned by 
+# and create history archives tables. The largest tables are partitioned by
 # batch execution date, which is a proxy for ledger closed date. The smaller
 # tables do not need to be partitioned. This script is intended for test env
 # use when setting up a sandbox.
 ###############################################################################
- 
+
 cd ../../
 WORKDIR="$(pwd)"
 echo "Current working directory: $WORKDIR"
@@ -25,9 +25,9 @@ PARTITION_TABLES=(history_operations history_transactions history_ledgers histor
 
 # make partitioned tables
 for table in ${PARTITION_TABLES[@]}
-do 
+do
     echo "Creating partitioned table $table in $DATASET_ID"
-    if [ "$table" = "history_operations" ]; then 
+    if [ "$table" = "history_operations" ]; then
         cluster=transaction_id,source_account,type
         partition=batch_run_date
     elif [ "$table" = "history_transactions" ]; then
@@ -60,10 +60,10 @@ do
     elif [ "$table" = "trust_lines" ]; then
         cluster=account_id,asset_id,liquidity_pool_id,last_modified_ledger
         partition=batch_run_date
-    else 
+    else
         cluster=ledger_sequence,transaction_id,accounttype
         partition=closed_at
-    fi 
+    fi
     bq mk --table \
     --schema $SCHEMA_DIR${table}_schema.json \
     --time_partitioning_field $partition \
@@ -71,4 +71,3 @@ do
     --clustering_fields $cluster \
     $PROJECT_ID:$DATASET_ID.$table
 done
-

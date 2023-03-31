@@ -1,8 +1,8 @@
 -- Finds the latest state of each claimable balance in the `claimable_balances` table.
--- Ranks each record (grain: one row per balance id) using 
+-- Ranks each record (grain: one row per balance id) using
 -- last modified ledger sequence number. View includes all claimable balances.
 -- (Deleted and Existing). View matches the Horizon snapshotted state tables.
-WITH current_balances AS 
+WITH current_balances AS
 (
     SELECT B.balance_id,
         B.asset_type,
@@ -26,7 +26,7 @@ WITH current_balances AS
         asset_amount,
         sponsor,
         flags,
-        last_modified_ledger, 
+        last_modified_ledger,
         ledger_entry_change,
         closed_at,
         deleted
@@ -38,9 +38,9 @@ SELECT balance_id,
     asset_amount,
     sponsor,
     flags,
-    last_modified_ledger, 
+    last_modified_ledger,
     ledger_entry_change,
     closed_at,
     deleted
-FROM current_balances  
+FROM current_balances
 WHERE rank_number = 1

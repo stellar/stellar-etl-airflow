@@ -49,4 +49,3 @@ left join new_load_dedup on
   exclude_duplicates.asset_type = new_load_dedup.asset_type
   and exclude_duplicates.asset_code = new_load_dedup.asset_code
   and exclude_duplicates.asset_issuer = new_load_dedup.asset_issuer
-  
