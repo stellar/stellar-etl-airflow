@@ -500,7 +500,7 @@ These scripts can do whatever you want and, in theory, can help a team with thei
 1. Install `pre-commit`
 ```bash
 # using pip
-$ pip install -r requirements-dev.txt
+$ pip install pre-commit==3.2.1
 ```
 2. Set up the Git hook scripts
 ```bash
