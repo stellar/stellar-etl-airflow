@@ -22,3 +22,8 @@ repos:
       - id: isort
         args: ["--profile", "black", "--filter-files"]
         files: "\\.(py)$"
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 2.0.2
+    hooks:
+      - id: sqlfluff-lint
+      - id: sqlfluff-fix
