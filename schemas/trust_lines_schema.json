@@ -32,7 +32,7 @@
   {
     "mode": "NULLABLE",
     "name": "liquidity_pool_id",
-    "type": "STRING"  
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",

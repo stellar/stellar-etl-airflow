@@ -2,7 +2,7 @@
 # Background process that copies extracts to gcsfuse mount on airflow-workers
 #
 # Author: Debnil Sur
-# Date: October 2020 
+# Date: October 2020
 #
 # This script is a long running background process on the airflow-worker
 # nodes. It listens for the existing of new files in the /home/airflow/etlData
@@ -19,7 +19,7 @@ move_file_if_closed() {
     sleep 10;
     postFileSize=$(wc -c < "$1")
     lsof "$1";
-    # if lsof returns an error code of 1, it means the file is not opened by any 
+    # if lsof returns an error code of 1, it means the file is not opened by any
     # other processes, allowing us to move it safely. Confirm there is data first.
     if [[ $? == 1 && $preFileSize -gt 0]]; then
         # File size is measured 10 seconds apart to confirm any batch process finished

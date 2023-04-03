@@ -8,7 +8,7 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 	- [Manual Installation](#manual-installation)
 	- [Airflow Variables Explanation](#airflow-variables-explanation)
 	  - [Normal Variables](#normal-variables)
-	  - [Kubernetes Specific Variables](#kubernetes-specific-variables) 
+	  - [Kubernetes Specific Variables](#kubernetes-specific-variables)
 - [Execution Procedures](#execution-procedures)
 	- [Starting Up](#starting-up)
 	- [Handling Failures](#handling-failures)
@@ -97,23 +97,23 @@ gcloud container node-pools create <pool_name> --cluster <cluster_name> \
 Alternatively, node pools can be created through the UI with the `Add Node Pool` button. Security can only be applied upon pool creation, so ensure that your security account and scopes are correct. If they need to be updated, you will need to delete the node pool and recreate it.
 
 > **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
-> 
+>
 > A sample affinity configuration is below, as well as defined in the `airflow_variables.txt`. The user must supply the node pool name in `values`.
 
 ```
 "affinity": {
-        "nodeAffinity": { 
-            "requiredDuringSchedulingIgnoredDuringExecution": { 
-                "nodeSelectorTerms": [{ 
-                    "matchExpressions": [{ 
-                        "key": "cloud.google.com/gke-nodepool", 
-                        "operator": "In", 
-                        "values": [<node-pool-1>, 
-						           <node-pool-2>,] 
-                        }] 
-                    }] 
-                } 
-            } 
+        "nodeAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+                "nodeSelectorTerms": [{
+                    "matchExpressions": [{
+                        "key": "cloud.google.com/gke-nodepool",
+                        "operator": "In",
+                        "values": [<node-pool-1>,
+						           <node-pool-2>,]
+                        }]
+                    }]
+                }
+            }
         },
 ```
 
@@ -184,11 +184,11 @@ gcloud iam service-accounts create hubble-service-account \
 ### Modify Kubernetes Config for Airflow Workers
 Find the Kubernetes cluster workloads that are used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the **GKE cluster** section. Click on the link that says "view cluster workloads."
 
-A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Click the edit button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow_worker_config.yaml). 
+A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Click the edit button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow_worker_config.yaml).
 
 > **_WARNING:_** You shouldn't copy the example file directly because it has environment variables and config values that are set up for a different project.
 
-  
+
 > **_NOTE:_** This deployment file contains two separate containers: airflow-worker and gcs-syncd. Only the airflow-worker container should be edited.
 
 <details>
@@ -266,7 +266,7 @@ gcloud container clusters get-credentials <cluster_name> --region=<composer_regi
 kubectl create configmap start-config --from-file poststart.sh -n <namespace_name>
 ```
 
-  
+
 
 Return to the airflow-worker config file. Add a new volumeMount to /etc/scripts.
 
@@ -337,7 +337,7 @@ Click the Admin tab, then Connections. Click create, then:
 Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
 
 The airflow_variables.txt file provides a set of default values for variables.
-  
+
 ## Custom Kubernetes Setup
 This section is currently unfinished as the Kubernetes setup is still in development.
 
@@ -392,7 +392,7 @@ Here are some example `volume_config` values. Note that a ReadWriteMany volume i
 # Execution Procedures
 
 ## Starting Up
-First, this image has a shows the Airflow web UI components for pausing and triggering DAGs: 
+First, this image has a shows the Airflow web UI components for pausing and triggering DAGs:
 ![Airflow UI](documentation/images/AirflowUI.png)
 1. Ensure that the Airflow scheduler is running: `airflow scheduler`
 2. Ensure that the Airflow web server is running: `airflow webserver -p <port>`
@@ -402,16 +402,16 @@ First, this image has a shows the Airflow web UI components for pausing and trig
 4. Enable the DAGs for exporting ledger changes
 	- Unpause the dags using the Web UI or the commands below:
 	```
-	airflow unpause unbounded_core_changes_export 
+	airflow unpause unbounded_core_changes_export
 	airflow unpause bucket_list_export
 	```
-	- Manually the trigger bucket list DAG with `airflow trigger_dag bucket_list_export <current_time>` or the Web UI. 
+	- Manually the trigger bucket list DAG with `airflow trigger_dag bucket_list_export <current_time>` or the Web UI.
 	- Once the bucket list has finished, trigger the `unbounded_core_changes_export` DAG with the same execution time as the bucket_list_export DAG. You can do this through the Web UI by going to Browse->DAG Runs->Create and setting the DAG id and execution date.
 	- Unpause the processing DAG with `airflow unpause process_unbounded_core_changes`
 5. Enable the DAGs for exporting orderbooks
 	- Unpause the dags using the Web UI or the commands below:
 	```
-	airflow unpause unbounded_core_orderbook_export 
+	airflow unpause unbounded_core_orderbook_export
 	airflow unpause process_unbounded_core_orderbooks
 	```
 ## Handling Failures
@@ -460,9 +460,9 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![Unbounded Orderbook DAG](documentation/images/OrderbookDAG.png)
 
-### Process Unbounded Orderbook DAG  
+### Process Unbounded Orderbook DAG
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_changes_dag.py) processes the output of the unbounded orderbook DAG. File sensors watch the folder where the unbounded core DAG sends its exported information. Once a file is seen, it is loaded into Google Cloud Storage and applied to BigQuery. Once a batch has been exported completely, the DAG triggers itself again.
-![Unbounded Orderbook DAG](documentation/images/ProcessOrderbookDAG.png)  
+![Unbounded Orderbook DAG](documentation/images/ProcessOrderbookDAG.png)
 
 ## Task Explanations
 
@@ -491,8 +491,28 @@ This section details further areas of development. It covers a basic guide on ho
 ## Extensions
 This section covers some possible extensions or further work that can be done.
 
+### Pre-commit Git hook scripts
+Git can run special scripts at various places in the Git workflow (which the system calls “hooks”).
+These scripts can do whatever you want and, in theory, can help a team with their development flow.
+
+`pre-commit` makes hook scripts extremely accessible to teams.
+
+1. Install `pre-commit`
+```bash
+# using pip
+$ pip install pre-commit==3.2.1
+```
+2. Set up the Git hook scripts
+```bash
+$ pre-commit install
+pre-commit installed at .git/hooks/pre-commit
+```
+
+That's it. Now `pre-commit` will run automatically on `git commit`!
+
+
 ### Adding New DAGs
-Adding new DAGs is a fairly straightforward process. Create a new python file in the `dags` folder. Create your dag object using the code below: 
+Adding new DAGs is a fairly straightforward process. Create a new python file in the `dags` folder. Create your dag object using the code below:
 ```
 dag = DAG(
 	'dag_id',
@@ -502,7 +522,7 @@ dag = DAG(
 )
 ```
 The get_default_dag_args() is defined in the `dags/stellar-etl-airflow/default.py` file.
- 
+
 Feel free to add more arguments or customize the existing ones. The documentation for a DAG is available [here](https://airflow.apache.org/docs/stable/_api/airflow/models/dag/index.html).
 
 ### Adding tasks to existing DAGs
@@ -521,7 +541,7 @@ Airflow has a variety of operators. The ones that are most likely to be used are
 
 You may also find this list of [Google-related operators](https://airflow.apache.org/docs/stable/howto/operator/gcp/index.html) useful for interacting with Google Cloud Storage or BigQuery.
 
-An example of a simple task is the [time task](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py). This task converts a time into a ledger range using a stellar-etl command. Since it needs to use the stellar-etl, we need a DockerOperator. We provide the operator with the command, the task_id, the parent DAG, and some parameters specific to DockerOperators, like the volume. 
+An example of a simple task is the [time task](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py). This task converts a time into a ledger range using a stellar-etl command. Since it needs to use the stellar-etl, we need a DockerOperator. We provide the operator with the command, the task_id, the parent DAG, and some parameters specific to DockerOperators, like the volume.
 
 More complex tasks might require a good amount of extra code to set up variables, authenticate, or check for errors. However, keep in mind that tasks should be idempotent. This means that tasks should produce the same output even if they are run multiple times. The same input should always produce the same output.
 
@@ -529,7 +549,7 @@ You may find that you need to pass small amounts of information, like filenames 
 
 ## Testing Changes
 Once you make a change, you can test it using the Airflow command line interface. Here's a quick outline of how to test changes:
-   1. Run `kubectl get pods --all-namespaces`. Look for a pod that starts with `airflow-worker`. 
+   1. Run `kubectl get pods --all-namespaces`. Look for a pod that starts with `airflow-worker`.
    2. Run `kubectl -n <pod_namespace> exec -it airflow-worker-<rest_of_pod_name> -c airflow-worker -- /bin/bash` to get inside the worker
    3. Run `airflow test history_archive_export <task_id> <test_date>`. Note that if the task you changed has dependencies, you need to run `airflow test` on those upstream tasks for the exact same date.
    4. Run `airflow test` on the tasks that depend on the the task you just changed. Ensure that they still perform as expected.
@@ -538,4 +558,3 @@ This guide can also be useful for testing deployment in a new environment. Follo
 
 ## Remaining Project TODOs
 Write documentation about custom Kubernetes setup ([#43](https://github.com/stellar/stellar-etl-airflow/issues/43)).
-
