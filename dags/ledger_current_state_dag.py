@@ -6,7 +6,7 @@ from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from airflow import DAG
 from airflow.models.variable import Variable
 
-#init_sentry()
+init_sentry()
 
 dag = DAG(
     'ledger_current_state',
