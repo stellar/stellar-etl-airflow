@@ -73,7 +73,7 @@ def build_dbt_task(dag, model_name, resource_cfg="default"):
     create_dbt_profile_cmd = create_dbt_profile()
 
     command = ["sh", "-c"]
-    args = [" ".join([create_dbt_profile_cmd, "dbt run --select", model_name, full_refresh])]
+    args = [" ".join([create_dbt_profile_cmd, "dbt run --select", model_name, dbt_full_refresh])]
     logging.info(f'sh commands to run in pod: {args}')
 
     config_file_location = Variable.get('kube_config_location')
