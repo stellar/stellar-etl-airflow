@@ -4,12 +4,13 @@ This file contains functions for creating Airflow tasks to convert from a time r
 import logging
 from datetime import timedelta
 
+from kubernetes.client import models as k8s
+from stellar_etl_airflow.default import alert_after_max_retries
+
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import models as k8s
-from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def build_time_task(

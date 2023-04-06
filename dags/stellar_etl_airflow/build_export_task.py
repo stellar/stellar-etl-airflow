@@ -5,14 +5,15 @@ import logging
 import os
 from datetime import datetime, timedelta
 
+from kubernetes.client import models as k8s
+from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
+
 from airflow import AirflowException
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import models as k8s
-from stellar_etl_airflow import macros
-from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def get_path_variables(use_testnet=False):
@@ -22,7 +23,7 @@ def get_path_variables(use_testnet=False):
     config = "/etl/docker/stellar-core.cfg"
     if use_testnet:
         config = "/etl/docker/stellar-core_testnet.cfg"
-    return Variable.get("image_output_path"), "/usr/bin/stellar-core", config
+    return "/usr/bin/stellar-core", config
 
 
 def select_correct_filename(cmd_type, base_name, batched_name):
@@ -71,7 +72,7 @@ def generate_etl_cmd(
     if cmd_type in ("archive", "bounded-core"):
         end_ledger = '{{ [ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]-1, ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"]] | max}}'
 
-    image_output_path, core_exec, core_cfg = get_path_variables(use_testnet)
+    core_exec, core_cfg = get_path_variables(use_testnet)
 
     batch_filename = "-".join([start_ledger, end_ledger, base_filename])
     run_id = "{{ run_id }}"
