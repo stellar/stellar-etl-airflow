@@ -8,7 +8,7 @@ from typing import List, Tuple
 from google.cloud import storage
 
 
-def _create_files_list(dags_directory: str) -> Tuple[str, List[str]]:
+def _create_files_list() -> Tuple[str, List[str]]:
     temp_dir = mkdtemp()
 
     # do not upload `dags/ddls/` directory and some files that Airflow don't use
@@ -17,7 +17,7 @@ def _create_files_list(dags_directory: str) -> Tuple[str, List[str]]:
     )
 
     # copy everything but the ignored files to a temp directory
-    copytree(dags_directory, f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
+    copytree("dags/", f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
     # copy all schemas
     copytree("schemas/", f"{temp_dir}/", dirs_exist_ok=True)
 
@@ -80,14 +80,10 @@ if __name__ == "__main__":
         description=__doc__, formatter_class=RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "--dags_directory",
-        help="Relative path to the source directory containing your DAGs",
-    )
-    parser.add_argument(
         "--dags_bucket",
         help="Name of the DAGs bucket of your Composer environment without the gs:// prefix",
     )
 
     args = parser.parse_args()
 
-    upload_dags_to_composer(args.dags_directory, args.dags_bucket)
+    upload_dags_to_composer(args.dags_bucket)
