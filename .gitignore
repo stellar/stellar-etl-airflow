@@ -141,3 +141,6 @@ cython_debug/
 # Swap files
 .swp
 .swo
+
+# Credentials check
+credentials.json

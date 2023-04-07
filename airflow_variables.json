@@ -63,76 +63,77 @@
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_project": "hubble-261722",
   "cluster_fields": {
-    "accounts": [ 
-      "account_id", 
-      "last_modified_ledger" 
-    ], 
-    "account_signers": [ 
-      "account_id", 
-      "signer",
-      "last_modified_ledger" 
-    ], 
-    "claimable_balances": [ 
-      "asset_id", 
+    "accounts": [
+      "account_id",
       "last_modified_ledger"
-    ], 
-    "history_assets": [ 
-      "asset_code", 
-      "asset_issuer", 
-      "asset_type" 
-    ], 
-    "history_effects": [ 
-      "address", 
-      "operation_id", 
-      "type" 
-    ], 
-    "history_ledgers": [ 
-      "sequence", 
-      "closed_at" 
-    ], 
+    ],
+    "account_signers": [
+      "account_id",
+      "signer",
+      "last_modified_ledger"
+    ],
+    "claimable_balances": [
+      "asset_id",
+      "last_modified_ledger"
+    ],
+    "history_assets": [
+      "asset_code",
+      "asset_issuer",
+      "asset_type"
+    ],
+    "history_effects": [
+      "address",
+      "operation_id",
+      "type"
+    ],
+    "history_ledgers": [
+      "sequence",
+      "closed_at"
+    ],
     "history_operations": [
-      "transaction_id", 
-      "source_account", 
+      "transaction_id",
+      "source_account",
       "type"
-    ], 
+    ],
     "history_trades": [
-      "selling_asset_id", 
-      "buying_asset_id", 
-      "trade_type" 
-    ], 
-    "history_transactions": [ 
-      "account", 
-      "ledger_sequence", 
-      "successful" 
-    ], 
+      "selling_asset_id",
+      "buying_asset_id",
+      "trade_type"
+    ],
+    "history_transactions": [
+      "account",
+      "ledger_sequence",
+      "successful"
+    ],
     "offers": [
-      "selling_asset_id", 
-      "buying_asset_id", 
-      "last_modified_ledger" 
-    ], 
-    "liquidity_pools": [ 
-      "liquidity_pool_id", 
-      "asset_a_id", 
-      "asset_b_id" , 
-      "last_modified_ledger" 
-    ], "trust_lines": [ 
-      "account_id", 
-      "asset_id", 
-      "liquidity_pool_id", 
-      "last_modified_ledger" 
-    ], 
+      "selling_asset_id",
+      "buying_asset_id",
+      "last_modified_ledger"
+    ],
+    "liquidity_pools": [
+      "liquidity_pool_id",
+      "asset_a_id",
+      "asset_b_id",
+      "last_modified_ledger"
+    ],
+    "trust_lines": [
+      "account_id",
+      "asset_id",
+      "liquidity_pool_id",
+      "last_modified_ledger"
+    ],
     "enriched_history_operations": [
-      "ledger_sequence", 
-      "transaction_id", 
-      "account", 
+      "ledger_sequence",
+      "transaction_id",
+      "account",
       "type"
-    ], 
+    ],
     "enriched_meaningful_history_operations": [
-      "ledger_sequence", 
-      "transaction_id", 
-      "account", 
+      "ledger_sequence",
+      "transaction_id",
+      "account",
       "type"
-    ] 
+    ]
   },
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
@@ -181,47 +182,47 @@
       "field": "batch_run_date"
     },
     "accounts": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "account_signers": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "claimable_balances": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
     },
     "history_effects": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "history_ledgers": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "closed_at"
-    }, 
-    "history_operations":{
-      "type": "MONTH", 
+    },
+    "history_operations": {
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "history_trades": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "ledger_closed_at"
-    }, 
+    },
     "history_transactions": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "offers": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "liquidity_pools": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
-    }, 
+    },
     "trust_lines": {
-      "type": "MONTH", 
+      "type": "MONTH",
       "field": "batch_run_date"
     }
   },
