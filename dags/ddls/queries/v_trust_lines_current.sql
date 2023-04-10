@@ -17,11 +17,12 @@ with
             , tl.sponsor
             , tl.trust_line_limit
             , tl.last_modified_ledger
+            . tl.ledger_entry_change
             , l.closed_at
             , tl.deleted
             , dense_rank() over (
                 partition by tl.account_id, tl.asset_code, tl.asset_issuer, tl.liquidity_pool_id
-                order by tl.last_modified_ledger desc
+                order by tl.last_modified_ledger desc, tl.ledger_entry_change desc
             ) as rank_number
         from `PROJECT.DATASET.trust_lines` as tl
         join `PROJECT.DATASET.history_ledgers` as l
@@ -39,6 +40,7 @@ with
             , sponsor
             , trust_line_limit
             , last_modified_ledger
+            , ledger_entry_change
             , closed_at
             , deleted
     )
@@ -55,6 +57,7 @@ select
     , sponsor
     , trust_line_limit
     , last_modified_ledger
+    , ledger_entry_change
     , closed_at
     , deleted
 from current_tls
