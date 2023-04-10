@@ -7,15 +7,14 @@ import logging
 import os
 from os.path import basename, splitext
 
-from google.cloud import bigquery
-from google.cloud.exceptions import NotFound
-from google.oauth2 import service_account
-from stellar_etl_airflow.default import alert_after_max_retries
-
 from airflow import AirflowException
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
+from google.cloud import bigquery
+from google.cloud.exceptions import NotFound
+from google.oauth2 import service_account
+from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def read_local_schema(data_type):

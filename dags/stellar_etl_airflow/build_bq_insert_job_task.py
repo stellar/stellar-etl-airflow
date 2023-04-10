@@ -1,11 +1,10 @@
 import os
 from datetime import timedelta
 
-from stellar_etl_airflow import macros
-from stellar_etl_airflow.default import alert_after_max_retries
-
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from stellar_etl_airflow import macros
+from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def get_query_filepath(query_name):
