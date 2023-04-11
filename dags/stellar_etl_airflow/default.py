@@ -1,16 +1,13 @@
+import logging
 from datetime import datetime, timedelta
 
 from airflow.models import Variable
 from sentry_sdk import capture_message, init, push_scope, set_tag
 from sentry_sdk.integrations.logging import LoggingIntegration
-import logging
 
 
 def init_sentry():
-    sentry_logging = LoggingIntegration(
-            level=logging.INFO,
-            event_level=logging.FATAL
-    )
+    sentry_logging = LoggingIntegration(level=logging.INFO, event_level=logging.FATAL)
 
     init(
         dsn=Variable.get("sentry_dsn"),
