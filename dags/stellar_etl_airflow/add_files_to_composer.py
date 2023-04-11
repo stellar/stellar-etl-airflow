@@ -2,14 +2,15 @@ import logging
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from glob import glob
 from os import listdir
-from shutil import copytree, copy, ignore_patterns
+from shutil import copy, copytree, ignore_patterns
 from tempfile import mkdtemp
 from typing import List, Tuple
 
 from google.cloud import storage
 
-
 logging.basicConfig(level=logging.INFO)
+
+
 def _create_files_list(env: str) -> Tuple[str, List[str]]:
     temp_dir = mkdtemp()
 
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--env",
         default="dev",
-        choices=["prod","dev"],
+        choices=["prod", "dev"],
         help="Name of the Composer environment. Default value is 'dev'",
     )
 
