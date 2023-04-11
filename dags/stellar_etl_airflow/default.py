@@ -1,13 +1,20 @@
+import logging
 from datetime import datetime, timedelta
 
 from airflow.models import Variable
 from sentry_sdk import capture_message, init, push_scope, set_tag
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 
 def init_sentry():
+    sentry_logging = LoggingIntegration(level=logging.INFO, event_level=logging.FATAL)
+
     init(
         dsn=Variable.get("sentry_dsn"),
         environment=Variable.get("sentry_environment"),
+        integrations=[
+            sentry_logging,
+        ],
     )
     set_tag("image_version", Variable.get("image_name"))
 
@@ -52,5 +59,5 @@ def alert_after_max_retries(context):
             scope.set_extra("duration", ti.duration)
             capture_message(
                 f"The task {ti.task_id} belonging to DAG {ti.dag_id} failed after max retries.",
-                "error",
+                "fatal",
             )

@@ -40,7 +40,7 @@ class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
                 )
                 capture_message(
                     f"failed_transforms ({self.failed_transforms}) has exceeded the max value ({self.max_failed_transforms})",
-                    "error",
+                    "fatal",
                 )
         super().pre_execute(**kwargs)
 
