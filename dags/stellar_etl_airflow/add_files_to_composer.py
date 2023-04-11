@@ -1,14 +1,16 @@
+import logging
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from glob import glob
 from os import listdir
-from shutil import copytree, ignore_patterns
+from shutil import copytree, copy, ignore_patterns
 from tempfile import mkdtemp
 from typing import List, Tuple
 
 from google.cloud import storage
 
 
-def _create_files_list() -> Tuple[str, List[str]]:
+logging.basicConfig(level=logging.INFO)
+def _create_files_list(env: str) -> Tuple[str, List[str]]:
     temp_dir = mkdtemp()
 
     # do not upload `dags/ddls/` directory and some files that Airflow don't use
@@ -20,14 +22,14 @@ def _create_files_list() -> Tuple[str, List[str]]:
     copytree("dags/", f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
     # copy all schemas
     copytree("schemas/", f"{temp_dir}/", dirs_exist_ok=True)
+    # copy airflow configuration file
+    copy(f"airflow-{env}.cfg", f"{temp_dir}/airflow.cfg")
 
     dags = glob(f"{temp_dir}/**/*.*", recursive=True)
     return (temp_dir, dags)
 
 
-def upload_dags_to_composer(
-    dags_directory: str, bucket_name: str, name_replacement: str = "dags/"
-) -> None:
+def upload_dags_to_composer(bucket_name: str, env: str) -> None:
     """
     Given a directory, this function moves all DAG files from that directory
     to a temporary directory, then uploads all contents of the temporary directory
@@ -37,7 +39,7 @@ def upload_dags_to_composer(
         bucket_name (str): the GCS bucket of the Cloud Composer environment to upload DAGs to
         name_replacement (str, optional): the name of the "dags/" subdirectory that will be used when constructing the temporary directory path name Defaults to "dags/".
     """
-    temp_dir, files = _create_files_list(dags_directory)
+    temp_dir, files = _create_files_list(env)
 
     if len(files) > 0:
         # Note - the GCS client library does not currently support batch requests on uploads
@@ -52,26 +54,27 @@ def upload_dags_to_composer(
             if f.endswith(".json"):
                 # create schemas directory
                 f = f.replace(f"{temp_dir}/", "schemas/")
+            if f.endswith(".cfg"):
+                # insert airflow configuration file
+                f = f.replace(f"{temp_dir}/", "")
             else:
                 # create dags directory
-                f = f.replace(f"{temp_dir}/", name_replacement)
-
-                print(f)
+                f = f.replace(f"{temp_dir}/", "dags/")
 
             try:
                 # Upload to your bucket
                 blob = bucket.blob(f)
                 blob.upload_from_filename(f)
-                print(f"File {f} uploaded to {bucket_name}/{f}.")
+                logging.info(f"File {f} uploaded to {bucket_name}/{f}.")
             except FileNotFoundError:
                 current_directory = listdir()
-                print(
-                    f"{name_replacement} directory not found in {current_directory}, you may need to override the default value of name_replacement to point to a relative directory"
+                logging.error(
+                    f"DAGs directory not found in {current_directory}, you may need to override the default value of name_replacement to point to a relative directory"
                 )
                 raise
 
     else:
-        print("No files to upload.")
+        logging.info("No files to upload.")
 
 
 if __name__ == "__main__":
@@ -79,10 +82,17 @@ if __name__ == "__main__":
         description=__doc__, formatter_class=RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "--dags_bucket",
-        help="Name of the DAGs bucket of your Composer environment without the gs:// prefix",
+        "--bucket",
+        required=True,
+        help="Name of the bucket of your Composer environment without the gs:// prefix",
+    )
+    parser.add_argument(
+        "--env",
+        default="dev",
+        choices=["prod","dev"],
+        help="Name of the Composer environment. Default value is 'dev'",
     )
 
     args = parser.parse_args()
 
-    upload_dags_to_composer(args.dags_bucket)
+    upload_dags_to_composer(args.bucket, args.env)
