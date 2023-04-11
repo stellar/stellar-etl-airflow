@@ -17,7 +17,7 @@ with
             , l.closed_at
             , b.deleted
             , dense_rank() over (
-                partition by b.balance_id 
+                partition by b.balance_id
                 order by b.last_modified_ledger desc, b.ledger_entry_change desc
                 ) as rank_number
         from `hubble-261722.crypto_stellar_internal_2.claimable_balances` as b

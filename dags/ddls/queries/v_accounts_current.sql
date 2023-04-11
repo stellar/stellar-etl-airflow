@@ -28,7 +28,7 @@ with
             , a.deleted
             , sponsor
             , dense_rank() over (
-                partition by a.account_id 
+                partition by a.account_id
                 order by a.last_modified_ledger desc, a.ledger_entry_change desc
                 ) as rank_number
         from `hubble-261722.crypto_stellar_internal_2.accounts` as a

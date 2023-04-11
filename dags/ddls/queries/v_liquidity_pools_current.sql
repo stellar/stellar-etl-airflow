@@ -23,7 +23,7 @@ WITH current_lps AS
         L.closed_at,
         LP.deleted,
         DENSE_RANK() OVER(
-            PARTITION BY liquidity_pool_id 
+            PARTITION BY liquidity_pool_id
             ORDER BY LP.last_modified_ledger DESC LP.ledger_entry_change DESC) AS rank_number
     FROM `PROJECT.DATASET.liquidity_pools` LP
     JOIN `PROJECT.DATASET.history_ledgers` L

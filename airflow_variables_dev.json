@@ -10,9 +10,7 @@
                 {
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
-                  "values": [
-                    "pool-2"
-                  ]
+                  "values": ["pool-2"]
                 }
               ]
             }
@@ -29,9 +27,7 @@
                 {
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
-                  "values": [
-                    "default-pool"
-                  ]
+                  "values": ["default-pool"]
                 }
               ]
             }
@@ -44,53 +40,16 @@
   "bq_dataset": "test_gcp_airflow_internal",
   "bq_project": "test-hubble-319619",
   "cluster_fields": {
-    "accounts": [
-      "account_id",
-      "last_modified_ledger"
-    ],
-    "account_signers": [
-      "account_id",
-      "signer",
-      "last_modified_ledger"
-    ],
-    "claimable_balances": [
-      "asset_id",
-      "last_modified_ledger"
-    ],
-    "history_assets": [
-      "asset_code",
-      "asset_issuer",
-      "asset_type"
-    ],
-    "history_effects": [
-      "address",
-      "operation_id",
-      "type"
-    ],
-    "history_ledgers": [
-      "sequence",
-      "closed_at"
-    ],
-    "history_operations": [
-      "transaction_id",
-      "source_account",
-      "type"
-    ],
-    "history_trades": [
-      "selling_asset_id",
-      "buying_asset_id",
-      "trade_type"
-    ],
-    "history_transactions": [
-      "account",
-      "ledger_sequence",
-      "successful"
-    ],
-    "offers": [
-      "selling_asset_id",
-      "buying_asset_id",
-      "last_modified_ledger"
-    ],
+    "accounts": ["account_id", "last_modified_ledger"],
+    "account_signers": ["account_id", "signer", "last_modified_ledger"],
+    "claimable_balances": ["asset_id", "last_modified_ledger"],
+    "history_assets": ["asset_code", "asset_issuer", "asset_type"],
+    "history_effects": ["address", "operation_id", "type"],
+    "history_ledgers": ["sequence", "closed_at"],
+    "history_operations": ["transaction_id", "source_account", "type"],
+    "history_trades": ["selling_asset_id", "buying_asset_id", "trade_type"],
+    "history_transactions": ["account", "ledger_sequence", "successful"],
+    "offers": ["selling_asset_id", "buying_asset_id", "last_modified_ledger"],
     "liquidity_pools": [
       "liquidity_pool_id",
       "asset_a_id",
