@@ -8,12 +8,12 @@ nocolor = False
 # CHANGE THIS TO THE DIALECT OF YOUR DATA WAREHOUSE
 dialect = bigquery
 # One of [raw|jinja|python|placeholder]
-templater = raw
+templater = python
 # Comma separated list of rules to check, default to all
 rules = all
 # Comma separated list of rules to exclude, or None
 # Rules not existing in our code style
-exclude_rules = L009,L022,L031,L034,L037,L051,L044,L027
+exclude_rules = L009,L022,L031,L034,L037,L051,L044,L027,L046
 # The depth to recursively parse to (0 for unlimited)
 recurse = 0
 # Below controls SQLFluff output, see max_line_length for SQL output
@@ -69,6 +69,14 @@ operator_new_lines = after
 
 [sqlfluff:templater]
 unwrap_wrapped_queries = True
+
+[sqlfluff:templater:python:context]
+project_id = project_id
+dataset_id = dataset_id
+batch_id = batch_id
+batch_run_date = batch_run_date
+prev_batch_run_date = prev_batch_run_date
+next_batch_run_date = next_batch_run_date
 
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]
