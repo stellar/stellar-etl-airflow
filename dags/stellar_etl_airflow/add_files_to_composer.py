@@ -48,7 +48,6 @@ def upload_dags_to_composer(
         bucket = storage_client.bucket(bucket_name)
 
         for f in files:
-
             # remove path to temp dir
             if f.endswith(".json"):
                 # create schemas directory
