@@ -7,9 +7,6 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    container:
-      image: apache/airflow:2.3.3
-      options: --user root
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -19,11 +16,14 @@ jobs:
       - name: Install dependencies
         run: |
           cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
-          su airflow
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
       - name: Import Airflow variables
-        run: airflow variables import airflow_variables_ci.json
+        run: |
+          airflow init db
+          airflow variables import airflow_variables_ci.json
+        env:
+          AIRFLOW_HOME: build/
       - name: Pytest
         run: pytest dags/
 
