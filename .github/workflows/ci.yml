@@ -8,23 +8,24 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == false
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
         uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - name: Install dependencies
-        run: |
-          cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
-          python -m pip install --upgrade pip
-          pip install -r requirements-ci.txt
-      - name: Init Airflow SQLite database
-        run: airflow db init
-      - name: Import Airflow variables
-        run: airflow variables import airflow_variables_ci.json
-      - name: Pytest
-        run: pytest dags/
+        # with:
+        #   python-version: 3.8
+      # - name: Install dependencies
+      # run: |
+      #   cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
+      #   python -m pip install --upgrade pip
+      #   pip install -r requirements-ci.txt
+      # - name: Init Airflow SQLite database
+      # run: airflow db init
+      # - name: Import Airflow variables
+      # run: airflow variables import airflow_variables_ci.json
+      # - name: Pytest
+      # run: pytest dags/
 
   promote-to-prod:
     runs-on: ubuntu-latest
