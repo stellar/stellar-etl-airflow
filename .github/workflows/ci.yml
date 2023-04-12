@@ -21,7 +21,7 @@ jobs:
     container:
       image: apache/airflow:2.3.3
       volumes:
-        - $PWD/dags:/opt/airflow/dags
+        - `pwd`/dags:/opt/airflow/dags
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
