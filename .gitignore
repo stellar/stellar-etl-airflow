@@ -139,8 +139,8 @@ cython_debug/
 .DS_Store
 
 # Swap files
-.swp
-.swo
+*.swp
+*.swo
 
 # Credentials check
 credentials.json
