@@ -11,6 +11,7 @@ jobs:
       image: apache/airflow:2.3.3
       volumes:
         - ${{ github.workspace }}/dags:/opt/airflow/dags
+      options: --user root
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -20,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
+          su airflow
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
       - name: Import Airflow variables
