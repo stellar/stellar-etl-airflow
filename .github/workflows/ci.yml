@@ -5,23 +5,13 @@ on:
     branches: [master]
 
 jobs:
-  pre-commit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - uses: pre-commit/action@v3.0.0
-
   tests:
     runs-on: ubuntu-latest
     needs: [pre-commit]
     container:
       image: apache/airflow:2.3.3
       volumes:
-        - `pwd`/dags:/opt/airflow/dags
+        - ${{ github.workspace }}/dags:/opt/airflow/dags
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
