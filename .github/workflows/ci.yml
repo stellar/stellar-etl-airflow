@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: apache/airflow:2.3.3
-      volumes:
-        - ${{ github.workspace }}/dags:/opt/airflow/dags
       options: --user root
     steps:
       - uses: actions/checkout@v3
