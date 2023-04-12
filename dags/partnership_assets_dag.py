@@ -11,11 +11,10 @@ init_sentry()
 dag = DAG(
     'partnership_assets',
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 4, 4, 0, 0),
+    start_date=datetime.datetime(2022, 4, 1, 0, 0),
     description='This DAG runs dbt to create the partnership asset intermediate tables and aggregate tables.',
     schedule_interval='0 11 * * *', # Daily 10 AM UTC
     params={},
-    catchup=False,
 )
 
 # tasks for partnership_assets__account_holders_activity_fact
