@@ -44,5 +44,5 @@ jobs:
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
         env:
           GOOGLE_CLOUD_PROJECT: hubble-261722
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.CREDS_PROD_HUBBLE }}
           BUCKET: us-central1-hubble-2-d948d67b-bucket

@@ -29,10 +29,10 @@ jobs:
           cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
+      - name: Init Airflow SQLite database
+        run: airflow db init
       - name: Import Airflow variables
         run: airflow variables import airflow_variables_ci.json
-        env:
-          AIRFLOW_HOME: build/
       - name: Pytest
         run: pytest dags/
 
@@ -53,13 +53,13 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install google-cloud-storage==2.1.0
       - name: Upload files to dev GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
         env:
           GOOGLE_CLOUD_PROJECT: test-hubble-319619
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.CREDS_TEST_HUBBLE }}
           BUCKET: us-central1-hubble-1pt5-dev-7db0e004-bucket
 
   promote-to-prod:
