@@ -13,6 +13,8 @@ with
             , a.sequence_ledger
             , a.sequence_time
             , a.num_subentries
+            , a.num_sponsoring
+            , a.num_sponsored
             , a.inflation_destination
             , a.flags
             , a.home_domain
@@ -25,7 +27,10 @@ with
             , l.closed_at
             , a.deleted
             , sponsor
-            , dense_rank() over (partition by a.account_id order by a.last_modified_ledger desc) as rank_number
+            , dense_rank() over (
+                partition by a.account_id
+                order by a.last_modified_ledger desc, a.ledger_entry_change desc
+                ) as rank_number
         from `hubble-261722.crypto_stellar_internal_2.accounts` as a
         join `hubble-261722.crypto_stellar_internal_2.history_ledgers` as l
             on a.last_modified_ledger = l.sequence
@@ -38,6 +43,8 @@ with
             , sequence_ledger
             , sequence_time
             , num_subentries
+            , num_sponsoring
+            , num_sponsored
             , inflation_destination
             , flags
             , selling_liabilities
@@ -62,6 +69,8 @@ select
     , sequence_ledger
     , sequence_time
     , num_subentries
+    , num_sponsoring
+    , num_sponsored
     , inflation_destination
     , flags
     , home_domain

@@ -13,14 +13,18 @@ WITH current_lps AS
             ELSE CONCAT(LP.asset_a_code,':',LP.asset_b_code) END AS asset_pair,
         LP.asset_a_code,
         LP.asset_a_issuer,
+        LP.asset_a_type,
         LP.asset_b_code,
         LP.asset_b_issuer,
+        LP.asset_b_type,
         LP.asset_a_amount,
         LP.asset_b_amount,
         LP.last_modified_ledger,
         L.closed_at,
         LP.deleted,
-        DENSE_RANK() OVER(PARTITION BY liquidity_pool_id ORDER BY LP.last_modified_ledger DESC LP.batch_insert_ts DESC) AS rank_number
+        DENSE_RANK() OVER(
+            PARTITION BY liquidity_pool_id
+            ORDER BY LP.last_modified_ledger DESC LP.ledger_entry_change DESC) AS rank_number
     FROM `PROJECT.DATASET.liquidity_pools` LP
     JOIN `PROJECT.DATASET.history_ledgers` L
         ON LP.last_modified_ledger = L.sequence
@@ -32,8 +36,10 @@ SELECT liquidity_pool_id,
     asset_pair,
     asset_a_code,
     asset_a_issuer,
+    asset_a_type,
     asset_b_code,
     asset_b_issuer,
+    asset_b_type,
     asset_a_amount,
     asset_b_amount,
     last_modified_ledger,

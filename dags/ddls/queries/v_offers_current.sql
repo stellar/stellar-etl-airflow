@@ -20,7 +20,8 @@ with
             , o.deleted
             , o.sponsor
             , dense_rank() over (
-                partition by o.seller_id, o.offer_id order by o.last_modified_ledger desc
+                partition by o.seller_id, o.offer_id
+                order by o.last_modified_ledger desc o.ledger_entry_change desc
             ) as rank_number
         from `hubble-261722.crypto_stellar_internal_2.offers` as o
         join `hubble-261722.crypto_stellar_internal_2.history_ledgers` as l
