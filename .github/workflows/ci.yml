@@ -18,12 +18,10 @@ jobs:
           cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
+      - name: Init Airflow SQLite database
+        run: airflow db init
       - name: Import Airflow variables
-        run: |
-          airflow init db
-          airflow variables import airflow_variables_ci.json
-        env:
-          AIRFLOW_HOME: build/
+        run: airflow variables import airflow_variables_ci.json
       - name: Pytest
         run: pytest dags/
 
