@@ -76,11 +76,15 @@ jobs:
           pip install --upgrade pip
           pip install google-cloud-storage==2.1.0
 
+      - name: Authenticate to test-hubble GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
+
       - name: Upload files to dev GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
         env:
           GOOGLE_CLOUD_PROJECT: test-hubble-319619
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.CREDS_TEST_HUBBLE }}
           BUCKET: us-central1-hubble-1pt5-dev-7db0e004-bucket
 
   promote-to-prod:
