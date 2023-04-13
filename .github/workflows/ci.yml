@@ -54,4 +54,4 @@ jobs:
             After merged and closed, this PR will trigger an action that updates DAGs, libs and schemas files from prod Airflow.
 
             [1]: https://github.com/peter-evans/create-pull-request
-          team-reviewers: platform-committers
+          # team-reviewers: platform-committers
