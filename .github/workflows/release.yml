@@ -1,27 +1,36 @@
-name: CI
+name: release
 
 on:
   pull_request:
-    branches: [release]
+    types:
+      - closed
+    branches:
+      - release
 
 jobs:
   tests:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+
       - name: Install dependencies
         run: |
           cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
+
+      - name: Init Airflow SQLite database
+        run: airflow db init
+
       - name: Import Airflow variables
         run: airflow variables import airflow_variables_ci.json
-        env:
-          AIRFLOW_HOME: build/
+
       - name: Pytest
         run: pytest dags/
 
@@ -30,16 +39,20 @@ jobs:
     needs: [tests]
     # deploy only occurs when pr is merged
     if: github.event.pull_request.merged == true
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install google-cloud-storage==2.1.0
+
       - name: Upload files to prod GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
         env:
