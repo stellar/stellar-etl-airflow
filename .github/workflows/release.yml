@@ -1,12 +1,16 @@
-name: CI
+name: release
 
 on:
-  pull_request:
-    branches: [release]
+  pull_request_target:
+    types:
+      - closed
+    branches:
+      - release
 
 jobs:
   tests:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == false
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
@@ -18,10 +22,10 @@ jobs:
           cat airflow_variables_dev.json | sed -e s/\\/home\\/airflow\\/gcs\\/dags\\/// > airflow_variables_ci.json
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
+      - name: Init Airflow SQLite database
+        run: airflow db init
       - name: Import Airflow variables
         run: airflow variables import airflow_variables_ci.json
-        env:
-          AIRFLOW_HOME: build/
       - name: Pytest
         run: pytest dags/
 
