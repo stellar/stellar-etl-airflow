@@ -2,11 +2,12 @@
 
 This repository contains the Airflow DAGs for the [Stellar ETL](https://github.com/stellar/stellar-etl) project. These DAGs provide a workflow for exporting data from the Stellar network and uploading the data into BigQuery.
 
-# Table of Contents
+## **Table of Contents**
 
 - [Installation and Setup](#installation-and-setup)
+  - [Google Cloud Platform](#google-cloud-platform)
   - [Cloud Composer](#cloud-composer)
-    - [Custom Kubernetes Setup](#custom-kubernetes-setup)
+  - [Custom Kubernetes Setup](#custom-kubernetes-setup)
   - [Manual Installation](#manual-installation)
   - [Airflow Variables Explanation](#airflow-variables-explanation)
     - [Normal Variables](#normal-variables)
@@ -15,64 +16,94 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
   - [Starting Up](#starting-up)
   - [Handling Failures](#handling-failures)
     - [Clearing Failures](#clearing-failures)
-    - [Long-Running Task Failures](#long-running-task-failures)
 - [Understanding the Setup](#understanding-the-setup)
   - [DAG Diagrams](#dag-diagrams)
+    - [History Archive with Captive Core DAG](#history-archive-with-captive-core-dag)
+    - [History Archive without Captive Core DAG](#history-archive-without-captive-core-dag)
+    - [State Table Export DAG](#state-table-export-dag)
+    - [Bucket List DAG (Unused)](#bucket-list-dag-unused)
   - [Task Explanations](#task-explanations)
+    - [build_time_task](#build_time_task)
+    - [build_export_task](#build_export_task)
+    - [build_gcs_to_bq_task](#build_gcs_to_bq_task)
+    - [build_apply_gcs_changes_to_bq_task](#build_apply_gcs_changes_to_bq_task)
+    - [build_batch_stats](#build_batch_stats)
+    - [bq_insert_job_task](#bq_insert_job_task)
+    - [cross_dependency_task](#cross_dependency_task)
+    - [delete_data_task](#delete_data_task)
 - [Further Development](#further-development)
   - [Extensions](#extensions)
-  - [Remaining Project TODOs](#remaining-project-todos)
+    - [Pre-commit Git hook scripts](#pre-commit-git-hook-scripts)
+    - [Adding New DAGs](#adding-new-dags)
+    - [Adding tasks to existing DAGs](#adding-tasks-to-existing-dags)
+    - [Adding New Tasks](#adding-new-tasks)
+  - [Testing Changes](#testing-changes)
+
+<br>
 
 # Installation and Setup
+- [Google Cloud Platform](#google-cloud-platform)
+- [Cloud Composer](#cloud-composer)
+- [Airflow Variables Explanation](#airflow-variables-explanation)
+- [Custom Kubernetes Setup](#custom-kubernetes-setup)
+- [Manual Installation](#manual-installation)
+  - [Normal Variables](#normal-variables)
+  - [Kubernetes Specific Variables](#kubernetes-specific-variables)
 
-## Cloud Composer
+<br>
 
-Cloud Composer is the preferred method of deployment. [Cloud Composer](https://cloud.google.com/composer) is a managed service used for Airflow deployment that provides much of the infrastructure required to host an Airflow instance. The steps for setting up a Cloud Composer environment are detailed below.
+## **Google Cloud Platform**
 
-### Setup the Cloud SDK
+Below are instructions to intialize the Google Cloud SDK and create the GCP project, dataset, and GCS bucket if needed.
+
+<br>
+
+### **Setup the Cloud SDK**
 
 - Download the [Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstart#installing_the_latest_version).
 - [Initialize the Cloud SDK](https://cloud.google.com/sdk/docs/quickstart#initializing_the) and login to your Google account
 
-### Create Google Project
+### **Create Google Project**
 
 - Login to the [Google Cloud Console](https://console.cloud.google.com/cloud-resource-manager)
-- Create a new [Google Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project)
+- Create a new [Google Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) or use an existing project
   > **_NOTE:_** The project name you choose corresponds to the Airflow variable "bq_project".
 
-### Create BigQuery Dataset
+### **Create BigQuery Dataset**
 
 - Log in to Google [BigQuery](https://cloud.google.com/bigquery)
-- [Create](https://cloud.google.com/bigquery/docs/datasets#create-dataset) a new dataset with the desired name
+- [Create](https://cloud.google.com/bigquery/docs/datasets#create-dataset) a new dataset with the desired name or use an existing dataset
   > **_NOTE:_** The dataset name you choose corresponds to the Airflow variable "bq_dataset".
 
-### Create Google Cloud Storage bucket
+### **Create Google Cloud Storage bucket**
 
 - Open the [Cloud Storage browser](https://console.cloud.google.com/storage/browser)
 - [Create](https://cloud.google.com/storage/docs/creating-buckets) a new Google Storage bucket that will store exported files
   > **_NOTE:_** The dataset name you choose corresponds to the Airflow variable "gcs_exported_data_bucket_name".
 
-> **_WARNING:_** Make sure that you adhere to the [location requirements](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage) for Cloud Storage buckets and BigQuery datasets. Otherwise, it will not be possible to upload data to BigQuery.
+  > **_NOTE:_** Creating a new environment with Cloud Composer will create a new GCS bucket.
 
-### Create Google Cloud Composer environment
+> **_WARNING:_** Make sure that you adhere to the [location requirements](https://cloud.google.com/bigquery/docs/batch-loading-data#data-locations) for Cloud Storage buckets and BigQuery datasets. Otherwise, it will not be possible to upload data to BigQuery.
 
-Create a new Cloud Composer environment using the [UI](https://cloud.google.com/composer/docs/how-to/managing/creating#creating_a_new_environment):
+<br>
 
-```bash
-gcloud composer environments create <environment_name> --location=<project_location> \
---zone=<project_zone> --disk-size=100GB --machine-type=n1-standard-4 \
---node-count=3 --python-version=3 --image-version=composer-<version>-airflow-<version> \
---service-account=<service_account>
+***
 
-gcloud composer environments update <environment_name> \
---location=<project_location> --update-pypi-package=docker==3.7.3
-```
+## **Cloud Composer**
 
-> **_For AIRFLOW 2.x:_** Be wary of choosing "autopilot" for environment resource management. The ephemeral storage provided by autopilot-ed containers is capped at 10GB, which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`), or any task that runs captive core.
+Cloud Composer is the preferred method of deployment. [Cloud Composer](https://cloud.google.com/composer) is a managed service used for Airflow deployment that provides much of the infrastructure required to host an Airflow instance. The steps for setting up a Cloud Composer environment are detailed below.
+
+<br>
+
+### **Create Google Cloud Composer environment**
+
+Create a new Cloud Composer environment using the [UI](https://console.cloud.google.com/composer/environments/create) or by following the setup instructions in [Create Cloud Composer environments](https://cloud.google.com/composer/docs/how-to/managing/creating)
+
+> **_For AIRFLOW 2.x:_** Be wary of choosing "autopilot" for environment resource management. The ephemeral storage provided by autopilot-ed containers is [capped at 10GB](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests), which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`), or any task that runs captive core.
 > You can add a second node pool to your Composer 1 environment, and configure it to be managed by autopilot if desired.
 > Composer 2 environments use autopilot exclusively for resource management.
 
-_Note_: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
+> **_Note_**: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
 Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-1.16.11-airflow-1.10.14` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
 
 > **_TROUBLESHOOTING:_** If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with Owner permissions and use it to create the Composer environment.
@@ -81,7 +112,9 @@ Cloud Composer may take a while to setup the environment. Once the process is fi
 
 > **_NOTE:_** Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
 
-### Upload DAGs and Schemas to Cloud Composer
+<br>
+
+### **Upload DAGs and Schemas to Cloud Composer**
 
 After the environment is created, select the environment and navigate to the environment configuration tab. Look for the value under **DAGs folder**. It will be of the form `gs://airflow_bucket/dags`. The `airflow_bucket` value will be used in this step and the next. Run the command below in order to upload the DAGs and schemas to your Airflow bucket.
 
@@ -89,19 +122,23 @@ After the environment is created, select the environment and navigate to the env
 > bash upload_static_to_gcs.sh <airflow_bucket>
 ```
 
-Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow Webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. Some DAGs may not show up due to errors that will be fixed as the following steps are completed.
+Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. Some DAGs may not show up due to errors that will be fixed as the following steps are completed.
 
-### Add Service Account Key
+<br>
 
-The Airflow DAGs require service account keys to perform their operations. Generate a [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) for a service account that has access to BigQuery and Google Cloud Storage. Then, add this key file to the data folder in your <airflow_bucket>.
+### **Add Service Account Key**
+
+The Airflow DAGs require service account keys to perform their operations. Generate a [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) for a service account that has access to BigQuery and Google Cloud Storage. Then, add this key file to the data folder in your `airflow_bucket`.
 
 > **_NOTE:_** The name of the key file corresponds to the Airflow variable "api_key_path". The data folder in Cloud Storage corresponds to the path "/home/airflow/gcs/data/", but ensure that the variable has the correct filename.
 
-### Add Kubernetes Node Pool
+<br>
+
+### **Add Kubernetes Node Pool**
 
 If the Kubernetes pods contain long-running or resource intensive operations, it is best to create a separate node pool for task execution. Executing the tasks on the same node pool as the `airflow-scheduler` will contribute to resource starvation and transient failures in the DAG.
 
-Find the Kubernetes cluster name that is used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the value of **GKE cluster**. The cluster name is the final part of this path.
+Find the Kubernetes cluster name that is used by your Cloud Composer environment. To do so, select the environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value of `GKE cluster`. The cluster name is the final part of this path.
 
 Then, run the command:
 
@@ -110,7 +147,9 @@ gcloud container node-pools create <pool_name> --cluster <cluster_name> \
 --zone <composer_zone> --project <project_id>
 ```
 
-Alternatively, node pools can be created through the UI with the `Add Node Pool` button. Security can only be applied upon pool creation, so ensure that your security account and scopes are correct. If they need to be updated, you will need to delete the node pool and recreate it.
+Alternatively, node pools can be created through the UI with the `ADD NODE POOL` button. Select the environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value under `GKE cluster`
+
+Security can only be applied upon pool creation, so ensure that your security account and scopes are correct. If they need to be updated, you will need to delete the node pool and recreate it.
 
 > **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
 >
@@ -133,7 +172,7 @@ Alternatively, node pools can be created through the UI with the `Add Node Pool`
         },
 ```
 
-### (Optional) Create Namespace for ETL Tasks
+### **Create Namespace for ETL Tasks (Optional)**
 
 Open the Google [Cloud Shell](https://cloud.google.com/shell). Run these commands:
 
@@ -148,11 +187,15 @@ kubectl create clusterrolebinding default-admin --clusterrole cluster-admin \
 
 The first command acquires credentials, allowing you to execute the next commands. The second command creates the new namespace, and the third allows the service account that executes tasks to act in the new namespace.
 
-To find the value of `<airflow_worker_namespace>`, select your Cloud Composer environment, navigate to environment configuration, and look for the value of **GKE cluster**. Click on the link that says "view cluster workloads." A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Look for the value of **Namespace**.
+To find the value of `<airflow_worker_namespace>`, select your Cloud Composer environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value of `GKE cluster`. Click on the link that says `view cluster workloads`.
+
+A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Look for the value of `Namespace`.
 
 > **_NOTE:_** The name of the newly created namespace corresponds to the Airflow variable "namespace".
 
-### Authenticating Tasks in an Autopilot-Managed Environment
+<br>
+
+### **Authenticating Tasks in an Autopilot-Managed Environment**
 
 There are a few extra hoops to jump through to configure Workload Identity, so that `export` tasks have permissions to upload files to GCS.
 You will be creating a Kubernetes service account, and bind it to a Google service account that your task is authenticated as.
@@ -160,55 +203,57 @@ Steps taken from this [doc](https://cloud.google.com/kubernetes-engine/docs/how-
 
 - Create a namespace in the k8s cluster where the Composer env is running:
 
-```bash
-kubectl create namespace hubble-composer
-```
+  ```bash
+  kubectl create namespace hubble-composer
+  ```
 
 - Create a k8s service account:
 
-```bash
-kubectl create serviceaccount hubble-composer-service-account \
-    --namespace hubble-composer
-```
+  ```bash
+  kubectl create serviceaccount hubble-composer-service-account \
+      --namespace hubble-composer
+  ```
 
 - Create a Google service account, if one doesn't already exist:
 
-```bash
-gcloud iam service-accounts create hubble-service-account \
-    --project=hubble-261722
-```
+  ```bash
+  gcloud iam service-accounts create hubble-service-account \
+      --project=hubble-261722
+  ```
 
 - Grant the Google service account that you're using `storage.objectAdmin` permissions, it doesn't already have it.
 
-```bash
+  ```bash
   gcloud projects add-iam-policy-binding hubble-261722 \
-  --member "serviceAccount:hubble-service-account@hubble-261722.iam.gserviceaccount.com" \
-  --role "roles/storage.objectAdmin"
-```
+    --member "serviceAccount:hubble-service-account@hubble-261722.iam.gserviceaccount.com" \
+    --role "roles/storage.objectAdmin"
+  ```
 
 - Associate the Google and k8s service accounts:
 
-```bash
+  ```bash
   gcloud iam service-accounts add-iam-policy-binding hubble-service-account@hubble-261722.iam.gserviceaccount.com \
-  --role roles/iam.workloadIdentityUser \
-  --member "serviceAccount:hubble-261722.svc.id.goog[hubble-composer/hubble-composer-service-account]"
-```
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:hubble-261722.svc.id.goog[hubble-composer/hubble-composer-service-account]"
+  ```
 
 - Annotate the k8s service account with the Google service account:
 
-```bash
+  ```bash
   kubectl annotate serviceaccount hubble-composer-service-account \
-    --namespace hubble-composer \
-    iam.gke.io/gcp-service-account=hubble-service-account@hubble-261722.iam.gserviceaccount.com
-```
+      --namespace hubble-composer \
+      iam.gke.io/gcp-service-account=hubble-service-account@hubble-261722.iam.gserviceaccount.com
+  ```
 
 - Set the corresponding airflow variables (`k8s_namespace` and `k8s_service_account`) for tasks running on `KubernetesPodOperator`.
 
-### Modify Kubernetes Config for Airflow Workers
+<br>
 
-Find the Kubernetes cluster workloads that are used by your Cloud Composer environment. To do so, select the environment, navigate to environment configuration, and look for the **GKE cluster** section. Click on the link that says "view cluster workloads."
+### **Modify Kubernetes Config for Airflow Workers**
 
-A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Click the edit button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow_worker_config.yaml).
+Find the Kubernetes cluster workloads that are used by your Cloud Composer environment. To do so, select the environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the `GKE cluster` section. Click on the link that says `view cluster workloads`.
+
+A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Click the `edit` button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow_worker_config.yaml).
 
 > **_WARNING:_** You shouldn't copy the example file directly because it has environment variables and config values that are set up for a different project.
 
@@ -271,72 +316,74 @@ name: etl-data
 
 ```
 
-> **_NOTE:_** The mount path chosen corresponds to the Airflow variable "local_output_path".
+> **_NOTE:_** The mount path chosen corresponds to the Airflow variable `local_output_path`.
 
 </details>
 
 <details>
 <summary>Add Poststart Script to Airflow Workers</summary>
-Find the namespace name in the airflow-worker config file. It should be near the top of the file, and may look like "composer-1-12-0-airflow-1-10-10-2fca78f7". This value will be used in later commands
+Find the namespace name in the airflow-worker config file. It should be near the top of the file, and may look like `composer-1-12-0-airflow-1-10-10-2fca78f7`. This value will be used in later commands.
 
-Next, open the cloud shell. Keep your airflow-worker configuration file open, or save it. In the cloud shell, create a text file called `poststart.sh` by running the command: `nano poststart.sh`. Then, copy the text from the `poststart.sh` file in this repository into the newly opened file. If you changed the path for the local folder in the previous step, make sure that you edit line 13:
+Next, open the cloud shell. Keep your airflow-worker configuration file open, or save it. In the cloud shell, create a text file called `poststart.sh` by running the command: `nano poststart.sh`. Then, copy the text from the `poststart.sh` file in this repository into the newly opened file. 
 
-```
-for file in /home/airflow/etlData/*
-```
+- If you changed the path for the local folder in the previous step, make sure that you edit line 13:
 
-It should reflect the path changes you made. Once the file is finalized, run these commands:
+  ```
+  for file in /home/airflow/etlData/*
+  ```
 
-```bash
-gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
+- It should reflect the path changes you made. Once the file is finalized, run these commands:
 
-kubectl create configmap start-config --from-file poststart.sh -n <namespace_name>
-```
+  ```bash
+  gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
+  
+  kubectl create configmap start-config --from-file poststart.sh -n <namespace_name>
+  ```
 
-Return to the airflow-worker config file. Add a new volumeMount to /etc/scripts.
+- Return to the airflow-worker config file. Add a new volumeMount to /etc/scripts.
 
-```
-...
+  ```
+  ...
+  
+  volumeMounts:
+  ...
+  - mountPath: /etc/scripts
+  name: config-volume
+  ...
+  
+  ```
 
-volumeMounts:
-...
-- mountPath: /etc/scripts
-name: config-volume
-...
+- Then, add a new Volume that links to the configMap you created.
 
-```
+  ```
+  ...
+  volumes:
+  ...
+  - configMap:
+  	defaultMode: 511
+  	name: start-config
+  	name: config-volume
+  ...
+  ```
 
-Then, add a new Volume that links to the configMap you created.
+- This will make the script available to the Airflow workers. In order for them to call it automatically, add a postStart hook to airflow-worker above the existing preStop hook.
 
-```
-...
-volumes:
-...
-- configMap:
-	defaultMode: 511
-	name: start-config
-	name: config-volume
-...
-```
-
-This will make the script available to the Airflow workers. In order for them to call it automatically, add a postStart hook to airflow-worker above the existing preStop hook.
-
-```
-...
-lifecycle:
-	postStart:
-		exec:
-			command:
-				- /bin/bash
-				- /etc/scripts/poststart.sh
-preStop:
-	exec:
-		command:
-			- bash
-			- -c
-			- pkill -f "MainProcess"
-...
-```
+  ```
+  ...
+  lifecycle:
+  	postStart:
+  		exec:
+  			command:
+  				- /bin/bash
+  				- /etc/scripts/poststart.sh
+  preStop:
+  	exec:
+  		command:
+  			- bash
+  			- -c
+  			- pkill -f "MainProcess"
+  ...
+  ```
 
 <details>
 <summary>Click here if you are interested in knowing what the script does.</summary>
@@ -350,42 +397,56 @@ Instead, we connect a local folder defined in the previous step. The `poststart.
 </details>
 </details>
 
-### Add Airflow Variables and Connections
+<br>
+
+### **Add Airflow Variables and Connections**
 
 In order to add the Airflow variables and connections, navigate to the Airflow web server. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow Webserver`.
 
 Click the Admin tab, then Connections. Click create, then:
 
-- Set the **Conn Id** field to `google_cloud_platform_connection`.
-- Set the **Conn Type** to `Google Cloud Platform`.
-- Set the **Project Id** to your project id
-- Set the **Keyfile Path** to <api_key_path>.
-- The <api_key_path> should be the same as the Airflow variable "api_key_path".
+- Set the `Conn Id` field to `google_cloud_platform_connection`.
+- Set the `Conn Type` to `Google Cloud Platform`.
+- Set the `Project Id` to your project id
+- Set the `Keyfile Path` to `<api_key_path>`.
+- The `<api_key_path>` should be the same as the Airflow variable `api_key_path`.
 
 Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
 
-The airflow_variables.txt file provides a set of default values for variables.
+The `airflow_variables.txt` file provides a set of default values for variables.
 
-## Custom Kubernetes Setup
+<br>
+
+***
+
+## **Custom Kubernetes Setup**
 
 This section is currently unfinished as the Kubernetes setup is still in development.
 
-## Manual Installation
+<br>
 
-1. Install Airflow v1.10 or later: `pip install apache-airflow`
-   - To confirm Airflow is installed, run `airflow -h` and ensure that you see a help screen
-2. Install the required packages: `pip install -r requirements.txt`
-3. Setup the Airflow database: `airflow initdb`
-4. Run Airflow scheduler: `airflow scheduler`
-5. Run Airflow web server: `airflow webserver`
-6. Add required Airflow variables through [CLI](https://airflow.apache.org/docs/stable/cli-ref#variables) or the [Airflow UI](https://airflow.apache.org/docs/stable/ui.html#variable-view)
-7. Add required Airflow connections through the [CLI](https://airflow.apache.org/docs/stable/cli-ref#connections) or [Airflow UI](https://airflow.apache.org/docs/stable/howto/connection/index.html)
-   - google_cloud_platform_connection: connection of type google_cloud_platform that connects to a Google Cloud Platform API key for a specific project. See [here](https://cloud.google.com/docs/authentication/api-keys?authuser=1) for more information about API keys.
-   - fs_default: connection with fs type that sets the default filepath
+***
 
-## Airflow Variables Explanation
+## **Manual Installation**
 
-### Normal Variables
+- Install Airflow v1.10 or later: `pip install apache-airflow`
+  - To confirm Airflow is installed, run `airflow -h` and ensure that you see a help screen
+- Install the required packages: `pip install -r requirements.txt`
+- Setup the Airflow database: `airflow initdb`
+- Run Airflow scheduler: `airflow scheduler`
+- Run Airflow web server: `airflow webserver`
+- Add required Airflow variables through [CLI](https://airflow.apache.org/docs/stable/cli-ref#variables) or the [Airflow UI](https://airflow.apache.org/docs/stable/ui.html#variable-view)
+- Add required Airflow connections through the [CLI](https://airflow.apache.org/docs/stable/cli-ref#connections) or [Airflow UI](https://airflow.apache.org/docs/stable/howto/connection/index.html)
+   - `google_cloud_platform_connection`: connection of type `google_cloud_platform` that connects to a Google Cloud Platform API key for a specific project. See [here](https://cloud.google.com/docs/authentication/api-keys?authuser=1) for more information about API keys.
+   - `fs_default`: connection with fs type that sets the default filepath
+
+<br>
+
+***
+
+## **Airflow Variables Explanation**
+
+### **Normal Variables**
 
 | Variable name                 | Description                                                                                                                                         | Should be changed?                                                    |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -396,7 +457,7 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 | gcs_exported_data_bucket_name | name of the Google Cloud Storage [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data                     | Yes. Change to the name of the bucket you made.                       |
 | image_name                    | name of the ETL's Docker image                                                                                                                      | No, unless you need a specific image version.                         |
 | image_output_path             | local output path within the ETL image                                                                                                              | No.                                                                   |
-| image_pull_policy             | Specifies how image pull behavior. Valid values are: "Always", "IfNotPresent", or "Never"                                                           | No, unless you handle image updates manually.                         |
+| image_pull_policy             | Specifies how image pull behavior. Valid values are: `Always`, `IfNotPresent`, or `Never`                                                           | No, unless you handle image updates manually.                         |
 | local_output_path             | local output path within the airflow-worker that is used for temporary storage                                                                      | No, unless you changed the path when modifying the Kubernetes config. |
 | namespace                     | namespace name for ETL tasks that generate Kubernetes pods                                                                                          | Yes, if you followed the optional step and made a new namespace       |
 | output_file_names             | JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure                       | Yes, if desired. Make sure each type has a different filename.        |
@@ -405,7 +466,7 @@ This section is currently unfinished as the Kubernetes setup is still in develop
 | schema_filepath               | file path to schema folder                                                                                                                          | No, unless schemas are in a different location                        |
 | table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                                            | Yes, if desired. Make sure each type has a different table name.      |
 
-### Kubernetes-Specific Variables
+### **Kubernetes-Specific Variables**
 
 | Variable name            | Description                                                                                                                                                                                                                                                                                 | Should be changed?                                                                                     |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
@@ -423,156 +484,171 @@ Here are some example `volume_config` values. Note that a ReadWriteMany volume i
 - In order to set up a persistent volume claim, set `volume_config={"persistentVolumeClaim":{"claimName": <claim>}`
 - In order to set up a host path volume, set `volume_config="hostPath":{"path": <path>, "type": "DirectoryOrCreate"}}`
 
+<br>
+
 # Execution Procedures
 
-## Starting Up
+- [Starting Up](#starting-up)
+- [Handling Failiures](#handling-failures)
+  - [Clearing Failures](#clearing-failures)
+
+## **Starting Up**
+
+> **_NOTE:_** Google Cloud Composer instance of airflow has limited CLI support.
+[Supported Airflow CLI commands](https://cloud.google.com/composer/docs/composer-2/access-airflow-cli#supported-commands)
 
 First, this image has a shows the Airflow web UI components for pausing and triggering DAGs:
 ![Airflow UI](documentation/images/AirflowUI.png)
 
-1. Ensure that the Airflow scheduler is running: `airflow scheduler`
-2. Ensure that the Airflow web server is running: `airflow webserver -p <port>`
-3. Enable the History Archive Export DAG
-   - Use the command `airflow unpause history_archive_export` or use the Airflow UI
-   - The DAG will export information every 5 minutes. It also will backfill by exporting information starting at the network's beginning up until the current time
-4. Enable the DAGs for exporting ledger changes
-   - Unpause the dags using the Web UI or the commands below:
-   ```
-   airflow unpause unbounded_core_changes_export
-   airflow unpause bucket_list_export
-   ```
-   - Manually the trigger bucket list DAG with `airflow trigger_dag bucket_list_export <current_time>` or the Web UI.
-   - Once the bucket list has finished, trigger the `unbounded_core_changes_export` DAG with the same execution time as the bucket_list_export DAG. You can do this through the Web UI by going to Browse->DAG Runs->Create and setting the DAG id and execution date.
-   - Unpause the processing DAG with `airflow unpause process_unbounded_core_changes`
-5. Enable the DAGs for exporting orderbooks
-   - Unpause the dags using the Web UI or the commands below:
-   ```
-   airflow unpause unbounded_core_orderbook_export
-   airflow unpause process_unbounded_core_orderbooks
-   ```
+- Ensure that the Airflow scheduler is running: `airflow scheduler`
+- Ensure that the Airflow web server is running: `airflow webserver -p <port>`
+- Enable the DAGs
+  - Use the command `airflow unpause <DAG name>` or use the Airflow UI
 
-## Handling Failures
+## **Handling Failures**
 
-### Clearing Failures
+### **Clearing Failures**
 
 You can clear failed tasks in the [task-instance context menu](https://airflow.apache.org/docs/apache-airflow/1.10.14/ui.html#task-instance-context-menu) in the Airflow UI. Clearing failed tasks gives them a chance to run again without requiring you to run the entire DAG again.
 
-### Long-Running Task Failures
-
-We have two long-running DAGs: the [unbounded_core_changes_export](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_changes_dag.py) DAG and the [unbounded_core_orderbook_export](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_orderbook_dag.py) DAG. Each one of these has a captive stellar-core instance, which it uses to export information perpetually. The information each DAG exports is picked up and loaded into BigQuery by the [process_unbounded_core_changes](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_changes_dag.py) DAG and the [process_unbound_core_orderbooks](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_orderbooks_dag.py) DAG.
-
-If a long running pod fails, look at the most recent successful DAG run of the associated process DAG. Take a look at the log of the file sensors, where you will see a line:
-`Relative path of the earliest file is: changes_folder/<START>-<END>-accounts.txt`
-
-This line indicates the last ledger that was processed. Now you can go to [Stellar Expert](https://stellar.expert/explorer/public) to get the close time of the end ledger. Then, manually create a DAG run at that time by going to Browse->DAG Runs->Create. Set the DAG id to the DAG that failed, and the Execution Time to the close time of the end ledger.
+<br>
 
 # Understanding the Setup
 
 This section contains information about the Airflow setup. It includes our DAG diagrams and explanations of tasks. For general Airflow knowledge, check out the Airflow [concepts overview](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html) or the Airflow [tutorial](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html).
 
-## DAG Diagrams
+- [DAG Diagrams](#dag-diagrams)
+  - [History Archive with Captive Core DAG](#history-archive-with-captive-core-dag)
+  - [History Archive without Captive Core DAG](#history-archive-without-captive-core-dag)
+  - [State Table Export DAG](#state-table-export-dag)
+  - [Bucket List DAG (Unused)](#bucket-list-dag-unused)
+- [Task Explanations](#task-explanations)
+  - [build_time_task](#build_time_task)
+  - [build_export_task](#build_export_task)
+  - [build_gcs_to_bq_task](#build_gcs_to_bq_task)
+  - [build_apply_gcs_changes_to_bq_task](#build_apply_gcs_changes_to_bq_task)
+  - [build_batch_stats](#build_batch_stats)
+  - [bq_insert_job_task](#bq_insert_job_task)
+  - [cross_dependency_task](#cross_dependency_task)
+  - [delete_data_task](#delete_data_task)
 
-### History Archive Export DAG
+## **DAG Diagrams**
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_dag.py) exports ledgers, transactions, operations, trades, and assets from Stellar's history archives, loads them into Google Cloud Storage, and then sends the data to BigQuery.
+### **History Archive with Captive Core DAG**
 
-![History Archive Dag](documentation/images/HistoryArchiveDAG.png)
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_with_captive_core_dag.py):
+- exports transactions, operations, trades, and effects from Stellar using CaptiveCore
+- inserts into BigQuery (private and public)
 
-### Unbounded Changes Export DAG
+![History Archive with Captive Core Dag](documentation/images/history_archive_with_captive_core.png)
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_dag.py) connects to a stellar-core instance and exports accounts, offers, and trustlines. This DAG is a long-running process that continually exports new information as the Stellar network progresses.
+### **History Archive without Captive Core DAG**
 
-![Core DAG](documentation/images/UnboundedDAG.png)
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_without_captive_core_dag.py):
+- exports assets and ledgers from Stellar's history archives
+- inserts into BigQuery (private and public)
 
-### Bounded Changes Export DAG
+![History Archive Dag](documentation/images/history_archive_without_captive_core.png)
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bounded_core_dag.py) connects to a stellar-core instance and exports accounts, offers, and trustlines. Unlike the unbounded version, this version is not long running. It stops once the range has been exported. Currently, this range is the ledger that includes the DAG's execution date.
+### **State Table Export DAG**
 
-![Core DAG](documentation/images/UnboundedDAG.png)
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/state_table_dag.py)
+- exports accounts, account_signers, offers, claimable_balances, liquidity pools, and trustlines
+- inserts into BigQuery (private)
 
-### Process Unbounded Changes DAG
+![Bucket List DAG](documentation/images/state_table_export.png)
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_changes_dag.py) processes the output of the unbounded changes DAG. File sensors watch the folder where the unbounded core DAG sends its exported information. Once a file is seen, it is loaded into Google Cloud Storage and applied to BigQuery. Once a batch has been exported completely, the DAG triggers itself again.
+### **Bucket List DAG (Unused)**
 
-![Process Core DAG](documentation/images/ProcessChangesDAG.png)
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bucket_list_dag.py):
+- exports from Stellar's bucket list, which contains data on accounts, offers, trustlines, account signers, liqudity pools, and claimable balances
+- inserts into BigQuery (private)
 
-### Bucket List Export DAG
+![Bucket List DAG](documentation/images/bucket_list_export.png)
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bucket_list_dag.py) exports from Stellar's bucket list, which contains data on accounts, offers, and trustlines. Exports from this DAG always begins from the genesis ledger and end at the ledger that includes the DAG's execution date.
+<br>
 
-![Bucket List DAG](documentation/images/BucketListDAG.png)
+## **Task Explanations**
 
-### Unbounded Orderbook Export DAG
-
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/unbounded_core_orderbook_dag.py) connects to a stellar-core instance and exports accounts, offers, and trustlines. This DAG is a long-running process that continually exports new information as the Stellar network progresses.
-
-![Unbounded Orderbook DAG](documentation/images/OrderbookDAG.png)
-
-### Process Unbounded Orderbook DAG
-
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/process_unbounded_core_changes_dag.py) processes the output of the unbounded orderbook DAG. File sensors watch the folder where the unbounded core DAG sends its exported information. Once a file is seen, it is loaded into Google Cloud Storage and applied to BigQuery. Once a batch has been exported completely, the DAG triggers itself again.
-![Unbounded Orderbook DAG](documentation/images/ProcessOrderbookDAG.png)
-
-## Task Explanations
-
-### build_time_task
+### **build_time_task**
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py) contains methods for creating time tasks. Time tasks call the get_ledger_range_from_times function in the stellar-etl Docker image. The tasks receive the execution time of the current DAG run and the expected execution time of the next run. They convert this time range into a ledger range that can be passed to the export tasks.
 
-### build_export_task
+### **build_export_task**
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_export_task.py) contains methods for creating export tasks. Export tasks call export functions in the stellar-etl Docker image with a ledger range determined by the upstream time task. The data is exported in a newline-delimited JSON text file with a file name in the format `[start ledger]-[end ledger]-[data type].txt`.
 
-### build_load_task
-
-[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_load_task.py) contains methods for creating load tasks. Load tasks load local files that were exported into Google Cloud Storage. In order to keep GCS files organized, exported data is loaded into a folder called `exported`. The `exported` folder contains folders for each of the exported data types.
-
-### build_gcs_to_bq_task
+### **build_gcs_to_bq_task**
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_gcs_to_bq_task.py) contains methods for creating tasks that appends information from a Google Cloud Storage file to a BigQuery table. These tasks will create a new table if one does not exist. These tasks are used for history archive data structures, as Stellar wants to keep a complete record of the ledger's entire history.
 
-### build_file_sensor_task
-
-[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_file_sensor_task.py) contains methods for creating a file sensor task. File sensors take in a file path, and continuously check that file path until a file or folder exists. Once the file is sensed, the task succeeds. This task is important because the unbounded core DAG exports batches at variable times. Using file sensors ensures that batches are detected and processed as soon as they are exported.
-
-### build_apply_gcs_changes_to_bq_task
+### **build_apply_gcs_changes_to_bq_task**
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_apply_gcs_changes_to_bq_task.py) contains methods for creating apply tasks. Apply tasks are used to merge a file from Google Cloud Storage into a BigQuery table. Apply tasks differ from the other task that appends in that they apply changes. This means that they update, delete, and insert rows. These tasks are used for accounts, offers, and trustlines, as the BigQuery table represents the point in time state of these data structures. This means that, for example, a merge task could alter the account balance field in the table if a user performed a transaction, delete a row in the table if a user deleted their account, or add a new row if a new account was created.
 
 Apply tasks can also be used to insert unique values only. This behavior is used for orderbook and history archive data structures. Instead of performing a merge operation, which would update or delete existing rows, the task will simply insert new rows if they don't already exist. This helps prevent duplicated data in a scenario where rows shouldn't change or be deleted. Essentially, this task replicates the behavior of a primary key in a database when used for orderbooks.
 
+### **build_batch_stats**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_batch_stats.py) pulls and inserts batch stats into BigQuery. 
+Data is inserted into `history_archives_dag_runs`.
+
+### **bq_insert_job_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_bq_insert_job_task.py) contains methods for creating BigQuery insert job tasks. 
+The task will read the query from the specified sql file and will return a BigQuery job operator configured to the GCP project and datasets defined.
+
+### **cross_dependency_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_cross_dependency_task.py) creates an ExternalTaskSensor that triggers on specified DAG tasks's success.
+
+### **delete_data_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_delete_data_task.py) deletes data from a specified BigQuery `project.dataset.table`
+
+<br>
+
 # Further Development
 
 This section details further areas of development. It covers a basic guide on how to add new features and test changes to existing features. It also contains a list of project TODOs (check the GitHub [issues page](https://github.com/stellar/stellar-etl-airflow/issues) for more!)
 
-## Extensions
+## **Extensions**
 
 This section covers some possible extensions or further work that can be done.
 
-### Pre-commit Git hook scripts
+- [Pre-commit Git hook scripts](#pre-commit-git-hook-scripts)
+- [Adding New DAGs](#adding-new-dags)
+- [Adding tasks to existing DAGs](#adding-tasks-to-existing-dags)
+- [Adding New Tasks](#adding-new-tasks)
+
+<br>
+
+### **Pre-commit Git hook scripts**
 
 Git can run special scripts at various places in the Git workflow (which the system calls “hooks”).
 These scripts can do whatever you want and, in theory, can help a team with their development flow.
 
 `pre-commit` makes hook scripts extremely accessible to teams.
 
-1. Install `pre-commit`
+- Install `pre-commit`
 
-```bash
-# using pip
-$ pip install pre-commit==3.2.1
-```
+  ```bash
+  # using pip
+  $ pip install pre-commit==3.2.1
+  ```
 
-2. Set up the Git hook scripts
+- Set up the Git hook scripts
 
-```bash
-$ pre-commit install
-pre-commit installed at .git/hooks/pre-commit
-```
+  ```bash
+  $ pre-commit install
+  pre-commit installed at .git/hooks/pre-commit
+  ```
 
 That's it. Now `pre-commit` will run automatically on `git commit`!
 
-### Adding New DAGs
+<br>
+
+### **Adding New DAGs**
 
 Adding new DAGs is a fairly straightforward process. Create a new python file in the `dags` folder. Create your dag object using the code below:
 
@@ -585,44 +661,47 @@ dag = DAG(
 )
 ```
 
-The get_default_dag_args() is defined in the `dags/stellar-etl-airflow/default.py` file.
+The `get_default_dag_args()` is defined in the [dags/stellar-etl-airflow/default.py](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/default.py) file.
 
 Feel free to add more arguments or customize the existing ones. The documentation for a DAG is available [here](https://airflow.apache.org/docs/stable/_api/airflow/models/dag/index.html).
 
-### Adding tasks to existing DAGs
+<br>
+
+### **Adding tasks to existing DAGs**
 
 If you have created a new DAG, or wish to extend an existing DAG, you can add tasks to it by calling the various `create_X_task` functions that are in the repository. See [here](https://airflow.apache.org/docs/stable/concepts.html#relations-between-tasks) for details on how to create dependencies between tasks.
 
-### Adding New Tasks
+<br>
+
+### **Adding New Tasks**
 
 Adding new tasks is a more involved process. You likely need to add a new python file in the `dags/stellar_etl_airflow` folder. This file should include a function that creates and returns the new task, as well as any auxiliary functions related to the task.
 
 Airflow has a variety of operators. The ones that are most likely to be used are:
 
-- [DockerOperator](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/docker_operator.py), which can be used to run stellar-etl commands
-- [KubernetesPodOperator](https://incubator-airflow.readthedocs.io/en/latest/howto/operator/kubernetes.html), which can start new Kubernetes Pods
+- [DockerOperator](https://airflow.apache.org/docs/apache-airflow-providers-docker/stable/_api/airflow/providers/docker/operators/docker/index.html#airflow.providers.docker.operators.docker.DockerOperator), which can be used to execute commands within a docker container
+- [KubernetesPodOperator](https://airflow.apache.org/docs/apache-airflow-providers-cncf-kubernetes/stable/operators.html), which can start new Kubernetes Pods
 - [PythonOperator](https://airflow.apache.org/docs/stable/howto/operator/python.html), which can run Python functions
-- [GlobFileSensor](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/glob_file_operator.py), which can detect files
 
 You may also find this list of [Google-related operators](https://airflow.apache.org/docs/stable/howto/operator/gcp/index.html) useful for interacting with Google Cloud Storage or BigQuery.
 
-An example of a simple task is the [time task](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py). This task converts a time into a ledger range using a stellar-etl command. Since it needs to use the stellar-etl, we need a DockerOperator. We provide the operator with the command, the task_id, the parent DAG, and some parameters specific to DockerOperators, like the volume.
+An example of a simple task is the [time task](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_time_task.py). This task converts a time into a ledger range using a stellar-etl command. Since it needs to use the stellar-etl, we need a KubernetesPodOperator. We provide the operator with the command, the task_id, the parent DAG, and some parameters specific to KubernetesPodOperator.
 
 More complex tasks might require a good amount of extra code to set up variables, authenticate, or check for errors. However, keep in mind that tasks should be idempotent. This means that tasks should produce the same output even if they are run multiple times. The same input should always produce the same output.
 
 You may find that you need to pass small amounts of information, like filenames or numbers, from one task to another. You can do so with Airflow's [XCOM system](https://airflow.apache.org/docs/stable/concepts.html?highlight=xcom#xcoms).
 
-## Testing Changes
+<br>
+
+## **Testing Changes**
 
 Once you make a change, you can test it using the Airflow command line interface. Here's a quick outline of how to test changes:
 
-1.  Run `kubectl get pods --all-namespaces`. Look for a pod that starts with `airflow-worker`.
-2.  Run `kubectl -n <pod_namespace> exec -it airflow-worker-<rest_of_pod_name> -c airflow-worker -- /bin/bash` to get inside the worker
-3.  Run `airflow test history_archive_export <task_id> <test_date>`. Note that if the task you changed has dependencies, you need to run `airflow test` on those upstream tasks for the exact same date.
-4.  Run `airflow test` on the tasks that depend on the the task you just changed. Ensure that they still perform as expected.
+- Run `kubectl get pods --all-namespaces`. Look for a pod that starts with `airflow-worker`.
+- Run `kubectl -n <pod_namespace> exec -it airflow-worker-<rest_of_pod_name> -c airflow-worker -- /bin/bash` to get inside the worker
+- Run `airflow task test history_archive_export <task_id> <test_date>`. Note that if the task you changed has dependencies, you need to run `airflow test` on those upstream tasks for the exact same date.
+- Run `airflow task test` on the tasks that depend on the the task you just changed. Ensure that they still perform as expected.
 
 This guide can also be useful for testing deployment in a new environment. Follow this testing process for all the taks in your DAGs to ensure that they work end-to-end.
 
-## Remaining Project TODOs
-
-Write documentation about custom Kubernetes setup ([#43](https://github.com/stellar/stellar-etl-airflow/issues/43)).
+An alternative to the testing flow above is to `trigger` the task in the Airflow UI. From there you are able to view the task status, log, and task details.
