@@ -18,6 +18,12 @@ dag = DAG(
     catchup=False,
 )
 
+# tasks for staging tables for marts
+stg_history_transactions = build_dbt_task(dag, 'stg_history_transactions')
+stg_history_ledgers = build_dbt_task(dag, 'stg_history_ledgers')
+stg_history_assets = build_dbt_task(dag, 'stg_history_assets')
+stg_history_trades = build_dbt_task(dag, 'stg_history_trades')
+
 # tasks for marts tables
 agg_network_stats = build_dbt_task(dag, 'agg_network_stats')
 fee_stats_agg = build_dbt_task(dag, 'fee_stats_agg')
@@ -27,6 +33,10 @@ trade_agg = build_dbt_task(dag, 'trade_agg')
 # DAG task graph
 # graph for marts tables
 agg_network_stats
-fee_stats_agg
-history_assets
-trade_agg
+
+stg_history_transactions >> fee_stats_agg
+stg_history_ledgers >> fee_stats_agg
+
+stg_history_assets >> history_assets
+
+stg_history_trades >> trade_agg
