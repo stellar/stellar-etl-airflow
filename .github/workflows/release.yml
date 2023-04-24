@@ -38,8 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [tests]
     # deploy only occurs when pr is merged
-    if: github.event.pull_request.merged == true
-
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.repository == 'stellar/stellar-etl-airflow'
+    
     steps:
       - uses: actions/checkout@v3
 

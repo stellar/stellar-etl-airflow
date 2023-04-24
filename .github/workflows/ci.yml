@@ -59,6 +59,8 @@ jobs:
     needs: [tests]
     # deploy to dev occurs every time
     # someone submits a pr targeting `master`
+    # from a branch at `stellar/stellar-etl-airflow` repo
+    if: github.repository == 'stellar/stellar-etl-airflow'
     # known caveats:
     # if there's more than 1 person working
     # in the same file this won't behave nicely
