@@ -26,21 +26,19 @@ dag = DAG(
     },
     render_template_as_native_obj=True,
     user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    catchup=False,
 )
 
 internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("bq_dataset")
-public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
 bucket_name = Variable.get("bucket_mgi")
 
 
 check_gcs_file = build_check_gcs_file('check_gcs_file', dag, bucket_name)
 
 
-send_mgi_to_bq_internal_task = build_gcs_csv_to_bq_task('send_mgi_to_bq_pub_task', dag, internal_project, internal_dataset, 'mgi', bucket_name)
-
-send_mgi_to_bq_public_task = build_gcs_csv_to_bq_task('send_mgi_to_bq_int_task', dag, public_project, public_dataset, 'mgi', bucket_name)
+send_mgi_to_bq_internal_task = build_gcs_csv_to_bq_task('send_mgi_to_bq_pub_task', dag, internal_project, internal_dataset, 'raw_mgi_stellar_transactions', bucket_name)
 
 
-check_gcs_file >> [send_mgi_to_bq_internal_task, send_mgi_to_bq_public_task]
+
+check_gcs_file >> send_mgi_to_bq_internal_task

@@ -10,7 +10,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 from airflow.macros import ds_format
 from airflow.models import TaskInstance
 
-today = "{{ ds_nodash }}"
+today = "{{ next_ds_nodash }}"
 object_prefix = f'stellar_transaction_extract_{today}'
 
 

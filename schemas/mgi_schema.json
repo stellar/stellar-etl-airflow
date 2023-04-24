@@ -66,6 +66,11 @@
     },
     {
         "mode": "NULLABLE",
+        "name": "receive_partner_name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
         "name": "tran_resource_id",
         "type": "STRING"
     },
