@@ -78,6 +78,27 @@
       "type"
     ]
   },
+  "dbt_auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "dbt_auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "dbt_client_email": "803774498738-compute@developer.gserviceaccount.com",
+  "dbt_client_id": 101879863915888261202,
+  "dbt_client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/803774498738-compute%40developer.gserviceaccount.com",
+  "dbt_dataset": "sdf_test",
+  "dbt_full_refresh_models": {
+    "partnership_assets__account_holders_activity_fact": true,
+    "partnership_assets__asset_activity_fact": true
+  },
+  "dbt_image_name": "chowbao/stellar-dbt:31098a7",
+  "dbt_job_execution_timeout_seconds": 300,
+  "dbt_job_retries": 1,
+  "dbt_keyfile_profile": "",
+  "dbt_maximum_bytes_billed": 250000000000,
+  "dbt_private_key": "dummy",
+  "dbt_private_key_id": "dummy",
+  "dbt_project": "test-hubble-319619",
+  "dbt_target": "dev_airflow",
+  "dbt_threads": 1,
+  "dbt_token_uri": "https://oauth2.googleapis.com/token",
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:5de391d",
@@ -166,6 +187,10 @@
     "trust_lines": {
       "type": "MONTH",
       "field": "batch_run_date"
+    },
+    "mgi": {
+      "field": "tran_evnt_date",
+      "type": "MONTH"
     }
   },
   "public_dataset": "test_crypto_stellar_2",
@@ -213,6 +238,7 @@
   "task_timeout": {
     "build_batch_stats": 180,
     "build_bq_insert_job": 180,
+    "build_dbt_task": 300,
     "build_delete_data_task": 180,
     "build_export_task": 180,
     "build_gcs_to_bq_task": 300,
