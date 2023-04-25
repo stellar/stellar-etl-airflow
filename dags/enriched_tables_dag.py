@@ -1,23 +1,22 @@
 import datetime
 
-from stellar_etl_airflow.default import init_sentry, get_default_dag_args
-from stellar_etl_airflow.build_dbt_task import build_dbt_task
-from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
-
 from airflow import DAG
 from airflow.models.variable import Variable
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
+from stellar_etl_airflow.build_dbt_task import build_dbt_task
+from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
 
 dag = DAG(
-    'enriched_tables',
+    "enriched_tables",
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2023, 4, 12, 0, 0),
-    description='This DAG runs dbt to create the tables for the models in marts/enriched/.',
-    schedule_interval='*/30 * * * *', # Runs every 30 mins
+    description="This DAG runs dbt to create the tables for the models in marts/enriched/.",
+    schedule_interval="*/30 * * * *",  # Runs every 30 mins
     params={},
     max_active_runs=1,
-    catchup=False
+    catchup=False,
 )
 
 
@@ -28,14 +27,16 @@ wait_on_dag = build_cross_deps(
 )
 
 # tasks for staging tables
-stg_history_ledgers = build_dbt_task(dag, 'stg_history_ledgers')
-stg_history_transactions = build_dbt_task(dag, 'stg_history_transactions')
-stg_history_operations = build_dbt_task(dag, 'stg_history_operations')
-stg_meaningful_assets = build_dbt_task(dag, 'stg_meaningful_assets')
+stg_history_ledgers = build_dbt_task(dag, "stg_history_ledgers")
+stg_history_transactions = build_dbt_task(dag, "stg_history_transactions")
+stg_history_operations = build_dbt_task(dag, "stg_history_operations")
+stg_meaningful_assets = build_dbt_task(dag, "stg_meaningful_assets")
 
 # tasks for enriched tables
-enriched_history_operations = build_dbt_task(dag, 'enriched_history_operations')
-enriched_history_operations_meaningful = build_dbt_task(dag, 'enriched_history_operations_meaningful')
+enriched_history_operations = build_dbt_task(dag, "enriched_history_operations")
+enriched_history_operations_meaningful = build_dbt_task(
+    dag, "enriched_history_operations_meaningful"
+)
 
 # DAG task graph
 # graph for enriched tables

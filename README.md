@@ -40,6 +40,7 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 <br>
 
 # Installation and Setup
+
 - [Google Cloud Platform](#google-cloud-platform)
 - [Cloud Composer](#cloud-composer)
 - [Airflow Variables Explanation](#airflow-variables-explanation)
@@ -75,6 +76,7 @@ Below are instructions to intialize the Google Cloud SDK and create the GCP proj
 
 - Open the [Cloud Storage browser](https://console.cloud.google.com/storage/browser)
 - [Create](https://cloud.google.com/storage/docs/creating-buckets) a new Google Storage bucket that will store exported files
+
   > **_NOTE:_** Creating a new Cloud Composer environment will automatically create a new GCS bucket.
 
   > **_NOTE:_** The dataset name you choose corresponds to the Airflow variable "gcs_exported_data_bucket_name".
@@ -85,7 +87,7 @@ Below are instructions to intialize the Google Cloud SDK and create the GCP proj
 
 <br>
 
-***
+---
 
 ## **Cloud Composer**
 
@@ -102,7 +104,7 @@ Create a new Cloud Composer environment using the [UI](https://console.cloud.goo
 > Composer 2 environments use autopilot exclusively for resource management.
 
 > **_Note_**: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
-Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-1.16.11-airflow-1.10.14` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
+> Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-1.16.11-airflow-1.10.14` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
 
 > **_TROUBLESHOOTING:_** If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with Owner permissions and use it to create the Composer environment.
 
@@ -322,7 +324,7 @@ name: etl-data
 <summary>Add Poststart Script to Airflow Workers</summary>
 Find the namespace name in the airflow-worker config file. It should be near the top of the file, and may look like `composer-1-12-0-airflow-1-10-10-2fca78f7`. This value will be used in later commands.
 
-Next, open the cloud shell. Keep your airflow-worker configuration file open, or save it. In the cloud shell, create a text file called `poststart.sh` by running the command: `nano poststart.sh`. Then, copy the text from the `poststart.sh` file in this repository into the newly opened file. 
+Next, open the cloud shell. Keep your airflow-worker configuration file open, or save it. In the cloud shell, create a text file called `poststart.sh` by running the command: `nano poststart.sh`. Then, copy the text from the `poststart.sh` file in this repository into the newly opened file.
 
 - If you changed the path for the local folder in the previous step, make sure that you edit line 13:
 
@@ -334,7 +336,7 @@ Next, open the cloud shell. Keep your airflow-worker configuration file open, or
 
   ```bash
   gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
-  
+
   kubectl create configmap start-config --from-file poststart.sh -n <namespace_name>
   ```
 
@@ -342,13 +344,13 @@ Next, open the cloud shell. Keep your airflow-worker configuration file open, or
 
   ```
   ...
-  
+
   volumeMounts:
   ...
   - mountPath: /etc/scripts
   name: config-volume
   ...
-  
+
   ```
 
 - Then, add a new Volume that links to the configMap you created.
@@ -415,7 +417,7 @@ The `airflow_variables.txt` file provides a set of default values for variables.
 
 <br>
 
-***
+---
 
 ## **Airflow Variables Explanation**
 
@@ -438,14 +440,13 @@ The `airflow_variables.txt` file provides a set of default values for variables.
 | owner                         | the name of the owner of the Airflow DAGs                                                                                                           | Yes.                                                                  |
 | schema_filepath               | file path to schema folder                                                                                                                          | No, unless schemas are in a different location                        |
 | table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                                            | Yes, if desired. Make sure each type has a different table name.      |
-| cluster_fields                | JSON object. Each key should be a BigQuery table, and the value is a list of columns that the table is clustered by                                            | Yes, if desired for tables that want clustering      |
-| parititon_fields              | JSON object. Each key should be a BigQuery table, and the value is a JSON object of type and field to partition by                                            | Yes, if desired for tables that want partitioning     |
-| gcs_exported_object_prefix    | String to prefix run_id export task output path with          | Yes, if desired to prefix run_id    |
-| sentry_dsn                    | Sentry Data Source Name to tell where Sentry SDK should send events        | Yes     |
-| sentry_environment            | Environment that sentry alerts will fire          | Yes    |
-| use_testnet                   | Flag to use testnet data instead of mainnet          | Yes, if desired to use testnet data    |
-| task_timeout                  | JSON object. Each key should be the airflow util task name, and the value is the timeout in seconds          | Yes, if desired to give tasks timeout    |
-
+| cluster_fields                | JSON object. Each key should be a BigQuery table, and the value is a list of columns that the table is clustered by                                 | Yes, if desired for tables that want clustering                       |
+| parititon_fields              | JSON object. Each key should be a BigQuery table, and the value is a JSON object of type and field to partition by                                  | Yes, if desired for tables that want partitioning                     |
+| gcs_exported_object_prefix    | String to prefix run_id export task output path with                                                                                                | Yes, if desired to prefix run_id                                      |
+| sentry_dsn                    | Sentry Data Source Name to tell where Sentry SDK should send events                                                                                 | Yes                                                                   |
+| sentry_environment            | Environment that sentry alerts will fire                                                                                                            | Yes                                                                   |
+| use_testnet                   | Flag to use testnet data instead of mainnet                                                                                                         | Yes, if desired to use testnet data                                   |
+| task_timeout                  | JSON object. Each key should be the airflow util task name, and the value is the timeout in seconds                                                 | Yes, if desired to give tasks timeout                                 |
 
 ### **Kubernetes-Specific Variables**
 
@@ -476,7 +477,7 @@ Here are some example `volume_config` values. Note that a ReadWriteMany volume i
 ## **Starting Up**
 
 > **_NOTE:_** Google Cloud Composer instance of airflow has limited CLI support.
-[Supported Airflow CLI commands](https://cloud.google.com/composer/docs/composer-2/access-airflow-cli#supported-commands)
+> [Supported Airflow CLI commands](https://cloud.google.com/composer/docs/composer-2/access-airflow-cli#supported-commands)
 
 First, this image has a shows the Airflow web UI components for pausing and triggering DAGs:
 ![Airflow UI](documentation/images/AirflowUI.png)
@@ -518,24 +519,27 @@ This section contains information about the Airflow setup. It includes our DAG d
 ### **History Archive with Captive Core DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_with_captive_core_dag.py):
+
 - exports transactions, operations, trades, and effects from Stellar using CaptiveCore
 - inserts into BigQuery
-> *_NOTE:_* SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
+  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
 
 ![History Archive with Captive Core Dag](documentation/images/history_archive_with_captive_core.png)
 
 ### **History Archive without Captive Core DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_without_captive_core_dag.py):
+
 - exports assets and ledgers from Stellar's history archives
 - inserts into BigQuery
-> *_NOTE:_* SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
+  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
 
 ![History Archive Dag](documentation/images/history_archive_without_captive_core.png)
 
 ### **State Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/state_table_dag.py)
+
 - exports accounts, account_signers, offers, claimable_balances, liquidity pools, and trustlines
 - inserts into BigQuery
 
@@ -543,9 +547,10 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ### **Bucket List DAG (Unsupported)**
 
-> *_NOTE:_* Bucket List DAG is unsupported.
+> _*NOTE:*_ Bucket List DAG is unsupported.
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bucket_list_dag.py):
+
 - exports from Stellar's bucket list, which contains data on accounts, offers, trustlines, account signers, liqudity pools, and claimable balances
 - inserts into BigQuery
 
@@ -575,12 +580,12 @@ Apply tasks can also be used to insert unique values only. This behavior is used
 
 ### **build_batch_stats**
 
-[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_batch_stats.py) pulls and inserts batch stats into BigQuery. 
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_batch_stats.py) pulls and inserts batch stats into BigQuery.
 Data is inserted into `history_archives_dag_runs`.
 
 ### **bq_insert_job_task**
 
-[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_bq_insert_job_task.py) contains methods for creating BigQuery insert job tasks. 
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_bq_insert_job_task.py) contains methods for creating BigQuery insert job tasks.
 The task will read the query from the specified sql file and will return a BigQuery job operator configured to the GCP project and datasets defined.
 
 ### **cross_dependency_task**
@@ -591,7 +596,7 @@ The task will read the query from the specified sql file and will return a BigQu
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_delete_data_task.py) deletes data from a specified BigQuery `project.dataset.table` according to the batch interval.
 
-> *_NOTE:_* If the batch interval is changed, the deleted data might not align with the prior batch intervals.
+> _*NOTE:*_ If the batch interval is changed, the deleted data might not align with the prior batch intervals.
 
 <br>
 
