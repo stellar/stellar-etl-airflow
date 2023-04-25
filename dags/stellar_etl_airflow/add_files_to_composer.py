@@ -25,6 +25,7 @@ def _create_files_list(env: str) -> Tuple[str, List[str]]:
     copytree("schemas/", f"{temp_dir}/", dirs_exist_ok=True)
     # copy airflow configuration file
     copy(f"airflow-{env}.cfg", f"{temp_dir}/airflow.cfg")
+    copy(f"airflow-{env}.cfg", f"airflow.cfg")
 
     dags = glob(f"{temp_dir}/**/*.*", recursive=True)
     return (temp_dir, dags)
@@ -68,9 +69,9 @@ def upload_dags_to_composer(bucket_name: str, env: str) -> None:
                 blob.upload_from_filename(f)
                 logging.info(f"File {f} uploaded to {bucket_name}/{f}.")
             except FileNotFoundError:
-                current_directory = listdir()
+                list_files = listdir(temp_dir)
                 logging.error(
-                    f"DAGs directory not found in {current_directory}, you may need to override the default value of name_replacement to point to a relative directory"
+                    f"File not found in temporary directory. List of files: {list_files}"
                 )
                 raise
 
