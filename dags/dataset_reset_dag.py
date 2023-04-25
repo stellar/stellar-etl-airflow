@@ -1,8 +1,7 @@
 """
 When the Test net server is reset, the dataset reset DAG deletes all the datasets in the test Hubble.
 """
-
-
+import ast
 import datetime
 import json
 
@@ -23,6 +22,7 @@ dag = DAG(
     description="This DAG runs after the Testnet data reset that occurs periodically.",
     start_date=datetime.datetime(2023, 1, 1, 0, 0),
     schedule_interval="10 9 * * *",
+    is_paused_upon_creation=ast.literal_eval(Variable.get("use_testnet")),
     params={
         "alias": "testnet-reset",
     },
