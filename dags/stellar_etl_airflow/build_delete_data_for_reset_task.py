@@ -6,9 +6,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def build_delete_data_task(dag, project, dataset, table, type_of_dataset):
-    DELETE_ROWS_QUERY = (
-        f"TRUNCATE table {project}.{dataset}.{table}"
-    )
+    DELETE_ROWS_QUERY = f"TRUNCATE table {project}.{dataset}.{table}"
 
     return BigQueryInsertJobOperator(
         dag=dag,

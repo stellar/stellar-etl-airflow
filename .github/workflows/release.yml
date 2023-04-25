@@ -41,7 +41,7 @@ jobs:
     if: >-
       github.event.pull_request.merged == true &&
       github.repository == 'stellar/stellar-etl-airflow'
-    
+
     steps:
       - uses: actions/checkout@v3
 

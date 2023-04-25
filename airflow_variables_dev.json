@@ -40,11 +40,7 @@
   "bq_dataset": "test_gcp_airflow_internal",
   "bq_project": "test-hubble-319619",
   "date_for_resets": {
-    "date": [
-      "2023-03-15", 
-      "2023-06-14", 
-      "2023-09-13", 
-      "2023-12-13"]
+    "date": ["2023-03-15", "2023-06-14", "2023-09-13", "2023-12-13"]
   },
   "cluster_fields": {
     "accounts": ["account_id", "last_modified_ledger"],
