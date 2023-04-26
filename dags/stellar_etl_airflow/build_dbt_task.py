@@ -80,11 +80,13 @@ def build_dbt_task(dag, model_name, resource_cfg="default"):
         dbt_full_refresh = "--full-refresh"
 
     create_dbt_profile_cmd = create_dbt_profile()
+    
+    execution_date = "EXECUTION_DATE=" + "{{ ds }}"
 
     command = ["sh", "-c"]
     args = [
         " ".join(
-            [create_dbt_profile_cmd, "dbt run --select", model_name, dbt_full_refresh]
+            [create_dbt_profile_cmd, execution_date, "dbt run --select", model_name, dbt_full_refresh]
         )
     ]
     logging.info(f"sh commands to run in pod: {args}")
