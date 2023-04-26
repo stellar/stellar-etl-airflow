@@ -37,12 +37,6 @@ repos:
     hooks:
       - id: black
 
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        args: [--profile=black]
-
   - repo: https://github.com/sqlfluff/sqlfluff
     rev: 2.0.3
     hooks:
