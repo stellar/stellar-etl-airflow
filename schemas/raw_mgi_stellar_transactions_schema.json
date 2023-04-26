@@ -1,0 +1,97 @@
+[
+    {
+        "mode": "NULLABLE",
+        "name": "src_tran_ref_id",
+        "type": "INTEGER"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "created_at",
+        "type": "TIMESTAMP"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "updated_at",
+        "type": "TIMESTAMP"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "transaction_status",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "send_cntry_name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "rec_cntry_name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "send_crncy_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "rec_crncy_code",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "send_face_USD_amt",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "send_face_tran_crncy_amt",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "send_fee_tran_amt",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "rec_face_tran_crncy_amt",
+        "type": "FLOAT"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "send_partner_name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "receive_partner_name",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "tran_resource_id",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "tran_hash_text",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "dgt_aset_tran_type",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "wallet_address",
+        "type": "STRING"
+    },
+    {
+        "mode": "NULLABLE",
+        "name": "promo_code",
+        "type": "STRING"
+    }
+]
