@@ -7,10 +7,9 @@ import json
 
 from airflow import DAG
 from airflow.models import Variable
-
 from stellar_etl_airflow.build_gcs_csv_to_bq_task import (
-    build_gcs_csv_to_bq_task,
     build_check_gcs_file,
+    build_gcs_csv_to_bq_task,
 )
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
