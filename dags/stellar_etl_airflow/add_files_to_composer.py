@@ -22,7 +22,7 @@ def _create_files_list(env: str) -> Tuple[str, List[str]]:
     # copy everything but the ignored files to a temp directory
     copytree("dags/", f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
     # copy all schemas
-    copytree("schemas/", f"{temp_dir}/dags/", dirs_exist_ok=True)
+    copytree("schemas/", f"{temp_dir}/", dirs_exist_ok=True)
     # copy airflow configuration file
     copy(f"airflow-{env}.cfg", f"{temp_dir}/airflow.cfg")
     copy(f"airflow-{env}.cfg", f"airflow.cfg")
@@ -55,17 +55,19 @@ def upload_dags_to_composer(bucket_name: str, env: str) -> None:
             # remove path to temp dir
             if f.endswith(".json"):
                 # create schemas directory
-                f = f.replace(f"{temp_dir}/", "dags/schemas/")
+                f = f.replace(f"{temp_dir}/", "schemas/")
+                blob = bucket.blob(f"dags/{f}")
             if f.endswith(".cfg"):
                 # insert airflow configuration file
                 f = f.replace(f"{temp_dir}/", "")
+                blob = bucket.blob(f)
             else:
                 # create dags directory
                 f = f.replace(f"{temp_dir}/", "dags/")
+                blob = bucket.blob(f)
 
             try:
                 # Upload to your bucket
-                blob = bucket.blob(f)
                 blob.upload_from_filename(f)
                 logging.info(f"File {f} uploaded to {bucket_name}/{f}.")
             except FileNotFoundError:
