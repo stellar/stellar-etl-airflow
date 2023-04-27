@@ -22,7 +22,7 @@ def _create_files_list(env: str) -> Tuple[str, List[str]]:
     # copy everything but the ignored files to a temp directory
     copytree("dags/", f"{temp_dir}/", ignore=files_to_ignore, dirs_exist_ok=True)
     # copy all schemas
-    copytree("schemas/", f"{temp_dir}/", dirs_exist_ok=True)
+    copytree("schemas/", f"{temp_dir}/dags/", dirs_exist_ok=True)
     # copy airflow configuration file
     copy(f"airflow-{env}.cfg", f"{temp_dir}/airflow.cfg")
     copy(f"airflow-{env}.cfg", f"airflow.cfg")
