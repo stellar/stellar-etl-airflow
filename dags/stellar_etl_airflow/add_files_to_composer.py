@@ -57,10 +57,7 @@ def upload_dags_to_composer(bucket_name: str, env: str) -> None:
             if f.endswith(".json"):
                 # create schemas directory
                 f = f.replace(f"{temp_dir}/", "schemas/")
-                type_f = type(f)
-                logging.info(f"F is type {type_f}")
                 schema_destination = "dags/" + f
-                logging.info(f"Schema destination: {schema_destination}")
                 blob = bucket.blob(schema_destination)
             if f.endswith(".cfg"):
                 # insert airflow configuration file
