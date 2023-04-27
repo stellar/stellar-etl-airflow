@@ -172,6 +172,13 @@ def build_export_task(
         .get("requests")
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
+    if command == "export_ledger_entry_changes":
+        arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
+    else:
+        arguments = f"""
+                    {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
+                    \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
+                    """
     return KubernetesPodOperator(
         service_account_name=Variable.get("k8s_service_account"),
         namespace=Variable.get("k8s_namespace"),
@@ -184,12 +191,7 @@ def build_export_task(
         name=command + "_task",
         image=Variable.get("image_name"),
         cmds=["bash", "-c"],
-        arguments=[
-            f"""
-            {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
-            \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
-            """
-        ],
+        arguments=[arguments],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,

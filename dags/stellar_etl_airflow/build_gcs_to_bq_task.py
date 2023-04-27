@@ -108,38 +108,63 @@ def build_gcs_to_bq_task(
         staging_table_suffix = "_staging"
     if data_type in history_tables:
         schema_fields = read_local_schema(f"history_{data_type}")
+        return CustomGCSToBigQueryOperator(
+            task_id=f"send_{data_type}_to_{dataset_type}",
+            execution_timeout=timedelta(
+                seconds=Variable.get("task_timeout", deserialize_json=True)[
+                    build_gcs_to_bq_task.__name__
+                ]
+            ),
+            bucket=bucket_name,
+            schema_fields=schema_fields,
+            autodetect=False,
+            source_format="NEWLINE_DELIMITED_JSON",
+            source_objects=[
+                "{{ task_instance.xcom_pull(task_ids='"
+                + export_task_id
+                + '\')["output"] }}'
+                + source_object_suffix
+            ],
+            destination_project_dataset_table=f"{project_name}.{dataset_name}.{data_type}{staging_table_suffix}",
+            write_disposition="WRITE_APPEND",
+            create_disposition="CREATE_IF_NEEDED",
+            max_bad_records=10,
+            time_partitioning=time_partition,
+            cluster_fields=cluster_fields,
+            export_task_id=export_task_id,
+            failed_transforms="{{ task_instance.xcom_pull(task_ids='"
+            + export_task_id
+            + '\')["failed_transforms"] }}',
+            max_failed_transforms=0,
+            on_failure_callback=alert_after_max_retries,
+            dag=dag,
+        )
 
     else:
         schema_fields = read_local_schema(f"{data_type}")
-
-    return CustomGCSToBigQueryOperator(
-        task_id=f"send_{data_type}_to_{dataset_type}",
-        execution_timeout=timedelta(
-            seconds=Variable.get("task_timeout", deserialize_json=True)[
-                build_gcs_to_bq_task.__name__
-            ]
-        ),
-        bucket=bucket_name,
-        schema_fields=schema_fields,
-        autodetect=False,
-        source_format="NEWLINE_DELIMITED_JSON",
-        source_objects=[
-            "{{ task_instance.xcom_pull(task_ids='"
-            + export_task_id
-            + '\')["output"] }}'
-            + source_object_suffix
-        ],
-        destination_project_dataset_table=f"{project_name}.{dataset_name}.{data_type}{staging_table_suffix}",
-        write_disposition="WRITE_APPEND",
-        create_disposition="CREATE_IF_NEEDED",
-        max_bad_records=10,
-        time_partitioning=time_partition,
-        cluster_fields=cluster_fields,
-        export_task_id=export_task_id,
-        failed_transforms="{{ task_instance.xcom_pull(task_ids='"
-        + export_task_id
-        + '\')["failed_transforms"] }}',
-        max_failed_transforms=0,
-        on_failure_callback=alert_after_max_retries,
-        dag=dag,
-    )
+        return GCSToBigQueryOperator(
+            task_id=f"send_{data_type}_to_{dataset_type}",
+            execution_timeout=timedelta(
+                seconds=Variable.get("task_timeout", deserialize_json=True)[
+                    build_gcs_to_bq_task.__name__
+                ]
+            ),
+            bucket=bucket_name,
+            schema_fields=schema_fields,
+            autodetect=False,
+            source_format="NEWLINE_DELIMITED_JSON",
+            source_objects=[
+                "{{ task_instance.xcom_pull(task_ids='"
+                + export_task_id
+                + '\')["output"] }}'
+                + source_object_suffix
+            ],
+            destination_project_dataset_table=f"{project_name}.{dataset_name}.{data_type}{staging_table_suffix}",
+            write_disposition="WRITE_APPEND",
+            create_disposition="CREATE_IF_NEEDED",
+            max_bad_records=10,
+            time_partitioning=time_partition,
+            cluster_fields=cluster_fields,
+            on_failure_callback=alert_after_max_retries,
+            dag=dag,
+        )
