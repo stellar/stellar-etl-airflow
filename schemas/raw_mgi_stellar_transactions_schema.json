@@ -2,7 +2,7 @@
   {
     "mode": "NULLABLE",
     "name": "src_tran_ref_id",
-    "type": "INTEGER"
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",
