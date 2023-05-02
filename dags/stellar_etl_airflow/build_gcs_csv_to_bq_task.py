@@ -34,6 +34,7 @@ def build_gcs_csv_to_bq_task(task_id, dag, project_id, dataset_id, table_name, b
         bucket=bucket_name,
         source_objects=['{{ ti.xcom_pull(key="return_value")[0] }}'],
         destination_project_dataset_table=f"{project_id}.{dataset_id}.{table_name}",
+        skip_leading_rows=1,
         schema_fields=read_local_schema(table_name),
         write_disposition="WRITE_TRUNCATE",
         dag=dag,

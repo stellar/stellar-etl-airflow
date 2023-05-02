@@ -40,5 +40,4 @@ check_gcs_file = build_check_gcs_file('check_gcs_file', dag, bucket_name)
 send_mgi_to_bq_internal_task = build_gcs_csv_to_bq_task('send_mgi_to_bq_pub_task', dag, internal_project, internal_dataset, 'raw_mgi_stellar_transactions', bucket_name)
 
 
-
 check_gcs_file >> send_mgi_to_bq_internal_task
