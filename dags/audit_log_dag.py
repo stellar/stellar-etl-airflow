@@ -1,7 +1,6 @@
 """
 This DAG runs an audit log SQL to update the audit log dashboard.
 """
-import ast
 import datetime
 import json
 
@@ -31,8 +30,17 @@ project = Variable.get("bq_project")
 dataset = Variable.get("bq_dataset_audit_log")
 
 
-build_audit_log_bq_job_task = build_bq_insert_job(dag, project, dataset, table_name, partition=False, cluster=False, create=True, write_disposition="WRITE_TRUNCATE")
+build_audit_log_bq_job_task = build_bq_insert_job(
+    dag,
+    project,
+    dataset,
+    table_name,
+    partition=False,
+    cluster=False,
+    create=True,
+    write_disposition="WRITE_TRUNCATE",
+)
 
 start_dag = DummyOperator(task_id="start_dag", dag=dag)
 
-start_dag >> build_audit_log_bq_job_task 
+start_dag >> build_audit_log_bq_job_task

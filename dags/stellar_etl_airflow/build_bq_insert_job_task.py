@@ -24,7 +24,14 @@ def file_to_string(sql_path):
 
 
 def build_bq_insert_job(
-    dag, project, dataset, table, partition, cluster=False, create=False, write_disposition="WRITE_APPEND"
+    dag,
+    project,
+    dataset,
+    table,
+    partition,
+    cluster=False,
+    create=False,
+    write_disposition="WRITE_APPEND",
 ):
     if dataset == Variable.get("public_dataset"):
         dataset_type = "pub"
