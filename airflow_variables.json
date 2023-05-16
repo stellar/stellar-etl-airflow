@@ -217,6 +217,7 @@
   },
   "public_dataset": "crypto_stellar_2",
   "public_project": "crypto-stellar",
+  "bq_dataset_audit_log": "audit_log",
   "resources": {
     "default": {
       "requests": {
