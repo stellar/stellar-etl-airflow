@@ -21,8 +21,8 @@ dag = DAG(
     params={
         "alias": "audit-log",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
     catchup=False,
+    user_defined_filters={"fromjson": lambda s: json.loads(s)},
 )
 
 
