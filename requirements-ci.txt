@@ -1,3 +1,4 @@
+alembic==1.10.4
 apache-airflow==2.3.3
 apache-airflow-providers-cncf-kubernetes==4.4.0
 apache-airflow-providers-google==8.6.0
@@ -6,4 +7,3 @@ freezegun==1.2.0
 jsonlines==3.0
 pytest==7.2.2
 sentry-sdk==1.19.0
-alembic==1.10.4
