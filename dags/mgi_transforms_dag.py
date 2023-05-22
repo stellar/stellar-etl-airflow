@@ -17,6 +17,11 @@ dag = DAG(
     max_active_runs=1,
 )
 
+# build snapshot table for raw transactions
+snapshot_raw_mgi_stellar_transactions = built_dbt_task(
+    dag, "snapshot_raw_mgi_stellar_transactions", "snapshot"
+)
+
 # tasks for staging tables for mgi transactions
 stg_mgi_transactions = build_dbt_task(dag, "stg_mgi_transactions")
 
