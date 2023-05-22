@@ -18,7 +18,7 @@ dag = DAG(
 )
 
 # build snapshot table for raw transactions
-snapshot_raw_mgi_stellar_transactions = built_dbt_task(
+snapshot_raw_mgi_stellar_transactions = build_dbt_task(
     dag, "snapshot_raw_mgi_stellar_transactions", "snapshot"
 )
 
