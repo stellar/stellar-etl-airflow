@@ -60,12 +60,13 @@ stellar_dbt:
     return create_dbt_profile_cmd
 
 
-def build_dbt_task(dag, model_name, resource_cfg="default"):
+def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default"):
     """Create a task to run dbt on a selected model.
 
     args:
         dag: parent dag for this task
         model_name: dbt model_name to run
+        command_type: dbt command name, defaults to "run"
         resource_cfg: the resource config name defined in the airflow 'resources' variable for k8s
 
     returns:
@@ -89,7 +90,9 @@ def build_dbt_task(dag, model_name, resource_cfg="default"):
             [
                 create_dbt_profile_cmd,
                 execution_date,
-                "dbt run --select",
+                "dbt ",
+                command_type,
+                " --select",
                 model_name,
                 dbt_full_refresh,
             ]

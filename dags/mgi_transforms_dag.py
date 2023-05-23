@@ -17,6 +17,11 @@ dag = DAG(
     max_active_runs=1,
 )
 
+# build snapshot table for raw transactions
+snapshot_raw_mgi_stellar_transactions = build_dbt_task(
+    dag, "snapshot_raw_mgi_stellar_transactions", "snapshot"
+)
+
 # tasks for staging tables for mgi transactions
 stg_mgi_transactions = build_dbt_task(dag, "stg_mgi_transactions")
 
@@ -28,4 +33,9 @@ fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
 
 # DAG task graph
 # graph for partnership_assets__account_holders_activity_fact
-stg_mgi_transactions >> int_mgi_transactions_transformed >> fct_mgi_cashflow
+(
+    snapshot_raw_mgi_stellar_transactions
+    >> stg_mgi_transactions
+    >> int_mgi_transactions_transformed
+    >> fct_mgi_cashflow
+)
