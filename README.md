@@ -138,14 +138,16 @@ The Airflow DAGs require service account keys to perform their operations. Gener
 
 If you want to pull an image from a private docker registry to use in KubernetesPodOperator in airflow you will need to add auth json credentials to kubernetes and the service account. [Kubernetes docs](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials)
 
-
 * Create the kubernetes secret from auth json
+
 ```
 kubectl create secret generic <secret name> \
     --from-file=.dockerconfigjson=<path/to/.docker/config.json> \
     --type=kubernetes.io/dockerconfigjson
 ```
+
 * Add secret to service account that will create the kubernetes pod
+
 ```
 kubectl patch serviceaccount <serviceaccount name> -p '{"imagePullSecrets": [{"name": "<secret-name>"}]}' --namespace=<namespace>
 ```
