@@ -26,7 +26,7 @@ logger.setLevel(logging.INFO)
 dag = DAG(
     "state_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2022, 3, 11, 19, 00),
+    start_date=datetime.datetime(2023, 5, 11, 19, 00),
     description="This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.",
     schedule_interval="*/30 * * * *",
     params={
@@ -46,14 +46,16 @@ internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
-date_task = build_time_task(dag, use_testnet=use_testnet)
+date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 changes_task = build_export_task(
     dag,
     "bounded-core",
     "export_ledger_entry_changes",
     file_names["changes"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="state",
 )

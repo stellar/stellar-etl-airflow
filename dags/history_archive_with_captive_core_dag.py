@@ -43,12 +43,13 @@ internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
 """
-time_task = build_time_task(dag, use_testnet=use_testnet)
+time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 
 """
 The write batch stats task will take a snapshot of the DAG run_id, execution date,
@@ -75,6 +76,7 @@ op_export_task = build_export_task(
     "export_operations",
     file_names["operations"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -84,6 +86,7 @@ trade_export_task = build_export_task(
     "export_trades",
     file_names["trades"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -93,6 +96,7 @@ effects_export_task = build_export_task(
     "export_effects",
     "effects.txt",
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -102,6 +106,7 @@ tx_export_task = build_export_task(
     "export_transactions",
     file_names["transactions"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )

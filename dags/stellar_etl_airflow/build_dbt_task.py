@@ -129,4 +129,5 @@ def build_dbt_task(dag, model_name, resource_cfg="default"):
         container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
+        image_pull_secrets=[k8s.V1LocalObjectReference("regcred")],
     )
