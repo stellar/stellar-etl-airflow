@@ -37,7 +37,7 @@ fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
 # graph for partnership_assets__account_holders_activity_fact
 (
     snapshot_raw_mgi_stellar_transactions
-    >> stg_mgi_transactions_snapshot
+    >> stg_mgi_transactions_snap
     >> stg_mgi_transactions_null_id
     >> int_mgi_transactions_transformed
     >> int_mgi_transactions_null_id
