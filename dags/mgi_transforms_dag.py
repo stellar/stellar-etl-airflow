@@ -23,19 +23,23 @@ snapshot_raw_mgi_stellar_transactions = build_dbt_task(
 )
 
 # tasks for staging tables for mgi transactions
-stg_mgi_transactions = build_dbt_task(dag, "stg_mgi_transactions")
+stg_mgi_transactions_snap = build_dbt_task(dag, "stg_mgi_transactions_snapshot")
+stg_mgi_transactions_null_id = build_dbt_task(dag, "stg_mgi_transactions_null_id")
 
 # tasks for fct_mgi_cashflow
 int_mgi_transactions_transformed = build_dbt_task(
     dag, "int_mgi_transactions_transformed"
 )
+int_mgi_transactions_null_id = build_dbt_task(dag, "int_mgi_transactions_null_id")
 fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
 
 # DAG task graph
 # graph for partnership_assets__account_holders_activity_fact
 (
     snapshot_raw_mgi_stellar_transactions
-    >> stg_mgi_transactions
+    >> stg_mgi_transactions_snapshot
+    >> stg_mgi_transactions_null_id
     >> int_mgi_transactions_transformed
+    >> int_mgi_transactions_null_id
     >> fct_mgi_cashflow
 )
