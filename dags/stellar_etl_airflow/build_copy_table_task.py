@@ -59,5 +59,4 @@ def build_copy_table(
         ),
         on_failure_callback=alert_after_max_retries,
         configuration=configuration,
-        job_type="COPY",
     )
