@@ -19,7 +19,7 @@ dag = DAG(
 )
 
 internal_project = Variable.get("bq_project")
-internal_dataset = Variable.get("bq_project")
+internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset_new")
 
