@@ -240,6 +240,7 @@
   "task_timeout": {
     "build_batch_stats": 180,
     "build_bq_insert_job": 180,
+    "build_copy_table": 180,
     "build_dbt_task": 300,
     "build_delete_data_task": 180,
     "build_export_task": 180,
