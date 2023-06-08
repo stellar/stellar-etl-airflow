@@ -14,7 +14,7 @@ def build_copy_table(
     destination_project,
     destination_dataset,
     destination_table,
-    write_disposition="WRITE_APPEND",
+    write_disposition="WRITE_TRUNCATE",
 ):
     """Create a task to copy a table.
 
@@ -27,7 +27,7 @@ def build_copy_table(
         destination_dataset: destination dataset
         destination_table: destination table
         write_disposition: specifies the action that occurs
-            if the table exists, defaults to "WRITE_APPEND"
+            if the table exists, defaults to "WRITE_TRUNCATE"
 
     returns:
         BigQueryInsertJobOperator
