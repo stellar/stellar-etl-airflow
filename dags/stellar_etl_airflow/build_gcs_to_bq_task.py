@@ -90,6 +90,8 @@ def build_gcs_to_bq_task(
     project_name = project
     if dataset == Variable.get("public_dataset"):
         dataset_type = "pub"
+    if dataset == Variable.get("public_dataset_new"):
+        dataset_type = "pub_new"
     else:
         dataset_type = "bq"
     dataset_name = dataset
