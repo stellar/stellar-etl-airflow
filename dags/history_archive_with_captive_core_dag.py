@@ -382,8 +382,8 @@ trade_export_task >> delete_old_trade_pub_new_task >> send_trades_to_pub_new_tas
     >> delete_old_effects_task
     >> send_effects_to_bq_task
 )
-effects_export_task >> deleted_old_effects_pub_task >> send_effects_to_pub_task
-effects_export_task >> deleted_old_effects_pub_new_task >> send_effects_to_pub_new_task
+effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
+effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_new_task
 (
     time_task
     >> write_tx_stats
