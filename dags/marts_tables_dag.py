@@ -23,6 +23,13 @@ stg_history_ledgers = build_dbt_task(dag, "stg_history_ledgers")
 stg_history_assets = build_dbt_task(dag, "stg_history_assets")
 stg_history_trades = build_dbt_task(dag, "stg_history_trades")
 
+# tasks for intermediate trades tables
+int_trade_agg_day = build_dbt_task(dag, "int_trade_agg_day")
+int_trade_agg_month = build_dbt_task(dag, "int_trade_agg_month")
+int_trade_agg_week = build_dbt_task(dag, "int_trade_agg_week")
+int_trade_agg_year = build_dbt_task(dag, "int_trade_agg_year")
+
+
 # tasks for marts tables
 agg_network_stats = build_dbt_task(dag, "agg_network_stats")
 fee_stats_agg = build_dbt_task(dag, "fee_stats_agg")
@@ -38,4 +45,7 @@ stg_history_ledgers >> fee_stats_agg
 
 stg_history_assets >> history_assets
 
-stg_history_trades >> trade_agg
+stg_history_trades >> int_trade_agg_day >> trade_agg
+stg_history_trades >> int_trade_agg_month >> trade_agg
+stg_history_trades >> int_trade_agg_week >> trade_agg
+stg_history_trades >> int_trade_agg_year >> trade_agg
