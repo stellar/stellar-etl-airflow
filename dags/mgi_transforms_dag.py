@@ -25,6 +25,7 @@ snapshot_raw_mgi_stellar_transactions = build_dbt_task(
 # tasks for staging tables for mgi transactions
 stg_mgi_transactions_snap = build_dbt_task(dag, "stg_mgi_transactions_snapshot")
 stg_mgi_transactions_null_id = build_dbt_task(dag, "stg_mgi_transactions_null_id")
+stg_country_code = build_dbt_task(dag, "stg_country_code")
 
 # tasks for fct_mgi_cashflow
 int_mgi_transactions_transformed = build_dbt_task(
@@ -39,6 +40,7 @@ fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
     snapshot_raw_mgi_stellar_transactions
     >> stg_mgi_transactions_snap
     >> stg_mgi_transactions_null_id
+    >> stg_country_code
     >> int_mgi_transactions_transformed
     >> int_mgi_transactions_null_id
     >> fct_mgi_cashflow
