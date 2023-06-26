@@ -12,7 +12,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2023, 5, 22, 0, 0),
     description="This DAG runs dbt to create the mgi cash in and cash out fact and dimension tables.",
-    schedule_interval="0 11 * * *",  # Daily 10 AM UTC
+    schedule_interval="30 15 * * *",  # Daily 15:30 UTC after MGI pipeline
     params={},
     max_active_runs=1,
 )
