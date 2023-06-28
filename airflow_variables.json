@@ -113,7 +113,7 @@
     "partnership_assets__asset_activity_fact": true,
     "trade_agg": true
   },
-  "dbt_image_name": "stellar/stellar-dbt:fd3476c",
+  "dbt_image_name": "stellar/stellar-dbt:9d215df",
   "dbt_job_execution_timeout_seconds": 6000,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
