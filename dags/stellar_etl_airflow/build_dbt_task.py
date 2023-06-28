@@ -131,6 +131,6 @@ def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default"):
         affinity=affinity,
         container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
         on_failure_callback=alert_after_max_retries,
-        image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
+        image_pull_policy=Variable.get("image_pull_policy"),
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
     )
