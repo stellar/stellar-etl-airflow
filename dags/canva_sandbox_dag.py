@@ -34,7 +34,6 @@ view_ids = Variable.get("view_ids", deserialize_json=True)
 project = Variable.get("bq_project")
 dataset = Variable.get("bq_dataset")
 sandbox_dataset = Variable.get("sandbox_dataset")
-sandbox_dataset = "canva_sandbox"
 
 start_update_tables = path_to_execute(dag, "start_update_tables")
 start_update_views = path_to_execute(dag, "start_update_views")

@@ -262,7 +262,7 @@
     "v_trust_lines_current": "v_trust_lines_current"
   },
   "use_testnet": "True",
-  "sandbox_dataset": "canva-sandbox",
+  "sandbox_dataset": "canvas-sandbox",
   "volume_config": {},
   "volume_name": "etl-data"
 }
