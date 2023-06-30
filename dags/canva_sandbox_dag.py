@@ -179,7 +179,7 @@ start_update_views >> [
     check_view_accounts_current,
     check_view_claimable_balances_current,
     check_view_liquidity_pool_trade,
-    #    check_view_liquidity_pool_value,
+    check_view_liquidity_pool_value,
     check_view_liquidity_pools_current,
     check_view_liquidity_providers,
     check_view_offers_current,
