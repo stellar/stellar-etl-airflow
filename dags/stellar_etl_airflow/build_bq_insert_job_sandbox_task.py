@@ -16,14 +16,17 @@ def check_view(**kwargs):
 
 def get_view_query(project_id, dataset_id, table_id, sandbox_dataset):
     project_check = "hubble-261722"
+    dataset_check = "crypto_stellar_internal_2"
     client = bigquery.Client()
     dataset_ref = client.dataset(dataset_id, project=project_id)
     table_ref = dataset_ref.table(table_id)
     table = client.get_table(table_ref)
     query = table.view_query
     modified_query = query.replace(dataset_id, sandbox_dataset)
+    # check if the project is test or prod
     if project_id != project_check:
         modified_query = modified_query.replace(project_check, project_id)
+        modified_query = modified_query.replace(dataset_check, dataset_id)
     return modified_query
 
 
