@@ -1,6 +1,3 @@
-from http import client
-
-from airflow.models import Variable
 from airflow.operators.python_operator import BranchPythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from google.cloud import bigquery

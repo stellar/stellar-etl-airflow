@@ -6,7 +6,6 @@ import json
 
 from airflow import DAG
 from airflow.models.variable import Variable
-from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_bq_insert_job_sandbox_task import (
     build_bq_insert_job_sandbox,
     build_check_view,
@@ -34,6 +33,7 @@ view_ids = Variable.get("view_ids", deserialize_json=True)
 project = Variable.get("bq_project")
 dataset = Variable.get("bq_dataset")
 sandbox_dataset = Variable.get("sandbox_dataset")
+test_project_check = "test-hubble-319619"
 
 start_update_tables = path_to_execute(dag, "start_update_tables")
 start_update_views = path_to_execute(dag, "start_update_views")
@@ -101,14 +101,6 @@ update_view_liquidity_pool_trade = build_bq_insert_job_sandbox(
     sandbox_dataset,
     view=True,
 )
-update_view_liquidity_pool_value = build_bq_insert_job_sandbox(
-    dag,
-    project,
-    dataset,
-    view_ids["v_liquidity_pool_value"],
-    sandbox_dataset,
-    view=True,
-)
 update_view_liquidity_pools_current = build_bq_insert_job_sandbox(
     dag,
     project,
@@ -117,6 +109,22 @@ update_view_liquidity_pools_current = build_bq_insert_job_sandbox(
     sandbox_dataset,
     view=True,
 )
+
+update_view_liquidity_pool_value = path_to_execute(dag, "update_for_test")
+check_view_liquidity_pool_value = path_to_execute(dag, "check_for_test")
+if project != test_project_check:
+    update_view_liquidity_pool_value = build_bq_insert_job_sandbox(
+        dag,
+        project,
+        dataset,
+        view_ids["v_liquidity_pool_value"],
+        sandbox_dataset,
+        view=True,
+    )
+
+    check_view_liquidity_pool_value = build_check_view(
+        dag, project, sandbox_dataset, view_ids["v_liquidity_pool_value"]
+    )
 update_view_liquidity_providers = build_bq_insert_job_sandbox(
     dag, project, dataset, view_ids["v_liquidity_providers"], sandbox_dataset, view=True
 )
@@ -139,9 +147,7 @@ check_view_claimable_balances_current = build_check_view(
 check_view_liquidity_pool_trade = build_check_view(
     dag, project, sandbox_dataset, view_ids["v_liquidity_pool_trade"]
 )
-check_view_liquidity_pool_value = build_check_view(
-    dag, project, sandbox_dataset, view_ids["v_liquidity_pool_value"]
-)
+
 check_view_liquidity_pools_current = build_check_view(
     dag, project, sandbox_dataset, view_ids["v_liquidity_pools_current"]
 )
