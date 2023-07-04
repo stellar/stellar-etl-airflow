@@ -272,18 +272,23 @@
     "build_time_task": 120
   },
   "view_ids": {
-    "v_signers_current": "v_account_signers_current",
-    "v_accounts_current": "v_accounts_current",
     "v_claimable_balances_current": "v_claimable_balances_current",
     "v_liquidity_pool_trade": "v_liquidity_pool_trade_volume",
     "v_liquidity_pool_value": "v_liquidity_pool_value",
-    "v_liquidity_pools_current": "v_liquidity_pools_current",
-    "v_liquidity_providers": "v_liquidity_providers",
-    "v_offers_current": "v_offers_current",
-    "v_trust_lines_current": "v_trust_lines_current"
+    "v_liquidity_providers": "v_liquidity_providers"
+  },
+  "dbt_tables": {
+    "signers_current": "account_signers_current",
+    "accounts_current": "accounts_current",
+    "liquidity_pools_current": "liquidity_pools_current",
+    "offers_current": "offers_current",
+    "trustlines_current": "trust_lines_current"
   },
   "use_testnet": "False",
   "sandbox_dataset": "canvas_sandbox",
   "volume_config": "{}",
-  "volume_name": "etl-data"
+  "volume_name": "etl-data",
+  "test_project_check": "test-hubble-319619",
+  "project_check": "hubble-261722",
+  "dataset_check": "crypto_stellar_internal_2"
 }
