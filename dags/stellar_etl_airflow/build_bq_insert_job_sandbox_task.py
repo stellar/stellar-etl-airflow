@@ -2,19 +2,16 @@ from airflow.models.variable import Variable
 from airflow.operators.python_operator import BranchPythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from google.cloud import bigquery
-from google.oauth2 import service_account
 from stellar_etl_airflow.default import alert_after_max_retries
 
 cluster = Variable.get("cluster_fields", deserialize_json=True)
 project_check = Variable.get("project_check")
 dataset_check = Variable.get("dataset_check")
 dbt_project = Variable.get("dbt_mart_dataset")
-key_path = Variable.get("api_key_path")
-credentials = service_account.Credentials.from_service_account_file(key_path)
 
 
 def check_table(**kwargs):
-    client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+    client = bigquery.Client()
     table_ref = f"{kwargs.get('project')}.{kwargs.get('dataset')}.{kwargs.get('table')}"
     try:
         table_id = client.get_table(table_ref)
@@ -24,7 +21,7 @@ def check_table(**kwargs):
 
 
 def get_view_query(project_id, dataset_id, table_id, sandbox_dataset):
-    client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+    client = bigquery.Client()
     dataset_ref = client.dataset(dataset_id, project=project_id)
     table_ref = dataset_ref.table(table_id)
     table = client.get_table(table_ref)
