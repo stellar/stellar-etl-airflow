@@ -250,12 +250,6 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 120
   },
-  "view_ids": {
-    "v_claimable_balances_current": "v_claimable_balances_current",
-    "v_liquidity_pool_trade": "v_liquidity_pool_trade_volume",
-    "v_liquidity_pool_value": "v_liquidity_pool_value",
-    "v_liquidity_providers": "v_liquidity_providers"
-  },
   "dbt_tables": {
     "signers_current": "account_signers_current",
     "accounts_current": "accounts_current",
@@ -266,8 +260,5 @@
   "use_testnet": "True",
   "sandbox_dataset": "canvas_sandbox",
   "volume_config": {},
-  "volume_name": "etl-data",
-  "test_project_check": "test-hubble-319619",
-  "project_check": "hubble-261722",
-  "dataset_check": "crypto_stellar_internal_2"
+  "volume_name": "etl-data"
 }
