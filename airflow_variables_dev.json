@@ -196,6 +196,14 @@
       "type": "MONTH"
     }
   },
+  "partners_data": {
+    "mgi": {
+      "prefix_folder": "mgi",
+      "prefix_id": "stellar_transaction_extract",
+      "table": "raw_mgi_stellar_transactions"
+    }
+  },
+  "partners_bucket": "partners_data",
   "public_dataset": "test_crypto_stellar_2",
   "public_dataset_new": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
