@@ -245,7 +245,8 @@
     "signers": "account_signers",
     "trades": "history_trades",
     "transactions": "history_transactions",
-    "trustlines": "trust_lines"
+    "trustlines": "trust_lines",
+    "enriched_history_operations": "enriched_history_operations"
   },
   "task_timeout": {
     "build_batch_stats": 180,
@@ -257,7 +258,15 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 120
   },
+  "dbt_tables": {
+    "signers_current": "account_signers_current",
+    "accounts_current": "accounts_current",
+    "liquidity_pools_current": "liquidity_pools_current",
+    "offers_current": "offers_current",
+    "trustlines_current": "trust_lines_current"
+  },
   "use_testnet": "True",
+  "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": {},
   "volume_name": "etl-data"
 }
