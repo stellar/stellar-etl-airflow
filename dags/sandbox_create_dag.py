@@ -25,7 +25,7 @@ with DAG(
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2023, 1, 1),
     description="This DAG creates a sandbox",
-    schedule_interval="0 0 1 * *",
+    schedule_interval="@once",
     params={"alias": "sandbox_dataset"},
     user_defined_filters={
         "fromjson": lambda s: json.loads(s),

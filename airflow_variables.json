@@ -279,7 +279,7 @@
     "trustlines_current": "trust_lines_current"
   },
   "use_testnet": "False",
-  "sandbox_dataset": "canvas_sandbox",
+  "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": "{}",
   "volume_name": "etl-data"
 }
