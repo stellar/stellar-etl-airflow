@@ -73,6 +73,8 @@ unwrap_wrapped_queries = True
 [sqlfluff:templater:python:context]
 project_id = project_id
 dataset_id = dataset_id
+target_dataset = target_dataset
+table_id = table_id
 batch_id = batch_id
 batch_run_date = batch_run_date
 prev_batch_run_date = prev_batch_run_date
