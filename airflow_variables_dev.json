@@ -203,7 +203,7 @@
       "table": "raw_mgi_stellar_transactions"
     }
   },
-  "partners_bucket": "partners_data",
+  "partners_bucket": "ext-partner-sftp",
   "public_dataset": "test_crypto_stellar_2",
   "public_dataset_new": "test_crypto_stellar",
   "public_project": "test-hubble-319619",

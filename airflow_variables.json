@@ -289,5 +289,5 @@
       "table": "raw_mgi_stellar_transactions"
     }
   },
-  "partners_bucket": "partners_data"
+  "partners_bucket": "ext-partner-sftp"
 }
