@@ -42,9 +42,9 @@ with DAG(
     start_tables_task = EmptyOperator(task_id="start_tables_task")
     start_views_task = EmptyOperator(task_id="start_views_task")
 
-    query_path = get_query_filepath("create_table")
-    query = file_to_string(query_path)
     for table_id in TABLES_ID:
+        query_path = get_query_filepath("create_table")
+        query = file_to_string(query_path)
         sql_params = {
             "project_id": PROJECT,
             "dataset_id": DATASET,
@@ -65,9 +65,9 @@ with DAG(
 
         start_tables_task >> tables_create_task
 
-    query_path = get_query_filepath("create_view")
-    query = file_to_string(query_path)
     for dbt_table in DBT_TABLES:
+        query_path = get_query_filepath("create_view")
+        query = file_to_string(query_path)
         sql_params = {
             "project_id": PROJECT,
             "dataset_id": DBT_DATASET,
