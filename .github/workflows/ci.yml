@@ -51,6 +51,11 @@ jobs:
       - name: Import Airflow variables
         run: airflow variables import airflow_variables_ci.json
 
+      - name: Authenticate to test-hubble GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
+
       - name: Pytest
         run: pytest dags/
 

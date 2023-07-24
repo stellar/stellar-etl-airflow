@@ -1,7 +1,12 @@
 alembic==1.10.4
 apache-airflow==2.3.3
 apache-airflow-providers-cncf-kubernetes==4.4.0
+apache-airflow-providers-common-sql==1.4.0
+apache-airflow-providers-ftp==3.3.1
 apache-airflow-providers-google==8.6.0
+apache-airflow-providers-http==4.3.0
+apache-airflow-providers-imap==3.1.1
+apache-airflow-providers-sqlite==3.3.2
 docker==3.7.3
 freezegun==1.2.0
 jsonlines==3.0

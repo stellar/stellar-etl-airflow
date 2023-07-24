@@ -42,6 +42,7 @@ internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
+public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
@@ -121,17 +122,26 @@ delete_old_op_task = build_delete_data_task(
 delete_old_op_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["operations"]
 )
+delete_old_op_pub_new_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["operations"]
+)
 delete_old_trade_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["trades"]
 )
 delete_old_trade_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["trades"]
 )
+delete_old_trade_pub_new_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["trades"]
+)
 delete_enrich_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_history_operations"
 )
 delete_enrich_op_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, "enriched_history_operations"
+)
+delete_enrich_op_pub_new_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, "enriched_history_operations"
 )
 delete_enrich_ma_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_meaningful_history_operations"
@@ -142,11 +152,17 @@ delete_old_effects_task = build_delete_data_task(
 delete_old_effects_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["effects"]
 )
+delete_old_effects_pub_new_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["effects"]
+)
 delete_old_tx_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["transactions"]
 )
 delete_old_tx_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["transactions"]
+)
+delete_old_tx_pub_new_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["transactions"]
 )
 
 """
@@ -240,6 +256,50 @@ send_txs_to_pub_task = build_gcs_to_bq_task(
 )
 
 """
+Load final public dataset, crypto-stellar
+"""
+send_ops_to_pub_new_task = build_gcs_to_bq_task(
+    dag,
+    op_export_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["operations"],
+    "",
+    partition=True,
+    cluster=True,
+)
+send_trades_to_pub_new_task = build_gcs_to_bq_task(
+    dag,
+    trade_export_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["trades"],
+    "",
+    partition=True,
+    cluster=True,
+)
+send_effects_to_pub_new_task = build_gcs_to_bq_task(
+    dag,
+    effects_export_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["effects"],
+    "",
+    partition=True,
+    cluster=True,
+)
+send_txs_to_pub_new_task = build_gcs_to_bq_task(
+    dag,
+    tx_export_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["transactions"],
+    "",
+    partition=True,
+    cluster=True,
+)
+
+"""
 Batch loading of derived table, `enriched_history_operations` which denormalizes ledgers, transactions and operations data.
 Must wait on history_archive_without_captive_core_dag to finish before beginning the job.
 The internal dataset also creates a filtered table, `enriched_meaningful_history_operations` which filters down to only relevant asset ops.
@@ -259,6 +319,14 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
     dag,
     public_project,
     public_dataset,
+    "enriched_history_operations",
+    partition=True,
+    cluster=True,
+)
+insert_enriched_hist_pub_new_task = build_bq_insert_job(
+    dag,
+    public_project,
+    public_dataset_new,
     "enriched_history_operations",
     partition=True,
     cluster=True,
@@ -296,6 +364,14 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> insert_enriched_hist_pub_task
 )
 (
+    op_export_task
+    >> delete_old_op_pub_new_task
+    >> send_ops_to_pub_new_task
+    >> wait_on_dag
+    >> delete_enrich_op_pub_new_task
+    >> insert_enriched_hist_pub_new_task
+)
+(
     time_task
     >> write_trade_stats
     >> trade_export_task
@@ -303,6 +379,7 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> send_trades_to_bq_task
 )
 trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
+trade_export_task >> delete_old_trade_pub_new_task >> send_trades_to_pub_new_task
 (
     time_task
     >> write_effects_stats
@@ -310,14 +387,8 @@ trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
     >> delete_old_effects_task
     >> send_effects_to_bq_task
 )
-(
-    time_task
-    >> write_effects_stats
-    >> effects_export_task
-    >> delete_old_effects_pub_task
-    >> send_effects_to_pub_task
-)
-trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
+effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
+effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_new_task
 (
     time_task
     >> write_tx_stats
@@ -327,3 +398,4 @@ trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
     >> wait_on_dag
 )
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
+tx_export_task >> delete_old_tx_pub_new_task >> send_txs_to_pub_new_task >> wait_on_dag

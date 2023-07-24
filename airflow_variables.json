@@ -113,10 +113,11 @@
     "partnership_assets__asset_activity_fact": true,
     "trade_agg": true
   },
-  "dbt_image_name": "chowbao/stellar-dbt:fb02e7a",
+  "dbt_image_name": "stellar/stellar-dbt:44ff373",
   "dbt_job_execution_timeout_seconds": 6000,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
+  "dbt_mart_dataset": "sdf_marts",
   "dbt_maximum_bytes_billed": 100000000000000,
   "dbt_private_key": "",
   "dbt_private_key_id": "",
@@ -216,6 +217,7 @@
     }
   },
   "public_dataset": "crypto_stellar_2",
+  "public_dataset_new": "crypto_stellar",
   "public_project": "crypto-stellar",
   "bq_dataset_audit_log": "audit_log",
   "resources": {
@@ -256,18 +258,28 @@
     "signers": "account_signers",
     "trades": "history_trades",
     "transactions": "history_transactions",
-    "trustlines": "trust_lines"
+    "trustlines": "trust_lines",
+    "enriched_history_operations": "enriched_history_operations"
   },
   "task_timeout": {
     "build_batch_stats": 180,
     "build_bq_insert_job": 180,
+    "build_copy_table": 180,
     "build_dbt_task": 6000,
     "build_delete_data_task": 180,
     "build_export_task": 180,
     "build_gcs_to_bq_task": 300,
     "build_time_task": 120
   },
+  "dbt_tables": {
+    "signers_current": "account_signers_current",
+    "accounts_current": "accounts_current",
+    "liquidity_pools_current": "liquidity_pools_current",
+    "offers_current": "offers_current",
+    "trustlines_current": "trust_lines_current"
+  },
   "use_testnet": "False",
+  "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": "{}",
   "volume_name": "etl-data"
 }
