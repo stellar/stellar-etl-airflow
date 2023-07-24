@@ -41,7 +41,6 @@ internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
-public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 use_futurenet = ast.literal_eval(Variable.get("use_futurenet")) 
 
@@ -97,17 +96,11 @@ delete_old_ledger_task = build_delete_data_task(
 delete_old_ledger_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["ledgers"]
 )
-delete_old_ledger_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["ledgers"]
-)
 delete_old_asset_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["assets"]
 )
 delete_old_asset_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["assets"]
-)
-delete_old_asset_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["assets"]
 )
 
 """
@@ -160,27 +153,6 @@ send_assets_to_pub_task = build_gcs_to_bq_task(
     cluster=True,
 )
 
-send_ledgers_to_pub_new_task = build_gcs_to_bq_task(
-    dag,
-    ledger_export_task.task_id,
-    public_project,
-    public_dataset_new,
-    table_names["ledgers"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_assets_to_pub_new_task = build_gcs_to_bq_task(
-    dag,
-    asset_export_task.task_id,
-    public_project,
-    public_dataset_new,
-    table_names["assets"],
-    "",
-    partition=True,
-    cluster=True,
-)
-
 """
 The tasks below use a job in BigQuery to deduplicate the table history_assets_stg.
 The job refreshes the table history_assets with only new records.
@@ -203,15 +175,6 @@ dedup_assets_pub_task = build_bq_insert_job(
     cluster=True,
     create=True,
 )
-dedup_assets_pub_new_task = build_bq_insert_job(
-    dag,
-    public_project,
-    public_dataset_new,
-    table_names["assets"],
-    partition=True,
-    cluster=True,
-    create=True,
-)
 
 (
     time_task
@@ -221,7 +184,6 @@ dedup_assets_pub_new_task = build_bq_insert_job(
     >> send_ledgers_to_bq_task
 )
 ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task
-ledger_export_task >> delete_old_ledger_pub_new_task >> send_ledgers_to_pub_new_task
 (
     time_task
     >> write_asset_stats
@@ -235,10 +197,4 @@ ledger_export_task >> delete_old_ledger_pub_new_task >> send_ledgers_to_pub_new_
     >> delete_old_asset_pub_task
     >> send_assets_to_pub_task
     >> dedup_assets_pub_task
-)
-(
-    asset_export_task
-    >> delete_old_asset_pub_new_task
-    >> send_assets_to_pub_new_task
-    >> dedup_assets_pub_new_task
 )
