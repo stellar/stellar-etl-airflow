@@ -968,6 +968,75 @@
         "mode": "NULLABLE",
         "name": "shares",
         "type": "FLOAT"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "amount",
+            "type": "FLOAT"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "asset_type",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "from",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "to",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "asset_balance_changes",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "function",
+        "type": "STRING"
+      },
+      {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "value",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "parameters",
+        "type": "RECORD"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "address",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "salt",
+        "type": "INTEGER"
       }
     ],
     "mode": "NULLABLE",
