@@ -37,6 +37,7 @@ enriched_history_operations = build_dbt_task(dag, "enriched_history_operations")
 enriched_history_operations_meaningful = build_dbt_task(
     dag, "enriched_history_operations_meaningful"
 )
+enriched_history_operations_xlm = build_dbt_task(dag, "enriched_history_operations_xlm")
 
 # DAG task graph
 # graph for enriched tables
@@ -46,3 +47,4 @@ wait_on_dag >> stg_history_operations >> enriched_history_operations
 
 enriched_history_operations >> enriched_history_operations_meaningful
 stg_meaningful_assets >> enriched_history_operations_meaningful
+enriched_history_operations >> enriched_history_operations_xlm

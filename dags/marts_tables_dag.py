@@ -31,13 +31,17 @@ int_trade_agg_year = build_dbt_task(dag, "int_trade_agg_year")
 
 # tasks for marts tables
 agg_network_stats = build_dbt_task(dag, "agg_network_stats")
+asset_stats_agg = build_dbt_task(dag, "asset_stats_agg")
 fee_stats_agg = build_dbt_task(dag, "fee_stats_agg")
 history_assets = build_dbt_task(dag, "history_assets")
 trade_agg = build_dbt_task(dag, "trade_agg")
+liquidity_providers = build_dbt_task(dag, "liquidity_providers")
 
 # DAG task graph
 # graph for marts tables
 agg_network_stats
+liquidity_providers
+asset_stats_agg
 
 stg_history_transactions >> fee_stats_agg
 stg_history_ledgers >> fee_stats_agg
