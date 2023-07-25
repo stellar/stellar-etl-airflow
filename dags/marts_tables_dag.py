@@ -29,6 +29,11 @@ int_trade_agg_month = build_dbt_task(dag, "int_trade_agg_month")
 int_trade_agg_week = build_dbt_task(dag, "int_trade_agg_week")
 int_trade_agg_year = build_dbt_task(dag, "int_trade_agg_year")
 
+# tasks for intermediate asset stats tables
+int_meaningful_asset_prices = build_dbt_task(dag, "int_meaningful_asset_prices")
+stg_excluded_accounts = build_dbt_task(dag, "stg_excluded_accounts")
+stg_xlm_to_usd = build_dbt_task(dag, "stg_xlm_to_usd")
+
 # tasks for marts tables
 agg_network_stats = build_dbt_task(dag, "agg_network_stats")
 asset_stats_agg = build_dbt_task(dag, "asset_stats_agg")
@@ -41,8 +46,10 @@ liquidity_providers = build_dbt_task(dag, "liquidity_providers")
 # graph for marts tables
 agg_network_stats
 liquidity_providers
-asset_stats_agg
 
+int_meaningful_asset_prices >> asset_stats_agg
+stg_excluded_accounts >> asset_stats_agg
+stg_xlm_to_usd >> asset_stats_agg
 stg_history_transactions >> fee_stats_agg
 stg_history_ledgers >> fee_stats_agg
 
