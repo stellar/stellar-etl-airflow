@@ -31,6 +31,7 @@ stg_history_ledgers = build_dbt_task(dag, "stg_history_ledgers")
 stg_history_transactions = build_dbt_task(dag, "stg_history_transactions")
 stg_history_operations = build_dbt_task(dag, "stg_history_operations")
 stg_meaningful_assets = build_dbt_task(dag, "stg_meaningful_assets")
+stg_sdf_accounts = build_dbt_task(dag, "stg_sdf_accounts")
 
 # tasks for enriched tables
 enriched_history_operations = build_dbt_task(dag, "enriched_history_operations")
@@ -48,3 +49,4 @@ wait_on_dag >> stg_history_operations >> enriched_history_operations
 enriched_history_operations >> enriched_history_operations_meaningful
 stg_meaningful_assets >> enriched_history_operations_meaningful
 enriched_history_operations >> enriched_history_operations_xlm
+stg_sdf_accounts >> enriched_history_operations_xlm
