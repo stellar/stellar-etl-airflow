@@ -281,5 +281,13 @@
   "use_testnet": "False",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": "{}",
-  "volume_name": "etl-data"
+  "volume_name": "etl-data",
+  "partners_data": {
+    "mgi": {
+      "prefix_folder": "mgi",
+      "prefix_id": "stellar_transaction_extract",
+      "table": "raw_mgi_stellar_transactions"
+    }
+  },
+  "partners_bucket": "ext-partner-sftp"
 }
