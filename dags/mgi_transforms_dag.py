@@ -6,7 +6,6 @@ from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
-
 dag = DAG(
     "mgi_transforms",
     default_args=get_default_dag_args(),
@@ -16,23 +15,27 @@ dag = DAG(
     params={},
     max_active_runs=1,
 )
-
 # build snapshot table for raw transactions
 snapshot_raw_mgi_stellar_transactions = build_dbt_task(
     dag, "snapshot_raw_mgi_stellar_transactions", "snapshot"
 )
-
 # tasks for staging tables for mgi transactions
 stg_mgi_transactions_snap = build_dbt_task(dag, "stg_mgi_transactions_snapshot")
 stg_mgi_transactions_null_id = build_dbt_task(dag, "stg_mgi_transactions_null_id")
 stg_country_code = build_dbt_task(dag, "stg_country_code")
-
 # tasks for fct_mgi_cashflow
 int_mgi_transactions_transformed = build_dbt_task(
     dag, "int_mgi_transactions_transformed"
 )
 int_mgi_transactions_null_id = build_dbt_task(dag, "int_mgi_transactions_null_id")
 fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
+
+# tasks for dim wallets
+dim_mgi_wallets = build_dbt_task(dag, "dim_mgi_wallets")
+
+# tasks for network stats
+enriched_history_mgi_operations = build_dbt_task(dag, "enriched_history_mgi_operations")
+mgi_network_stats_agg = build_dbt_task(dag, "mgi_network_stats_agg")
 
 # DAG task graph
 # graph for partnership_assets__account_holders_activity_fact
@@ -44,4 +47,10 @@ fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
     >> int_mgi_transactions_transformed
     >> int_mgi_transactions_null_id
     >> fct_mgi_cashflow
+)
+(
+    stg_mgi_transactions_snap
+    >> dim_mgi_wallets
+    >> enriched_history_mgi_operations
+    >> mgi_network_stats_agg
 )
