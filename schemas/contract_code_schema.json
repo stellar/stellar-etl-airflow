@@ -17,7 +17,7 @@
     {
       "mode": "NULLABLE",
       "name": "contract_code_entry_body_type",
-      "type": "INTEGER"
+      "type": "STRING"
     },
     {
       "mode": "NULLABLE",

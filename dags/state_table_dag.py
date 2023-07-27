@@ -253,7 +253,7 @@ send_config_settings_to_bq_task = build_gcs_to_bq_task(
     internal_project,
     internal_dataset,
     table_names["config_settings"],
-    "/*-config_setting.txt",
+    "/*-config_settings.txt",
     partition=True,
     cluster=True,
 )
@@ -349,7 +349,7 @@ send_config_settings_to_pub_task = build_gcs_to_bq_task(
     public_project,
     public_dataset,
     table_names["config_settings"],
-    "/*-config_setting.txt",
+    "/*-config_settings.txt",
     partition=True,
     cluster=True,
 )
@@ -443,7 +443,7 @@ send_config_settings_to_pub_new_task = build_gcs_to_bq_task(
     public_project,
     public_dataset_new,
     table_names["config_settings"],
-    "/*-config_setting.txt",
+    "/*-config_settings.txt",
     partition=True,
     cluster=True,
 )
