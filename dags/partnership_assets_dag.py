@@ -34,6 +34,9 @@ int_partnership_assets__account_holders_activity = build_dbt_task(
 partnership_assets__account_holders_activity_fact = build_dbt_task(
     dag, "partnership_assets__account_holders_activity_fact"
 )
+partnership_assets__most_active_fact = build_dbt_task(
+    dag, "partnership_assets__most_active_fact"
+)
 
 # tasks for partnership_assets__asset_activity_fact
 int_partnership_assets__payment_volume = build_dbt_task(
@@ -72,6 +75,10 @@ stg_partnership_asset_prices >> int_partnership_assets__account_holders_activity
 (
     int_partnership_assets__account_holders_activity
     >> partnership_assets__account_holders_activity_fact
+)
+(
+    int_partnership_assets__account_holders_activity
+    >> partnership_assets__most_active_fact
 )
 
 # graph for partnership_assets__asset_activity_fact
