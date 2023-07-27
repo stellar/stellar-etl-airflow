@@ -74,7 +74,7 @@ write_sign_stats = build_batch_stats(dag, table_names["signers"])
 write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
 write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
 write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
-write_config_settings = build_batch_stats(dag, table_names["config_settings"])
+write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
 
 """
 The delete partition task checks to see if the given partition/batch id exists in
