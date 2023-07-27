@@ -770,6 +770,11 @@
         "mode": "NULLABLE",
         "name": "ledgers_to_expire",
         "type": "INTEGER"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "contract",
+        "type": "STRING"
       }
     ],
     "mode": "NULLABLE",
