@@ -137,11 +137,11 @@
   "partition_fields": {
     "enriched_history_operations": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "enriched_meaningful_history_operations": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "history_assets": {
       "type": "MONTH",
@@ -165,7 +165,7 @@
     },
     "history_ledgers": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "history_operations": {
       "type": "MONTH",
@@ -173,7 +173,7 @@
     },
     "history_trades": {
       "type": "MONTH",
-      "field": "ledger_closed_at"
+      "field": "batch_run_date"
     },
     "history_transactions": {
       "type": "MONTH",

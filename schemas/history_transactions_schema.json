@@ -148,5 +148,10 @@
     "mode": "REPEATED",
     "name": "extra_signers",
     "type": "string"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "closed_at",
+    "type": "TIMESTAMP"
   }
 ]

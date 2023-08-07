@@ -189,7 +189,7 @@
     },
     "history_ledgers": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "history_operations": {
       "type": "MONTH",
@@ -197,7 +197,7 @@
     },
     "history_trades": {
       "type": "MONTH",
-      "field": "ledger_closed_at"
+      "field": "batch_run_date"
     },
     "history_transactions": {
       "type": "MONTH",
