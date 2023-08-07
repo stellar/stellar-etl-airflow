@@ -137,11 +137,11 @@
   "partition_fields": {
     "enriched_history_operations": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "enriched_meaningful_history_operations": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "history_assets": {
       "type": "MONTH",
