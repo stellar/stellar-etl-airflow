@@ -101,6 +101,11 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "partnr_sen_phys_line2_addr",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "partnr_sen_phys_city_name",
     "type": "STRING"
   },
@@ -122,6 +127,11 @@
   {
     "mode": "NULLABLE",
     "name": "partnr_rec_phys_line1_addr",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "partnr_rec_phys_line2_addr",
     "type": "STRING"
   },
   {
