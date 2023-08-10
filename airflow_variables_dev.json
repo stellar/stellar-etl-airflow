@@ -149,47 +149,47 @@
     },
     "accounts": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "account_signers": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "claimable_balances": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "history_effects": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "history_ledgers": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "history_operations": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "history_trades": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "ledger_closed_at"
     },
     "history_transactions": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "offers": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "liquidity_pools": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "trust_lines": {
       "type": "MONTH",
-      "field": "batch_run_date"
+      "field": "closed_at"
     },
     "mgi": {
       "field": "tran_evnt_date",
