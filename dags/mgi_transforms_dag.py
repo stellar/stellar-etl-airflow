@@ -2,6 +2,7 @@ import datetime
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
@@ -15,6 +16,9 @@ dag = DAG(
     params={},
     max_active_runs=1,
 )
+# create dependency on raw data load
+wait_on__mgi_dag = build_cross_deps(dag, "wait_on_mgi_pipeline", "partner_pipeline_dag")
+
 # build snapshot table for raw transactions
 snapshot_raw_mgi_stellar_transactions = build_dbt_task(
     dag, "snapshot_raw_mgi_stellar_transactions", "snapshot"
@@ -38,7 +42,7 @@ enriched_history_mgi_operations = build_dbt_task(dag, "enriched_history_mgi_oper
 mgi_network_stats_agg = build_dbt_task(dag, "mgi_network_stats_agg")
 
 # DAG task graph
-# graph for partnership_assets__account_holders_activity_fact
+wait_on__mgi_dag >> snapshot_raw_mgi_stellar_transactions
 (
     snapshot_raw_mgi_stellar_transactions
     >> stg_mgi_transactions_snap

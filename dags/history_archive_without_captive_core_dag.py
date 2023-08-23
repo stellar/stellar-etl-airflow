@@ -40,7 +40,6 @@ table_names = Variable.get("table_ids", deserialize_json=True)
 internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
 public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 
@@ -91,17 +90,11 @@ Bigquery. If it does, the records are deleted prior to reinserting the batch.
 delete_old_ledger_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["ledgers"]
 )
-delete_old_ledger_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["ledgers"]
-)
 delete_old_ledger_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["ledgers"]
 )
 delete_old_asset_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["assets"]
-)
-delete_old_asset_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["assets"]
 )
 delete_old_asset_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["assets"]
@@ -136,27 +129,6 @@ send_assets_to_bq_task = build_gcs_to_bq_task(
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
-send_ledgers_to_pub_task = build_gcs_to_bq_task(
-    dag,
-    ledger_export_task.task_id,
-    public_project,
-    public_dataset,
-    table_names["ledgers"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_assets_to_pub_task = build_gcs_to_bq_task(
-    dag,
-    asset_export_task.task_id,
-    public_project,
-    public_dataset,
-    table_names["assets"],
-    "",
-    partition=True,
-    cluster=True,
-)
-
 send_ledgers_to_pub_new_task = build_gcs_to_bq_task(
     dag,
     ledger_export_task.task_id,
@@ -191,15 +163,6 @@ dedup_assets_bq_task = build_bq_insert_job(
     cluster=True,
     create=True,
 )
-dedup_assets_pub_task = build_bq_insert_job(
-    dag,
-    public_project,
-    public_dataset,
-    table_names["assets"],
-    partition=True,
-    cluster=True,
-    create=True,
-)
 dedup_assets_pub_new_task = build_bq_insert_job(
     dag,
     public_project,
@@ -217,7 +180,6 @@ dedup_assets_pub_new_task = build_bq_insert_job(
     >> delete_old_ledger_task
     >> send_ledgers_to_bq_task
 )
-ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task
 ledger_export_task >> delete_old_ledger_pub_new_task >> send_ledgers_to_pub_new_task
 (
     time_task
@@ -226,12 +188,6 @@ ledger_export_task >> delete_old_ledger_pub_new_task >> send_ledgers_to_pub_new_
     >> delete_old_asset_task
     >> send_assets_to_bq_task
     >> dedup_assets_bq_task
-)
-(
-    asset_export_task
-    >> delete_old_asset_pub_task
-    >> send_assets_to_pub_task
-    >> dedup_assets_pub_task
 )
 (
     asset_export_task

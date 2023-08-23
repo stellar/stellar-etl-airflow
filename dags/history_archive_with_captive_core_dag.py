@@ -144,9 +144,6 @@ delete_enrich_ma_op_task = build_delete_data_task(
 delete_old_effects_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["effects"]
 )
-delete_old_effects_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["effects"]
-)
 delete_old_effects_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["effects"]
 )
@@ -225,16 +222,6 @@ send_trades_to_pub_task = build_gcs_to_bq_task(
     public_project,
     public_dataset,
     table_names["trades"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_effects_to_pub_task = build_gcs_to_bq_task(
-    dag,
-    effects_export_task.task_id,
-    public_project,
-    public_dataset,
-    table_names["effects"],
     "",
     partition=True,
     cluster=True,
@@ -382,7 +369,6 @@ trade_export_task >> delete_old_trade_pub_new_task >> send_trades_to_pub_new_tas
     >> delete_old_effects_task
     >> send_effects_to_bq_task
 )
-effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
 effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_new_task
 (
     time_task
