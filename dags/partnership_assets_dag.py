@@ -12,7 +12,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2022, 4, 1, 0, 0),
     description="This DAG runs dbt to create the partnership asset intermediate tables and aggregate tables.",
-    schedule_interval="0 10 * * *",  # Daily 10 AM UTC
+    schedule_interval="30 16 * * *",  # Daily 16:30 UTC, after cloud function
     params={},
     max_active_runs=1,
 )
