@@ -6,8 +6,6 @@ import datetime
 import json
 import logging
 
-import pandas as pd
-import requests
 from airflow import DAG
 from airflow.decorators import dag, task
 from airflow.models import Variable
@@ -18,8 +16,8 @@ from google.cloud import storage
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 from stellar_etl_airflow.default import alert_after_max_retries
 
-
-@dag(
+with DAG(
+    dag_id="daily_euro_ohlc_dag",
     start_date=datetime.datetime(2023, 1, 1, 0, 0),
     description="This DAG updates the currency tables in Bigquey every day",
     schedule_interval="35 0 * * *",
@@ -28,8 +26,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
     },
     user_defined_filters={"fromjson": lambda s: json.loads(s)},
     catchup=False,
-)
-def daily_euro_ohlc_dag_1():
+) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
     columns = Variable.get("columns_ohlc_currency")
     project_name = Variable.get("bq_project")
@@ -38,15 +35,18 @@ def daily_euro_ohlc_dag_1():
     TODAY = "{{ ds }}"
     FILENAME = f"{currency_ohlc['file']}-{TODAY}.csv"
 
-    @task
+    @task()
     def get_daily_ohlc(endpoint, file_name):
+        import pandas as pd
+        import requests
+
         response = requests.get(endpoint)
         df = pd.DataFrame(response, columns=columns, index=None)
         df["time"] = pd.to_datetime(df["time"], unit="ms")
         df = df.to_csv(file_name, index=False)
         return df
 
-    @task
+    @task()
     def response_to_gcs(bucket_name, source_file_name, destination_blob_name):
         """Uploads a file to the bucket."""
         storage_client = storage.Client()
@@ -57,7 +57,7 @@ def daily_euro_ohlc_dag_1():
             f"File {source_file_name}.csv uploaded to {destination_blob_name}."
         )
 
-    @task
+    @task()
     def upload_to_bq(file, bucket_name, project_name, dataset_name, table_name):
         schema_fields = read_local_schema(file)
         return GCSToBigQueryOperator(
@@ -86,6 +86,3 @@ def daily_euro_ohlc_dag_1():
     )
 
     get_ohlc >> upload_to_gcs >> gcs_to_bq
-
-
-daily_euro_ohlc_dag_1()
