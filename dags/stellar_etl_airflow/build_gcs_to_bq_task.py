@@ -130,6 +130,7 @@ def build_gcs_to_bq_task(
             destination_project_dataset_table=f"{project_name}.{dataset_name}.{data_type}{staging_table_suffix}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",
+            schema_update_option="ALLOW_FIELD_ADDITION",
             max_bad_records=0,
             time_partitioning=time_partition,
             cluster_fields=cluster_fields,
@@ -153,6 +154,7 @@ def build_gcs_to_bq_task(
             ),
             bucket=bucket_name,
             schema_fields=schema_fields,
+            schema_update_options=["ALLOW_FIELD_ADDITION"],
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
             source_objects=[
