@@ -36,7 +36,7 @@ with DAG(
     FILENAME = f"{currency_ohlc['file']}-{TODAY}.csv"
 
     @task()
-    def get_daily_ohlc(endpoint, file_name):
+    def get_daily_ohlc(endpoint, file_name, columns):
         import pandas as pd
         import requests
 
@@ -75,7 +75,9 @@ with DAG(
             dag=dag,
         )
 
-    get_ohlc = get_daily_ohlc(currency_ohlc["endpoint"], FILENAME)
+    get_ohlc = get_daily_ohlc(
+        currency_ohlc["endpoint"], FILENAME, currency_ohlc["columns"]
+    )
     upload_to_gcs = response_to_gcs(bucket_name, get_ohlc, FILENAME)
     gcs_to_bq = upload_to_bq(
         currency_ohlc["file"],
