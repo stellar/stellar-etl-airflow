@@ -115,7 +115,7 @@ select
     , previous_ledger_hash
     , transaction_count
     , hl.operation_count as ledger_operation_count
-    , closed_at
+    , hl.closed_at
     , hl.id as ledger_id
     , total_coins
     , fee_pool
