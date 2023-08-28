@@ -268,5 +268,12 @@
   "use_testnet": "True",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": {},
-  "volume_name": "etl-data"
+  "volume_name": "etl-data",
+  "currency_ohlc": {
+    "file": "euro-ohlc",
+    "table_name": "euro-usd-ohlc",
+    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1"
+  },
+  "columns_ohlc_currency": ["time", "open", "high", "low", "close"],
+  "currency_bucket": "currencies_ohlc"
 }
