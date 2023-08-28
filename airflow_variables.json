@@ -173,19 +173,19 @@
     },
     "accounts": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "account_signers": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "claimable_balances": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "history_effects": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "history_ledgers": {
       "type": "MONTH",
@@ -193,7 +193,7 @@
     },
     "history_operations": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "history_trades": {
       "type": "MONTH",
@@ -201,19 +201,19 @@
     },
     "history_transactions": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "offers": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "liquidity_pools": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     },
     "trust_lines": {
       "type": "MONTH",
-      "field": "closed_at"
+      "field": "batch_run_date"
     }
   },
   "public_dataset": "crypto_stellar_2",
