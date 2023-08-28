@@ -19,17 +19,15 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 
 @dag(
-    "daily_euro_ohlc_dag",
     description="This DAG updates the currency tables in Bigquey every day",
     schedule_interval="35 0 * * *",
     params={
         "alias": "euro",
     },
-    render_template_as_native_obj=True,
     user_defined_filters={"fromjson": lambda s: json.loads(s)},
     catchup=False,
 )
-def daily_euro_ohlc_dag():
+def daily_euro_ohlc_dag_1():
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
     columns = Variable.get("columns_ohlc_currency")
     project_name = Variable.get("bq_project")
@@ -88,4 +86,4 @@ def daily_euro_ohlc_dag():
     get_ohlc >> upload_to_gcs >> gcs_to_bq
 
 
-daily_euro_ohlc_dag()
+daily_euro_ohlc_dag_1()
