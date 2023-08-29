@@ -28,7 +28,7 @@ with DAG(
     catchup=False,
 ) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
-    columns = currency_ohlc["columns_ohlc_currency"]
+    columns = ["time", "open", "high", "low", "close"]
     project_name = Variable.get("bq_project")
     dataset_name = Variable.get("bq_dataset")
     bucket_name = Variable.get("currency_bucket")
