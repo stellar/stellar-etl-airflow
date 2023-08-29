@@ -46,18 +46,16 @@ with DAG(
         df = pd.DataFrame(response, columns=columns, index=None)
         df["time"] = pd.to_datetime(df["time"], unit="ms")
         df = df.to_csv(file_name, index=False)
-        return df
+        return {"api_response": df}
 
     @task()
-    def response_to_gcs(bucket_name, source_file_name, destination_blob_name):
+    def response_to_gcs(bucket_name, api_response, destination_blob_name):
         """Uploads a file to the bucket."""
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
-        blob.upload_from_string(source_file_name)
-        logging.info(
-            f"File {source_file_name}.csv uploaded to {destination_blob_name}."
-        )
+        blob.upload_from_string(api_response)
+        logging.info(f"File {api_response}.csv uploaded to {destination_blob_name}.")
 
     @task()
     def upload_to_bq(file, bucket_name, project_name, dataset_name, table_name):
