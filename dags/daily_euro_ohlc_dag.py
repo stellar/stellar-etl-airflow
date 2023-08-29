@@ -28,12 +28,13 @@ with DAG(
     catchup=False,
 ) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
-    columns = Variable.get("columns_ohlc_currency")
+    columns = currency_ohlc["columns_ohlc_currency"]
     project_name = Variable.get("bq_project")
     dataset_name = Variable.get("bq_dataset")
     bucket_name = Variable.get("currency_bucket")
-    TODAY = "{{ ds }}"
-    FILENAME = f"{currency_ohlc['file']}-{TODAY}.csv"
+    currency = currency_ohlc["currency"]
+    today = "{{ ds }}"
+    filename = f"{currency}-{today}.csv"
 
     @task()
     def get_daily_ohlc(endpoint, file_name, columns):
@@ -66,7 +67,7 @@ with DAG(
             schema_fields=schema_fields,
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
-            source_objects=f"{FILENAME}-{TODAY}.csv",
+            source_objects=f"{filename}-{today}.csv",
             destination_project_dataset_table=f"{project_name}.{dataset_name}.{table_name}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",
@@ -75,12 +76,10 @@ with DAG(
             dag=dag,
         )
 
-    get_ohlc = get_daily_ohlc(
-        currency_ohlc["endpoint"], FILENAME, currency_ohlc["columns"]
-    )
-    upload_to_gcs = response_to_gcs(bucket_name, get_ohlc, FILENAME)
+    get_ohlc = get_daily_ohlc(currency_ohlc["endpoint"], filename, columns)
+    upload_to_gcs = response_to_gcs(bucket_name, get_ohlc, filename)
     gcs_to_bq = upload_to_bq(
-        currency_ohlc["file"],
+        currency,
         bucket_name,
         project_name,
         dataset_name,
