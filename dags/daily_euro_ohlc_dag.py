@@ -28,7 +28,6 @@ with DAG(
     catchup=False,
 ) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
-    columns = currency_ohlc["columns_ohlc_currency"]
     project_name = Variable.get("bq_project")
     dataset_name = Variable.get("bq_dataset")
     bucket_name = Variable.get("currency_bucket")
@@ -37,20 +36,17 @@ with DAG(
     filename = f"{currency}-{today}.txt"
 
     @task()
-    def get_daily_ohlc(endpoint):
+    def response_to_gcs(bucket_name, endpoint, destination_blob_name):
         import requests
 
         response = requests.get(endpoint)
-        return {"api_response": response.json()}
-
-    @task()
-    def response_to_gcs(bucket_name, api_response, destination_blob_name):
+        euro_data = response.text
         """Uploads a file to the bucket."""
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
-        blob.upload_from_string(api_response)
-        logging.info(f"File {api_response}.txt uploaded to {destination_blob_name}.")
+        blob.upload_from_string(euro_data)
+        logging.info(f"File {destination_blob_name}.txt uploaded to {bucket_name}.")
 
     @task()
     def upload_to_bq(file, bucket_name, project_name, dataset_name, table_name):
@@ -70,8 +66,7 @@ with DAG(
             dag=dag,
         )
 
-    get_ohlc = get_daily_ohlc(currency_ohlc["endpoint"], filename, columns)
-    upload_to_gcs = response_to_gcs(bucket_name, get_ohlc, filename)
+    upload_to_gcs = response_to_gcs(bucket_name, currency_ohlc["endpoint"], filename)
     gcs_to_bq = upload_to_bq(
         currency,
         bucket_name,
@@ -80,4 +75,4 @@ with DAG(
         currency_ohlc["table_name"],
     )
 
-    get_ohlc >> upload_to_gcs >> gcs_to_bq
+    upload_to_gcs >> gcs_to_bq
