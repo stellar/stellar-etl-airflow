@@ -34,19 +34,14 @@ with DAG(
     bucket_name = Variable.get("currency_bucket")
     currency = currency_ohlc["currency"]
     today = "{{ ds }}"
-    filename = f"{currency}-{today}.csv"
+    filename = f"{currency}-{today}.txt"
 
     @task()
-    def get_daily_ohlc(endpoint, file_name, columns):
-        import pandas as pd
+    def get_daily_ohlc(endpoint):
         import requests
 
         response = requests.get(endpoint)
-        response = response.json()
-        df = pd.DataFrame(response, columns=columns, index=None)
-        df["time"] = pd.to_datetime(df["time"], unit="ms")
-        df = df.to_csv(file_name, index=False)
-        return {"api_response": df}
+        return {"api_response": response.json()}
 
     @task()
     def response_to_gcs(bucket_name, api_response, destination_blob_name):
@@ -55,7 +50,7 @@ with DAG(
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
         blob.upload_from_string(api_response)
-        logging.info(f"File {api_response}.csv uploaded to {destination_blob_name}.")
+        logging.info(f"File {api_response}.txt uploaded to {destination_blob_name}.")
 
     @task()
     def upload_to_bq(file, bucket_name, project_name, dataset_name, table_name):
@@ -66,7 +61,7 @@ with DAG(
             schema_fields=schema_fields,
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
-            source_objects=f"{filename}-{today}.csv",
+            source_objects=f"{filename}-{today}.txt",
             destination_project_dataset_table=f"{project_name}.{dataset_name}.{table_name}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",

@@ -2,7 +2,7 @@
   {
     "mode": "NULLABLE",
     "name": "time",
-    "type": "TIME"
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",
