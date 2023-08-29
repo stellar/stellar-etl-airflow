@@ -28,7 +28,7 @@ with DAG(
     catchup=False,
 ) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
-    columns = ["time", "open", "high", "low", "close"]
+    columns = currency_ohlc["columns_ohlc_currency"]
     project_name = Variable.get("bq_project")
     dataset_name = Variable.get("bq_dataset")
     bucket_name = Variable.get("currency_bucket")
@@ -42,6 +42,7 @@ with DAG(
         import requests
 
         response = requests.get(endpoint)
+        response = response.json()
         df = pd.DataFrame(response, columns=columns, index=None)
         df["time"] = pd.to_datetime(df["time"], unit="ms")
         df = df.to_csv(file_name, index=False)
