@@ -458,10 +458,5 @@
     "mode": "NULLABLE",
     "name": "batch_insert_ts",
     "type": "TIMESTAMP"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "closed_at",
-    "type": "TIMESTAMP"
   }
 ]
