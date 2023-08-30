@@ -118,10 +118,5 @@
     "mode": "NULLABLE",
     "name": "sequence_time",
     "type": "TIMESTAMP"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "closed_at",
-    "type": "TIMESTAMP"
   }
 ]

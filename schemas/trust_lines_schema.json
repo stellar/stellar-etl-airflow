@@ -93,10 +93,5 @@
     "mode": "NULLABLE",
     "name": "sponsor",
     "type": "STRING"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "closed_at",
-    "type": "TIMESTAMP"
   }
 ]
