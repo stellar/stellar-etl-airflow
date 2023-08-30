@@ -17,7 +17,9 @@ dag = DAG(
     max_active_runs=1,
 )
 # create dependency on raw data load
-wait_on__mgi_dag = build_cross_deps(dag, "wait_on_mgi_pipeline", "partner_pipeline_dag")
+wait_on__mgi_dag = build_cross_deps(
+    dag, "wait_on_mgi_pipeline", "partner_pipeline_dag", time_delta=10
+)
 
 # build snapshot table for raw transactions
 snapshot_raw_mgi_stellar_transactions = build_dbt_task(
