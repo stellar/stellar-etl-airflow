@@ -1023,13 +1023,8 @@
       },
       {
         "mode": "NULLABLE",
-        "name": "type",
+        "name": "from_asset",
         "type": "STRING"
-      },
-      {
-        "mode": "REPEATED",
-        "name": "salt",
-        "type": "INTEGER"
       },
       {
         "mode": "NULLABLE",

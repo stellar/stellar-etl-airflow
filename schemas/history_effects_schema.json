@@ -772,8 +772,13 @@
         "type": "INTEGER"
       },
       {
-        "mode": "REPEATED",
+        "mode": "NULLABLE",
         "name": "contract",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "contract_event_type",
         "type": "STRING"
       }
     ],
