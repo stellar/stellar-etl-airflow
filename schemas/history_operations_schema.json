@@ -1052,6 +1052,26 @@
         "mode": "NULLABLE",
         "name": "ledgers_to_expire",
         "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "contract_id",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "contract_code_hash",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ledgers_to_expire",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ledgers_to_expire",
+        "type": "INTEGER"
       }
     ],
     "mode": "NULLABLE",
@@ -1101,6 +1121,11 @@
   {
     "mode": "NULLABLE",
     "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_closed_at",
     "type": "TIMESTAMP"
   }
 ]

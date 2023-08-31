@@ -6,11 +6,6 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "contract_key",
-      "type": "STRING"
-    },
-    {
-      "mode": "NULLABLE",
       "name": "contract_durability",
       "type": "STRING"
     },
@@ -18,11 +13,6 @@
       "mode": "NULLABLE",
       "name": "contract_data_flags",
       "type": "INTEGER"
-    },
-    {
-      "mode": "NULLABLE",
-      "name": "contract_data_val",
-      "type": "STRING"
     },
     {
       "mode": "NULLABLE",
@@ -78,6 +68,12 @@
       "mode": "NULLABLE",
       "name": "batch_insert_ts",
       "type": "TIMESTAMP"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "contract_key_type",
+      "type": "STRING"
     }
+
   ]
   

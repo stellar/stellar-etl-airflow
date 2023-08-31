@@ -148,5 +148,36 @@
     "mode": "REPEATED",
     "name": "extra_signers",
     "type": "string"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "refundable_fee",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "soroban_resources_instructions",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "soroban_resources_read_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "soroban_resources_write_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "soroban_resource_extended_meta_data_size_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "ledger_closed_at",
+    "type": "TIMESTAMP"
   }
+
 ]
