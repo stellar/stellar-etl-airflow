@@ -1062,16 +1062,6 @@
         "mode": "NULLABLE",
         "name": "contract_code_hash",
         "type": "INTEGER"
-      },
-      {
-        "mode": "NULLABLE",
-        "name": "ledgers_to_expire",
-        "type": "INTEGER"
-      },
-      {
-        "mode": "NULLABLE",
-        "name": "ledgers_to_expire",
-        "type": "INTEGER"
       }
     ],
     "mode": "NULLABLE",
