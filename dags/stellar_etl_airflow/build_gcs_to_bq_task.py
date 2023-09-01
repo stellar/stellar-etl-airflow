@@ -119,6 +119,7 @@ def build_gcs_to_bq_task(
             ),
             bucket=bucket_name,
             schema_fields=schema_fields,
+            schema_update_options=["ALLOW_FIELD_ADDITION"],
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
             source_objects=[
@@ -153,6 +154,7 @@ def build_gcs_to_bq_task(
             ),
             bucket=bucket_name,
             schema_fields=schema_fields,
+            schema_update_options=["ALLOW_FIELD_ADDITION"],
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
             source_objects=[
