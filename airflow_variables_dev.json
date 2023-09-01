@@ -90,7 +90,7 @@
     "partnership_assets__account_holders_activity_fact": true,
     "partnership_assets__asset_activity_fact": true
   },
-  "dbt_image_name": "stellar/stellar-dbt:c2fc401",
+  "dbt_image_name": "stellar/stellar-dbt:fcbee51",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
