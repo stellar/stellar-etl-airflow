@@ -37,7 +37,7 @@
     }
   },
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
-  "bq_dataset": "test_gcp_airflow_internal",
+  "bq_dataset": "test_crypto_stellar_internal",
   "bq_project": "test-hubble-319619",
   "bq_dataset_audit_log": "audit_log",
   "bucket_mgi": "mgi-stellar-transactions",
@@ -85,7 +85,7 @@
   "dbt_client_email": "803774498738-compute@developer.gserviceaccount.com",
   "dbt_client_id": 101879863915888261202,
   "dbt_client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/803774498738-compute%40developer.gserviceaccount.com",
-  "dbt_dataset": "sdf_test",
+  "dbt_dataset": "test_sdf",
   "dbt_full_refresh_models": {
     "partnership_assets__account_holders_activity_fact": true,
     "partnership_assets__asset_activity_fact": true
@@ -94,7 +94,7 @@
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
-  "dbt_mart_dataset": "sdf_test_marts",
+  "dbt_mart_dataset": "test_sdf_marts",
   "dbt_maximum_bytes_billed": 250000000000,
   "dbt_private_key": "dummy",
   "dbt_private_key_id": "dummy",
@@ -204,7 +204,7 @@
     }
   },
   "partners_bucket": "ext-partner-sftp",
-  "public_dataset": "test_crypto_stellar_2",
+  "public_dataset": "test_crypto_stellar_old",
   "public_dataset_new": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
