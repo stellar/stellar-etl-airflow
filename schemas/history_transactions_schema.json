@@ -171,12 +171,7 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "soroban_resource_extended_meta_data_size_bytes",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "ledger_closed_at",
+    "name": "closed_at",
     "type": "TIMESTAMP"
   }
 ]

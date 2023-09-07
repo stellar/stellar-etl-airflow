@@ -21,7 +21,7 @@ WORKDIR="$(pwd)"
 echo "Current working directory: $WORKDIR"
 
 PROJECT_ID=test-hubble-319619
-DATASET_ID=test_gcp_airflow_internal
+DATASET_ID=test_crypto_stellar_internal
 SCHEMA_DIR=$WORKDIR/schemas/
 STATE_TABLES=(accounts liquidity_pools offers trust_lines)
 

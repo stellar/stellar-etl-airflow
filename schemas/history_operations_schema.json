@@ -1023,13 +1023,13 @@
       },
       {
         "mode": "NULLABLE",
-        "name": "from_asset",
+        "name": "asset",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "ledgers_to_expire",
-        "type": "INTEGER"
+        "name": "type",
+        "type": "STRING"
       },
       {
         "mode": "NULLABLE",
@@ -1093,7 +1093,7 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "ledger_closed_at",
+    "name": "closed_at",
     "type": "TIMESTAMP"
   }
 ]
