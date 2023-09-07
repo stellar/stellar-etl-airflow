@@ -136,7 +136,7 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "fee_propagate_data_1kb",
+      "name": "fee_tx_size_1kb",
       "type": "INTEGER"
     },
     {
