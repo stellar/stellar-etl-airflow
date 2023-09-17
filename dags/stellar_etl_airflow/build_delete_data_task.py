@@ -40,3 +40,31 @@ def build_delete_data_task(dag, project, dataset, table):
             }
         },
     )
+
+def build_delete_dbt_data_task(dag, project, dataset, table, time_column):
+    batch_id = macros.get_batch_id()
+    batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+
+    # Adding the partition to the filter clause prunes the query
+    # if the table is partitioned (tables partitioned by batch_run_date)
+    DELETE_ROWS_QUERY = (
+        f"DELETE FROM {dataset}.{table} "
+        f"WHERE date({time_column}) = date('{batch_date}');"
+    )
+
+    return BigQueryInsertJobOperator(
+        project_id=project,
+        task_id=f"delete_old_partition_{table}_dbt",
+        execution_timeout=timedelta(
+            seconds=Variable.get("task_timeout", deserialize_json=True)[
+                build_delete_data_task.__name__
+            ]
+        ),
+        on_failure_callback=alert_after_max_retries,
+        configuration={
+            "query": {
+                "query": DELETE_ROWS_QUERY,
+                "useLegacySql": False,
+            }
+        },
+    )
