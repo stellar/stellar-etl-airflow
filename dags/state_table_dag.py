@@ -121,16 +121,16 @@ delete_trust_task = build_delete_data_task(
 delete_trust_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["trustlines"]
 )
-delete_contract_data_pub_new_task = build_delete_data_task(
+delete_contract_data_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["contract_data"]
 )
-delete_contract_code_pub_new_task = build_delete_data_task(
+delete_contract_code_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["contract_code"]
 )
-delete_config_settings_pub_new_task = build_delete_data_task(
+delete_config_settings_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["config_settings"]
 )
-delete_expiration_pub_new_task = build_delete_data_task(
+delete_expiration_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["expiration"]
 )
 
@@ -279,7 +279,7 @@ send_trust_to_pub_new_task = build_gcs_to_bq_task(
     partition=True,
     cluster=True,
 )
-send_contract_data_to_pub_new_task = build_gcs_to_bq_task(
+send_contract_data_to_pub_task = build_gcs_to_bq_task(
     dag,
     changes_task.task_id,
     public_project,
@@ -289,7 +289,7 @@ send_contract_data_to_pub_new_task = build_gcs_to_bq_task(
     partition=True,
     cluster=True,
 )
-send_contract_code_to_pub_new_task = build_gcs_to_bq_task(
+send_contract_code_to_pub_task = build_gcs_to_bq_task(
     dag,
     changes_task.task_id,
     public_project,
@@ -299,7 +299,7 @@ send_contract_code_to_pub_new_task = build_gcs_to_bq_task(
     partition=True,
     cluster=True,
 )
-send_config_settings_to_pub_new_task = build_gcs_to_bq_task(
+send_config_settings_to_pub_task = build_gcs_to_bq_task(
     dag,
     changes_task.task_id,
     public_project,
@@ -309,7 +309,7 @@ send_config_settings_to_pub_new_task = build_gcs_to_bq_task(
     partition=True,
     cluster=True,
 )
-send_expiration_to_pub_new_task = build_gcs_to_bq_task(
+send_expiration_to_pub_task = build_gcs_to_bq_task(
     dag,
     changes_task.task_id,
     public_project,
@@ -355,27 +355,27 @@ write_trust_stats >> delete_trust_pub_new_task >> send_trust_to_pub_new_task
     date_task
     >> changes_task
     >> write_contract_data_stats
-    >> delete_contract_data_pub_new_task
-    >> send_contract_data_to_pub_new_task
+    >> delete_contract_data_task
+    >> send_contract_data_to_pub_task
 )
 (
     date_task
     >> changes_task
     >> write_contract_code_stats
-    >> delete_contract_code_pub_new_task
-    >> send_contract_code_to_pub_new_task
+    >> delete_contract_code_task
+    >> send_contract_code_to_pub_task
 )
 (
     date_task
     >> changes_task
     >> write_config_settings_stats
-    >> delete_config_settings_pub_new_task
-    >> send_config_settings_to_pub_new_task
+    >> delete_config_settings_task
+    >> send_config_settings_to_pub_task
 )
 (
     date_task
     >> changes_task
     >> write_expiration_stats
-    >> delete_expiration_pub_new_task
-    >> send_expiration_to_pub_new_task
+    >> delete_expiration_task
+    >> send_expiration_to_pub_task
 )

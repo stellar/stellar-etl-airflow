@@ -62,6 +62,7 @@ write_op_stats = build_batch_stats(dag, table_names["operations"])
 write_trade_stats = build_batch_stats(dag, table_names["trades"])
 write_effects_stats = build_batch_stats(dag, table_names["effects"])
 write_tx_stats = build_batch_stats(dag, table_names["transactions"])
+write_diagnostic_events_stats = build_batch_stats(dag, table_names["diagnostic_events"])
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -107,6 +108,16 @@ tx_export_task = build_export_task(
     "archive",
     "export_transactions",
     file_names["transactions"],
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    resource_cfg="cc",
+)
+diagnostic_events_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_diagnostic_events",
+    file_names["diagnostic_events"],
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -386,3 +397,8 @@ effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_ne
 )
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 tx_export_task >> delete_old_tx_pub_new_task >> send_txs_to_pub_new_task >> wait_on_dag
+(
+    time_task
+    >> write_diagnostic_events_stats
+    >> diagnostic_events_export_task
+)
