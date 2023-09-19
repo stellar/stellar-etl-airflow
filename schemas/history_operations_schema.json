@@ -1023,23 +1023,22 @@
       },
       {
         "mode": "NULLABLE",
-        "name": "asset",
-        "type": "STRING"
-      },
-      {
-        "mode": "NULLABLE",
         "name": "type",
         "type": "STRING"
       },
       {
         "mode": "NULLABLE",
-        "name": "contract_id",
+        "name": "ledgers_to_expire",
         "type": "INTEGER"
+      },      {
+        "mode": "NULLABLE",
+        "name": "contract_id",
+        "type": "STRING"
       },
       {
         "mode": "NULLABLE",
         "name": "contract_code_hash",
-        "type": "INTEGER"
+        "type": "STRING"
       }
     ],
     "mode": "NULLABLE",

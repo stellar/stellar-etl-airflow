@@ -26,7 +26,7 @@ logger.setLevel(logging.INFO)
 dag = DAG(
     "state_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 7, 21, 20, 30),
+    start_date=datetime.datetime(2023, 9, 15, 19, 30),
     description="This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.",
     schedule_interval="*/30 * * * *",
     params={
@@ -131,7 +131,7 @@ delete_config_settings_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["config_settings"]
 )
 delete_expiration_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["config_settings"]
+    dag, public_project, public_dataset_new, table_names["expiration"]
 )
 
 """

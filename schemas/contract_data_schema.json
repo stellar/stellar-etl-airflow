@@ -31,6 +31,11 @@
     },
     {
       "mode": "NULLABLE",
+      "name": "asset_type",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
       "name": "balance_holder",
       "type": "STRING"
     },

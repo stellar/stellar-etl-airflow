@@ -22,7 +22,8 @@ init_sentry()
 dag = DAG(
     "history_archive_without_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2022, 3, 11, 18, 30),
+    start_date=datetime.datetime(2023, 9, 15, 19, 30),
+    catchup=True,
     description="This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads",
     schedule_interval="*/15 * * * *",
     params={
@@ -41,6 +42,7 @@ internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
+public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
 use_futurenet = ast.literal_eval(Variable.get("use_futurenet")) 
 
@@ -95,6 +97,9 @@ delete_old_ledger_task = build_delete_data_task(
 )
 delete_old_ledger_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["ledgers"]
+)
+delete_old_ledger_pub_new_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["ledgers"]
 )
 delete_old_asset_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["assets"]
