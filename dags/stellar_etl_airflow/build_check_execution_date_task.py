@@ -21,6 +21,7 @@ def build_check_execution_date(dag, task_name, start_task, stop_task):
     return BranchPythonOperator(
         task_id=task_name,
         python_callable=check_execution_date,
+        on_failure_callback=alert_after_max_retries,
         op_kwargs={"start_task": start_task, "stop_task": stop_task},
         provide_context=True,
         dag=dag,
