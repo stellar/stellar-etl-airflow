@@ -90,7 +90,7 @@
     "partnership_assets__account_holders_activity_fact": true,
     "partnership_assets__asset_activity_fact": true
   },
-  "dbt_image_name": "stellar/stellar-dbt:fcbee51",
+  "dbt_image_name": "stellar/stellar-dbt:0643adc",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
@@ -268,5 +268,12 @@
   "use_testnet": "True",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": {},
-  "volume_name": "etl-data"
+  "volume_name": "etl-data",
+  "currency_ohlc": {
+    "currency": "euro_ohlc",
+    "table_name": "euro_usd_ohlc",
+    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
+    "columns_ohlc_currency": ["time", "open", "high", "low", "close"]
+  },
+  "currency_bucket": "currencies_ohlc"
 }
