@@ -41,7 +41,12 @@ def select_correct_filename(cmd_type, base_name, batched_name):
 
 
 def generate_etl_cmd(
-    command, base_filename, cmd_type, use_gcs=False, use_testnet=False, use_futurenet=False
+    command,
+    base_filename,
+    cmd_type,
+    use_gcs=False,
+    use_testnet=False,
+    use_futurenet=False,
 ):
     """
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.

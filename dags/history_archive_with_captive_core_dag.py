@@ -397,8 +397,4 @@ effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_ne
 )
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 tx_export_task >> delete_old_tx_pub_new_task >> send_txs_to_pub_new_task >> wait_on_dag
-(
-    time_task
-    >> write_diagnostic_events_stats
-    >> diagnostic_events_export_task
-)
+(time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)

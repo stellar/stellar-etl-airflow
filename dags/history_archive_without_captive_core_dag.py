@@ -44,7 +44,7 @@ public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
-use_futurenet = ast.literal_eval(Variable.get("use_futurenet")) 
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next

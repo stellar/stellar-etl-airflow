@@ -79,18 +79,10 @@
       "account",
       "type"
     ],
-    "contract_data": [
-    "last_modified_ledger"
-    ],
-      "contract_code": [
-        "last_modified_ledger"
-      ],
-      "config_settings": [
-        "last_modified_ledger"
-      ],
-      "expiration": [
-        "last_modified_ledger"
-    ]
+    "contract_data": ["last_modified_ledger"],
+    "contract_code": ["last_modified_ledger"],
+    "config_settings": ["last_modified_ledger"],
+    "expiration": ["last_modified_ledger"]
   },
   "dbt_auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   "dbt_auth_uri": "https://accounts.google.com/o/oauth2/auth",

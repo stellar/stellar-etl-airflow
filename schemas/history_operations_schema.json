@@ -1047,7 +1047,8 @@
         "mode": "NULLABLE",
         "name": "ledgers_to_expire",
         "type": "INTEGER"
-      },      {
+      },
+      {
         "mode": "NULLABLE",
         "name": "contract_id",
         "type": "STRING"

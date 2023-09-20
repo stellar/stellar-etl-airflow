@@ -13,7 +13,11 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def build_time_task(
-    dag, use_testnet=False, use_next_exec_time=True, resource_cfg="default", use_futurenet=False
+    dag,
+    use_testnet=False,
+    use_next_exec_time=True,
+    resource_cfg="default",
+    use_futurenet=False,
 ):
     """
     Creates a task to run the get_ledger_range_from_times command from the stellar-etl Docker image. The start time is the previous
