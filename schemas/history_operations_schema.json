@@ -1012,6 +1012,23 @@
         "type": "RECORD"
       },
       {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "value",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "parameters",
+        "type": "RECORD"
+      },
+      {
         "mode": "NULLABLE",
         "name": "function",
         "type": "STRING"
