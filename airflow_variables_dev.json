@@ -78,6 +78,18 @@
       "transaction_id",
       "account",
       "type"
+    ],
+    "contract_data": [
+    "last_modified_ledger"
+    ],
+      "contract_code": [
+        "last_modified_ledger"
+      ],
+      "config_settings": [
+        "last_modified_ledger"
+      ],
+      "expiration": [
+        "last_modified_ledger"
     ]
   },
   "dbt_auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
@@ -104,7 +116,7 @@
   "dbt_token_uri": "https://oauth2.googleapis.com/token",
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:6211230",
+  "image_name": "chowbao/stellar-etl:testnet-noUsdDb",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -130,7 +142,12 @@
     "signers": "account_signers.txt",
     "trades": "trades.txt",
     "transactions": "transactions.txt",
-    "trustlines": "trustlines.txt"
+    "trustlines": "trustlines.txt",
+    "contract_data": "contract_data.txt",
+    "contract_code": "contract_code.txt",
+    "config_settings": "config_settings.txt",
+    "expiration": "expiration.txt",
+    "diagnostic_events": "diagnostic_events.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
   "owner": "SDF",
@@ -193,6 +210,22 @@
     },
     "mgi": {
       "field": "tran_evnt_date",
+      "type": "MONTH"
+    },
+    "contract_data": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "contract_code": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "config_settings": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "expiration": {
+      "field": "batch_run_date",
       "type": "MONTH"
     }
   },
@@ -268,5 +301,6 @@
   "use_testnet": "True",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "volume_config": {},
-  "volume_name": "etl-data"
+  "volume_name": "etl-data",
+  "use_futurenet": "False"
 }
