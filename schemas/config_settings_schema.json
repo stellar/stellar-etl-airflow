@@ -86,27 +86,22 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "fee_write_1kb",
+      "name": "bucket_list_target_size_bytes",
       "type": "INTEGER"
     },
     {
       "mode": "NULLABLE",
-      "name": "bucket_list_size_bytes",
+      "name": "write_fee_1kb_bucket_list_low",
       "type": "INTEGER"
     },
     {
       "mode": "NULLABLE",
-      "name": "bucket_list_fee_rate_low",
+      "name": "write_fee_1kb_bucket_list_high",
       "type": "INTEGER"
     },
     {
       "mode": "NULLABLE",
-      "name": "bucket_list_fee_rate_high",
-      "type": "INTEGER"
-    },
-    {
-      "mode": "NULLABLE",
-      "name": "bucket_list_growth_factor",
+      "name": "bucket_list_write_fee_growth_factor",
       "type": "INTEGER"
     },
     {
@@ -126,7 +121,7 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "ledger_max_propagate_size_bytes",
+      "name": "ledger_max_txs_size_bytes",
       "type": "INTEGER"
     },
     {
@@ -236,6 +231,11 @@
     {
       "mode": "NULLABLE",
       "name": "eviction_scan_size",
+      "type": "INTEGER"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "starting_eviction_scan_level",
       "type": "INTEGER"
     },
     {

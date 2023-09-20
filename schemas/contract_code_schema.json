@@ -11,16 +11,6 @@
     },
     {
       "mode": "NULLABLE",
-      "name": "contract_code_expiration_ledger_seq",
-      "type": "INTEGER"
-    },
-    {
-      "mode": "NULLABLE",
-      "name": "contract_code_entry_body_type",
-      "type": "STRING"
-    },
-    {
-      "mode": "NULLABLE",
       "name": "last_modified_ledger",
       "type": "INTEGER"
     },
