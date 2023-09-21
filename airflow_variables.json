@@ -113,7 +113,6 @@
     "trade_agg": false
   },
   "dbt_image_name": "stellar/stellar-dbt:0643adc",
-  "public_dbt_image_name": "stellar/stellar-dbt:11a4b88",
   "dbt_job_execution_timeout_seconds": 6000,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
@@ -297,5 +296,6 @@
     "columns_ohlc_currency": ["time", "open", "high", "low", "close"]
   },
   "currency_bucket": "ext-asset-pricing",
-  "enviroment": "prod"
+  "enviroment": "prod",
+  "public_dbt_image_name": "stellar/stellar-dbt:11a4b88"
 }
