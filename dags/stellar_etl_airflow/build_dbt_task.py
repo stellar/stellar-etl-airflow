@@ -117,7 +117,7 @@ def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default", 
         dbt_image = Variable.get("public_dbt_image_name")
 
     return KubernetesPodOperator(
-        task_id=model_name,
+        task_id=f"{project}_{model_name}",
         name=model_name,
         execution_timeout=timedelta(
             seconds=Variable.get("task_timeout", deserialize_json=True)[
