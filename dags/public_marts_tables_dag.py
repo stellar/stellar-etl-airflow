@@ -2,9 +2,9 @@ import datetime
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from airflow.operators.dummy import DummyOperator
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
-from airflow.operators.dummy import DummyOperator 
 
 init_sentry()
 
@@ -19,16 +19,19 @@ dag = DAG(
 )
 
 start_dag = DummyOperator(task_id="start_dag", dag=dag)
-
 start_dag
 
 env = Variable.get("environment")
 if env == "prod":
     # tasks for staging tables for marts
-    stg_history_transactions = build_dbt_task(dag, "stg_history_transactions", project="pub")
+    stg_history_transactions = build_dbt_task(
+        dag, "stg_history_transactions", project="pub"
+    )
     stg_history_ledgers = build_dbt_task(dag, "stg_history_ledgers", project="pub")
     stg_history_assets = build_dbt_task(dag, "stg_history_assets", project="pub")
-    stg_history_operations = build_dbt_task(dag, "stg_history_operations", project="pub")
+    stg_history_operations = build_dbt_task(
+        dag, "stg_history_operations", project="pub"
+    )
     # stg_history_trades = build_dbt_task(dag, "stg_history_trades", project="pub")
 
     # tasks for intermediate trades tables
