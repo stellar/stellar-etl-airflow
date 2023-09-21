@@ -63,7 +63,9 @@ stellar_dbt:
     return create_dbt_profile_cmd
 
 
-def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default", project = "prod"):
+def build_dbt_task(
+    dag, model_name, command_type="run", resource_cfg="default", project="prod"
+):
     """Create a task to run dbt on a selected model.
 
     args:
