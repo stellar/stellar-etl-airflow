@@ -276,5 +276,6 @@
     "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
     "columns_ohlc_currency": ["time", "open", "high", "low", "close"]
   },
-  "currency_bucket": "currencies_ohlc"
+  "currency_bucket": "currencies_ohlc",
+  "environment": "dev"
 }
