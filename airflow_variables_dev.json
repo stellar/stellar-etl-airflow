@@ -271,7 +271,12 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "enriched_history_operations": "enriched_history_operations"
+    "enriched_history_operations": "enriched_history_operations",
+    "contract_data": "contract_data",
+    "contract_code": "contract_code",
+    "config_settings": "config_settings",
+    "expiration": "expiration",
+    "diagnostic_events": "diagnostic_events"
   },
   "task_timeout": {
     "build_batch_stats": 180,
