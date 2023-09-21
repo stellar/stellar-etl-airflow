@@ -111,12 +111,12 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "tx_max_extended_meta_data_size_bytes",
+    "name": "tx_max_contract_events_size_bytes",
     "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
-    "name": "fee_extended_meta_data_1kb",
+    "name": "fee_contract_events_1kb",
     "type": "INTEGER"
   },
   {
