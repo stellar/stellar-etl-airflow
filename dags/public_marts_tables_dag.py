@@ -19,6 +19,7 @@ dag = DAG(
 )
 
 start_dag = DummyOperator(task_id="start_dag", dag=dag)
+
 start_dag
 
 env = Variable.get("environment")
