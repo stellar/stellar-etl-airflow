@@ -8,7 +8,6 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-from dags.sandbox_create_dag import TARGET_PROJECT
 from stellar_etl_airflow.build_bq_insert_job_task import (
     file_to_string,
     get_query_filepath,
