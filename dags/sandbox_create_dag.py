@@ -35,6 +35,7 @@ with DAG(
     PROJECT = Variable.get("bq_project")
     DATASET = Variable.get("bq_dataset")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
+    TARGET_PROJECT = Variable.get("dev_project_id")
     DBT_DATASET = Variable.get("dbt_mart_dataset")
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
     DBT_TABLES = Variable.get("dbt_tables", deserialize_json=True)
@@ -50,6 +51,7 @@ with DAG(
             "dataset_id": DATASET,
             "table_id": TABLES_ID[table_id],
             "target_dataset": SANDBOX_DATASET,
+            "target_project_id": TARGET_PROJECT,
         }
         query = query.format(**sql_params)
         tables_create_task = BigQueryInsertJobOperator(
@@ -73,6 +75,7 @@ with DAG(
             "dataset_id": DBT_DATASET,
             "table_id": DBT_TABLES[dbt_table],
             "target_dataset": SANDBOX_DATASET,
+            "target_project_id": TARGET_PROJECT,
         }
         query = query.format(**sql_params)
         dbt_tables_create_task = BigQueryInsertJobOperator(

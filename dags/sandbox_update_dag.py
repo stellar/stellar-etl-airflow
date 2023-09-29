@@ -8,6 +8,7 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from dags.sandbox_create_dag import TARGET_PROJECT
 from stellar_etl_airflow.build_bq_insert_job_task import (
     file_to_string,
     get_query_filepath,
@@ -32,6 +33,7 @@ with DAG(
 ) as dag:
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
     PROJECT = Variable.get("bq_project")
+    TARGET_PROJECT = Variable.get("dev_project_id")
     BQ_DATASET = Variable.get("bq_dataset")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
 
@@ -45,6 +47,7 @@ with DAG(
             "dataset_id": BQ_DATASET,
             "table_id": TABLES_ID[table_id],
             "target_dataset": SANDBOX_DATASET,
+            "target_project_id": TARGET_PROJECT,
         }
         query = query.format(**sql_params)
         tables_update_task = BigQueryInsertJobOperator(
