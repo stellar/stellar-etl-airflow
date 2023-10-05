@@ -120,7 +120,7 @@ def build_dbt_task(
 
     return KubernetesPodOperator(
         task_id=f"{project}_{model_name}",
-        name=model_name,
+        name=f"{project}_{model_name}",
         execution_timeout=timedelta(
             seconds=Variable.get("task_timeout", deserialize_json=True)[
                 build_dbt_task.__name__
