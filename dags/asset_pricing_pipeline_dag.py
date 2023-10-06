@@ -4,7 +4,6 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
-from stellar_etl_airflow.build_delete_data_task import build_delete_dbt_data_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
