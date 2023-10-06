@@ -23,8 +23,6 @@ dag = DAG(
 )
 
 internal_project = Variable.get("bq_project")
-dbt_conformed = Variable.get("sdf_conformed")
-dbt_marts = Variable.get("sdf_marts")
 
 # tasks for staging tables for trades
 stg_history_trades = build_dbt_task(dag, "stg_history_trades")
