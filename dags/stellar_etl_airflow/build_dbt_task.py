@@ -9,7 +9,7 @@ from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
-def create_dbt_profile():
+def create_dbt_profile(project="prod"):
     dbt_target = Variable.get("dbt_target")
     dbt_dataset = Variable.get("dbt_dataset")
     dbt_maximum_bytes_billed = Variable.get("dbt_maximum_bytes_billed")
@@ -27,6 +27,9 @@ def create_dbt_profile():
     dbt_token_uri = Variable.get("dbt_token_uri")
     dbt_auth_provider_x509_cert_url = Variable.get("dbt_auth_provider_x509_cert_url")
     dbt_client_x509_cert_url = Variable.get("dbt_client_x509_cert_url")
+    if project == "pub":
+        dbt_project = Variable.get("public_project")
+        dbt_dataset = Variable.get("public_dataset")
 
     profiles_yml = f"""
 stellar_dbt:
@@ -60,7 +63,9 @@ stellar_dbt:
     return create_dbt_profile_cmd
 
 
-def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default"):
+def build_dbt_task(
+    dag, model_name, command_type="run", resource_cfg="default", project="prod"
+):
     """Create a task to run dbt on a selected model.
 
     args:
@@ -80,7 +85,7 @@ def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default"):
     if dbt_full_refresh_models.get(model_name):
         dbt_full_refresh = "--full-refresh"
 
-    create_dbt_profile_cmd = create_dbt_profile()
+    create_dbt_profile_cmd = create_dbt_profile(project)
 
     execution_date = "EXECUTION_DATE=" + "{{ ds }}"
 
@@ -109,9 +114,13 @@ def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default"):
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
+    dbt_image = Variable.get("dbt_image_name")
+    if project == "pub":
+        dbt_image = Variable.get("public_dbt_image_name")
+
     return KubernetesPodOperator(
-        task_id=model_name,
-        name=model_name,
+        task_id=f"{project}_{model_name}",
+        name=f"{project}_{model_name}",
         execution_timeout=timedelta(
             seconds=Variable.get("task_timeout", deserialize_json=True)[
                 build_dbt_task.__name__
@@ -119,7 +128,7 @@ def build_dbt_task(dag, model_name, command_type="run", resource_cfg="default"):
         ),
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
-        image=Variable.get("dbt_image_name"),
+        image=dbt_image,
         cmds=command,
         arguments=args,
         dag=dag,
