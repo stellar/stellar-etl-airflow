@@ -26,6 +26,9 @@ def _create_files_list(env: str) -> Tuple[str, List[str]]:
     # copy airflow configuration file
     copy(f"airflow-{env}.cfg", f"{temp_dir}/airflow.cfg")
     copy(f"airflow-{env}.cfg", f"airflow.cfg")
+    # copy airflow variables json
+    copy(f"variables-{env}.json", f"{temp_dir}/variables.json")
+    copy(f"variables-{env}.json", f"variables.json")
 
     dags = glob(f"{temp_dir}/**/*.*", recursive=True)
     return (temp_dir, dags)
