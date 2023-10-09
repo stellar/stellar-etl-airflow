@@ -65,3 +65,12 @@ jobs:
         env:
           GOOGLE_CLOUD_PROJECT: hubble-261722
           BUCKET: us-central1-hubble-2-d948d67b-bucket
+
+      - name: Update Airflow variables
+        run: >
+          gcloud composer environments run $COMPOSER_ENVIRONMENT
+          --location $LOCATION
+          variables import -- gcsfuse/variables.json
+        env:
+          COMPOSER_ENVIRONMENT: hubble-2-d948d67b
+          LOCATION: us-central1
