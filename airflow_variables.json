@@ -116,7 +116,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:0643adc",
+  "dbt_image_name": "stellar/stellar-dbt:011d897",
   "dbt_job_execution_timeout_seconds": 6000,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
@@ -130,7 +130,7 @@
   "dbt_token_uri": "https://oauth2.googleapis.com/token",
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:6211230",
+  "image_name": "stellar/stellar-etl:e9c803c",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
