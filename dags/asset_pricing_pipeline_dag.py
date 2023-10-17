@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from airflow import DAG
 from airflow.models.variable import Variable

@@ -760,6 +760,26 @@
         "mode": "NULLABLE",
         "name": "bought_asset_issuer",
         "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "entries",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "ledgers_to_expire",
+        "type": "INTEGER"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "contract",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "contract_event_type",
+        "type": "STRING"
       }
     ],
     "mode": "NULLABLE",

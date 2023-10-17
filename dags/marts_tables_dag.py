@@ -10,16 +10,16 @@ init_sentry()
 dag = DAG(
     "marts_tables",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 4, 4, 0, 0),
+    start_date=datetime.datetime(2015, 9, 30),
     description="This DAG runs dbt to create the tables for the models in marts/ but not any marts subdirectories.",
     schedule_interval="0 11 * * *",  # Daily 11 AM UTC
     params={},
-    catchup=False,
+    catchup=True,
+    max_active_runs=1,
 )
 
 # tasks for staging tables for marts
 stg_history_transactions = build_dbt_task(dag, "stg_history_transactions")
-stg_history_ledgers = build_dbt_task(dag, "stg_history_ledgers")
 stg_history_assets = build_dbt_task(dag, "stg_history_assets")
 stg_history_trades = build_dbt_task(dag, "stg_history_trades")
 
@@ -31,11 +31,12 @@ int_trade_agg_year = build_dbt_task(dag, "int_trade_agg_year")
 
 # tasks for intermediate asset stats tables
 int_meaningful_asset_prices = build_dbt_task(dag, "int_meaningful_asset_prices")
+int_asset_stats_agg = build_dbt_task(dag, "int_asset_stats_agg")
 stg_excluded_accounts = build_dbt_task(dag, "stg_excluded_accounts")
 stg_xlm_to_usd = build_dbt_task(dag, "stg_xlm_to_usd")
 
 # tasks for marts tables
-agg_network_stats = build_dbt_task(dag, "agg_network_stats")
+network_stats_agg = build_dbt_task(dag, "network_stats_agg")
 asset_stats_agg = build_dbt_task(dag, "asset_stats_agg")
 fee_stats_agg = build_dbt_task(dag, "fee_stats_agg")
 history_assets = build_dbt_task(dag, "history_assets")
@@ -44,14 +45,14 @@ liquidity_providers = build_dbt_task(dag, "liquidity_providers")
 
 # DAG task graph
 # graph for marts tables
-agg_network_stats
+network_stats_agg
 liquidity_providers
 
-int_meaningful_asset_prices >> asset_stats_agg
-stg_excluded_accounts >> asset_stats_agg
-stg_xlm_to_usd >> asset_stats_agg
+int_meaningful_asset_prices >> int_asset_stats_agg
+stg_excluded_accounts >> int_asset_stats_agg
+stg_xlm_to_usd >> int_asset_stats_agg
+int_asset_stats_agg >> asset_stats_agg
 stg_history_transactions >> fee_stats_agg
-stg_history_ledgers >> fee_stats_agg
 
 stg_history_assets >> history_assets
 
