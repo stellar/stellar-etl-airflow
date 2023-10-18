@@ -23,7 +23,8 @@ init_sentry()
 dag = DAG(
     "history_archive_with_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2022, 3, 11, 18, 30),
+    start_date=datetime.datetime(2023, 9, 20, 15, 0),
+    catchup=True,
     description="This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
     schedule_interval="*/30 * * * *",
     params={
@@ -44,12 +45,13 @@ public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
 """
-time_task = build_time_task(dag, use_testnet=use_testnet)
+time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 
 """
 The write batch stats task will take a snapshot of the DAG run_id, execution date,
@@ -60,6 +62,7 @@ write_op_stats = build_batch_stats(dag, table_names["operations"])
 write_trade_stats = build_batch_stats(dag, table_names["trades"])
 write_effects_stats = build_batch_stats(dag, table_names["effects"])
 write_tx_stats = build_batch_stats(dag, table_names["transactions"])
+write_diagnostic_events_stats = build_batch_stats(dag, table_names["diagnostic_events"])
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -76,6 +79,7 @@ op_export_task = build_export_task(
     "export_operations",
     file_names["operations"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -85,6 +89,7 @@ trade_export_task = build_export_task(
     "export_trades",
     file_names["trades"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -94,6 +99,7 @@ effects_export_task = build_export_task(
     "export_effects",
     "effects.txt",
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -103,6 +109,17 @@ tx_export_task = build_export_task(
     "export_transactions",
     file_names["transactions"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    resource_cfg="cc",
+)
+diagnostic_events_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_diagnostic_events",
+    file_names["diagnostic_events"],
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
 )
@@ -380,3 +397,4 @@ effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_ne
 )
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 tx_export_task >> delete_old_tx_pub_new_task >> send_txs_to_pub_new_task >> wait_on_dag
+(time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)

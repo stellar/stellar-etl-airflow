@@ -22,7 +22,8 @@ init_sentry()
 dag = DAG(
     "history_archive_without_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2022, 3, 11, 18, 30),
+    start_date=datetime.datetime(2023, 9, 20, 15, 0),
+    catchup=True,
     description="This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads",
     schedule_interval="*/15 * * * *",
     params={
@@ -43,12 +44,13 @@ public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
 """
-time_task = build_time_task(dag, use_testnet=use_testnet)
+time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 
 """
 The write batch stats task will take a snapshot of the DAG run_id, execution date,
@@ -73,6 +75,7 @@ ledger_export_task = build_export_task(
     "export_ledgers",
     file_names["ledgers"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 asset_export_task = build_export_task(
@@ -81,6 +84,7 @@ asset_export_task = build_export_task(
     "export_assets",
     file_names["assets"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 

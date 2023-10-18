@@ -151,6 +151,26 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "refundable_fee",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_instructions",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_read_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_write_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "closed_at",
     "type": "TIMESTAMP"
   }

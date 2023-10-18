@@ -26,7 +26,7 @@ logger.setLevel(logging.INFO)
 dag = DAG(
     "state_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2022, 3, 11, 19, 00),
+    start_date=datetime.datetime(2023, 9, 20, 15, 0),
     description="This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.",
     schedule_interval="*/30 * * * *",
     params={
@@ -37,6 +37,7 @@ dag = DAG(
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
+    catchup=True,
 )
 
 file_names = Variable.get("output_file_names", deserialize_json=True)
@@ -47,14 +48,16 @@ public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 public_dataset_new = Variable.get("public_dataset_new")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
-date_task = build_time_task(dag, use_testnet=use_testnet)
+date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 changes_task = build_export_task(
     dag,
     "bounded-core",
     "export_ledger_entry_changes",
     file_names["changes"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="state",
 )
@@ -70,6 +73,10 @@ write_off_stats = build_batch_stats(dag, table_names["offers"])
 write_pool_stats = build_batch_stats(dag, table_names["liquidity_pools"])
 write_sign_stats = build_batch_stats(dag, table_names["signers"])
 write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
+write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
+write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
+write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
+write_expiration_stats = build_batch_stats(dag, table_names["expiration"])
 
 """
 The delete partition task checks to see if the given partition/batch id exists in
@@ -113,6 +120,18 @@ delete_trust_task = build_delete_data_task(
 )
 delete_trust_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["trustlines"]
+)
+delete_contract_data_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["contract_data"]
+)
+delete_contract_code_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["contract_code"]
+)
+delete_config_settings_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["config_settings"]
+)
+delete_expiration_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["expiration"]
 )
 
 """
@@ -260,6 +279,46 @@ send_trust_to_pub_new_task = build_gcs_to_bq_task(
     partition=True,
     cluster=True,
 )
+send_contract_data_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    changes_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["contract_data"],
+    "/*-contract_data.txt",
+    partition=True,
+    cluster=True,
+)
+send_contract_code_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    changes_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["contract_code"],
+    "/*-contract_code.txt",
+    partition=True,
+    cluster=True,
+)
+send_config_settings_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    changes_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["config_settings"],
+    "/*-config_settings.txt",
+    partition=True,
+    cluster=True,
+)
+send_expiration_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    changes_task.task_id,
+    public_project,
+    public_dataset_new,
+    table_names["expiration"],
+    "/*-expiration.txt",
+    partition=True,
+    cluster=True,
+)
 
 date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
 write_acc_stats >> delete_acc_pub_new_task >> send_acc_to_pub_new_task
@@ -292,3 +351,31 @@ write_sign_stats >> delete_sign_pub_new_task >> send_sign_to_pub_new_task
     >> send_trust_to_bq_task
 )
 write_trust_stats >> delete_trust_pub_new_task >> send_trust_to_pub_new_task
+(
+    date_task
+    >> changes_task
+    >> write_contract_data_stats
+    >> delete_contract_data_task
+    >> send_contract_data_to_pub_task
+)
+(
+    date_task
+    >> changes_task
+    >> write_contract_code_stats
+    >> delete_contract_code_task
+    >> send_contract_code_to_pub_task
+)
+(
+    date_task
+    >> changes_task
+    >> write_config_settings_stats
+    >> delete_config_settings_task
+    >> send_config_settings_to_pub_task
+)
+(
+    date_task
+    >> changes_task
+    >> write_expiration_stats
+    >> delete_expiration_task
+    >> send_expiration_to_pub_task
+)

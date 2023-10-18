@@ -15,13 +15,15 @@ from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
-def get_path_variables(use_testnet=False):
+def get_path_variables(use_testnet=False, use_futurenet=False):
     """
     Returns the image output path, core executable path, and core config path.
     """
     config = "/etl/docker/stellar-core.cfg"
     if use_testnet:
         config = "/etl/docker/stellar-core_testnet.cfg"
+    elif use_futurenet:
+        config = "/etl/docker/stellar-core_futurenet.cfg"
     return "/usr/bin/stellar-core", config
 
 
@@ -39,7 +41,12 @@ def select_correct_filename(cmd_type, base_name, batched_name):
 
 
 def generate_etl_cmd(
-    command, base_filename, cmd_type, use_gcs=False, use_testnet=False
+    command,
+    base_filename,
+    cmd_type,
+    use_gcs=False,
+    use_testnet=False,
+    use_futurenet=False,
 ):
     """
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
@@ -71,7 +78,7 @@ def generate_etl_cmd(
     if cmd_type in ("archive", "bounded-core"):
         end_ledger = '{{ [ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]-1, ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"]] | max}}'
 
-    core_exec, core_cfg = get_path_variables(use_testnet)
+    core_exec, core_cfg = get_path_variables(use_testnet, use_futurenet)
 
     batch_filename = "-".join([start_ledger, end_ledger, base_filename])
     run_id = "{{ run_id }}"
@@ -134,6 +141,8 @@ def generate_etl_cmd(
         cmd.extend(["-u", metadata])
     if use_testnet:
         cmd.append("--testnet")
+    elif use_futurenet:
+        cmd.append("--futurenet")
     cmd.append("--strict-export")
     return cmd, os.path.join(filepath, correct_filename)
 
@@ -145,6 +154,7 @@ def build_export_task(
     filename,
     use_gcs=False,
     use_testnet=False,
+    use_futurenet=False,
     resource_cfg="default",
 ):
     """
@@ -161,7 +171,7 @@ def build_export_task(
     """
 
     etl_cmd, output_file = generate_etl_cmd(
-        command, filename, cmd_type, use_gcs, use_testnet
+        command, filename, cmd_type, use_gcs, use_testnet, use_futurenet
     )
     etl_cmd_string = " ".join(etl_cmd)
     config_file_location = Variable.get("kube_config_location")

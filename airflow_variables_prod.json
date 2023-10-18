@@ -91,7 +91,11 @@
       "transaction_id",
       "account",
       "type"
-    ]
+    ],
+    "contract_data": ["last_modified_ledger"],
+    "contract_code": ["last_modified_ledger"],
+    "config_settings": ["last_modified_ledger"],
+    "expiration": ["last_modified_ledger"]
   },
   "dbt_auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   "dbt_auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -112,7 +116,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:0643adc",
+  "dbt_image_name": "stellar/stellar-dbt:011d897",
   "dbt_job_execution_timeout_seconds": 6000,
   "dbt_job_retries": 1,
   "dbt_keyfile_profile": "",
@@ -126,7 +130,7 @@
   "dbt_token_uri": "https://oauth2.googleapis.com/token",
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:6211230",
+  "image_name": "stellar/stellar-etl:e9c803c",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -153,7 +157,12 @@
     "signers": "account_signers.txt",
     "trades": "trades.txt",
     "transactions": "transactions.txt",
-    "trustlines": "trustlines.txt"
+    "trustlines": "trustlines.txt",
+    "contract_data": "contract_data.txt",
+    "contract_code": "contract_code.txt",
+    "config_settings": "config_settings.txt",
+    "expiration": "expiration.txt",
+    "diagnostic_events": "diagnostic_events.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
   "owner": "SDF",
@@ -213,6 +222,22 @@
     "trust_lines": {
       "type": "MONTH",
       "field": "batch_run_date"
+    },
+    "contract_data": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "contract_code": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "config_settings": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "expiration": {
+      "field": "batch_run_date",
+      "type": "MONTH"
     }
   },
   "public_dataset": "crypto_stellar_2",
@@ -258,7 +283,12 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "enriched_history_operations": "enriched_history_operations"
+    "enriched_history_operations": "enriched_history_operations",
+    "contract_data": "contract_data",
+    "contract_code": "contract_code",
+    "config_settings": "config_settings",
+    "expiration": "expiration",
+    "diagnostic_events": "diagnostic_events"
   },
   "task_timeout": {
     "build_batch_stats": 180,
@@ -289,6 +319,7 @@
     }
   },
   "partners_bucket": "ext-partner-sftp",
+  "use_futurenet": "False",
   "currency_ohlc": {
     "currency": "euro_ohlc",
     "table_name": "euro_usd_ohlc",

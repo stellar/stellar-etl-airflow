@@ -1,0 +1,42 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "contract_code_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "contract_code_ext_v",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_modified_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_entry_change",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "deleted",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  }
+]

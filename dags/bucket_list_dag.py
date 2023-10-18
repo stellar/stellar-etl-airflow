@@ -44,6 +44,7 @@ internal_dataset = Variable.get("bq_dataset")
 public_project = Variable.get("public_project")
 public_dataset = Variable.get("public_dataset")
 use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -61,6 +62,7 @@ export_acc_task = build_export_task(
     "export_accounts",
     file_names["accounts"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 export_bal_task = build_export_task(
@@ -69,6 +71,7 @@ export_bal_task = build_export_task(
     "export_claimable_balances",
     file_names["claimable_balances"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 export_off_task = build_export_task(
@@ -77,6 +80,7 @@ export_off_task = build_export_task(
     "export_offers",
     file_names["offers"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 export_pool_task = build_export_task(
@@ -85,6 +89,7 @@ export_pool_task = build_export_task(
     "export_pools",
     file_names["liquidity_pools"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 export_sign_task = build_export_task(
@@ -93,6 +98,7 @@ export_sign_task = build_export_task(
     "export_signers",
     file_names["signers"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 export_trust_task = build_export_task(
@@ -101,6 +107,7 @@ export_trust_task = build_export_task(
     "export_trustlines",
     file_names["trustlines"],
     use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
     use_gcs=True,
 )
 
