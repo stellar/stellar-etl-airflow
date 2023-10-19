@@ -88,9 +88,8 @@ jobs:
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
-      - name: Setup gcloud
-        run: >
-          gcloud components install gke-gcloud-auth-plugin
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
 
       - name: Upload files to dev GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
