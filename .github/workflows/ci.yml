@@ -82,6 +82,8 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install google-cloud-storage==2.1.0
+          apt-get install kubectl
+          apt-get install google-cloud-sdk
 
       - name: Authenticate to test-hubble GCP
         uses: google-github-actions/auth@v1
