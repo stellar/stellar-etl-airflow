@@ -97,6 +97,12 @@ jobs:
           GOOGLE_CLOUD_PROJECT: test-hubble-319619
           BUCKET: us-central1-hubble-1pt5-dev-7db0e004-bucket
 
+      - name: get GKE credentials
+        uses: "google-github-actions/get-gke-credentials@v1"
+        with:
+          cluster_name: "us-central1-hubble-1pt5-dev-7db0e004-gke"
+          location: $LOCATION
+
       - name: Update Airflow variables
         run: >
           gcloud composer environments run $COMPOSER_ENVIRONMENT
