@@ -82,13 +82,15 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install google-cloud-storage==2.1.0
-          apt-get install kubectl
-          apt-get install google-cloud-sdk
 
       - name: Authenticate to test-hubble GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
+
+      - name: Setup gcloud
+        run: >
+          gcloud components install gke-gcloud-auth-plugin
 
       - name: Upload files to dev GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
