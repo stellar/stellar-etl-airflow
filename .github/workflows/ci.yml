@@ -101,7 +101,7 @@ jobs:
         uses: "google-github-actions/get-gke-credentials@v1"
         with:
           cluster_name: "us-central1-hubble-1pt5-dev-7db0e004-gke"
-          location: $LOCATION
+          location: "us-central1-c"
 
       - name: Update Airflow variables
         run: >
