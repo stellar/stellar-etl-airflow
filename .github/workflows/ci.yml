@@ -88,29 +88,21 @@ jobs:
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v1"
-
       - name: Upload files to dev GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
         env:
           GOOGLE_CLOUD_PROJECT: test-hubble-319619
           BUCKET: us-central1-hubble-1pt5-dev-7db0e004-bucket
 
-      - name: get GKE credentials
-        uses: "google-github-actions/get-gke-credentials@v1"
-        with:
-          cluster_name: "us-central1-hubble-1pt5-dev-7db0e004-gke"
-          location: "us-central1-c"
-
       - name: Update Airflow variables
-        run: >
-          gcloud composer environments run $COMPOSER_ENVIRONMENT
-          --location $LOCATION
-          variables import -- gcsfuse/variables.json
+        uses: actions-hub/gcloud@master
         env:
+          PROJECT_ID: test-hubble-319619
+          APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
           COMPOSER_ENVIRONMENT: hubble-1pt5-dev
           LOCATION: us-central1
+        with:
+          args: composer environments run $COMPOSER_ENVIRONMENT --location $LOCATION  variables import -- gcsfuse/variables.json
 
   promote-to-prod:
     runs-on: ubuntu-latest
