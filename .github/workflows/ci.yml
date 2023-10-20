@@ -94,16 +94,6 @@ jobs:
           GOOGLE_CLOUD_PROJECT: test-hubble-319619
           BUCKET: us-central1-hubble-1pt5-dev-7db0e004-bucket
 
-      - name: Install Kubectl
-        uses: actions-hub/gcloud@master
-        env:
-          PROJECT_ID: test-hubble-319619
-          APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: hubble-1pt5-dev
-          LOCATION: us-central1
-        with:
-          args: components install kubectl
-
       - name: Update Airflow variables
         uses: actions-hub/gcloud@master
         env:
@@ -112,7 +102,7 @@ jobs:
           COMPOSER_ENVIRONMENT: hubble-1pt5-dev
           LOCATION: us-central1
         with:
-          args: composer environments run $COMPOSER_ENVIRONMENT --location $LOCATION  variables import -- gcsfuse/variables.json
+          args: components install kubectl && gcloud composer environments run $COMPOSER_ENVIRONMENT --location $LOCATION  variables import -- gcsfuse/variables.json
 
   promote-to-prod:
     runs-on: ubuntu-latest
