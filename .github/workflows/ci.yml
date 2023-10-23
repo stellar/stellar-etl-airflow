@@ -103,8 +103,8 @@ jobs:
           LOCATION: us-central1
         with:
           args: >
-            components install kubectl && gcloud composer environments run \
-            $COMPOSER_ENVIRONMENT --location $LOCATION variables import \
+            components install kubectl && gcloud composer environments run
+            $COMPOSER_ENVIRONMENT --location $LOCATION variables import
             -- gcsfuse/variables.json
 
   promote-to-prod:
