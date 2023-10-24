@@ -3,7 +3,6 @@ The history_archive_export DAG exports ledger_transactions from the history arch
 It is scheduled to export information to BigQuery at regular intervals.
 """
 import ast
-import datetime
 import json
 
 from airflow import DAG
@@ -20,8 +19,7 @@ init_sentry()
 dag = DAG(
     "history_ledger_transaction_with_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 9, 20, 15, 0),
-    catchup=True,
+    catchup=False,
     description="This DAG exports ledger transaction from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
     schedule_interval="*/30 * * * *",
     params={
