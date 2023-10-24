@@ -3,6 +3,7 @@ The history_archive_export DAG exports ledger_transactions from the history arch
 It is scheduled to export information to BigQuery at regular intervals.
 """
 import ast
+import datetime
 import json
 
 from airflow import DAG
