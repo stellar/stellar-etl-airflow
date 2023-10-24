@@ -19,7 +19,8 @@ init_sentry()
 dag = DAG(
     "history_ledger_transaction_with_captive_core",
     default_args=get_default_dag_args(),
-    catchup=False,
+    catchup=True,
+    start_date=datetime.datetime(2023, 9, 20, 15, 0),
     description="This DAG exports ledger transaction from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
     schedule_interval="*/30 * * * *",
     params={
