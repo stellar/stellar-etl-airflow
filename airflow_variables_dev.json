@@ -140,7 +140,7 @@
     "config_settings": "config_settings.txt",
     "expiration": "expiration.txt",
     "diagnostic_events": "diagnostic_events.txt",
-    "ledger_transactions": "ledger_transactions.txt"
+    "ledger_transaction": "ledger_transaction.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
   "owner": "SDF",
@@ -278,7 +278,7 @@
     "config_settings": "config_settings",
     "expiration": "expiration",
     "diagnostic_events": "diagnostic_events",
-    "ledger_transactions": "ledger_transactions"
+    "ledger_transaction": "ledger_transaction"
   },
   "task_timeout": {
     "build_batch_stats": 180,

@@ -55,7 +55,7 @@ start and end ledgers so that reconciliation and data validation are easier. The
 record is written to an internal dataset for data eng use only.
 """
 
-write_lt_stats = build_batch_stats(dag, table_names["ledger_transactions"])
+write_lt_stats = build_batch_stats(dag, table_names["ledger_transaction"])
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -71,8 +71,8 @@ starts prematurely and will not load data.
 lt_export_task = build_export_task(
     dag,
     "archive",
-    "export_ledger_transactions",
-    file_names["ledger_transactions"],
+    "export_ledger_transaction",
+    file_names["ledger_transaction"],
     use_testnet=use_testnet,
     use_gcs=True,
     resource_cfg="cc",
