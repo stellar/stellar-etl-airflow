@@ -26,7 +26,9 @@ def _create_files_list(env: str) -> Tuple[str, List[str]]:
     # copy airflow configuration file
     copy(f"airflow-{env}.cfg", f"{temp_dir}/airflow.cfg")
     copy(f"airflow-{env}.cfg", f"airflow.cfg")
-
+    # copy airflow variables json
+    copy(f"airflow_variables_{env}.json", f"{temp_dir}/variables.json")
+    copy(f"airflow_variables_{env}.json", f"variables.json")
     dags = glob(f"{temp_dir}/**/*.*", recursive=True)
     return (temp_dir, dags)
 
@@ -53,7 +55,11 @@ def upload_dags_to_composer(bucket_name: str, env: str) -> None:
 
         for f in files:
             # remove path to temp dir
-            if f.endswith(".json"):
+            if f.endswith(f"variables.json"):
+                # insert airflow variable file
+                f = f.replace(f"{temp_dir}/", "")
+                blob = bucket.blob(f)
+            elif f.endswith(".json"):
                 # create schemas directory
                 f = f.replace(f"{temp_dir}/", "schemas/")
                 schema_destination = "dags/" + f
