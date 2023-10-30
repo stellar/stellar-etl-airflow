@@ -11,7 +11,7 @@ from airflow.models.variable import Variable
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_export_task import build_export_task
-from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
+from stellar_etl_airflow.build_export_to_lake_task import export_to_lake
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
@@ -79,4 +79,10 @@ lt_export_task = build_export_task(
 )
 
 
-(time_task >> write_lt_stats >> lt_export_task)
+lt_lake_export_task = export_to_lake(
+    dag,
+    lt_export_task.task_id,
+)
+
+
+(time_task >> write_lt_stats >> lt_export_task >> lt_lake_export_task)
