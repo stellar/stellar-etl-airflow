@@ -12,10 +12,14 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime.datetime(2015, 9, 30),
     description="This DAG runs dbt to create the tables for the models in marts/ but not any marts subdirectories.",
-    schedule_interval="0 11 * * *",  # Daily 11 AM UTC
+    schedule_interval="0 17 * * *",  # Daily 11 AM UTC
     params={},
     catchup=True,
     max_active_runs=1,
+)
+
+wait_on_partnership_assets_dag = build_cross_deps(
+    dag, "wait_on_partnership_assets_pipeline", "partnership_assets_dag", time_delta=10
 )
 
 # tasks for staging tables for marts
@@ -48,7 +52,7 @@ liquidity_providers = build_dbt_task(dag, "liquidity_providers")
 network_stats_agg
 liquidity_providers
 
-int_meaningful_asset_prices >> int_asset_stats_agg
+wait_on_partnership_assets_dag >> int_meaningful_asset_prices >> int_asset_stats_agg
 stg_excluded_accounts >> int_asset_stats_agg
 stg_xlm_to_usd >> int_asset_stats_agg
 int_asset_stats_agg >> asset_stats_agg
