@@ -2,6 +2,7 @@ import datetime
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
