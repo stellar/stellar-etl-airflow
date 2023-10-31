@@ -12,6 +12,11 @@ from stellar_etl_airflow.default import alert_after_max_retries
 def export_to_lake(dag, export_task_id):
     bucket_source = Variable.get("gcs_exported_data_bucket_name")
     bucket_destination = Variable.get("ledger_transaction_data_lake_bucket_name")
+    destination_data = [
+        "{{ task_instance.xcom_pull(task_ids='"
+        + export_task_id
+        + '\')["output"][13:] }}'
+    ]
     return GCSToGCSOperator(
         dag=dag,
         task_id="export_data_to_lake",
@@ -22,10 +27,6 @@ def export_to_lake(dag, export_task_id):
             + '\')["output"] }}'
         ],
         destination_bucket=bucket_destination,
-        destination_object=[
-            "{{ task_instance.xcom_pull(task_ids='"
-            + export_task_id
-            + '\')["output"][13:] }}'
-        ],
+        destination_object=destination_data[0],
         exact_match=True,
     )
