@@ -84,5 +84,4 @@ lt_lake_export_task = export_to_lake(
     lt_export_task.task_id,
 )
 
-
 (time_task >> write_lt_stats >> lt_export_task >> lt_lake_export_task)

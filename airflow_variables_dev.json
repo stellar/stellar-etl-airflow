@@ -309,5 +309,6 @@
     "columns_ohlc_currency": ["time", "open", "high", "low", "close"]
   },
   "currency_bucket": "currencies_ohlc",
-  "public_dbt_image_name": "stellar/stellar-dbt:671afb6"
+  "public_dbt_image_name": "stellar/stellar-dbt:671afb6",
+  "ledger_transaction_data_lake_bucket_name": "ledger_transaction_data_lake"
 }
