@@ -193,5 +193,10 @@
     "mode": "NULLABLE",
     "name": "partnr_rec_displ_name",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "cancellation_reas",
+    "type": "STRING"
   }
 ]
