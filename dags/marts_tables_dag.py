@@ -20,7 +20,7 @@ dag = DAG(
 )
 
 wait_on_partnership_assets_dag = build_cross_deps(
-    dag, "wait_on_partnership_assets_pipeline", "partnership_assets_dag", time_delta=10
+    dag, "wait_on_partnership_assets_pipeline", "partnership_assets", time_delta=10
 )
 
 # tasks for staging tables for marts
