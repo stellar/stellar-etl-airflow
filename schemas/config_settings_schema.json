@@ -282,5 +282,10 @@
     "mode": "NULLABLE",
     "name": "closed_at",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
   }
 ]
