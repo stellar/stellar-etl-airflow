@@ -91,7 +91,6 @@ lt_bq_task = build_data_lake_to_bq_task(
     internal_project,
     internal_dataset,
     "ledger_transaction",
-    "",
 )
 
 (time_task >> write_lt_stats >> lt_export_task >> lt_lake_export_task >> lt_bq_task)
