@@ -27,6 +27,8 @@ def export_to_lake(dag, export_task_id):
             + '\')["output"] }}'
         ],
         destination_bucket=bucket_destination,
+        do_xcom_push=True,
         destination_object=destination_data[0],
         exact_match=True,
+        on_failure_callback=alert_after_max_retries,
     )
