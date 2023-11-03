@@ -1,0 +1,37 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_envelope",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_result",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_meta",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_fee_meta",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_ledger_history",
+    "type": "string"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "closed_at",
+    "type": "TIMESTAMP"
+  }
+]
