@@ -52,6 +52,7 @@ select
     , new_load_dedup.batch_id
     , new_load_dedup.batch_run_date
     , new_load_dedup.batch_insert_ts
+    , new_load_dedup.asset_id
 from exclude_duplicates
 left join
     new_load_dedup on
