@@ -11,9 +11,7 @@ from stellar_etl_airflow.default import alert_after_max_retries, init_sentry
 init_sentry()
 
 
-def build_data_lake_to_bq_task(
-    dag, export_task_id, project, dataset, data_type, ledger_range
-):
+def build_data_lake_to_bq_task(dag, project, dataset, data_type, ledger_range):
     source_objects = []
     for ledger in range(ledger_range["start"], ledger_range["end"]):
         source_objects.append(f"{ledger}.txt")
@@ -25,11 +23,6 @@ def build_data_lake_to_bq_task(
         "require_partition_filter": True,
     }
     schema_fields = read_local_schema(f"history_{data_type}")
-    destination_data = [
-        "{{ task_instance.xcom_pull(task_ids='"
-        + export_task_id
-        + '\')["output"][13:] }}'
-    ]
     return GoogleCloudStorageToBigQueryOperator(
         task_id="load_data_to_bq",
         bucket=bucket_name,

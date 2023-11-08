@@ -80,13 +80,12 @@ lt_export_task = build_export_task(
 )
 
 ledger_range = "{{ task_instance.xcom_pull(task_ids='time_task.task_id') }}"
-ledger_range = json.loads(ledger_range)
+ledger_range = json.load(ledger_range)
 for ledger in range(ledger_range["start"], ledger_range["end"]):
     lt_lake_export_task = export_to_lake(dag, lt_export_task.task_id, ledger)
 
 lt_bq_task = build_data_lake_to_bq_task(
     dag,
-    lt_export_task.task_id,
     internal_project,
     internal_dataset,
     "ledger_transaction",
