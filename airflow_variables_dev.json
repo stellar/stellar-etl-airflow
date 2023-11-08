@@ -310,5 +310,6 @@
   },
   "currency_bucket": "currencies_ohlc",
   "public_dbt_image_name": "stellar/stellar-dbt:671afb6",
-  "ledger_transaction_data_lake_bucket_name": "ledger_transaction_data_lake"
+  "ledger_transaction_data_lake_bucket_name": "ledger_transaction_data_lake",
+  "max_db_entry_age_in_days": 90
 }
