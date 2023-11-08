@@ -32,11 +32,6 @@ def transform_ledger_sequence(ledger_range):
 def export_to_lake(dag, export_task_id, ledger_sequence):
     bucket_source = Variable.get("gcs_exported_data_bucket_name")
     bucket_destination = Variable.get("ledger_transaction_data_lake_bucket_name")
-    destination_data = [
-        "{{ task_instance.xcom_pull(task_ids='"
-        + export_task_id
-        + '\')["output"][13:] }}'
-    ]
 
     return GCSFileTransformOperator(
         task_id="export_data_to_lake",
