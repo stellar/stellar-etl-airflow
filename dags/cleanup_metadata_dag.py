@@ -43,7 +43,7 @@ DEFAULT_MAX_DB_ENTRY_AGE_IN_DAYS = int(Variable.get("max_db_entry_age_in_days", 
 PRINT_DELETES = False
 # Whether the job should delete the db entries or not. Included if you want to
 # temporarily avoid deleting the db entries.
-ENABLE_DELETE = False
+ENABLE_DELETE = True
 # List of all the objects that will be deleted. Comment out the DB objects you
 # want to skip.
 DATABASE_OBJECTS = [
