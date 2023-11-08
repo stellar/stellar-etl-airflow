@@ -79,11 +79,9 @@ lt_export_task = build_export_task(
     resource_cfg="cc",
 )
 
-ledger_range = (
-    "{{ task_instance.xcom_pull(key='return_value', task_ids='time_task.task_id', ) }}"
-)
-ledger_range = ast.literal_eval(str(ledger_range))
-for ledger in range(ledger_range["start"], ledger_range["end"]):
+start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
+end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"] }}'
+for ledger in range(start_ledger, end_ledger):
     lt_lake_export_task = export_to_lake(dag, lt_export_task.task_id, ledger)
 
 lt_bq_task = build_data_lake_to_bq_task(
@@ -91,7 +89,8 @@ lt_bq_task = build_data_lake_to_bq_task(
     internal_project,
     internal_dataset,
     "ledger_transaction",
-    ledger_range,
+    start_ledger,
+    end_ledger,
 )
 
 (time_task >> write_lt_stats >> lt_export_task >> lt_lake_export_task >> lt_bq_task)

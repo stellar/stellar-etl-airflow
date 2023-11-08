@@ -11,9 +11,11 @@ from stellar_etl_airflow.default import alert_after_max_retries, init_sentry
 init_sentry()
 
 
-def build_data_lake_to_bq_task(dag, project, dataset, data_type, ledger_range):
+def build_data_lake_to_bq_task(
+    dag, project, dataset, data_type, start_ledger, end_ledger
+):
     source_objects = []
-    for ledger in range(ledger_range["start"], ledger_range["end"]):
+    for ledger in range(start_ledger, end_ledger):
         source_objects.append(f"{ledger}.txt")
     bucket_name = Variable.get("ledger_transaction_data_lake_bucket_name")
     time_partition = {
