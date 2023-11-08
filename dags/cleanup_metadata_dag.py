@@ -25,7 +25,11 @@ from airflow.version import version as airflow_version
 from sqlalchemy import and_, func, text
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import load_only
-from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+from stellar_etl_airflow.default import (
+    alert_after_max_retries,
+    get_default_dag_args,
+    init_sentry,
+)
 
 init_sentry()
 
@@ -435,13 +439,18 @@ def analyze_db():
 
 
 analyze_op = PythonOperator(
-    task_id="analyze_query", python_callable=analyze_db, provide_context=True, dag=dag
+    task_id="analyze_query",
+    python_callable=analyze_db,
+    provide_context=True,
+    on_failure_callback=alert_after_max_retries,
+    dag=dag,
 )
 
 cleanup_session_op = PythonOperator(
     task_id="cleanup_sessions",
     python_callable=cleanup_sessions,
     provide_context=True,
+    on_failure_callback=alert_after_max_retries,
     dag=dag,
 )
 
@@ -453,6 +462,7 @@ for db_object in DATABASE_OBJECTS:
         python_callable=cleanup_function,
         params=db_object,
         provide_context=True,
+        on_failure_callback=alert_after_max_retries,
         dag=dag,
     )
 
