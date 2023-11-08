@@ -80,7 +80,7 @@ lt_export_task = build_export_task(
 )
 
 ledger_range = "{{ task_instance.xcom_pull(task_ids='time_task.task_id') }}"
-ledger_range = ast.literal_eval(ledger_range)
+ledger_range = ast.literal_eval(str(ledger_range))
 for ledger in range(ledger_range["start"], ledger_range["end"]):
     lt_lake_export_task = export_to_lake(dag, lt_export_task.task_id, ledger)
 
