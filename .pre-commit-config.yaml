@@ -44,7 +44,7 @@ repos:
         args: ["--profile=black", "--magic-placement"]
 
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 2.3.5
+    rev: 2.0.3
     hooks:
       - id: sqlfluff-lint
       - id: sqlfluff-fix
