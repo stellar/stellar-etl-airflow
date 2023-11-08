@@ -327,5 +327,6 @@
     "columns_ohlc_currency": ["time", "open", "high", "low", "close"]
   },
   "currency_bucket": "ext-asset-pricing",
+  "max_db_entry_age_in_days": 180,
   "public_dbt_image_name": "stellar/stellar-dbt:671afb6"
 }
