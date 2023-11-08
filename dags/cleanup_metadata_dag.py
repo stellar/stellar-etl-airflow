@@ -6,7 +6,9 @@ having too much data in your Airflow MetaStore.
 import logging
 from datetime import timedelta
 
+import airflow
 import dateutil.parser
+from airflow import settings
 from airflow.models import (
     DAG,
     DagModel,
@@ -24,9 +26,6 @@ from sqlalchemy import and_, func, text
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import load_only
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
-
-import airflow
-from airflow import settings
 
 init_sentry()
 
