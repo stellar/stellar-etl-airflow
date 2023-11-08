@@ -3,12 +3,10 @@ A maintenance workflow that you can deploy into Airflow to periodically clean
 out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
 having too much data in your Airflow MetaStore.
 """
-from datetime import timedelta
 import logging
-import os
+from datetime import timedelta
 
-import airflow
-from airflow import settings
+import dateutil.parser
 from airflow.models import (
     DAG,
     DagModel,
@@ -22,13 +20,13 @@ from airflow.models import (
 from airflow.operators.python import PythonOperator
 from airflow.utils import timezone
 from airflow.version import version as airflow_version
-
-import dateutil.parser
 from sqlalchemy import and_, func, text
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import load_only
-
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+
+import airflow
+from airflow import settings
 
 init_sentry()
 
@@ -40,9 +38,7 @@ START_DATE = airflow.utils.dates.days_ago(1)
 AIRFLOW_VERSION = airflow_version[: -len("+composer")].split(".")
 # Length to retain the log files if not already provided in the conf. If this
 # is set to 30, the job will remove those files that arE 30 days old or older.
-DEFAULT_MAX_DB_ENTRY_AGE_IN_DAYS = int(
-    Variable.get("max_db_entry_age_in_days", 30)
-)
+DEFAULT_MAX_DB_ENTRY_AGE_IN_DAYS = int(Variable.get("max_db_entry_age_in_days", 30))
 # Prints the database entries which will be getting deleted; set to False
 # to avoid printing large lists and slowdown process
 PRINT_DELETES = False
