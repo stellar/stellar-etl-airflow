@@ -106,7 +106,6 @@
     "expiration_current": true,
     "soroban__contract_metrics_agg": true,
     "soroban__top_contract_activity_agg": true
-
   },
   "dbt_image_name": "chowbao/stellar-dbt:soroban",
   "dbt_job_execution_timeout_seconds": 300,
