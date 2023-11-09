@@ -1,22 +1,6 @@
 {
   "affinity": {
-    "default": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [
-            {
-              "matchExpressions": [
-                {
-                  "key": "cloud.google.com/gke-nodepool",
-                  "operator": "In",
-                  "values": ["default-pool"]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
+    "default": {},
     "backfill": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
