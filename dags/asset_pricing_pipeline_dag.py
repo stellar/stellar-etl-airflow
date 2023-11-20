@@ -32,14 +32,12 @@ stg_asset_prices_usd = build_dbt_task(dag, "stg_asset_prices_usd")
 # tasks for ohlc intermediate tables
 int_stable_coin_prices = build_dbt_task(dag, "int_stable_coin_prices")
 int_usdc_trades = build_dbt_task(dag, "int_usdc_trades")
-int_usds_trades = build_dbt_task(dag, "int_usds_trades")
 int_xlm_trades = build_dbt_task(dag, "int_xlm_trades")
 
 # tasks for final fact
 ohlc_exchange_fact = build_dbt_task(dag, "ohlc_exchange_fact")
 
 # DAG task graph
-stg_history_trades >> int_usdc_trades >> ohlc_exchange_fact
-stg_history_trades >> int_usds_trades >> ohlc_exchange_fact
+stg_history_trades >> stg_asset_prices_usd >> int_usdc_trades >> ohlc_exchange_fact
 stg_history_trades >> int_xlm_trades >> ohlc_exchange_fact
 int_xlm_trades >> int_stable_coin_prices >> ohlc_exchange_fact
