@@ -26,6 +26,10 @@ stg_contract_data = build_dbt_task(dag, "stg_contract_data")
 stg_expiration = build_dbt_task(dag, "stg_expiration")
 
 # tasks for intermediate soroban aggregate tables
+int_soroban__enriched_history_operations_year = build_dbt_task(
+    dag, "int_soroban__enriched_history_operations_year"
+)
+
 int_soroban__contract_metrics_day = build_dbt_task(
     dag, "int_soroban__contract_metrics_day"
 )
@@ -69,12 +73,44 @@ stg_contract_data >> contract_assets_fact
 contract_type_fact
 stg_expiration >> expiration_current
 
-int_soroban__contract_metrics_day >> soroban__contract_metrics_agg
-int_soroban__contract_metrics_day >> soroban__contract_metrics_agg
-int_soroban__contract_metrics_day >> soroban__contract_metrics_agg
-int_soroban__contract_metrics_day >> soroban__contract_metrics_agg
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__contract_metrics_day
+    >> soroban__contract_metrics_agg
+)
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__contract_metrics_day
+    >> soroban__contract_metrics_agg
+)
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__contract_metrics_day
+    >> soroban__contract_metrics_agg
+)
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__contract_metrics_day
+    >> soroban__contract_metrics_agg
+)
 
-int_soroban__top_contract_activity_day >> soroban__top_contract_activity_agg
-int_soroban__top_contract_activity_week >> soroban__top_contract_activity_agg
-int_soroban__top_contract_activity_month >> soroban__top_contract_activity_agg
-int_soroban__top_contract_activity_year >> soroban__top_contract_activity_agg
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__top_contract_activity_day
+    >> soroban__top_contract_activity_agg
+)
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__top_contract_activity_week
+    >> soroban__top_contract_activity_agg
+)
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__top_contract_activity_month
+    >> soroban__top_contract_activity_agg
+)
+(
+    int_soroban__enriched_history_operations_year
+    >> int_soroban__top_contract_activity_year
+    >> soroban__top_contract_activity_agg
+)
