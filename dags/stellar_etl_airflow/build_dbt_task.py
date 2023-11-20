@@ -57,7 +57,6 @@ stellar_dbt:
         auth_provider_x509_cert_url: "{dbt_auth_provider_x509_cert_url}"
         client_x509_cert_url: "{dbt_client_x509_cert_url}"
 elementary:
-  target: {dbt_target}
   outputs:
     default:
       dataset: elementary
