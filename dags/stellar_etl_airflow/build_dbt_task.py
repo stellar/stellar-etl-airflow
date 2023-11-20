@@ -118,10 +118,10 @@ def build_dbt_task(
             [
                 create_dbt_profile_cmd,
                 execution_date,
-                "dbt ",
+                "dbt",
                 "--no-use-colors",
                 command_type,
-                " --select",
+                "--select",
                 model_name,
                 dbt_full_refresh,
             ]
