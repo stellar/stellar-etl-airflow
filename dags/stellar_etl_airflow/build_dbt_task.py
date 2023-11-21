@@ -123,6 +123,7 @@ def build_dbt_task(
                 command_type,
                 "--select",
                 model_name,
+                "elementary",
                 dbt_full_refresh,
             ]
         )
