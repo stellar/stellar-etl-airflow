@@ -56,6 +56,29 @@ stellar_dbt:
         token_uri: "{dbt_token_uri}"
         auth_provider_x509_cert_url: "{dbt_auth_provider_x509_cert_url}"
         client_x509_cert_url: "{dbt_client_x509_cert_url}"
+elementary:
+  outputs:
+    default:
+      dataset: elementary
+      maximum_bytes_billed: {dbt_maximum_bytes_billed}
+      job_execution_timeout_seconds: {dbt_job_execution_timeout_seconds}
+      job_retries: {dbt_job_retries}
+      location: us
+      method: service-account-json
+      project: "{dbt_project}"
+      threads: {dbt_threads}
+      type: bigquery
+      keyfile_json:
+        type: "service_account"
+        project_id: "{dbt_project}"
+        private_key_id: "{dbt_private_key_id}"
+        private_key: "{dbt_private_key}"
+        client_email: "{dbt_client_email}"
+        client_id: "{dbt_client_id}"
+        auth_uri: "{dbt_auth_uri}"
+        token_uri: "{dbt_token_uri}"
+        auth_provider_x509_cert_url: "{dbt_auth_provider_x509_cert_url}"
+        client_x509_cert_url: "{dbt_client_x509_cert_url}"
 """
 
     create_dbt_profile_cmd = f"echo '{profiles_yml}' > profiles.yml;"
@@ -95,10 +118,12 @@ def build_dbt_task(
             [
                 create_dbt_profile_cmd,
                 execution_date,
-                "dbt ",
+                "dbt",
+                "--no-use-colors",
                 command_type,
-                " --select",
+                "--select",
                 model_name,
+                "elementary",
                 dbt_full_refresh,
             ]
         )
