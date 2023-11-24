@@ -9,13 +9,13 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.sensors.gcs import (
     GCSObjectsWithPrefixExistenceSensor,
 )
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
     GCSToBigQueryOperator,
 )
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
@@ -47,7 +47,6 @@ with DAG(
                 SET update_timestamp = CURRENT_TIMESTAMP()
                 WHERE update_timestamp IS NULL
             """
-
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:
@@ -95,4 +94,9 @@ with DAG(
                 }
             },
         )
-        start_tables_task >> check_gcs_file >> send_partner_to_bq_internal_task >> insert_ts_field
+        (
+            start_tables_task
+            >> check_gcs_file
+            >> send_partner_to_bq_internal_task
+            >> insert_ts_field
+        )
