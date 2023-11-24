@@ -198,5 +198,10 @@
     "mode": "NULLABLE",
     "name": "cancellation_reas",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "timestamp",
+    "type": "TIMESTAMP"
   }
 ]
