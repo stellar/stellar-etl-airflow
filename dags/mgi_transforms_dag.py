@@ -39,6 +39,9 @@ fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
 # tasks for dim wallets
 dim_mgi_wallets = build_dbt_task(dag, "dim_mgi_wallets")
 
+# task for dim dates
+dim_dates = build_dbt_task(dag, "dim_dates")
+
 # tasks for network stats
 enriched_history_mgi_operations = build_dbt_task(dag, "enriched_history_mgi_operations")
 mgi_network_stats_agg = build_dbt_task(dag, "mgi_network_stats_agg")
@@ -52,6 +55,7 @@ wait_on__mgi_dag >> snapshot_raw_mgi_stellar_transactions
     >> stg_country_code
     >> int_mgi_transactions_transformed
     >> int_mgi_transactions_null_id
+    >> dim_dates
     >> fct_mgi_cashflow
 )
 (
