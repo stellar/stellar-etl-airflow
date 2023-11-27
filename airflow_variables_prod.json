@@ -119,7 +119,7 @@
   "dbt_project": "hubble-261722",
   "dbt_target": "prod",
   "dbt_threads": 1,
-  "gcs_exported_data_abucket_name": "us-central1-hubble-2-d948d67b-bucket",
+  "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:08fd8de",
   "image_output_path": "/etl/exported_data/",
