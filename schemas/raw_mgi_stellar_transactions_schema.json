@@ -201,7 +201,8 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "timestamp",
-    "type": "TIMESTAMP"
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP",
+    "default_value_expression": "CURRENT_TIMESTAMP()"
   }
 ]
