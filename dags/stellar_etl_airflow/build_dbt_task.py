@@ -19,14 +19,6 @@ def create_dbt_profile(project="prod"):
     dbt_job_retries = Variable.get("dbt_job_retries")
     dbt_project = Variable.get("dbt_project")
     dbt_threads = Variable.get("dbt_threads")
-    dbt_private_key_id = Variable.get("dbt_private_key_id")
-    dbt_private_key = Variable.get("dbt_private_key")
-    dbt_client_email = Variable.get("dbt_client_email")
-    dbt_client_id = Variable.get("dbt_client_id")
-    dbt_auth_uri = Variable.get("dbt_auth_uri")
-    dbt_token_uri = Variable.get("dbt_token_uri")
-    dbt_auth_provider_x509_cert_url = Variable.get("dbt_auth_provider_x509_cert_url")
-    dbt_client_x509_cert_url = Variable.get("dbt_client_x509_cert_url")
     if project == "pub":
         dbt_project = Variable.get("public_project")
         dbt_dataset = Variable.get("public_dataset")
@@ -41,21 +33,10 @@ stellar_dbt:
       job_execution_timeout_seconds: {dbt_job_execution_timeout_seconds}
       job_retries: {dbt_job_retries}
       location: us
-      method: service-account-json
+      method: oauth
       project: "{dbt_project}"
       threads: {dbt_threads}
       type: bigquery
-      keyfile_json:
-        type: "service_account"
-        project_id: "{dbt_project}"
-        private_key_id: "{dbt_private_key_id}"
-        private_key: "{dbt_private_key}"
-        client_email: "{dbt_client_email}"
-        client_id: "{dbt_client_id}"
-        auth_uri: "{dbt_auth_uri}"
-        token_uri: "{dbt_token_uri}"
-        auth_provider_x509_cert_url: "{dbt_auth_provider_x509_cert_url}"
-        client_x509_cert_url: "{dbt_client_x509_cert_url}"
 elementary:
   outputs:
     default:
@@ -64,21 +45,10 @@ elementary:
       job_execution_timeout_seconds: {dbt_job_execution_timeout_seconds}
       job_retries: {dbt_job_retries}
       location: us
-      method: service-account-json
+      method: oauth
       project: "{dbt_project}"
       threads: {dbt_threads}
       type: bigquery
-      keyfile_json:
-        type: "service_account"
-        project_id: "{dbt_project}"
-        private_key_id: "{dbt_private_key_id}"
-        private_key: "{dbt_private_key}"
-        client_email: "{dbt_client_email}"
-        client_id: "{dbt_client_id}"
-        auth_uri: "{dbt_auth_uri}"
-        token_uri: "{dbt_token_uri}"
-        auth_provider_x509_cert_url: "{dbt_auth_provider_x509_cert_url}"
-        client_x509_cert_url: "{dbt_client_x509_cert_url}"
 """
 
     create_dbt_profile_cmd = f"echo '{profiles_yml}' > profiles.yml;"
