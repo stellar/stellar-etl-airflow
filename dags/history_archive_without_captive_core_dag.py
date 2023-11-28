@@ -2,9 +2,9 @@
 The history_archive_export DAG exports ledgers and transactions from the history archives.
 It is scheduled to export information to BigQuery at regular intervals.
 """
-import ast
-import datetime
-import json
+from ast import literal_eval
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models import Variable
@@ -30,8 +30,8 @@ dag = DAG(
         "alias": "archive",
     },
     user_defined_filters={
-        "fromjson": lambda s: json.loads(s),
-        "literal_eval": lambda e: ast.literal_eval(e),
+        "fromjson": lambda s: loads(s),
+        "literal_eval": lambda e: literal_eval(e),
     },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,

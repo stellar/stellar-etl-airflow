@@ -1,10 +1,4 @@
-"""
-The partner_pipeline_dag DAG updates the partners table in Bigquey every day.
-"""
-
-import datetime
-import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.models import Variable

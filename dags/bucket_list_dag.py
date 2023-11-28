@@ -4,9 +4,9 @@ bucket list. As a result, it is faster than stellar-core. Bucket list commands r
 to stop exporting. This end ledger  is determined by when the Airflow DAG is run. This DAG should be triggered manually
 when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 """
-import ast
-import datetime
-import json
+from ast import literal_eval
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models import Variable
@@ -31,8 +31,8 @@ dag = DAG(
         "alias": "bucket",
     },
     user_defined_filters={
-        "fromjson": lambda s: json.loads(s),
-        "literal_eval": lambda e: ast.literal_eval(e),
+        "fromjson": lambda s: loads(s),
+        "literal_eval": lambda e: literal_eval(e),
     },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,

@@ -1,5 +1,5 @@
 import datetime
-import json
+from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
@@ -16,7 +16,7 @@ dag = DAG(
     description="This DAG runs dbt to calculate asset pricing based on stablecoin and XLM trades",
     schedule_interval="0 2 * * *",  # daily at 2am
     params={},
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={"fromjson": lambda s: loads(s)},
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
