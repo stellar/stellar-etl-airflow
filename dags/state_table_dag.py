@@ -40,22 +40,21 @@ dag = DAG(
     catchup=True,
 )
 
-file_names = Variable.get("output_file_names", deserialize_json=True)
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = Variable.get("bq_project")
-internal_dataset = Variable.get("bq_dataset")
-public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
-public_dataset_new = Variable.get("public_dataset_new")
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
-use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
+internal_project = "{{ var.value.bq_project }}"
+internal_dataset = "{{ var.value.bq_dataset }}"
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
+public_dataset_new = "{{ var.value.public_dataset_new }}"
+use_testnet = "{{ var.value.use_testnet | literal_eval }}"
+use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
 
 date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 changes_task = build_export_task(
     dag,
     "bounded-core",
     "export_ledger_entry_changes",
-    file_names["changes"],
+    "{{ var.json.output_file_names.changes }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,

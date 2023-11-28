@@ -23,29 +23,31 @@ init_sentry()
 dag = DAG(
     "history_archive_with_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 9, 20, 15, 0),
+    start_date=datetime(2023, 9, 20, 15, 0),
     catchup=True,
     description="This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
     schedule_interval="*/30 * * * *",
     params={
         "alias": "cc",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={
+        "fromjson": lambda s: json.loads(s),
+        "literal_eval": lambda e: ast.literal_eval(e),
+    },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
 )
 
-file_names = Variable.get("output_file_names", deserialize_json=True)
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = Variable.get("bq_project")
-internal_dataset = Variable.get("bq_dataset")
-public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
-public_dataset_new = Variable.get("public_dataset_new")
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
-use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
+internal_project = "{{ var.value.bq_project }}"
+internal_dataset = "{{ var.value.bq_dataset }}"
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
+public_dataset_new = "{{ var.value.public_dataset_new }}"
+use_testnet = "{{ var.value.use_testnet | literal_eval }}"
+use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -77,7 +79,7 @@ op_export_task = build_export_task(
     dag,
     "archive",
     "export_operations",
-    file_names["operations"],
+    "{{ var.json.output_file_names.operations }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -87,7 +89,7 @@ trade_export_task = build_export_task(
     dag,
     "archive",
     "export_trades",
-    file_names["trades"],
+    "{{ var.json.output_file_names.trades }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -107,7 +109,7 @@ tx_export_task = build_export_task(
     dag,
     "archive",
     "export_transactions",
-    file_names["transactions"],
+    "{{ var.json.output_file_names.transactions }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -117,7 +119,7 @@ diagnostic_events_export_task = build_export_task(
     dag,
     "archive",
     "export_diagnostic_events",
-    file_names["diagnostic_events"],
+    "{{ var.json.output_file_names.diagnostic_events }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,

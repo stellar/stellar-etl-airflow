@@ -22,29 +22,31 @@ init_sentry()
 dag = DAG(
     "history_archive_without_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 9, 20, 15, 0),
+    start_date=datetime(2023, 9, 20, 15, 0),
     catchup=True,
     description="This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads",
     schedule_interval="*/15 * * * *",
     params={
         "alias": "archive",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={
+        "fromjson": lambda s: json.loads(s),
+        "literal_eval": lambda e: ast.literal_eval(e),
+    },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
 )
 
-file_names = Variable.get("output_file_names", deserialize_json=True)
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = Variable.get("bq_project")
-internal_dataset = Variable.get("bq_dataset")
-public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
-public_dataset_new = Variable.get("public_dataset_new")
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
-use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
+internal_project = "{{ var.value.bq_project }}"
+internal_dataset = "{{ var.value.bq_dataset }}"
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
+public_dataset_new = "{{ var.value.public_dataset_new }}"
+use_testnet = "{{ var.value.use_testnet | literal_eval }}"
+use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -73,7 +75,7 @@ ledger_export_task = build_export_task(
     dag,
     "archive",
     "export_ledgers",
-    file_names["ledgers"],
+    "{{ var.json.output_file_names.ledgers }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -82,7 +84,7 @@ asset_export_task = build_export_task(
     dag,
     "archive",
     "export_assets",
-    file_names["assets"],
+    "{{ var.json.output_file_names.assets }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,

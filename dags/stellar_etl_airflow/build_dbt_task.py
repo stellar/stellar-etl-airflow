@@ -10,18 +10,18 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def create_dbt_profile(project="prod"):
-    dbt_target = Variable.get("dbt_target")
-    dbt_dataset = Variable.get("dbt_dataset")
-    dbt_maximum_bytes_billed = Variable.get("dbt_maximum_bytes_billed")
-    dbt_job_execution_timeout_seconds = Variable.get(
-        "dbt_job_execution_timeout_seconds"
+    dbt_target = "{{ var.value.dbt_target }}"
+    dbt_dataset = "{{ var.value.dbt_dataset }}"
+    dbt_maximum_bytes_billed = "{{ var.value.dbt_maximum_bytes_billed }}"
+    dbt_job_execution_timeout_seconds = (
+        "{{ var.value.dbt_job_execution_timeout_seconds }}"
     )
-    dbt_job_retries = Variable.get("dbt_job_retries")
-    dbt_project = Variable.get("dbt_project")
-    dbt_threads = Variable.get("dbt_threads")
+    dbt_job_retries = "{{ var.value.dbt_job_retries }}"
+    dbt_project = "{{ var.value.dbt_project }}"
+    dbt_threads = "{{ var.value.dbt_threads }}"
     if project == "pub":
-        dbt_project = Variable.get("public_project")
-        dbt_dataset = Variable.get("public_dataset")
+        dbt_project = "{{ var.value.public_project }}"
+        dbt_dataset = "{{ var.value.public_dataset }}"
 
     profiles_yml = f"""
 stellar_dbt:
@@ -72,10 +72,7 @@ def build_dbt_task(
     """
 
     dbt_full_refresh = ""
-    dbt_full_refresh_models = Variable.get(
-        "dbt_full_refresh_models", deserialize_json=True
-    )
-    if dbt_full_refresh_models.get(model_name):
+    if "{{ var.json.get('dbt_full_refresh_models.' + model_name) }}":
         dbt_full_refresh = "--full-refresh"
 
     create_dbt_profile_cmd = create_dbt_profile(project)
@@ -121,8 +118,8 @@ def build_dbt_task(
                 build_dbt_task.__name__
             ]
         ),
-        namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
+        namespace="{{ var.value.k8s_namespace }}",
+        service_account_name="{{ var.value.service_account_name }}",
         image=dbt_image,
         cmds=command,
         arguments=args,
