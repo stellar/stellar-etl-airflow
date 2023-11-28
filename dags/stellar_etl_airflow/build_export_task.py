@@ -6,6 +6,7 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import AirflowException
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
@@ -174,13 +175,14 @@ def build_export_task(
         command, filename, cmd_type, use_gcs, use_testnet, use_futurenet
     )
     etl_cmd_string = " ".join(etl_cmd)
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
-    resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
-    )
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
+    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
     if command == "export_ledger_entry_changes":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""

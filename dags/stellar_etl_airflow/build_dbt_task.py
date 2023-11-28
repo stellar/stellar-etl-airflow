@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
@@ -97,18 +98,19 @@ def build_dbt_task(
     ]
     logging.info(f"sh commands to run in pod: {args}")
 
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
-    resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
-    )
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
+    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = Variable.get("dbt_image_name")
+    dbt_image = "{{ var.value.dbt_image_name }}"
     if project == "pub":
-        dbt_image = Variable.get("public_dbt_image_name")
+        dbt_image = "{{ var.value.public_dbt_image_name }}"
 
     return KubernetesPodOperator(
         task_id=f"{project}_{model_name}",
