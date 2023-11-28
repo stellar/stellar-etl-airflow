@@ -98,16 +98,16 @@ delete_old_ledger_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["ledgers"]
 )
 delete_old_ledger_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["ledgers"]
+    dag, public_project, public_dataset, table_names["ledgers"], "pub"
 )
 delete_old_ledger_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["ledgers"]
+    dag, public_project, public_dataset_new, table_names["ledgers"], "pub_new"
 )
 delete_old_asset_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["assets"]
 )
 delete_old_asset_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["assets"]
+    dag, public_project, public_dataset_new, table_names["assets"], "pub_new"
 )
 
 """
@@ -148,6 +148,7 @@ send_ledgers_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_ledgers_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -158,6 +159,7 @@ send_ledgers_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_assets_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -168,6 +170,7 @@ send_assets_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 
 """
@@ -191,6 +194,7 @@ dedup_assets_pub_new_task = build_bq_insert_job(
     partition=True,
     cluster=True,
     create=True,
+    dataset_type="pub_new",
 )
 
 (

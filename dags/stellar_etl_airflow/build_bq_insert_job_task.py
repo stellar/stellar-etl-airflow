@@ -32,13 +32,8 @@ def build_bq_insert_job(
     cluster=False,
     create=False,
     write_disposition="WRITE_APPEND",
+    dataset_type="bq",
 ):
-    if dataset == Variable.get("public_dataset"):
-        dataset_type = "pub"
-    elif dataset == Variable.get("public_dataset_new"):
-        dataset_type = "pub_new"
-    else:
-        dataset_type = "bq"
     query_path = get_query_filepath(table)
     query = file_to_string(query_path)
     batch_id = macros.get_batch_id()

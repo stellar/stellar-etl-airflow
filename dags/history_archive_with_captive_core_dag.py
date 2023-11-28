@@ -134,28 +134,28 @@ delete_old_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["operations"]
 )
 delete_old_op_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["operations"]
+    dag, public_project, public_dataset, table_names["operations"], "pub"
 )
 delete_old_op_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["operations"]
+    dag, public_project, public_dataset_new, table_names["operations"], "pub_new"
 )
 delete_old_trade_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["trades"]
 )
 delete_old_trade_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["trades"]
+    dag, public_project, public_dataset, table_names["trades"], "pub"
 )
 delete_old_trade_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["trades"]
+    dag, public_project, public_dataset_new, table_names["trades"], "pub_new"
 )
 delete_enrich_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_history_operations"
 )
 delete_enrich_op_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, "enriched_history_operations"
+    dag, public_project, public_dataset, "enriched_history_operations", "pub"
 )
 delete_enrich_op_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, "enriched_history_operations"
+    dag, public_project, public_dataset_new, "enriched_history_operations", "pub_new"
 )
 delete_enrich_ma_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_meaningful_history_operations"
@@ -164,16 +164,16 @@ delete_old_effects_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["effects"]
 )
 delete_old_effects_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["effects"]
+    dag, public_project, public_dataset_new, table_names["effects"], "pub_new"
 )
 delete_old_tx_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["transactions"]
 )
 delete_old_tx_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["transactions"]
+    dag, public_project, public_dataset, table_names["transactions"], "pub"
 )
 delete_old_tx_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["transactions"]
+    dag, public_project, public_dataset_new, table_names["transactions"], "pub_new"
 )
 
 """
@@ -234,6 +234,7 @@ send_ops_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_trades_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -244,6 +245,7 @@ send_trades_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_txs_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -254,6 +256,7 @@ send_txs_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 
 """
@@ -268,6 +271,7 @@ send_ops_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_trades_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -278,6 +282,7 @@ send_trades_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_effects_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -288,6 +293,7 @@ send_effects_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_txs_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -298,6 +304,7 @@ send_txs_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 
 """
@@ -323,6 +330,7 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
     "enriched_history_operations",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 insert_enriched_hist_pub_new_task = build_bq_insert_job(
     dag,
@@ -331,6 +339,7 @@ insert_enriched_hist_pub_new_task = build_bq_insert_job(
     "enriched_history_operations",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 insert_enriched_ma_hist_task = build_bq_insert_job(
     dag,
