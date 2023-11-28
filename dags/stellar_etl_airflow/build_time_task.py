@@ -4,6 +4,7 @@ This file contains functions for creating Airflow tasks to convert from a time r
 import logging
 from datetime import timedelta
 
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
@@ -53,13 +54,14 @@ def build_time_task(
         args.append("--testnet")
     elif use_futurenet:
         args.append("--futurenet")
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
-    resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
-    )
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
+    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     return KubernetesPodOperator(
@@ -70,9 +72,9 @@ def build_time_task(
                 build_time_task.__name__
             ]
         ),
-        namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
-        image=Variable.get("image_name"),
+        namespace="{{ var.value.k8s_namespace }}",
+        service_account_name="{{ var.value.service_account_name }}",
+        image="{{ var.value.image_name }}",
         cmds=command,
         arguments=args,
         dag=dag,

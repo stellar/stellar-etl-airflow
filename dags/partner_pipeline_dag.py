@@ -1,10 +1,4 @@
-"""
-The partner_pipeline_dag DAG updates the partners table in Bigquey every day.
-"""
-
-import datetime
-import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.models import Variable
@@ -28,21 +22,20 @@ init_sentry()
 with DAG(
     "partner_pipeline_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 1, 1, 0, 0),
-    description="This DAG updates the partner tables in Bigquey every day",
+    start_date=datetime(2023, 1, 1, 0, 0),
+    description="This DAG automates daily updates to partner tables in BigQuery.",
     schedule_interval="20 15 * * *",
     params={
         "alias": "partner",
     },
     render_template_as_native_obj=True,
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
     catchup=False,
 ) as dag:
-    PROJECT = Variable.get("bq_project")
-    DATASET = Variable.get("bq_dataset")
-    BUCKET_NAME = Variable.get("partners_bucket")
+    PROJECT = "{{ var.value.bq_project }}"
+    DATASET = "{{ var.value.bq_dataset }}"
+    BUCKET_NAME = "{{ var.value.partners_bucket }}"
     PARTNERS = Variable.get("partners_data", deserialize_json=True)
-    TODAY = "{{ next_ds_nodash }}"
+    TODAY = "{{ data_interval_end | ds }}"
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:

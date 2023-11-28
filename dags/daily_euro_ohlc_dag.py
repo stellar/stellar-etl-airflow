@@ -2,8 +2,8 @@
 The daily_euro_ohlc_dag DAG updates the currency table in Bigquey every day.
 """
 
-import datetime
-import json
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.decorators import dag
@@ -18,13 +18,13 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 with DAG(
     dag_id="daily_euro_ohlc_dag",
-    start_date=datetime.datetime(2023, 1, 1, 0, 0),
+    start_date=datetime(2023, 1, 1, 0, 0),
     description="This DAG updates the currency tables in Bigquey every day",
     schedule_interval="35 0 * * *",
     params={
         "alias": "euro",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={"fromjson": lambda s: loads(s)},
     catchup=False,
 ) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)

@@ -1,7 +1,6 @@
-import datetime
+from datetime import datetime
 
 from airflow import DAG
-from airflow.models.variable import Variable
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
@@ -10,7 +9,7 @@ init_sentry()
 dag = DAG(
     "mgi_transforms",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 5, 22, 0, 0),
+    start_date=datetime(2023, 5, 22, 0, 0),
     description="This DAG runs dbt to create the mgi cash in and cash out fact and dimension tables.",
     schedule_interval="30 15 * * *",  # Daily 15:30 UTC after MGI pipeline
     params={},
@@ -39,6 +38,9 @@ fct_mgi_cashflow = build_dbt_task(dag, "fct_mgi_cashflow")
 # tasks for dim wallets
 dim_mgi_wallets = build_dbt_task(dag, "dim_mgi_wallets")
 
+# task for dim dates
+dim_dates = build_dbt_task(dag, "dim_dates")
+
 # tasks for network stats
 enriched_history_mgi_operations = build_dbt_task(dag, "enriched_history_mgi_operations")
 mgi_network_stats_agg = build_dbt_task(dag, "mgi_network_stats_agg")
@@ -52,6 +54,7 @@ wait_on__mgi_dag >> snapshot_raw_mgi_stellar_transactions
     >> stg_country_code
     >> int_mgi_transactions_transformed
     >> int_mgi_transactions_null_id
+    >> dim_dates
     >> fct_mgi_cashflow
 )
 (
