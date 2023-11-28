@@ -6,6 +6,7 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import AirflowException
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
@@ -174,13 +175,14 @@ def build_export_task(
         command, filename, cmd_type, use_gcs, use_testnet, use_futurenet
     )
     etl_cmd_string = " ".join(etl_cmd)
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
-    resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
-    )
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
+    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
     if command == "export_ledger_entry_changes":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
@@ -190,8 +192,8 @@ def build_export_task(
                     \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
                     """
     return KubernetesPodOperator(
-        service_account_name=Variable.get("k8s_service_account"),
-        namespace=Variable.get("k8s_namespace"),
+        service_account_name="{{ var.value.service_account_name }}",
+        namespace="{{ var.value.k8s_namespace }}",
         task_id=command + "_task",
         execution_timeout=timedelta(
             minutes=Variable.get("task_timeout", deserialize_json=True)[
@@ -199,7 +201,7 @@ def build_export_task(
             ]
         ),
         name=command + "_task",
-        image=Variable.get("image_name"),
+        image="{{ var.value.image_name }}",
         cmds=["bash", "-c"],
         arguments=[arguments],
         dag=dag,

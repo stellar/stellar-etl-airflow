@@ -1,7 +1,6 @@
-import datetime
+from datetime import datetime
 
 from airflow import DAG
-from airflow.models.variable import Variable
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
@@ -11,7 +10,7 @@ init_sentry()
 dag = DAG(
     "marts_tables",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2015, 9, 30),
+    start_date=datetime(2015, 9, 30),
     description="This DAG runs dbt to create the tables for the models in marts/ but not any marts subdirectories.",
     schedule_interval="0 17 * * *",  # Daily 11 AM UTC
     params={},

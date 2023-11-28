@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from airflow import DAG
 from airflow.models.variable import Variable
@@ -11,7 +11,7 @@ init_sentry()
 dag = DAG(
     "ledger_current_state",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 4, 4, 0, 0),
+    start_date=datetime(2023, 4, 4, 0, 0),
     description="This DAG runs dbt to create the tables for the models in marts/ledger_current_state/",
     schedule_interval="0 */1 * * *",  # Runs hourly; NOTE: This can be changed to daily if execution time is too slow
     params={},

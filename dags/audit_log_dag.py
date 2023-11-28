@@ -1,8 +1,8 @@
 """
 This DAG runs an audit log SQL to update the audit log dashboard.
 """
-import datetime
-import json
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models import Variable
@@ -16,12 +16,12 @@ dag = DAG(
     "audit_log_dag",
     default_args=get_default_dag_args(),
     description="This DAG runs periodically to update the audit log dashboard.",
-    start_date=datetime.datetime(2023, 1, 1, 0, 0),
+    start_date=datetime(2023, 1, 1, 0, 0),
     schedule_interval="10 9 * * *",
     params={
         "alias": "audit-log",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={"fromjson": lambda s: loads(s)},
     catchup=False,
 )
 
