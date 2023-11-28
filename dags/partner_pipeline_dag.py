@@ -43,10 +43,6 @@ with DAG(
     BUCKET_NAME = Variable.get("partners_bucket")
     PARTNERS = Variable.get("partners_data", deserialize_json=True)
     TODAY = "{{ next_ds_nodash }}"
-    QUERY = """ UPDATE {project}.{dataset}.{table}
-                SET update_timestamp = CURRENT_TIMESTAMP()
-                WHERE update_timestamp IS NULL
-            """
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:
@@ -79,24 +75,4 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        # insert_ts_field = BigQueryInsertJobOperator(
-        #     task_id=f"insert_ts_field_{partner}",
-        #     project_id=PROJECT,
-        #     on_failure_callback=alert_after_max_retries,
-        #     configuration={
-        #         "query": {
-        #             "query": QUERY.format(
-        #                 project=PROJECT,
-        #                 dataset=DATASET,
-        #                 table=PARTNERS[partner]["table"],
-        #             ),
-        #             "useLegacySql": False,
-        #         }
-        #     },
-        # )
-        (
-            start_tables_task
-            >> check_gcs_file
-            >> send_partner_to_bq_internal_task
-            # >> insert_ts_field
-        )
+        (start_tables_task >> check_gcs_file >> send_partner_to_bq_internal_task)
