@@ -72,8 +72,8 @@ def build_time_task(
                 build_time_task.__name__
             ]
         ),
-        namespace="{{ var.value.k8s_namespace }}",
-        service_account_name="{{ var.value.service_account_name }}",
+        namespace=Variable.get("k8s_namespace"),
+        service_account_name=Variable.get("k8s_service_account"),
         image="{{ var.value.image_name }}",
         cmds=command,
         arguments=args,

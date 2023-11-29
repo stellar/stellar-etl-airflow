@@ -73,7 +73,7 @@ def build_dbt_task(
     """
 
     dbt_full_refresh = ""
-    if "{{ var.json.get('dbt_full_refresh_models.' + model_name) }}":
+    if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(model_name):
         dbt_full_refresh = "--full-refresh"
 
     create_dbt_profile_cmd = create_dbt_profile(project)
@@ -120,8 +120,8 @@ def build_dbt_task(
                 build_dbt_task.__name__
             ]
         ),
-        namespace="{{ var.value.k8s_namespace }}",
-        service_account_name="{{ var.value.service_account_name }}",
+        namespace=Variable.get("k8s_namespace"),
+        service_account_name=Variable.get("k8s_service_account"),
         image=dbt_image,
         cmds=command,
         arguments=args,
