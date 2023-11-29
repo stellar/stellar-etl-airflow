@@ -11,7 +11,7 @@ from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import models as k8s
+from kubernetes.client.models import V1LocalObjectReference
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
@@ -182,7 +182,9 @@ def build_export_task(
     else:
         config_file_location = None
         in_cluster = True
-    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
+    resources_requests = (
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
+    )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
     if command == "export_ledger_entry_changes":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
@@ -208,7 +210,7 @@ def build_export_task(
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        container_resources=resources_requests,
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,

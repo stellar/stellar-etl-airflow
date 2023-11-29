@@ -9,7 +9,7 @@ from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import models as k8s
+from kubernetes.client.models import V1LocalObjectReference
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
@@ -61,7 +61,9 @@ def build_time_task(
     else:
         config_file_location = None
         in_cluster = True
-    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
+    resources_requests = (
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
+    )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     return KubernetesPodOperator(
@@ -84,7 +86,7 @@ def build_time_task(
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
     )
