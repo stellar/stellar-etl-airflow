@@ -8,7 +8,7 @@ from json import loads
 
 from airflow import DAG
 from airflow.models import Variable
-from kubernetes.client.models import V1ResourceRequirements
+from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
@@ -33,7 +33,7 @@ dag = DAG(
     render_template_as_native_obj=True,
     user_defined_filters={
         "fromjson": lambda s: loads(s),
-        "container_resources": lambda s: V1ResourceRequirements(requests=s),
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
         "literal_eval": lambda e: literal_eval(e),
     },
     user_defined_macros={

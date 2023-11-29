@@ -6,7 +6,7 @@ from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client.models import V1LocalObjectReference
+from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
@@ -137,5 +137,5 @@ def build_dbt_task(
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
-        image_pull_secrets=[V1LocalObjectReference("private-docker-auth")],
+        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
     )

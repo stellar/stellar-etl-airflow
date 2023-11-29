@@ -11,7 +11,6 @@ from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client.models import V1LocalObjectReference
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
