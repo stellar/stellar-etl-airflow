@@ -2,12 +2,13 @@
 The history_archive_export DAG exports operations and trades from the history archives.
 It is scheduled to export information to BigQuery at regular intervals.
 """
-import ast
-import datetime
-import json
+from ast import literal_eval
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
@@ -23,29 +24,33 @@ init_sentry()
 dag = DAG(
     "history_archive_with_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 9, 20, 15, 0),
+    start_date=datetime(2023, 9, 20, 15, 0),
     catchup=True,
     description="This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
     schedule_interval="*/30 * * * *",
     params={
         "alias": "cc",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    render_template_as_native_obj=True,
+    user_defined_filters={
+        "fromjson": lambda s: loads(s),
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
+        "literal_eval": lambda e: literal_eval(e),
+    },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
 )
 
-file_names = Variable.get("output_file_names", deserialize_json=True)
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = Variable.get("bq_project")
-internal_dataset = Variable.get("bq_dataset")
-public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
-public_dataset_new = Variable.get("public_dataset_new")
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
-use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
+internal_project = "{{ var.value.bq_project }}"
+internal_dataset = "{{ var.value.bq_dataset }}"
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
+public_dataset_new = "{{ var.value.public_dataset_new }}"
+use_testnet = "{{ var.value.use_testnet | literal_eval }}"
+use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -77,7 +82,7 @@ op_export_task = build_export_task(
     dag,
     "archive",
     "export_operations",
-    file_names["operations"],
+    "{{ var.json.output_file_names.operations }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -87,7 +92,7 @@ trade_export_task = build_export_task(
     dag,
     "archive",
     "export_trades",
-    file_names["trades"],
+    "{{ var.json.output_file_names.trades }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -107,7 +112,7 @@ tx_export_task = build_export_task(
     dag,
     "archive",
     "export_transactions",
-    file_names["transactions"],
+    "{{ var.json.output_file_names.transactions }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -117,7 +122,7 @@ diagnostic_events_export_task = build_export_task(
     dag,
     "archive",
     "export_diagnostic_events",
-    file_names["diagnostic_events"],
+    "{{ var.json.output_file_names.diagnostic_events }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -132,28 +137,28 @@ delete_old_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["operations"]
 )
 delete_old_op_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["operations"]
+    dag, public_project, public_dataset, table_names["operations"], "pub"
 )
 delete_old_op_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["operations"]
+    dag, public_project, public_dataset_new, table_names["operations"], "pub_new"
 )
 delete_old_trade_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["trades"]
 )
 delete_old_trade_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["trades"]
+    dag, public_project, public_dataset, table_names["trades"], "pub"
 )
 delete_old_trade_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["trades"]
+    dag, public_project, public_dataset_new, table_names["trades"], "pub_new"
 )
 delete_enrich_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_history_operations"
 )
 delete_enrich_op_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, "enriched_history_operations"
+    dag, public_project, public_dataset, "enriched_history_operations", "pub"
 )
 delete_enrich_op_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, "enriched_history_operations"
+    dag, public_project, public_dataset_new, "enriched_history_operations", "pub_new"
 )
 delete_enrich_ma_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_meaningful_history_operations"
@@ -162,16 +167,16 @@ delete_old_effects_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["effects"]
 )
 delete_old_effects_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["effects"]
+    dag, public_project, public_dataset_new, table_names["effects"], "pub_new"
 )
 delete_old_tx_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["transactions"]
 )
 delete_old_tx_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["transactions"]
+    dag, public_project, public_dataset, table_names["transactions"], "pub"
 )
 delete_old_tx_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["transactions"]
+    dag, public_project, public_dataset_new, table_names["transactions"], "pub_new"
 )
 
 """
@@ -232,6 +237,7 @@ send_ops_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_trades_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -242,6 +248,7 @@ send_trades_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_txs_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -252,6 +259,7 @@ send_txs_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 
 """
@@ -266,6 +274,7 @@ send_ops_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_trades_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -276,6 +285,7 @@ send_trades_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_effects_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -286,6 +296,7 @@ send_effects_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 send_txs_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -296,6 +307,7 @@ send_txs_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 
 """
@@ -321,6 +333,7 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
     "enriched_history_operations",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 insert_enriched_hist_pub_new_task = build_bq_insert_job(
     dag,
@@ -329,6 +342,7 @@ insert_enriched_hist_pub_new_task = build_bq_insert_job(
     "enriched_history_operations",
     partition=True,
     cluster=True,
+    dataset_type="pub_new",
 )
 insert_enriched_ma_hist_task = build_bq_insert_job(
     dag,

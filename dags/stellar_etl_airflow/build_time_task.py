@@ -4,11 +4,11 @@ This file contains functions for creating Airflow tasks to convert from a time r
 import logging
 from datetime import timedelta
 
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
@@ -53,12 +53,15 @@ def build_time_task(
         args.append("--testnet")
     elif use_futurenet:
         args.append("--futurenet")
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
     resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
@@ -72,7 +75,7 @@ def build_time_task(
         ),
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
-        image=Variable.get("image_name"),
+        image="{{ var.value.image_name }}",
         cmds=command,
         arguments=args,
         dag=dag,
@@ -82,7 +85,7 @@ def build_time_task(
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
     )

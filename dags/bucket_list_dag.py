@@ -4,12 +4,13 @@ bucket list. As a result, it is faster than stellar-core. Bucket list commands r
 to stop exporting. This end ledger  is determined by when the Airflow DAG is run. This DAG should be triggered manually
 when initializing the tables in order to catch up to the current state in the network, but should not be scheduled to run constantly.
 """
-import ast
-import datetime
-import json
+from ast import literal_eval
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models import Variable
+from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
@@ -23,29 +24,33 @@ init_sentry()
 dag = DAG(
     "bucket_list_export",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2021, 10, 15),
-    end_date=datetime.datetime(2021, 10, 15),
+    start_date=datetime(2021, 10, 15),
+    end_date=datetime(2021, 10, 15),
     description="This DAG loads a point forward view of state tables. Caution: Does not capture historical changes!",
     schedule_interval="@daily",
     params={
         "alias": "bucket",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    render_template_as_native_obj=True,
+    user_defined_filters={
+        "fromjson": lambda s: loads(s),
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
+        "literal_eval": lambda e: literal_eval(e),
+    },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
 )
 
-file_names = Variable.get("output_file_names", deserialize_json=True)
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = Variable.get("bq_project")
-internal_dataset = Variable.get("bq_dataset")
-public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset")
-use_testnet = ast.literal_eval(Variable.get("use_testnet"))
-use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
-
+internal_project = "{{ var.value.bq_project }}"
+internal_dataset = "{{ var.value.bq_dataset }}"
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
+public_dataset_new = "{{ var.value.public_dataset_new }}"
+use_testnet = "{{ var.value.use_testnet | literal_eval }}"
+use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
 """
 The time task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
@@ -60,7 +65,7 @@ export_acc_task = build_export_task(
     dag,
     "bucket",
     "export_accounts",
-    file_names["accounts"],
+    "{{ var.json.output_file_names.accounts }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -69,7 +74,7 @@ export_bal_task = build_export_task(
     dag,
     "bucket",
     "export_claimable_balances",
-    file_names["claimable_balances"],
+    "{{ var.json.output_file_names.claimable_balances }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -78,7 +83,7 @@ export_off_task = build_export_task(
     dag,
     "bucket",
     "export_offers",
-    file_names["offers"],
+    "{{ var.json.output_file_names.offers }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -87,7 +92,7 @@ export_pool_task = build_export_task(
     dag,
     "bucket",
     "export_pools",
-    file_names["liquidity_pools"],
+    "{{ var.json.output_file_names.liquidity_pools }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -96,7 +101,7 @@ export_sign_task = build_export_task(
     dag,
     "bucket",
     "export_signers",
-    file_names["signers"],
+    "{{ var.json.output_file_names.signers }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -105,7 +110,7 @@ export_trust_task = build_export_task(
     dag,
     "bucket",
     "export_trustlines",
-    file_names["trustlines"],
+    "{{ var.json.output_file_names.trustlines }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -131,37 +136,37 @@ delete_acc_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["accounts"]
 )
 delete_acc_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["accounts"]
+    dag, public_project, public_dataset, table_names["accounts"], "pub"
 )
 delete_bal_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["claimable_balances"]
 )
 delete_bal_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["claimable_balances"]
+    dag, public_project, public_dataset, table_names["claimable_balances"], "pub"
 )
 delete_off_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["offers"]
 )
 delete_off_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["offers"]
+    dag, public_project, public_dataset, table_names["offers"], "pub"
 )
 delete_pool_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["liquidity_pools"]
 )
 delete_pool_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["liquidity_pools"]
+    dag, public_project, public_dataset, table_names["liquidity_pools"], "pub"
 )
 delete_sign_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["signers"]
 )
 delete_sign_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["signers"]
+    dag, public_project, public_dataset, table_names["signers"], "pub"
 )
 delete_trust_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["trustlines"]
 )
 delete_trust_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["trustlines"]
+    dag, public_project, public_dataset, table_names["trustlines"], "pub"
 )
 
 """
@@ -244,6 +249,7 @@ send_acc_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_bal_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -254,6 +260,7 @@ send_bal_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_off_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -264,6 +271,7 @@ send_off_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_pool_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -274,6 +282,7 @@ send_pool_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_sign_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -284,6 +293,7 @@ send_sign_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 send_trust_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -294,6 +304,7 @@ send_trust_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
+    dataset_type="pub",
 )
 
 (
