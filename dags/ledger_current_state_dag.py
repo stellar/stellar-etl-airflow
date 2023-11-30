@@ -2,6 +2,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_copy_table_task import build_copy_table
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
@@ -14,7 +15,10 @@ dag = DAG(
     start_date=datetime(2023, 4, 4, 0, 0),
     description="This DAG runs dbt to create the tables for the models in marts/ledger_current_state/",
     schedule_interval="0 */1 * * *",  # Runs hourly; NOTE: This can be changed to daily if execution time is too slow
-    params={},
+    render_template_as_native_obj=True,
+    user_defined_filters={
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
+    },
     catchup=False,
 )
 
