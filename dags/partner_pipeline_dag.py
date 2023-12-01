@@ -9,6 +9,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.sensors.gcs import (
     GCSObjectsWithPrefixExistenceSensor,
 )
@@ -42,7 +43,6 @@ with DAG(
     BUCKET_NAME = Variable.get("partners_bucket")
     PARTNERS = Variable.get("partners_data", deserialize_json=True)
     TODAY = "{{ next_ds_nodash }}"
-
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:
@@ -75,4 +75,4 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        start_tables_task >> check_gcs_file >> send_partner_to_bq_internal_task
+        (start_tables_task >> check_gcs_file >> send_partner_to_bq_internal_task)
