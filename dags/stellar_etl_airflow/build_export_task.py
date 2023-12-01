@@ -6,11 +6,11 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import AirflowException
-from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
+from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
@@ -174,15 +174,12 @@ def build_export_task(
         command, filename, cmd_type, use_gcs, use_testnet, use_futurenet
     )
     etl_cmd_string = " ".join(etl_cmd)
-    namespace = conf.get("kubernetes", "NAMESPACE")
-    if namespace == "default":
-        config_file_location = Variable.get("kube_config_location")
-        in_cluster = False
-    else:
-        config_file_location = None
-        in_cluster = True
+    config_file_location = Variable.get("kube_config_location")
+    in_cluster = False if config_file_location else True
     resources_requests = (
-        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
+        Variable.get("resources", deserialize_json=True)
+        .get(resource_cfg)
+        .get("requests")
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
     if command == "export_ledger_entry_changes":
@@ -202,14 +199,14 @@ def build_export_task(
             ]
         ),
         name=command + "_task",
-        image="{{ var.value.image_name }}",
+        image=Variable.get("image_name"),
         cmds=["bash", "-c"],
         arguments=[arguments],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        container_resources=resources_requests,
+        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,

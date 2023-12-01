@@ -1,8 +1,8 @@
 """
 This DAG creates the sandbox dataset with transactions tables, state tables with history and views.
 """
-from datetime import datetime
-from json import loads
+import datetime
+import json
 
 from airflow import DAG
 from airflow.models.variable import Variable
@@ -23,12 +23,12 @@ init_sentry()
 with DAG(
     "sandbox_create_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 1, 1),
+    start_date=datetime.datetime(2023, 1, 1),
     description="This DAG creates a sandbox",
     schedule_interval="@once",
     params={"alias": "sandbox_dataset"},
     user_defined_filters={
-        "fromjson": lambda s: loads(s),
+        "fromjson": lambda s: json.loads(s),
     },
     catchup=False,
 ) as dag:

@@ -1,7 +1,7 @@
-from datetime import datetime
+import datetime
 
 from airflow import DAG
-from kubernetes.client import models as k8s
+from airflow.models.variable import Variable
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
@@ -10,13 +10,10 @@ init_sentry()
 dag = DAG(
     "partnership_assets",
     default_args=get_default_dag_args(),
-    start_date=datetime(2022, 4, 1, 0, 0),
+    start_date=datetime.datetime(2022, 4, 1, 0, 0),
     description="This DAG runs dbt to create the partnership asset intermediate tables and aggregate tables.",
     schedule_interval="30 16 * * *",  # Daily 16:30 UTC, after cloud function
-    render_template_as_native_obj=True,
-    user_defined_filters={
-        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
-    },
+    params={},
     max_active_runs=1,
 )
 

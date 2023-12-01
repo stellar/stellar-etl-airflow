@@ -2,11 +2,13 @@
 This file contains functions for creating Airflow tasks to merge data on ledger entry changes from
 a file in Google Cloud storage into a BigQuery table.
 """
+import json
 import logging
-from json import loads
-from os.path import basename, join, splitext
+import os
+from os.path import basename, splitext
 
 from airflow import AirflowException
+from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
 from google.cloud import bigquery
@@ -28,11 +30,13 @@ def read_local_schema(data_type):
     """
 
     # since the dags folder is shared among airflow workers and the webservers, schemas are stored in the dags folder
-    schema_filepath = join(Variable.get("schema_filepath"), f"{data_type}_schema.json")
+    schema_filepath = os.path.join(
+        Variable.get("schema_filepath"), f"{data_type}_schema.json"
+    )
     logging.info(f"Loading schema file at {schema_filepath}")
 
     with open(schema_filepath, "r") as schema_file:
-        schema_fields = loads(schema_file.read())
+        schema_fields = json.loads(schema_file.read())
 
     return schema_fields
 

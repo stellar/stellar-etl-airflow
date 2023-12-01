@@ -2,13 +2,12 @@
 The history_archive_export DAG exports ledgers and transactions from the history archives.
 It is scheduled to export information to BigQuery at regular intervals.
 """
-from ast import literal_eval
-from datetime import datetime
-from json import loads
+import ast
+import datetime
+import json
 
 from airflow import DAG
 from airflow.models import Variable
-from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
@@ -23,33 +22,29 @@ init_sentry()
 dag = DAG(
     "history_archive_without_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 9, 20, 15, 0),
+    start_date=datetime.datetime(2023, 9, 20, 15, 0),
     catchup=True,
     description="This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads",
     schedule_interval="*/15 * * * *",
     params={
         "alias": "archive",
     },
-    render_template_as_native_obj=True,
-    user_defined_filters={
-        "fromjson": lambda s: loads(s),
-        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
-        "literal_eval": lambda e: literal_eval(e),
-    },
+    user_defined_filters={"fromjson": lambda s: json.loads(s)},
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
 )
 
+file_names = Variable.get("output_file_names", deserialize_json=True)
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = "{{ var.value.bq_project }}"
-internal_dataset = "{{ var.value.bq_dataset }}"
-public_project = "{{ var.value.public_project }}"
-public_dataset = "{{ var.value.public_dataset }}"
-public_dataset_new = "{{ var.value.public_dataset_new }}"
-use_testnet = "{{ var.value.use_testnet | literal_eval }}"
-use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
+internal_project = Variable.get("bq_project")
+internal_dataset = Variable.get("bq_dataset")
+public_project = Variable.get("public_project")
+public_dataset = Variable.get("public_dataset")
+public_dataset_new = Variable.get("public_dataset_new")
+use_testnet = ast.literal_eval(Variable.get("use_testnet"))
+use_futurenet = ast.literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -78,7 +73,7 @@ ledger_export_task = build_export_task(
     dag,
     "archive",
     "export_ledgers",
-    "{{ var.json.output_file_names.ledgers }}",
+    file_names["ledgers"],
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -87,7 +82,7 @@ asset_export_task = build_export_task(
     dag,
     "archive",
     "export_assets",
-    "{{ var.json.output_file_names.assets }}",
+    file_names["assets"],
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -101,16 +96,16 @@ delete_old_ledger_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["ledgers"]
 )
 delete_old_ledger_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, table_names["ledgers"], "pub"
+    dag, public_project, public_dataset, table_names["ledgers"]
 )
 delete_old_ledger_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["ledgers"], "pub_new"
+    dag, public_project, public_dataset_new, table_names["ledgers"]
 )
 delete_old_asset_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["assets"]
 )
 delete_old_asset_pub_new_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["assets"], "pub_new"
+    dag, public_project, public_dataset_new, table_names["assets"]
 )
 
 """
@@ -151,7 +146,6 @@ send_ledgers_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
-    dataset_type="pub_new",
 )
 send_ledgers_to_pub_task = build_gcs_to_bq_task(
     dag,
@@ -162,7 +156,6 @@ send_ledgers_to_pub_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
-    dataset_type="pub",
 )
 send_assets_to_pub_new_task = build_gcs_to_bq_task(
     dag,
@@ -173,7 +166,6 @@ send_assets_to_pub_new_task = build_gcs_to_bq_task(
     "",
     partition=True,
     cluster=True,
-    dataset_type="pub_new",
 )
 
 """
@@ -197,7 +189,6 @@ dedup_assets_pub_new_task = build_bq_insert_job(
     partition=True,
     cluster=True,
     create=True,
-    dataset_type="pub_new",
 )
 
 (

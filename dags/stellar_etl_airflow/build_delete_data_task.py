@@ -6,7 +6,13 @@ from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
-def build_delete_data_task(dag, project, dataset, table, dataset_type="bq"):
+def build_delete_data_task(dag, project, dataset, table):
+    if dataset == Variable.get("public_dataset"):
+        dataset_type = "pub"
+    elif dataset == Variable.get("public_dataset_new"):
+        dataset_type = "pub_new"
+    else:
+        dataset_type = "bq"
     batch_id = macros.get_batch_id()
     batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 

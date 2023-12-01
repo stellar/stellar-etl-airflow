@@ -54,7 +54,6 @@ def build_gcs_to_bq_task(
     source_object_suffix,
     partition,
     cluster,
-    dataset_type="bq",
 ):
     """
     Creates a task to load a file from Google Cloud Storage into BigQuery.
@@ -88,6 +87,13 @@ def build_gcs_to_bq_task(
         )
     else:
         cluster_fields = None
+    project_name = project
+    if dataset == Variable.get("public_dataset"):
+        dataset_type = "pub"
+    elif dataset == Variable.get("public_dataset_new"):
+        dataset_type = "pub_new"
+    else:
+        dataset_type = "bq"
     dataset_name = dataset
     time_partition = {}
     if partition:
@@ -122,7 +128,7 @@ def build_gcs_to_bq_task(
                 + '\')["output"] }}'
                 + source_object_suffix
             ],
-            destination_project_dataset_table=f"{project}.{dataset_name}.{data_type}{staging_table_suffix}",
+            destination_project_dataset_table=f"{project_name}.{dataset_name}.{data_type}{staging_table_suffix}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",
             schema_update_option="ALLOW_FIELD_ADDITION",
@@ -158,7 +164,7 @@ def build_gcs_to_bq_task(
                 + '\')["output"] }}'
                 + source_object_suffix
             ],
-            destination_project_dataset_table=f"{project}.{dataset_name}.{data_type}{staging_table_suffix}",
+            destination_project_dataset_table=f"{project_name}.{dataset_name}.{data_type}{staging_table_suffix}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",
             max_bad_records=0,
