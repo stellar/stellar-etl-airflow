@@ -49,8 +49,8 @@ internal_dataset = "{{ var.value.bq_dataset }}"
 public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 public_dataset_new = "{{ var.value.public_dataset_new }}"
-use_testnet = "{{ var.value.use_testnet | literal_eval }}"
-use_futurenet = "{{ var.value.use_futurenet | literal_eval }}"
+use_testnet = literal_eval(Variable.get("use_testnet"))
+use_futurenet = literal_eval(Variable.get("use_futurenet"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
