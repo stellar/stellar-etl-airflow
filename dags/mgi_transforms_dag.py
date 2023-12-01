@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from airflow import DAG
+from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
@@ -12,7 +13,10 @@ dag = DAG(
     start_date=datetime(2023, 5, 22, 0, 0),
     description="This DAG runs dbt to create the mgi cash in and cash out fact and dimension tables.",
     schedule_interval="30 15 * * *",  # Daily 15:30 UTC after MGI pipeline
-    params={},
+    render_template_as_native_obj=True,
+    user_defined_filters={
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
+    },
     max_active_runs=1,
 )
 # create dependency on raw data load

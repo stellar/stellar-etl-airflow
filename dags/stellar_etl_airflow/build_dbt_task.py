@@ -73,7 +73,7 @@ def build_dbt_task(
     """
 
     dbt_full_refresh = ""
-    if "{{ var.json.get('dbt_full_refresh_models.' + model_name) }}":
+    if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(model_name):
         dbt_full_refresh = "--full-refresh"
 
     create_dbt_profile_cmd = create_dbt_profile(project)
@@ -105,7 +105,9 @@ def build_dbt_task(
     else:
         config_file_location = None
         in_cluster = True
-    resources_requests = "{{ var.json.get('resources.' + resource_cfg + '.requests') }}"
+    resources_requests = (
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
+    )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
@@ -120,8 +122,8 @@ def build_dbt_task(
                 build_dbt_task.__name__
             ]
         ),
-        namespace="{{ var.value.k8s_namespace }}",
-        service_account_name="{{ var.value.service_account_name }}",
+        namespace=Variable.get("k8s_namespace"),
+        service_account_name=Variable.get("k8s_service_account"),
         image=dbt_image,
         cmds=command,
         arguments=args,
@@ -132,7 +134,7 @@ def build_dbt_task(
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
