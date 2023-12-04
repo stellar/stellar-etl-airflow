@@ -35,7 +35,7 @@ with DAG(
     DATASET = "{{ var.value.bq_dataset }}"
     BUCKET_NAME = "{{ var.value.partners_bucket }}"
     PARTNERS = Variable.get("partners_data", deserialize_json=True)
-    TODAY = "{{ data_interval_end | ds }}"
+    TODAY = "{{ data_interval_end | ds_nodash }}"
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:
