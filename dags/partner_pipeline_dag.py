@@ -60,7 +60,6 @@ with DAG(
                 PROJECT, DATASET, PARTNERS[partner]["table"]
             ),
             skip_leading_rows=1,
-            autodetect=False,
             schema_fields=read_local_schema(PARTNERS[partner]["table"]),
             write_disposition="WRITE_TRUNCATE",
             dag=dag,
