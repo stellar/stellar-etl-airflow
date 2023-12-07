@@ -32,9 +32,6 @@ snapshot_raw_mgi_stellar_transactions = build_dbt_task(
 stg_mgi_transactions_snap = build_dbt_task(dag, "stg_mgi_transactions_snapshot")
 stg_mgi_transactions_null_id = build_dbt_task(dag, "stg_mgi_transactions_null_id")
 stg_country_code = build_dbt_task(dag, "stg_country_code")
-stg_history_ledgers_dev = build_dbt_task(dag, "stg_history_ledgers_dev")
-stg_accounts_dev = build_dbt_task(dag, "stg_accounts_dev")
-stg_trust_lines_dev = build_dbt_task(dag, "stg_trust_lines_dev")
 stg_partnership_assets_prices = build_dbt_task(dag, "stg_partnership_assets_prices")
 # tasks for fct_mgi_cashflow
 int_mgi_transactions_transformed = build_dbt_task(
@@ -63,10 +60,7 @@ wait_on__mgi_dag >> snapshot_raw_mgi_stellar_transactions
     >> stg_mgi_transactions_snap
     >> stg_mgi_transactions_null_id
     >> stg_country_code
-    >> stg_history_ledgers_dev
-    >> stg_accounts_dev
     >> stg_partnership_assets_prices
-    >> stg_trust_lines_dev
     >> int_mgi_transactions_transformed
     >> int_mgi_transactions_null_id
     >> dim_dates
