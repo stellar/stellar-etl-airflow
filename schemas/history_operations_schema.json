@@ -1045,7 +1045,7 @@
       },
       {
         "mode": "NULLABLE",
-        "name": "ledgers_to_expire",
+        "name": "extend_to",
         "type": "INTEGER"
       },
       {
