@@ -51,3 +51,6 @@ def is_new_tag(repo, last_known_tag_date):
         else:
             logging.info("No new tags found")
             return "task_aready_up_to_date_task"
+
+
+is_new_tag("js-stellar-base", "2021-09-01T17:00:00Z")

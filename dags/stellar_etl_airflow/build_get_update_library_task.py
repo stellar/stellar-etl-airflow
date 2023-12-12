@@ -4,12 +4,6 @@ import requests
 from google.cloud import storage
 
 
-def create_gcs_blob(bucket_name, destination_blob_name):
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    return bucket.blob(destination_blob_name)
-
-
 def download_file(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -19,7 +13,9 @@ def download_file(url):
 
 
 def upload_to_gcs(bucket_name, destination_blob_name, content):
-    blob = create_gcs_blob(bucket_name, destination_blob_name)
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
     blob.upload_from_string(content)
 
 
@@ -40,6 +36,8 @@ def send_library_to_gcs(file_url, bucket_name, destination_blob_name):
 
 
 def check_file_upload_date(bucket_name, file_name):
-    blob = create_gcs_blob(bucket_name, file_name)
-    last_update_date = blob.update()
+    client = storage.Client()
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.get_blob(file_name)
+    last_update_date = blob.updated
     return last_update_date
