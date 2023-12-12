@@ -47,10 +47,7 @@ def is_new_tag(repo, last_known_tag_date):
         logging.info(f"Latest tag date: {latest_tag['commit_date']}")
         if latest_tag["commit_date"] > last_known_tag_date:
             logging.info("New tag found!")
-            return True
+            return "update_library_task"
         else:
             logging.info("No new tags found")
             return "task_aready_up_to_date_task"
-
-
-is_new_tag("js-stellar-base", "2021-09-01T17:00:00Z")
