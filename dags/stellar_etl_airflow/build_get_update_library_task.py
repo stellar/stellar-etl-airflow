@@ -41,4 +41,5 @@ def send_library_to_gcs(file_url, bucket_name, destination_blob_name):
 
 def check_file_upload_date(bucket_name, file_name):
     blob = create_gcs_blob(bucket_name, file_name)
-    return blob.update()
+    last_update_date = blob.update()
+    return last_update_date
