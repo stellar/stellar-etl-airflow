@@ -17,7 +17,7 @@ init_sentry()
 dag = DAG(
     "js_library_update_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2015, 9, 30),
+    start_date=datetime(2023, 1, 1),
     description="This DAG updates the js library from bower-js-stellar-base repo.",
     schedule_interval="0 17 * * *",  # Daily 11 AM UTC
     render_template_as_native_obj=True,
@@ -25,8 +25,7 @@ dag = DAG(
         "alias": "js_library",
     },
     user_defined_filters={"fromjson": lambda s: loads(s)},
-    catchup=True,
-    max_active_runs=1,
+    catchup=False,
 )
 
 repo = "{{ var.value.stellar_base_js_repositoy_name }}"
