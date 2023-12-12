@@ -1057,6 +1057,11 @@
         "mode": "NULLABLE",
         "name": "contract_code_hash",
         "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "decoded_symbol_param_names",
+        "type": "STRING"
       }
     ],
     "mode": "NULLABLE",
