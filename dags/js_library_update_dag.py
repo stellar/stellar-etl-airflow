@@ -45,7 +45,7 @@ check_tag = BranchPythonOperator(
     python_callable=is_new_tag,
     op_kwargs={
         "repo": repo,
-        "last_known_tag_date": "{{ ti.xcom_pull(task_ids='check_last_update_task') }}",
+        "last_known_tag_date": "{{ ti.xcom_pull(key='last_update_date',task_ids='check_last_update_task') }}",
     },
     dag=dag,
 )

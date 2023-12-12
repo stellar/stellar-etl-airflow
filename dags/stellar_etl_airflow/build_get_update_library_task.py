@@ -40,4 +40,5 @@ def check_file_upload_date(bucket_name, file_name):
     bucket = client.get_bucket(bucket_name)
     blob = bucket.get_blob(file_name)
     last_update_date = blob.updated
+    last_update_date = {"last_update_date": last_update_date}
     return last_update_date
