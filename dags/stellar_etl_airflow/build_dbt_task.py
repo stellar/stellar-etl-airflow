@@ -58,7 +58,7 @@ elementary:
 
 
 def build_dbt_task(
-    dag, model_name, command_type="run", resource_cfg="default", project="prod"
+    dag, model_name, command_type="build", resource_cfg="default", project="prod"
 ):
     """Create a task to run dbt on a selected model.
 
@@ -91,7 +91,6 @@ def build_dbt_task(
                 command_type,
                 "--select",
                 model_name,
-                "elementary",
                 dbt_full_refresh,
             ]
         )
