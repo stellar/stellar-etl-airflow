@@ -43,6 +43,8 @@ def get_latest_tag_from_github(owner, repo):
 def is_new_tag(repo, last_known_tag_date):
     repository_owner = "stellar"
     latest_tag = get_latest_tag_from_github(repository_owner, repo)
+    latest_tag["commit_date"] = latest_tag["commit_date"].split("T")[0]
+    last_known_tag_date = str(last_known_tag_date)
     if latest_tag:
         logging.info(f"Latest tag date: {latest_tag['commit_date']}")
         if latest_tag["commit_date"] > last_known_tag_date:
