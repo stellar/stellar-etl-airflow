@@ -6,7 +6,7 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "expiration_ledger_seq",
+    "name": "live_until_ledger_seq",
     "type": "INTEGER"
   },
   {

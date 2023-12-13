@@ -76,7 +76,7 @@ write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
 write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
 write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
 write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
-write_expiration_stats = build_batch_stats(dag, table_names["expiration"])
+write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
 
 """
 The delete partition task checks to see if the given partition/batch id exists in
@@ -130,8 +130,8 @@ delete_contract_code_task = build_delete_data_task(
 delete_config_settings_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["config_settings"]
 )
-delete_expiration_task = build_delete_data_task(
-    dag, public_project, public_dataset_new, table_names["expiration"]
+delete_ttl_task = build_delete_data_task(
+    dag, public_project, public_dataset_new, table_names["ttl"]
 )
 
 """
@@ -309,13 +309,13 @@ send_config_settings_to_pub_task = build_gcs_to_bq_task(
     partition=True,
     cluster=True,
 )
-send_expiration_to_pub_task = build_gcs_to_bq_task(
+send_ttl_to_pub_task = build_gcs_to_bq_task(
     dag,
     changes_task.task_id,
     public_project,
     public_dataset_new,
-    table_names["expiration"],
-    "/*-expiration.txt",
+    table_names["ttl"],
+    "/*-ttl.txt",
     partition=True,
     cluster=True,
 )
@@ -375,7 +375,7 @@ write_trust_stats >> delete_trust_pub_new_task >> send_trust_to_pub_new_task
 (
     date_task
     >> changes_task
-    >> write_expiration_stats
-    >> delete_expiration_task
-    >> send_expiration_to_pub_task
+    >> write_ttl_stats
+    >> delete_ttl_task
+    >> send_ttl_to_pub_task
 )

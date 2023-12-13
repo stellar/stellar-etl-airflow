@@ -95,7 +95,7 @@
     "contract_data": ["last_modified_ledger"],
     "contract_code": ["last_modified_ledger"],
     "config_settings": ["last_modified_ledger"],
-    "expiration": ["last_modified_ledger"]
+    "ttl": ["last_modified_ledger"]
   },
   "dbt_auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   "dbt_auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -161,7 +161,7 @@
     "contract_data": "contract_data.txt",
     "contract_code": "contract_code.txt",
     "config_settings": "config_settings.txt",
-    "expiration": "expiration.txt",
+    "ttl": "ttl.txt",
     "diagnostic_events": "diagnostic_events.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
@@ -235,7 +235,7 @@
       "field": "batch_run_date",
       "type": "MONTH"
     },
-    "expiration": {
+    "ttl": {
       "field": "batch_run_date",
       "type": "MONTH"
     }
@@ -287,7 +287,7 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "expiration": "expiration",
+    "ttl": "ttl",
     "diagnostic_events": "diagnostic_events"
   },
   "task_timeout": {

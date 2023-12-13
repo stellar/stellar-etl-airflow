@@ -23,7 +23,7 @@ dag = DAG(
 stg_config_settings = build_dbt_task(dag, "stg_config_settings")
 stg_contract_code = build_dbt_task(dag, "stg_contract_code")
 stg_contract_data = build_dbt_task(dag, "stg_contract_data")
-stg_expiration = build_dbt_task(dag, "stg_expiration")
+stg_ttl = build_dbt_task(dag, "stg_ttl")
 
 # tasks for intermediate soroban aggregate tables
 int_soroban__enriched_history_operations_year = build_dbt_task(
@@ -59,7 +59,7 @@ int_soroban__top_contract_activity_year = build_dbt_task(
 # tasks for marts tables
 contract_assets_fact = build_dbt_task(dag, "contract_assets_fact")
 contract_type_fact = build_dbt_task(dag, "contract_type_fact")
-expiration_current = build_dbt_task(dag, "expiration_current")
+ttl_current = build_dbt_task(dag, "ttl_current")
 soroban__contract_metrics_agg = build_dbt_task(dag, "soroban__contract_metrics_agg")
 soroban__top_contract_activity_agg = build_dbt_task(
     dag, "soroban__top_contract_activity_agg"
@@ -71,7 +71,7 @@ stg_contract_code
 
 stg_contract_data >> contract_assets_fact
 contract_type_fact
-stg_expiration >> expiration_current
+stg_ttl >> ttl_current
 
 (
     int_soroban__enriched_history_operations_year
