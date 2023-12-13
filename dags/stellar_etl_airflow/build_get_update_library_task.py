@@ -12,11 +12,11 @@ def download_file(url):
         raise Exception(f"Error downloading file: {response.status_code}")
 
 
-def upload_to_gcs(bucket_name, destination_blob_name, content):
+def upload_to_gcs(bucket_name, destination_blob_name, content, content_type=None):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
-    blob.upload_from_string(content)
+    blob.upload_from_string(content, content_type=content_type)
 
 
 def send_library_to_gcs(file_url, bucket_name, destination_blob_name):
