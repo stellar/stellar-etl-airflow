@@ -1,7 +1,9 @@
+from ast import literal_eval
 from datetime import datetime
 from json import loads
 
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import BranchPythonOperator
 from airflow.operators.python_operator import PythonOperator
@@ -19,8 +21,9 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2023, 1, 1),
     description="This DAG updates the js library from bower-js-stellar-base repo.",
-    schedule_interval="0 17 * * *",  # Daily 11 AM UTC
+    schedule_interval="0 17 * * *",  # Daily at 17:00 UTC
     render_template_as_native_obj=True,
+    is_paused_upon_creation=literal_eval(Variable.get("use_testnet")),
     params={
         "alias": "js_library",
     },
