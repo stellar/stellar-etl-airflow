@@ -319,5 +319,8 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:dbf348d"
+  "public_dbt_image_name": "stellar/stellar-dbt:dbf348d",
+  "stellar_base_js_repositoy_name": "bower-js-stellar-base",
+  "stellar_base_js_repository_url": "https://raw.githubusercontent.com/stellar/bower-js-stellar-base/master/stellar-base.min.js",
+  "package_js_object_name": "stellar-base.min.js"
 }
