@@ -52,4 +52,4 @@ def is_new_tag(repo, last_known_tag_date):
             return "update_library_task"
         else:
             logging.info("No new tags found")
-            return "task_aready_up_to_date_task"
+            return "task_already_up_to_date_task"

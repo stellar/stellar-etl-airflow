@@ -61,9 +61,9 @@ update_library = PythonOperator(
     dag=dag,
 )
 
-task_aready_up_to_date = EmptyOperator(
-    task_id="task_aready_up_to_date_task",
+task_already_up_to_date = EmptyOperator(
+    task_id="task_already_up_to_date_task",
     dag=dag,
 )
 
-check_last_update >> check_tag >> [update_library, task_aready_up_to_date]
+check_last_update >> check_tag >> [update_library, task_already_up_to_date]
