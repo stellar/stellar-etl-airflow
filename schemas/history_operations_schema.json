@@ -1029,6 +1029,23 @@
         "type": "RECORD"
       },
       {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "value",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "parameters_decoded",
+        "type": "RECORD"
+      },
+      {
         "mode": "NULLABLE",
         "name": "function",
         "type": "STRING"
@@ -1056,11 +1073,6 @@
       {
         "mode": "NULLABLE",
         "name": "contract_code_hash",
-        "type": "STRING"
-      },
-      {
-        "mode": "REPEATED",
-        "name": "decoded_symbol_param_names",
         "type": "STRING"
       }
     ],
