@@ -79,10 +79,10 @@
       "account",
       "type"
     ],
-    "contract_data": ["last_modified_ledger"],
-    "contract_code": ["last_modified_ledger"],
+    "contract_data": ["last_modified_ledger", "contract_id"],
+    "contract_code": ["last_modified_ledger", "contract_code_hash"],
     "config_settings": ["last_modified_ledger"],
-    "expiration": ["last_modified_ledger"]
+    "ttl": ["last_modified_ledger", "key_hash"]
   },
   "dbt_dataset": "test_sdf",
   "dbt_full_refresh_models": {
@@ -129,7 +129,7 @@
     "contract_data": "contract_data.txt",
     "contract_code": "contract_code.txt",
     "config_settings": "config_settings.txt",
-    "expiration": "expiration.txt",
+    "ttl": "ttl.txt",
     "diagnostic_events": "diagnostic_events.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
@@ -196,19 +196,19 @@
       "type": "MONTH"
     },
     "contract_data": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "contract_code": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "config_settings": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
-    "expiration": {
-      "field": "batch_run_date",
+    "ttl": {
+      "field": "closed_at",
       "type": "MONTH"
     }
   },
@@ -266,7 +266,7 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "expiration": "expiration",
+    "ttl": "ttl",
     "diagnostic_events": "diagnostic_events"
   },
   "task_timeout": {
