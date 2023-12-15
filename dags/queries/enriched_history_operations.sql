@@ -136,13 +136,14 @@ select
     , ht.extra_signers as extra_signers
     , details.asset_balance_changes
     , details.parameters
+    , details.parameters_decoded
     , details.function
     , details.address
     , details.type as soroban_operation_type
     , details.extend_to
     , details.contract_id
     , details.contract_code_hash
-    , ht.refundable_fee
+    , ht.resource_fee
     , ht.soroban_resources_instructions
     , ht.soroban_resources_read_bytes
     , ht.soroban_resources_write_bytes
