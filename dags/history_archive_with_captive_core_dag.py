@@ -47,6 +47,7 @@ table_names = Variable.get("table_ids", deserialize_json=True)
 internal_project = "{{ var.value.bq_project }}"
 internal_dataset = "{{ var.value.bq_dataset }}"
 public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
 public_dataset_new = "{{ var.value.public_dataset_new }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
@@ -135,17 +136,26 @@ Bigquery. If it does, the records are deleted prior to reinserting the batch.
 delete_old_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["operations"]
 )
+delete_old_op_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["operations"], "pub"
+)
 delete_old_op_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["operations"], "pub_new"
 )
 delete_old_trade_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["trades"]
 )
+delete_old_trade_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["trades"], "pub"
+)
 delete_old_trade_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["trades"], "pub_new"
 )
 delete_enrich_op_task = build_delete_data_task(
     dag, internal_project, internal_dataset, "enriched_history_operations"
+)
+delete_enrich_op_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, "enriched_history_operations", "pub"
 )
 delete_enrich_op_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, "enriched_history_operations", "pub_new"
@@ -161,6 +171,9 @@ delete_old_effects_pub_new_task = build_delete_data_task(
 )
 delete_old_tx_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["transactions"]
+)
+delete_old_tx_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["transactions"], "pub"
 )
 delete_old_tx_pub_new_task = build_delete_data_task(
     dag, public_project, public_dataset_new, table_names["transactions"], "pub_new"
@@ -215,6 +228,40 @@ send_txs_to_bq_task = build_gcs_to_bq_task(
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
+send_ops_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    op_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["operations"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+send_trades_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    trade_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["trades"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+send_txs_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    tx_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["transactions"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+
 """
 Load final public dataset, crypto-stellar
 """
@@ -279,6 +326,15 @@ insert_enriched_hist_task = build_bq_insert_job(
     partition=True,
     cluster=True,
 )
+insert_enriched_hist_pub_task = build_bq_insert_job(
+    dag,
+    public_project,
+    public_dataset,
+    "enriched_history_operations",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
 insert_enriched_hist_pub_new_task = build_bq_insert_job(
     dag,
     public_project,
@@ -314,6 +370,14 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
 )
 (
     op_export_task
+    >> delete_old_op_pub_task
+    >> send_ops_to_pub_task
+    >> wait_on_dag
+    >> delete_enrich_op_pub_task
+    >> insert_enriched_hist_pub_task
+)
+(
+    op_export_task
     >> delete_old_op_pub_new_task
     >> send_ops_to_pub_new_task
     >> wait_on_dag
@@ -327,6 +391,7 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> delete_old_trade_task
     >> send_trades_to_bq_task
 )
+trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
 trade_export_task >> delete_old_trade_pub_new_task >> send_trades_to_pub_new_task
 (
     time_task
@@ -344,5 +409,6 @@ effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_ne
     >> send_txs_to_bq_task
     >> wait_on_dag
 )
+tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 tx_export_task >> delete_old_tx_pub_new_task >> send_txs_to_pub_new_task >> wait_on_dag
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)

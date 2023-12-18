@@ -91,6 +91,9 @@ delete_acc_pub_new_task = build_delete_data_task(
 delete_bal_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["claimable_balances"]
 )
+delete_bal_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["claimable_balances"], "pub"
+)
 delete_bal_pub_new_task = build_delete_data_task(
     dag,
     public_project,
@@ -206,6 +209,18 @@ The apply tasks receive the location of the file in Google Cloud storage through
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
+send_bal_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    changes_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["claimable_balances"],
+    "/*-claimable_balances.txt",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+
 """
     Send to new public dataset
 """
@@ -323,6 +338,7 @@ send_ttl_to_pub_task = build_gcs_to_bq_task(
 date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
 write_acc_stats >> delete_acc_pub_new_task >> send_acc_to_pub_new_task
 date_task >> changes_task >> write_bal_stats >> delete_bal_task >> send_bal_to_bq_task
+write_bal_stats >> delete_bal_pub_task >> send_bal_to_pub_task
 write_bal_stats >> delete_bal_pub_new_task >> send_bal_to_pub_new_task
 date_task >> changes_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
 write_off_stats >> delete_off_pub_new_task >> send_off_to_pub_new_task
