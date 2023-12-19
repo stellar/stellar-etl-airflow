@@ -190,17 +190,17 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "max_entry_expiration",
+    "name": "max_entry_ttl",
     "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
-    "name": "min_temp_entry_expiration",
+    "name": "min_temporary_ttl",
     "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
-    "name": "min_persistent_entry_expiration",
+    "name": "min_persistent_ttl",
     "type": "INTEGER"
   },
   {
@@ -220,7 +220,7 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "max_entries_to_expire",
+    "name": "max_entries_to_archive",
     "type": "INTEGER"
   },
   {

@@ -79,17 +79,17 @@
       "account",
       "type"
     ],
-    "contract_data": ["last_modified_ledger"],
-    "contract_code": ["last_modified_ledger"],
+    "contract_data": ["last_modified_ledger", "contract_id"],
+    "contract_code": ["last_modified_ledger", "contract_code_hash"],
     "config_settings": ["last_modified_ledger"],
-    "expiration": ["last_modified_ledger"]
+    "ttl": ["last_modified_ledger", "key_hash"]
   },
   "dbt_dataset": "test_sdf",
   "dbt_full_refresh_models": {
     "partnership_assets__account_holders_activity_fact": true,
     "partnership_assets__asset_activity_fact": true
   },
-  "dbt_image_name": "stellar/stellar-dbt:1e160fe",
+  "dbt_image_name": "stellar/stellar-dbt:738ac3e",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "test_sdf_marts",
@@ -99,7 +99,7 @@
   "dbt_threads": 1,
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:08fd8de",
+  "image_name": "stellar/stellar-etl:bbce8f8",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -129,7 +129,7 @@
     "contract_data": "contract_data.txt",
     "contract_code": "contract_code.txt",
     "config_settings": "config_settings.txt",
-    "expiration": "expiration.txt",
+    "ttl": "ttl.txt",
     "diagnostic_events": "diagnostic_events.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
@@ -196,19 +196,19 @@
       "type": "MONTH"
     },
     "contract_data": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "contract_code": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "config_settings": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
-    "expiration": {
-      "field": "batch_run_date",
+    "ttl": {
+      "field": "closed_at",
       "type": "MONTH"
     }
   },
@@ -266,7 +266,7 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "expiration": "expiration",
+    "ttl": "ttl",
     "diagnostic_events": "diagnostic_events"
   },
   "task_timeout": {
