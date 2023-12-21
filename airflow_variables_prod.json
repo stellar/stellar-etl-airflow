@@ -9,9 +9,7 @@
                 {
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
-                  "values": [
-                    "default-pool"
-                  ]
+                  "values": ["default-pool"]
                 }
               ]
             }
@@ -62,9 +60,7 @@
                 {
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
-                  "values": [
-                    "default-pool"
-                  ]
+                  "values": ["default-pool"]
                 }
               ]
             }
