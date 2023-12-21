@@ -82,6 +82,7 @@ ledger_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
+    resource_cfg="wocc",
 )
 asset_export_task = build_export_task(
     dag,
@@ -91,6 +92,7 @@ asset_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
+    resource_cfg="wocc",
 )
 
 """

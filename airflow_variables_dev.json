@@ -1,6 +1,22 @@
 {
   "affinity": {
-    "default": {},
+    "default": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["default-pool"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
     "cc": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
@@ -11,6 +27,23 @@
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
                   "values": ["pool-2"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "wocc": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["default-pool"]
                 }
               ]
             }
@@ -232,6 +265,13 @@
       }
     },
     "cc": {
+      "requests": {
+        "cpu": "0.3",
+        "memory": "900Mi",
+        "ephemeral-storage": "1Gi"
+      }
+    },
+    "wocc": {
       "requests": {
         "cpu": "0.3",
         "memory": "900Mi",

@@ -22,7 +22,7 @@ init_sentry()
 dag = DAG(
     "state_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 12, 7, 20, 0),
+    start_date=datetime(2023, 12, 17, 6, 0),
     description="This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.",
     schedule_interval="*/30 * * * *",
     params={
