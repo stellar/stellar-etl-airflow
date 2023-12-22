@@ -364,8 +364,8 @@ last_dag_run_task = BranchDateTimeOperator(
     use_task_logical_date=True,
     follow_task_ids_if_true=["trigger_dbt_daily_dag"],
     follow_task_ids_if_false=["not_last_dag_run_task"],
-    target_upper=time(17, 30, 1),
-    target_lower=time(17, 30, 0),
+    target_upper=time(0, 0, 1),
+    target_lower=time(0, 0, 0),
     dag=dag,
 )
 midday_run_task = BranchDateTimeOperator(
