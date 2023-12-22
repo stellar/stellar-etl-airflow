@@ -3,11 +3,14 @@ The history_archive_export DAG exports operations and trades from the history ar
 It is scheduled to export information to BigQuery at regular intervals.
 """
 from ast import literal_eval
-from datetime import datetime
+from datetime import datetime, time
 from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from airflow.operators.datetime import BranchDateTimeOperator
+from airflow.operators.empty import EmptyOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
@@ -353,6 +356,60 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     cluster=True,
 )
 
+"""
+These tasks use the BranchDateTimeOperator to trigger different dbt DAGs daily and every 12 hours
+"""
+last_dag_run_task = BranchDateTimeOperator(
+    task_id="last_dag_run_task",
+    use_task_logical_date=True,
+    follow_task_ids_if_true=["trigger_dbt_daily_dag"],
+    follow_task_ids_if_false=["not_last_dag_run_task"],
+    target_upper=time(17, 30, 1),
+    target_lower=time(17, 30, 0),
+    dag=dag,
+)
+midday_run_task = BranchDateTimeOperator(
+    task_id="midday_run_task",
+    use_task_logical_date=True,
+    follow_task_ids_if_true=["trigger_dbt_ohlc_dag"],
+    follow_task_ids_if_false=["not_midday_dag_run_task"],
+    target_upper=time(12, 0, 1),
+    target_lower=time(12, 0, 0),
+    dag=dag,
+)
+
+"""
+These tasks trigger DAGs that runs the dbt models
+"""
+trigger_eho_dag = TriggerDagRunOperator(
+    task_id="trigger_enriched_history_operations_dag",
+    trigger_dag_id="enriched_history_operations_dag",
+    execution_date="{{ ts }}",
+    reset_dag_run=True,
+    wait_for_completion=True,
+    dag=dag,
+)
+trigger_dbt_daily_dag = TriggerDagRunOperator(
+    task_id="trigger_dbt_daily_dag",
+    trigger_dag_id="dbt_daily_dag",
+    execution_date="{{ ts }}",
+    reset_dag_run=True,
+    wait_for_completion=True,
+    dag=dag,
+)
+trigger_dbt_ohlc_dag = TriggerDagRunOperator(
+    task_id="trigger_dbt_ohlc_dag",
+    trigger_dag_id="dbt_ohlc_dag",
+    trigger_rule="none_failed_min_one_success",
+    execution_date="{{ ts }}",
+    reset_dag_run=True,
+    wait_for_completion=True,
+    dag=dag,
+)
+
+not_last_dag_run_task = EmptyOperator(task_id="not_last_dag_run_task")
+not_midday_dag_run_task = EmptyOperator(task_id="not_midday_dag_run_task")
+
 (
     time_task
     >> write_op_stats
@@ -412,3 +469,18 @@ effects_export_task >> delete_old_effects_pub_new_task >> send_effects_to_pub_ne
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 tx_export_task >> delete_old_tx_pub_new_task >> send_txs_to_pub_new_task >> wait_on_dag
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
+(
+    [
+        insert_enriched_hist_pub_new_task,
+        insert_enriched_hist_pub_task,
+        insert_enriched_hist_task,
+    ]
+    >> trigger_eho_dag
+)
+trigger_eho_dag >> [last_dag_run_task, midday_run_task]
+last_dag_run_task >> [
+    not_last_dag_run_task,
+    trigger_dbt_daily_dag,
+]
+trigger_dbt_daily_dag >> trigger_dbt_ohlc_dag
+midday_run_task >> [not_midday_dag_run_task, trigger_dbt_ohlc_dag]
