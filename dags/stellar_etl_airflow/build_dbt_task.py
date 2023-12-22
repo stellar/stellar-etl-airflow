@@ -82,7 +82,7 @@ def dbt_run_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "techindicium/stellar-dbt@sha256:459f4f6d122e2237f66cb192540ebfc9e6e7fe9e47b62ea29c0764c7df868927"
+    dbt_image = "techindicium/stellar-dbt@sha256:8e1571ddb60596ff8c1d2afb83455ff3fb6a3fc6430a33a18502437bf6021083"
 
     args = [command_type, f"--{flag}"]
 
