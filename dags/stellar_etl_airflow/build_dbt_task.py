@@ -111,7 +111,6 @@ def dbt_run_task(
         service_account_name=Variable.get("k8s_service_account"),
         env_vars={
             "DBT_USE_COLORS": "0",
-            "GCLOUD_PROJECT_ID": "{{ var.value.dbt_project }}",
             "DBT_DATASET": "crypto_stellar_dbt",
             "DBT_TARGET": "{{ var.value.dbt_target }}",
             "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
