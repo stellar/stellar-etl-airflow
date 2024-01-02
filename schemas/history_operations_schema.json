@@ -1029,6 +1029,23 @@
         "type": "RECORD"
       },
       {
+        "fields": [
+          {
+            "mode": "NULLABLE",
+            "name": "type",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "value",
+            "type": "STRING"
+          }
+        ],
+        "mode": "REPEATED",
+        "name": "parameters_decoded",
+        "type": "RECORD"
+      },
+      {
         "mode": "NULLABLE",
         "name": "function",
         "type": "STRING"
@@ -1045,7 +1062,7 @@
       },
       {
         "mode": "NULLABLE",
-        "name": "ledgers_to_expire",
+        "name": "extend_to",
         "type": "INTEGER"
       },
       {

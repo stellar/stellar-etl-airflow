@@ -23,7 +23,7 @@ init_sentry()
 dag = DAG(
     "history_archive_without_captive_core",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 9, 20, 15, 0),
+    start_date=datetime(2023, 12, 18, 17, 0),
     catchup=True,
     description="This DAG exports ledgers, transactions, and assets from the history archive to BigQuery. Incremental Loads",
     schedule_interval="*/15 * * * *",
@@ -82,6 +82,7 @@ ledger_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
+    resource_cfg="wocc",
 )
 asset_export_task = build_export_task(
     dag,
@@ -91,6 +92,7 @@ asset_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
+    resource_cfg="wocc",
 )
 
 """
