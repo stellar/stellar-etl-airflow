@@ -1,6 +1,22 @@
 {
   "affinity": {
-    "default": {},
+    "default": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["default-pool"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
     "backfill": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
@@ -35,7 +51,7 @@
         }
       }
     },
-    "state": {
+    "wocc": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
           "nodeSelectorTerms": [
@@ -45,6 +61,23 @@
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
                   "values": ["default-pool"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "state": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["state-table"]
                 }
               ]
             }
@@ -121,7 +154,7 @@
   "dbt_threads": 1,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:08fd8de",
+  "image_name": "stellar/stellar-etl:d8ab3e6",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -244,6 +277,13 @@
       }
     },
     "cc": {
+      "requests": {
+        "cpu": "3.5",
+        "memory": "15Gi",
+        "ephemeral-storage": "10Gi"
+      }
+    },
+    "wocc": {
       "requests": {
         "cpu": "3.5",
         "memory": "15Gi",
