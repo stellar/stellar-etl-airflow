@@ -25,7 +25,7 @@ dag = DAG(
 internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("dbt_mart_dataset")
 public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset_new")
+public_dataset = Variable.get("public_dataset")
 
 # tasks for staging tables for ledger_current_state tables
 stg_account_signers = build_dbt_task(dag, "stg_account_signers")
