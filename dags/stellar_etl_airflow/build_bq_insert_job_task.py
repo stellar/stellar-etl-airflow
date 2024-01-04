@@ -63,6 +63,7 @@ def build_bq_insert_job(
             },
             "useLegacySql": False,
             "writeDisposition": write_disposition,
+            "schemaUpdateOptions": ["ALLOW_FIELD_ADDITION"],
         }
     }
     if partition:
