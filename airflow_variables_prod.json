@@ -264,8 +264,7 @@
       "type": "MONTH"
     }
   },
-  "public_dataset": "crypto_stellar_2",
-  "public_dataset_new": "crypto_stellar",
+  "public_dataset": "crypto_stellar",
   "public_project": "crypto-stellar",
   "bq_dataset_audit_log": "audit_log",
   "resources": {
