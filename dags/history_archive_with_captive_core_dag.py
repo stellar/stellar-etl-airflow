@@ -364,7 +364,7 @@ The `wait_for_completion` boolean set to `True` means that this task will wait u
 """
 trigger_eho_dag = TriggerDagRunOperator(
     task_id="trigger_enriched_history_operations_dag",
-    trigger_dag_id="enriched_history_operations_dag",
+    trigger_dag_id="enriched_history_operations",
     execution_date="{{ ts }}",
     reset_dag_run=True,
     wait_for_completion=True,
@@ -388,7 +388,7 @@ last_dag_run_task = BranchDateTimeOperator(
 )
 trigger_dbt_daily_dag = TriggerDagRunOperator(
     task_id="trigger_dbt_daily_dag",
-    trigger_dag_id="dbt_daily_dag",
+    trigger_dag_id="dbt_daily",
     execution_date="{{ ts }}",
     reset_dag_run=True,
     wait_for_completion=True,
@@ -412,7 +412,7 @@ midday_run_task = BranchDateTimeOperator(
 )
 trigger_dbt_ohlc_dag = TriggerDagRunOperator(
     task_id="trigger_dbt_ohlc_dag",
-    trigger_dag_id="dbt_ohlc_dag",
+    trigger_dag_id="dbt_ohlc",
     trigger_rule="none_failed_min_one_success",
     execution_date="{{ ts }}",
     reset_dag_run=True,

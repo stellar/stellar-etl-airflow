@@ -1,5 +1,5 @@
 """
-The `dbt_daily_dag` runs `dbt build` against all models except by:
+The `dbt_daily` DAG runs `dbt build` against all models except by:
     - the `enriched_history_operations` model
     - and all models tagged `ohlc`
 The function dbt_task() has `build` as the default argument for `dbt`
@@ -12,7 +12,7 @@ from stellar_etl_airflow.build_dbt_task import dbt_task
 from stellar_etl_airflow.default import get_default_dag_args
 
 dag = DAG(
-    "dbt_daily_dag",
+    "dbt_daily",
     default_args=get_default_dag_args(),
     schedule_interval=None,  # don’t schedule since this DAG is externally triggered daily
     user_defined_filters={
