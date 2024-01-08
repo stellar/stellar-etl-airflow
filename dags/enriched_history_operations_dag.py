@@ -1,6 +1,6 @@
 from airflow import DAG
 from kubernetes.client import models as k8s
-from stellar_etl_airflow.build_dbt_task import dbt_run_task
+from stellar_etl_airflow.build_dbt_task import dbt_task
 from stellar_etl_airflow.default import get_default_dag_args
 
 dag = DAG(
@@ -15,6 +15,6 @@ dag = DAG(
     tags=["dbt"],
 )
 
-enriched_history_operations_task = dbt_run_task(
+enriched_history_operations_task = dbt_task(
     dag, model_name="enriched_history_operations"
 )

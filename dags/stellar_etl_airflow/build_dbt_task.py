@@ -57,7 +57,7 @@ elementary:
     return create_dbt_profile_cmd
 
 
-def dbt_run_task(
+def dbt_task(
     dag,
     model_name=None,
     tag=None,
