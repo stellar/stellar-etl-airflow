@@ -1,3 +1,9 @@
+"""
+The `dbt_ohlc_dag` runs `dbt build` selecting all models tagged with `ohlc` and all of its parents.
+The function dbt_task() has `build` as the default argument for `dbt`
+and the default graph operator is `+`.
+The final command is similar to: `dbt build --select +tag:ohlc`
+"""
 from airflow import DAG
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_dbt_task import dbt_task

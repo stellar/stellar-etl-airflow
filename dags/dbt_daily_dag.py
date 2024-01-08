@@ -1,3 +1,11 @@
+"""
+The `dbt_daily_dag` runs `dbt build` against all models except by:
+    - the `enriched_history_operations` model
+    - and all models tagged `ohlc`
+The function dbt_task() has `build` as the default argument for `dbt`
+and the graph operator needs to be an empty string to override the default `+`.
+The final command is similar to: `dbt build --exclude enriched_history_operations,tag:ohlc`
+"""
 from airflow import DAG
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_dbt_task import dbt_task
