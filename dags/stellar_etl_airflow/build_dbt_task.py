@@ -82,7 +82,7 @@ def dbt_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "techindicium/stellar-dbt@sha256:8e1571ddb60596ff8c1d2afb83455ff3fb6a3fc6430a33a18502437bf6021083"
+    dbt_image = "{{ var.value.public_dbt_image_name }}"
 
     args = [command_type, f"--{flag}"]
 
@@ -130,7 +130,7 @@ def dbt_task(
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth-indicium")],
+        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
     )
 
 
