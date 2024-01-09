@@ -576,6 +576,22 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![Bucket List DAG](documentation/images/bucket_list_export.png)
 
+### **Sandbox update DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
+
+- This DAG update the Canvas sandbox dataset with transactions tables, state tables with history once a month.
+
+![sandbox update DAG](documentation/images/sandbox_update_dag.png)
+
+### **Cleanup metadata DAG**
+
+- A maintenance workflow that you can deploy into Airflow to periodically clean
+out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
+having too much data in your Airflow MetaStore.
+
+![sandbox update DAG](documentation/images/cleanup_metadata_dag.png)
+
 <br>
 
 ## **Task Explanations**
