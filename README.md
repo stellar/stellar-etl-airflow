@@ -586,11 +586,13 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ### **Cleanup metadata DAG**
 
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/cleanup_metadata_dag.py)
+
 - A maintenance workflow that you can deploy into Airflow to periodically clean
 out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
 having too much data in your Airflow MetaStore.
 
-![sandbox update DAG](documentation/images/cleanup_metadata_dag.png)
+![Cleanup metadata DAG](documentation/images/cleanup_metadata_dag.png)
 
 <br>
 
