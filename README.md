@@ -643,6 +643,10 @@ The task will read the query from the specified sql file and will return a BigQu
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_coingecko_api_to_gcs_task.py) creates a CSV file from the CoinGecko API and uploads it to Google Cloud Storage, inside of a bucket.
 The file is named after the destination_blob_name parameter and the columns parameter is used to create the CSV file with the specified columns.
 
+### **build_check_execution_date_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_check_execution_date_task.py) checks if the current date is in the list of dates that are set to reset the DAG.
+If the current date is in the list, the DAG will continue to run the tasks that are set to run on the reset date. If the current date is not in the list, the DAG will stop running the tasks that are set to run on the reset date.
 
 <br>
 
