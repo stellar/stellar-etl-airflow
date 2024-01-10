@@ -638,6 +638,12 @@ The task will read the query from the specified sql file and will return a BigQu
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_copy_table_task.py) copies a table from an specified BigQuery `project.dataset.table` to its destination inside of an specific project and dataset.
 
+### **build_coingecko_api_to_gcs_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_coingecko_api_to_gcs_task.py) creates a CSV file from the CoinGecko API and uploads it to Google Cloud Storage, inside of a bucket.
+The file is named after the destination_blob_name parameter and the columns parameter is used to create the CSV file with the specified columns.
+
+
 <br>
 
 # Further Development
