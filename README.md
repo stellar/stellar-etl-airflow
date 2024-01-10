@@ -634,6 +634,10 @@ The task will read the query from the specified sql file and will return a BigQu
 
 > _*NOTE:*_ If the batch interval is changed, the deleted data might not align with the prior batch intervals.
 
+### **build_copy_table_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_copy_table_task.py) copies a table from an specified BigQuery `project.dataset.table` to its destination inside of an specific project and dataset.
+
 <br>
 
 # Further Development
