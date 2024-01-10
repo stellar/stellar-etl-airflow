@@ -1,6 +1,22 @@
 {
   "affinity": {
-    "default": {},
+    "default": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["default-pool"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
     "cc": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
@@ -11,6 +27,23 @@
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
                   "values": ["pool-2"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "wocc": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["default-pool"]
                 }
               ]
             }
@@ -220,8 +253,7 @@
     }
   },
   "partners_bucket": "partners_data",
-  "public_dataset": "test_crypto_stellar_old",
-  "public_dataset_new": "test_crypto_stellar",
+  "public_dataset": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
     "default": {
@@ -232,6 +264,13 @@
       }
     },
     "cc": {
+      "requests": {
+        "cpu": "0.3",
+        "memory": "900Mi",
+        "ephemeral-storage": "1Gi"
+      }
+    },
+    "wocc": {
       "requests": {
         "cpu": "0.3",
         "memory": "900Mi",
