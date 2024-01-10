@@ -6,11 +6,6 @@ from ast import literal_eval
 from datetime import datetime, time
 from json import loads
 
-from airflow import DAG
-from airflow.models.variable import Variable
-from airflow.operators.datetime import BranchDateTimeOperator
-from airflow.operators.empty import EmptyOperator
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
@@ -21,6 +16,12 @@ from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+
+from airflow import DAG
+from airflow.models.variable import Variable
+from airflow.operators.datetime import BranchDateTimeOperator
+from airflow.operators.empty import EmptyOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 init_sentry()
 
@@ -418,7 +419,6 @@ tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
 (
     [
-        insert_enriched_hist_pub_new_task,
         insert_enriched_hist_pub_task,
         insert_enriched_hist_task,
     ]
