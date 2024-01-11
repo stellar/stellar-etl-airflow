@@ -366,10 +366,3 @@ tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
     ]
     >> trigger_eho_dag
 )
-trigger_eho_dag >> [last_dag_run_task, midday_run_task]
-last_dag_run_task >> [
-    not_last_dag_run_task,
-    trigger_dbt_daily_dag,
-]
-trigger_dbt_daily_dag >> trigger_dbt_ohlc_dag
-midday_run_task >> [not_midday_dag_run_task, trigger_dbt_ohlc_dag]
