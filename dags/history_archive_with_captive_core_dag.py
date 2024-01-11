@@ -3,13 +3,11 @@ The history_archive_export DAG exports operations and trades from the history ar
 It is scheduled to export information to BigQuery at regular intervals.
 """
 from ast import literal_eval
-from datetime import datetime, time
+from datetime import datetime
 from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
-from airflow.operators.datetime import BranchDateTimeOperator
-from airflow.operators.empty import EmptyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
@@ -301,71 +299,16 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
 This task triggers the `enriched_history_operations_dag` that's resposible for running the dbt `enriched_history_operations` model.
 The execution date of the triggered DAG will be the same as this DAG.
 The `reset_dag_run` boolean set to `True` means that whenever this DAG is rerun/cleared, the triggered DAG also receives a new DAG run.
-The `wait_for_completion` boolean set to `True` means that this task will wait until the triggered DAG finishes.
+The `wait_for_completion` boolean set to `False` means that this task won't wait until the triggered DAG finishes.
 """
 trigger_eho_dag = TriggerDagRunOperator(
     task_id="trigger_enriched_history_operations_dag",
     trigger_dag_id="enriched_history_operations",
     execution_date="{{ ts }}",
     reset_dag_run=True,
-    wait_for_completion=True,
+    wait_for_completion=False,
     dag=dag,
 )
-
-"""
-The `last_dag_run_task` will only return `True` when it's 00:00 UTC
-then it will follow the task id `trigger_dbt_daily_dag`.
-This logic along with tasks dependencies will result in the `dbt_daily_dag`
-running once a daily (midnight).
-"""
-last_dag_run_task = BranchDateTimeOperator(
-    task_id="last_dag_run_task",
-    use_task_logical_date=True,
-    follow_task_ids_if_true=["trigger_dbt_daily_dag"],
-    follow_task_ids_if_false=["not_last_dag_run_task"],
-    target_upper=time(0, 0, 1),
-    target_lower=time(0, 0, 0),
-    dag=dag,
-)
-trigger_dbt_daily_dag = TriggerDagRunOperator(
-    task_id="trigger_dbt_daily_dag",
-    trigger_dag_id="dbt_daily",
-    execution_date="{{ ts }}",
-    reset_dag_run=True,
-    wait_for_completion=True,
-    dag=dag,
-)
-
-"""
-The `midday_run_task` will only return `True` when it's 12:00 UTC
-then it will follow the task id `trigger_dbt_ohlc_dag`.
-This logic along with tasks dependencies will result in the `dbt_ohlc_dag`
-running twice a day (noon and midnight).
-"""
-midday_run_task = BranchDateTimeOperator(
-    task_id="midday_run_task",
-    use_task_logical_date=True,
-    follow_task_ids_if_true=["trigger_dbt_ohlc_dag"],
-    follow_task_ids_if_false=["not_midday_dag_run_task"],
-    target_upper=time(12, 0, 1),
-    target_lower=time(12, 0, 0),
-    dag=dag,
-)
-trigger_dbt_ohlc_dag = TriggerDagRunOperator(
-    task_id="trigger_dbt_ohlc_dag",
-    trigger_dag_id="dbt_ohlc",
-    trigger_rule="none_failed_min_one_success",
-    execution_date="{{ ts }}",
-    reset_dag_run=True,
-    wait_for_completion=True,
-    dag=dag,
-)
-
-"""
-Placeholder tasks to organize the flow of BranchDateTimeOperator
-"""
-not_last_dag_run_task = EmptyOperator(task_id="not_last_dag_run_task")
-not_midday_dag_run_task = EmptyOperator(task_id="not_midday_dag_run_task")
 
 (
     time_task
