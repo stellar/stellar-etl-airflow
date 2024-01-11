@@ -1,7 +1,7 @@
 """
 The `enriched_history_operations` DAG runs `dbt build` the `enriched_history_operations` model.
 """
-from datetime import time
+from datetime import datetime, time
 
 from airflow import DAG
 from airflow.operators.datetime import BranchDateTimeOperator
@@ -14,6 +14,7 @@ from stellar_etl_airflow.default import get_default_dag_args
 dag = DAG(
     "enriched_history_operations",
     default_args=get_default_dag_args(),
+    start_date=datetime(2024, 1, 1, 0, 0),
     schedule_interval=None,  # don’t schedule since this DAG is externally triggered daily
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
