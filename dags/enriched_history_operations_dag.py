@@ -100,3 +100,11 @@ Placeholder tasks to organize the flow of BranchDateTimeOperator
 """
 not_last_dag_run_task = EmptyOperator(task_id="not_last_dag_run_task")
 not_midday_dag_run_task = EmptyOperator(task_id="not_midday_dag_run_task")
+
+enriched_history_operations_task >> [last_dag_run_task, midday_run_task]
+last_dag_run_task >> [
+    not_last_dag_run_task,
+    trigger_dbt_daily_dag,
+]
+trigger_dbt_daily_dag >> trigger_dbt_ohlc_dag
+midday_run_task >> [not_midday_dag_run_task, trigger_dbt_ohlc_dag]
