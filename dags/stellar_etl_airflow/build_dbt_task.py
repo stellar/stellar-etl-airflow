@@ -130,7 +130,7 @@ def dbt_task(
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth-indicium")],
     )
 
 
