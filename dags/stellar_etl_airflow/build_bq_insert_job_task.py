@@ -63,7 +63,6 @@ def build_bq_insert_job(
             },
             "useLegacySql": False,
             "writeDisposition": write_disposition,
-            "schemaUpdateOptions": ["ALLOW_FIELD_ADDITION"],
         }
     }
     if partition:
@@ -74,6 +73,8 @@ def build_bq_insert_job(
         configuration["query"]["clustering"] = {"fields": cluster_fields[table]}
     if create:
         configuration["query"]["createDisposition"] = "CREATE_IF_NEEDED"
+    if write_disposition == "WRITE_APPEND":
+        configuration["query"]["schemaUpdateOptions"] = "ALLOW_FIELD_ADDITION"
 
     return BigQueryInsertJobOperator(
         task_id=f"insert_records_{table}_{dataset_type}",
