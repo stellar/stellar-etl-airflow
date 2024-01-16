@@ -576,6 +576,24 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![Bucket List DAG](documentation/images/bucket_list_export.png)
 
+### **Sandbox update DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
+
+- This DAG update the Canvas sandbox dataset with transactions tables, state tables with history once a month.
+
+![sandbox update DAG](documentation/images/sandbox_update_dag.png)
+
+### **Cleanup metadata DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/cleanup_metadata_dag.py)
+
+- A maintenance workflow that you can deploy into Airflow to periodically clean
+out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
+having too much data in your Airflow MetaStore.
+
+![Cleanup metadata DAG](documentation/images/cleanup_metadata_dag.png)
+
 <br>
 
 ## **Task Explanations**
@@ -612,11 +630,25 @@ The task will read the query from the specified sql file and will return a BigQu
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_cross_dependency_task.py) creates an ExternalTaskSensor that triggers on specified DAG tasks's success.
 
-### **delete_data_task**
+### **build_delete_data_task**
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_delete_data_task.py) deletes data from a specified BigQuery `project.dataset.table` according to the batch interval.
 
 > _*NOTE:*_ If the batch interval is changed, the deleted data might not align with the prior batch intervals.
+
+### **build_copy_table_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_copy_table_task.py) copies a table from an specified BigQuery `project.dataset.table` to its destination inside of an specific project and dataset.
+
+### **build_coingecko_api_to_gcs_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_coingecko_api_to_gcs_task.py) creates a CSV file from the CoinGecko API and uploads it to Google Cloud Storage, inside of a bucket.
+The file is named after the destination_blob_name parameter and the columns parameter is used to create the CSV file with the specified columns.
+
+### **build_check_execution_date_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_check_execution_date_task.py) checks if the current date is in the list of dates that are set to reset the DAG.
+If the current date is in the list, the DAG will continue to run the tasks that are set to run on the reset date. If the current date is not in the list, the DAG will stop running the tasks that are set to run on the reset date.
 
 <br>
 
