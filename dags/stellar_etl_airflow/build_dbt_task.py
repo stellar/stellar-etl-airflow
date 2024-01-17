@@ -57,8 +57,85 @@ elementary:
     return create_dbt_profile_cmd
 
 
+def dbt_task(
+    dag,
+    model_name=None,
+    tag=None,
+    flag="select",
+    operator="+",
+    command_type="build",
+    resource_cfg="default",
+):
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
+
+    container_resources = k8s.V1ResourceRequirements(
+        requests={
+            "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
+            "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
+        }
+    )
+    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
+
+    dbt_image = "{{ var.value.public_dbt_image_name }}"
+
+    args = [command_type, f"--{flag}"]
+
+    models = []
+    if tag:
+        task_name = tag
+        models.append(f"{operator}tag:{tag}")
+    if model_name:
+        task_name = model_name
+        models.append(f"{operator}{model_name}")
+    if len(models) > 1:
+        task_name = "multiple_models"
+        args.append(",".join(models))
+    else:
+        args.append(models[0])
+
+    if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
+        args.append("--full-refresh")
+
+    logging.info(f"sh commands to run in pod: {args}")
+
+    return KubernetesPodOperator(
+        task_id=f"dbt_{command_type}_{task_name}",
+        name=f"dbt_{command_type}_{task_name}",
+        namespace=Variable.get("k8s_namespace"),
+        service_account_name=Variable.get("k8s_service_account"),
+        env_vars={
+            "DBT_USE_COLORS": "0",
+            "DBT_DATASET": "crypto_stellar_dbt",
+            "DBT_TARGET": "{{ var.value.dbt_target }}",
+            "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
+            "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
+            "DBT_THREADS": "{{ var.value.dbt_threads }}",
+            "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
+        },
+        image=dbt_image,
+        arguments=args,
+        dag=dag,
+        do_xcom_push=True,
+        is_delete_operator_pod=True,
+        startup_timeout_seconds=720,
+        in_cluster=in_cluster,
+        config_file=config_file_location,
+        affinity=affinity,
+        container_resources=container_resources,
+        on_failure_callback=alert_after_max_retries,
+        image_pull_policy="IfNotPresent",
+        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+    )
+
+
 def build_dbt_task(
-    dag, model_name, command_type="build", resource_cfg="default", project="prod"
+    dag, model_name, command_type="run", resource_cfg="default", project="prod"
 ):
     """Create a task to run dbt on a selected model.
 

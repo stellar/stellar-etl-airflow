@@ -154,7 +154,7 @@
   "dbt_threads": 1,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:d8ab3e6",
+  "image_name": "stellar/stellar-etl:a480828",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -358,5 +358,5 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:dbf348d"
+  "public_dbt_image_name": "stellar/stellar-dbt:7b37cf5"
 }
