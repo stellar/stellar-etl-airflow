@@ -8,6 +8,7 @@ from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_batch_stats import build_batch_stats
@@ -294,6 +295,21 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     cluster=True,
 )
 
+"""
+This task triggers the `enriched_history_operations_dag` that's resposible for running the dbt `enriched_history_operations` model.
+The execution date of the triggered DAG will be the same as this DAG.
+The `reset_dag_run` boolean set to `True` means that whenever this DAG is rerun/cleared, the triggered DAG also receives a new DAG run.
+The `wait_for_completion` boolean set to `False` means that this task won't wait until the triggered DAG finishes.
+"""
+trigger_eho_dag = TriggerDagRunOperator(
+    task_id="trigger_enriched_history_operations_dag",
+    trigger_dag_id="enriched_history_operations",
+    execution_date="{{ ts }}",
+    reset_dag_run=True,
+    wait_for_completion=False,
+    dag=dag,
+)
+
 (
     time_task
     >> write_op_stats
@@ -343,3 +359,10 @@ effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
 )
 tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
+(
+    [
+        insert_enriched_hist_pub_task,
+        insert_enriched_hist_task,
+    ]
+    >> trigger_eho_dag
+)
