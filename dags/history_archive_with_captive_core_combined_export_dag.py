@@ -318,7 +318,7 @@ all_history_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_ta
     >> wait_on_dag
 )
 all_history_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
-(time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
+(time_task >> write_diagnostic_events_stats >> all_history_export_task)
 (
     [
         insert_enriched_hist_pub_task,
