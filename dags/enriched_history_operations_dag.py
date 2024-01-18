@@ -73,7 +73,7 @@ running twice a day (noon and midnight).
 midday_run_task = BranchDateTimeOperator(
     task_id="midday_run_task",
     use_task_logical_date=True,
-    follow_task_ids_if_true=["trigger_dbt_ohlc_dag"],
+    follow_task_ids_if_true=["is_midday_dag_run_task"],
     follow_task_ids_if_false=["not_midday_dag_run_task"],
     target_upper=time(12, 0, 1),
     target_lower=time(12, 0, 0),
@@ -101,6 +101,7 @@ Placeholder tasks to organize the flow of BranchDateTimeOperator
 """
 not_last_dag_run_task = EmptyOperator(task_id="not_last_dag_run_task")
 not_midday_dag_run_task = EmptyOperator(task_id="not_midday_dag_run_task")
+is_midday_dag_run_task = EmptyOperator(task_id="is_midday_dag_run_task")
 
 enriched_history_operations_task >> [last_dag_run_task, midday_run_task]
 last_dag_run_task >> [
@@ -108,4 +109,5 @@ last_dag_run_task >> [
     trigger_dbt_daily_dag,
 ]
 trigger_dbt_daily_dag >> trigger_dbt_ohlc_dag
-midday_run_task >> [not_midday_dag_run_task, trigger_dbt_ohlc_dag]
+midday_run_task >> [not_midday_dag_run_task, is_midday_dag_run_task]
+is_midday_dag_run_task >> trigger_dbt_ohlc_dag
