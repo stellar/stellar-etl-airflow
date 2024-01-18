@@ -154,7 +154,7 @@
   "dbt_threads": 1,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:a480828",
+  "image_name": "chowbao/stellar-etl:ef553e5",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
