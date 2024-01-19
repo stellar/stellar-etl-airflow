@@ -27,7 +27,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 1, 18, 22, 0),
     catchup=True,
-    description="This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
+    description="This DAG exports all history_* base tables using CaptiveCore. The DAG is a temporary fix, and not suited for public use.",
     schedule_interval="*/30 * * * *",
     params={
         "alias": "cc",
