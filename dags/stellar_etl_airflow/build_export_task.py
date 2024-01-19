@@ -87,7 +87,8 @@ def generate_etl_cmd(
         filepath = os.path.join(Variable.get("gcs_exported_object_prefix"), run_id)
     batched_path = os.path.join(filepath, batch_filename)
     base_path = os.path.join(filepath, base_filename)
-
+    if command == "export_all_history":
+        batched_path = filepath + "/"
     correct_filename = select_correct_filename(cmd_type, base_filename, batch_filename)
     switch = {
         "archive": [
@@ -144,6 +145,10 @@ def generate_etl_cmd(
     elif use_futurenet:
         cmd.append("--futurenet")
     cmd.append("--strict-export")
+
+    if command == "export_all_history":
+        return cmd, filepath + "/"
+
     return cmd, os.path.join(filepath, correct_filename)
 
 
@@ -185,7 +190,7 @@ def build_export_task(
         f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
-    if command == "export_ledger_entry_changes":
+    if command == "export_ledger_entry_changes" or command == "export_all_history":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
     else:
         arguments = f"""
