@@ -6,7 +6,7 @@ apache-airflow-providers-ftp==3.3.1
 apache-airflow-providers-google==8.6.0
 apache-airflow-providers-http==4.3.0
 apache-airflow-providers-imap==3.1.1
-apache-airflow-providers-sqlite==3.7.0
+apache-airflow-providers-sqlite==3.3.3
 connexion==2.14.2
 docker==3.7.3
 flask==2.2.5
