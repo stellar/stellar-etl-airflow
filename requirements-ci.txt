@@ -11,6 +11,7 @@ connexion==2.14.2
 docker==3.7.3
 flask==2.2.5
 flask-appbuilder==4.1.2
+flask-session==0.5.0
 freezegun==1.2.0
 jsonlines==3.0
 pendulum==2.1.2
