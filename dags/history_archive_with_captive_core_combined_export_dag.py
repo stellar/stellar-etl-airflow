@@ -25,7 +25,7 @@ init_sentry()
 dag = DAG(
     "history_archive_with_captive_core_combined_export",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 1, 18, 22, 0),
+    start_date=datetime(2024, 1, 19, 19, 0),
     catchup=True,
     description="This DAG exports all history_* base tables using CaptiveCore. The DAG is a temporary fix, and not suited for public use.",
     schedule_interval="*/30 * * * *",
