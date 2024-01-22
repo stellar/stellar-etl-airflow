@@ -117,7 +117,7 @@
     "config_settings": ["last_modified_ledger"],
     "ttl": ["last_modified_ledger", "key_hash"]
   },
-  "dbt_dataset": "test_sdf",
+  "dbt_dataset": "test",
   "dbt_full_refresh_models": {
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
