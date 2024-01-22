@@ -130,7 +130,7 @@
     "config_settings": ["last_modified_ledger"],
     "ttl": ["last_modified_ledger", "key_hash"]
   },
-  "dbt_dataset": "sdf",
+  "dbt_dataset": "",
   "dbt_full_refresh_models": {
     "history_assets": false,
     "int_partnership_assets__account_holders_activity": false,
@@ -144,14 +144,14 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:1e160fe",
-  "dbt_job_execution_timeout_seconds": 6000,
+  "dbt_image_name": "stellar/stellar-dbt:abb819d",
+  "dbt_job_execution_timeout_seconds": 1800,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "sdf_marts",
   "dbt_maximum_bytes_billed": 100000000000000,
   "dbt_project": "hubble-261722",
   "dbt_target": "prod",
-  "dbt_threads": 1,
+  "dbt_threads": 6,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:3761e4a",
@@ -358,5 +358,5 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:7b37cf5"
+  "public_dbt_image_name": "stellar/stellar-dbt:abb819d"
 }

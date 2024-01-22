@@ -119,17 +119,17 @@
   },
   "dbt_dataset": "test_sdf",
   "dbt_full_refresh_models": {
-    "partnership_assets__account_holders_activity_fact": true,
-    "partnership_assets__asset_activity_fact": true
+    "partnership_assets__account_holders_activity_fact": false,
+    "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:738ac3e",
+  "dbt_image_name": "stellar/stellar-dbt:abb819d",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "test_sdf_marts",
   "dbt_maximum_bytes_billed": 250000000000,
   "dbt_project": "test-hubble-319619",
   "dbt_target": "test",
-  "dbt_threads": 1,
+  "dbt_threads": 6,
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:3761e4a",
@@ -338,5 +338,5 @@
   },
   "currency_bucket": "currencies_ohlc",
   "max_db_entry_age_in_days": 90,
-  "public_dbt_image_name": "stellar/stellar-dbt:7b37cf5"
+  "public_dbt_image_name": "stellar/stellar-dbt:abb819d"
 }
