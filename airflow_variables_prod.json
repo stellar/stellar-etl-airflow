@@ -151,7 +151,7 @@
   "dbt_maximum_bytes_billed": 100000000000000,
   "dbt_project": "hubble-261722",
   "dbt_target": "prod",
-  "dbt_threads": 6,
+  "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:3761e4a",
