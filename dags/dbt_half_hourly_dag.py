@@ -36,4 +36,4 @@ current_state_task = dbt_task(dag, tag="current_state")
 # DAG task graph
 wait_on_cc >> enriched_history_operations_task
 
-wait_on_state_table >> enriched_history_operations_task
+wait_on_state_table >> current_state_task
