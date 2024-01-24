@@ -14,7 +14,6 @@ dag = DAG(
     start_date=datetime(2024, 1, 23, 0, 0),
     description="This DAG runs dbt models at a half hourly cadence",
     schedule_interval="*/30 * * * *",  # Runs every 30 mins
-    render_template_as_native_obj=True,
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },

@@ -1,11 +1,3 @@
-"""
-The `dbt_daily` DAG runs `dbt build` against all models except by:
-    - the `enriched_history_operations` model
-    - and all models tagged `ohlc`
-The function dbt_task() has `build` as the default argument for `dbt`
-and the graph operator needs to be an empty string to override the default `+`.
-The final command is similar to: `dbt build --exclude enriched_history_operations,tag:ohlc`
-"""
 from datetime import datetime
 
 from airflow import DAG
@@ -20,7 +12,6 @@ dag = DAG(
     start_date=datetime(2024, 1, 23, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
-    render_template_as_native_obj=True,
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
