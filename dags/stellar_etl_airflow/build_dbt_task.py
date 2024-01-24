@@ -56,7 +56,6 @@ elementary:
 
     return create_dbt_profile_cmd
 
-
 def dbt_task(
     dag,
     model_name=None,
@@ -82,7 +81,7 @@ def dbt_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "{{ var.value.public_dbt_image_name }}"
+    dbt_image = "{{ var.value.dbt_image_name }}"
 
     args = [command_type, f"--{flag}"]
 
@@ -188,8 +187,6 @@ def build_dbt_task(
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
-    if project == "pub":
-        dbt_image = "{{ var.value.public_dbt_image_name }}"
 
     return KubernetesPodOperator(
         task_id=f"{project}_{model_name}",
@@ -213,6 +210,6 @@ def build_dbt_task(
         affinity=affinity,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
-        image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
+        image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
     )
