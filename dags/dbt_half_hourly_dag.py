@@ -27,17 +27,11 @@ dag = DAG(
 wait_on_cc = build_cross_deps(
     dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
 )
-wait_on_state_table = build_cross_deps(
-    dag, "wait_on_state_table", "state_table_export"
-)
+wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 
 # DBT models to run
-enriched_history_operations_task = dbt_task(
-    dag, tag="enriched_history_operations"
-)
-current_state_task = dbt_task(
-    dag, tag="current_state"
-)
+enriched_history_operations_task = dbt_task(dag, tag="enriched_history_operations")
+current_state_task = dbt_task(dag, tag="current_state")
 
 # DAG task graph
 wait_on_cc >> enriched_history_operations_task

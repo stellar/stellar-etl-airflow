@@ -32,30 +32,14 @@ wait_on_eho_and_current_state = build_cross_deps(
 )
 
 # DBT models to run
-ohlc_task = dbt_task(
-    dag, tag="ohlc"
-)
-liquidity_pool_trade_volume_task = dbt_task(
-    dag, tag="liquidity_pool_trade_volume"
-)
-mgi_task = dbt_task(
-    dag, tag="mgi"
-)
-liquidity_providers_task= dbt_task(
-    dag, tag="liquidity_providers"
-)
-trade_agg_task = dbt_task(
-    dag, tag="trade_agg"
-)
-fee_stats_agg_task = dbt_task(
-    dag, tag="fee_stats_agg"
-)
-asset_stats_agg_task = dbt_task(
-    dag, tag="asset_stats_agg"
-)
-network_stats_agg_task = dbt_task(
-    dag, tag="network_stats_agg"
-)
+ohlc_task = dbt_task(dag, tag="ohlc")
+liquidity_pool_trade_volume_task = dbt_task(dag, tag="liquidity_pool_trade_volume")
+mgi_task = dbt_task(dag, tag="mgi")
+liquidity_providers_task= dbt_task(dag, tag="liquidity_providers")
+trade_agg_task = dbt_task(dag, tag="trade_agg")
+fee_stats_agg_task = dbt_task(dag, tag="fee_stats_agg")
+asset_stats_agg_task = dbt_task(dag, tag="asset_stats_agg")
+network_stats_agg_task = dbt_task(dag, tag="network_stats_agg")
 
 # DAG task graph
 wait_on_eho_and_current_state >> ohlc_task >> liquidity_pool_trade_volume_task
