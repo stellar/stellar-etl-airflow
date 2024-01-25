@@ -23,8 +23,13 @@ dag = DAG(
 )
 
 # Wait on ingestion DAGs
+# NOTE: history_archive_without_captive_core is currently disabled in 
+# favor of history_archive_with_captive_core_combined
+#wait_on_cc = build_cross_deps(
+#    dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
+#)
 wait_on_cc = build_cross_deps(
-    dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
+    dag, "wait_on_ledgers_txs", "history_archive_with_captive_core_combined"
 )
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 

@@ -34,6 +34,7 @@ trade_agg_task = dbt_task(dag, tag="trade_agg")
 fee_stats_agg_task = dbt_task(dag, tag="fee_stats_agg")
 asset_stats_agg_task = dbt_task(dag, tag="asset_stats_agg")
 network_stats_agg_task = dbt_task(dag, tag="network_stats_agg")
+partnership_assets_task = dbt_task(dag, tag="partnership_assets")
 
 # DAG task graph
 wait_on_eho_and_current_state >> ohlc_task >> liquidity_pool_trade_volume_task
@@ -43,3 +44,4 @@ wait_on_eho_and_current_state >> trade_agg_task
 wait_on_eho_and_current_state >> fee_stats_agg_task
 wait_on_eho_and_current_state >> asset_stats_agg_task
 wait_on_eho_and_current_state >> network_stats_agg_task
+wait_on_eho_and_current_state >> partnership_assets_task
