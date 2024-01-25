@@ -30,7 +30,7 @@ dag = DAG(
 #     dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
 # )
 wait_on_cc = build_cross_deps(
-    dag, "wait_on_ledgers_txs", "history_archive_with_captive_core_combined"
+    dag, "wait_on_ledgers_txs", "history_archive_with_captive_core_combined_export"
 )
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 
