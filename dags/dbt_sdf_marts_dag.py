@@ -9,7 +9,7 @@ from stellar_etl_airflow.default import get_default_dag_args
 dag = DAG(
     "dbt_sdf_marts",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 1, 23, 0, 0),
+    start_date=datetime(2024, 1, 26, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
     user_defined_filters={
@@ -17,7 +17,7 @@ dag = DAG(
     },
     max_active_runs=3,
     catchup=True,
-    tags=["dbt-daily"],
+    tags=["dbt-sdf-marts"],
 )
 
 # Wait on ingestion DAGs

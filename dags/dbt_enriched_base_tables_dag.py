@@ -11,7 +11,7 @@ init_sentry()
 dag = DAG(
     "dbt_enriched_base_tables",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 1, 23, 0, 0),
+    start_date=datetime(2024, 1, 26, 0, 0),
     description="This DAG runs dbt models at a half hourly cadence",
     schedule_interval="*/30 * * * *",  # Runs every 30 mins
     user_defined_filters={
@@ -19,7 +19,7 @@ dag = DAG(
     },
     max_active_runs=3,
     catchup=True,
-    tags=["dbt-half-hourly"],
+    tags=["dbt-enriched-base-tables"],
 )
 
 # Wait on ingestion DAGs
