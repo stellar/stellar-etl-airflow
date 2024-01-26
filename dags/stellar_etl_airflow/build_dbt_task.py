@@ -117,6 +117,7 @@ def dbt_task(
             "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
             "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
+            "DBT_PROJECT": "{{ var.value.dbt_project }}",
         },
         image=dbt_image,
         arguments=args,
