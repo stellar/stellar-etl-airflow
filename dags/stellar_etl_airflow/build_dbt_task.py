@@ -82,7 +82,7 @@ def dbt_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "{{ var.value.public_dbt_image_name }}"
+    dbt_image = "{{ var.value.dbt_image_name }}"
 
     args = [command_type, f"--{flag}"]
 
@@ -111,7 +111,7 @@ def dbt_task(
         service_account_name=Variable.get("k8s_service_account"),
         env_vars={
             "DBT_USE_COLORS": "0",
-            "DBT_DATASET": "crypto_stellar_dbt",
+            "DBT_DATASET": "{{ var.value.dbt_dataset }}",
             "DBT_TARGET": "{{ var.value.dbt_target }}",
             "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
             "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
@@ -188,8 +188,6 @@ def build_dbt_task(
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
-    if project == "pub":
-        dbt_image = "{{ var.value.public_dbt_image_name }}"
 
     return KubernetesPodOperator(
         task_id=f"{project}_{model_name}",
@@ -213,6 +211,6 @@ def build_dbt_task(
         affinity=affinity,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
-        image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
+        image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
     )
