@@ -21,8 +21,8 @@ dag = DAG(
 )
 
 # Wait on ingestion DAGs
-wait_on_eho_and_current_state = build_cross_deps(
-    dag, "wait_on_eho_and_current_state", "dbt_enriched_base_tables"
+wait_on_dbt_enriched_base_tables = build_cross_deps(
+    dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
 )
 
 wait_on_partner_pipeline_dag = build_cross_deps(
@@ -42,14 +42,14 @@ network_stats_agg_task = dbt_task(dag, tag="network_stats")
 partnership_assets_task = dbt_task(dag, tag="partnership_assets")
 
 # DAG task graph
-wait_on_eho_and_current_state >> ohlc_task >> liquidity_pool_trade_volume_task
+wait_on_dbt_enriched_base_tables >> ohlc_task >> liquidity_pool_trade_volume_task
 
-wait_on_eho_and_current_state >> mgi_task
+wait_on_dbt_enriched_base_tables >> mgi_task
 wait_on_partner_pipeline_dag >> mgi_task
 
-wait_on_eho_and_current_state >> liquidity_providers_task
-wait_on_eho_and_current_state >> trade_agg_task
-wait_on_eho_and_current_state >> fee_stats_agg_task
-wait_on_eho_and_current_state >> asset_stats_agg_task
-wait_on_eho_and_current_state >> network_stats_agg_task
-wait_on_eho_and_current_state >> partnership_assets_task
+wait_on_dbt_enriched_base_tables >> liquidity_providers_task
+wait_on_dbt_enriched_base_tables >> trade_agg_task
+wait_on_dbt_enriched_base_tables >> fee_stats_agg_task
+wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
+wait_on_dbt_enriched_base_tables >> network_stats_agg_task
+wait_on_dbt_enriched_base_tables >> partnership_assets_task
