@@ -118,6 +118,8 @@ def dbt_task(
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
             "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
             "DBT_PROJECT": "{{ var.value.dbt_project }}",
+            "INTERNAL_SOURCE_DB": "{{ var.value.internal_source_db }}",
+            "INTERNAL_SOURCE_SCHEMA": "{{ var.value.internal_source_schema }}",
         },
         image=dbt_image,
         arguments=args,

@@ -358,5 +358,7 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:84336db"
+  "public_dbt_image_name": "stellar/stellar-dbt:84336db",
+  "internal_source_db": "hubble-261722",
+  "internal_source_schema": "crypto_stellar_internal_2"
 }
