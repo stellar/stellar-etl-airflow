@@ -17,7 +17,7 @@ dag = DAG(
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
-    max_active_runs=3,
+    max_active_runs=1,
     catchup=True,
     tags=["dbt-enriched-base-tables"],
 )
