@@ -122,6 +122,7 @@ def dbt_task(
             "INTERNAL_SOURCE_SCHEMA": "{{ var.value.internal_source_schema }}",
             "PUBLIC_SOURCE_DB": "{{ var.value.public_source_db }}",
             "PUBLIC_SOURCE_SCHEMA": "{{ var.value.public_source_schema }}",
+            "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
         arguments=args,

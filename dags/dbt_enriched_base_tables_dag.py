@@ -11,14 +11,14 @@ init_sentry()
 dag = DAG(
     "dbt_enriched_base_tables",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 1, 29, 0, 0),
+    start_date=datetime(2024, 1, 30, 0, 0),
     description="This DAG runs dbt models at a half hourly cadence",
     schedule_interval="*/30 * * * *",  # Runs every 30 mins
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
     max_active_runs=1,
-    catchup=True,
+    catchup=False,
     tags=["dbt-enriched-base-tables"],
 )
 
