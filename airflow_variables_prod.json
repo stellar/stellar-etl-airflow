@@ -144,7 +144,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:84336db",
+  "dbt_image_name": "stellar/stellar-dbt:bbe7478",
   "dbt_job_execution_timeout_seconds": 1800,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "sdf_marts",
@@ -358,5 +358,9 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:84336db"
+  "public_dbt_image_name": "stellar/stellar-dbt:bbe7478",
+  "internal_source_db": "hubble-261722",
+  "internal_source_schema": "crypto_stellar_internal_2",
+  "public_source_db": "crypto_stellar",
+  "public_source_schema": "crypto-stellar"
 }

@@ -24,7 +24,7 @@ with DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2023, 1, 1, 0, 0),
     description="This DAG automates daily updates to partner tables in BigQuery.",
-    schedule_interval="20 15 * * *",
+    schedule_interval="0 13 * * *",
     params={
         "alias": "partner",
     },
