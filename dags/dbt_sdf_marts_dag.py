@@ -11,7 +11,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 1, 26, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
+    schedule_interval="0 16 * * *",  # Runs at 16:00 UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
