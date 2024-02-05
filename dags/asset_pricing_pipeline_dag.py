@@ -1,8 +1,9 @@
 import datetime
-import json
+from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
@@ -15,8 +16,11 @@ dag = DAG(
     start_date=datetime.datetime(2023, 9, 10),
     description="This DAG runs dbt to calculate asset pricing based on stablecoin and XLM trades",
     schedule_interval="0 2 * * *",  # daily at 2am
-    params={},
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    render_template_as_native_obj=True,
+    user_defined_filters={
+        "fromjson": lambda s: loads(s),
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
+    },
     user_defined_macros={
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,

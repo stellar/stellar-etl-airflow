@@ -151,7 +151,7 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "refundable_fee",
+    "name": "resource_fee",
     "type": "INTEGER"
   },
   {

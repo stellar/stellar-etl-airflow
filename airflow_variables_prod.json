@@ -1,6 +1,22 @@
 {
   "affinity": {
-    "default": {},
+    "default": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["default-pool"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
     "backfill": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
@@ -35,7 +51,7 @@
         }
       }
     },
-    "state": {
+    "wocc": {
       "nodeAffinity": {
         "requiredDuringSchedulingIgnoredDuringExecution": {
           "nodeSelectorTerms": [
@@ -45,6 +61,23 @@
                   "key": "cloud.google.com/gke-nodepool",
                   "operator": "In",
                   "values": ["default-pool"]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "state": {
+      "nodeAffinity": {
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "nodeSelectorTerms": [
+            {
+              "matchExpressions": [
+                {
+                  "key": "cloud.google.com/gke-nodepool",
+                  "operator": "In",
+                  "values": ["state-table"]
                 }
               ]
             }
@@ -92,17 +125,12 @@
       "account",
       "type"
     ],
-    "contract_data": ["last_modified_ledger"],
-    "contract_code": ["last_modified_ledger"],
+    "contract_data": ["last_modified_ledger", "contract_id"],
+    "contract_code": ["last_modified_ledger", "contract_code_hash"],
     "config_settings": ["last_modified_ledger"],
-    "ttl": ["last_modified_ledger"]
+    "ttl": ["last_modified_ledger", "key_hash"]
   },
-  "dbt_auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "dbt_auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "dbt_client_email": "471979297599-compute@developer.gserviceaccount.com",
-  "dbt_client_id": 102744410146098624313,
-  "dbt_client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/471979297599-compute%40developer.gserviceaccount.com",
-  "dbt_dataset": "sdf",
+  "dbt_dataset": "",
   "dbt_full_refresh_models": {
     "history_assets": false,
     "int_partnership_assets__account_holders_activity": false,
@@ -116,21 +144,17 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:1e160fe",
-  "dbt_job_execution_timeout_seconds": 6000,
+  "dbt_image_name": "stellar/stellar-dbt:bbe7478",
+  "dbt_job_execution_timeout_seconds": 1800,
   "dbt_job_retries": 1,
-  "dbt_keyfile_profile": "",
   "dbt_mart_dataset": "sdf_marts",
   "dbt_maximum_bytes_billed": 100000000000000,
-  "dbt_private_key": "",
-  "dbt_private_key_id": "",
   "dbt_project": "hubble-261722",
   "dbt_target": "prod",
-  "dbt_threads": 1,
-  "dbt_token_uri": "https://oauth2.googleapis.com/token",
+  "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:08fd8de",
+  "image_name": "stellar/stellar-etl:3761e4a",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -224,24 +248,23 @@
       "field": "batch_run_date"
     },
     "contract_data": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "contract_code": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "config_settings": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     },
     "ttl": {
-      "field": "batch_run_date",
+      "field": "closed_at",
       "type": "MONTH"
     }
   },
-  "public_dataset": "crypto_stellar_2",
-  "public_dataset_new": "crypto_stellar",
+  "public_dataset": "crypto_stellar",
   "public_project": "crypto-stellar",
   "bq_dataset_audit_log": "audit_log",
   "resources": {
@@ -253,6 +276,13 @@
       }
     },
     "cc": {
+      "requests": {
+        "cpu": "3.5",
+        "memory": "15Gi",
+        "ephemeral-storage": "10Gi"
+      }
+    },
+    "wocc": {
       "requests": {
         "cpu": "3.5",
         "memory": "15Gi",
@@ -328,5 +358,9 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:671afb6"
+  "public_dbt_image_name": "stellar/stellar-dbt:bbe7478",
+  "internal_source_db": "hubble-261722",
+  "internal_source_schema": "crypto_stellar_internal_2",
+  "public_source_db": "crypto-stellar",
+  "public_source_schema": "crypto_stellar"
 }

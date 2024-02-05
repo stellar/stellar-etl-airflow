@@ -6,11 +6,11 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import AirflowException
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.default import alert_after_max_retries
 
@@ -87,7 +87,8 @@ def generate_etl_cmd(
         filepath = os.path.join(Variable.get("gcs_exported_object_prefix"), run_id)
     batched_path = os.path.join(filepath, batch_filename)
     base_path = os.path.join(filepath, base_filename)
-
+    if command == "export_all_history":
+        batched_path = filepath + "/"
     correct_filename = select_correct_filename(cmd_type, base_filename, batch_filename)
     switch = {
         "archive": [
@@ -144,6 +145,10 @@ def generate_etl_cmd(
     elif use_futurenet:
         cmd.append("--futurenet")
     cmd.append("--strict-export")
+
+    if command == "export_all_history":
+        return cmd, filepath + "/"
+
     return cmd, os.path.join(filepath, correct_filename)
 
 
@@ -174,15 +179,18 @@ def build_export_task(
         command, filename, cmd_type, use_gcs, use_testnet, use_futurenet
     )
     etl_cmd_string = " ".join(etl_cmd)
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
     resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
-    if command == "export_ledger_entry_changes":
+    if command == "export_ledger_entry_changes" or command == "export_all_history":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
     else:
         arguments = f"""
@@ -199,14 +207,14 @@ def build_export_task(
             ]
         ),
         name=command + "_task",
-        image=Variable.get("image_name"),
+        image="{{ var.value.image_name }}",
         cmds=["bash", "-c"],
         arguments=[arguments],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        container_resources=resources_requests,
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,

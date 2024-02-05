@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 
+from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
@@ -10,26 +11,18 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def create_dbt_profile(project="prod"):
-    dbt_target = Variable.get("dbt_target")
-    dbt_dataset = Variable.get("dbt_dataset")
-    dbt_maximum_bytes_billed = Variable.get("dbt_maximum_bytes_billed")
-    dbt_job_execution_timeout_seconds = Variable.get(
-        "dbt_job_execution_timeout_seconds"
+    dbt_target = "{{ var.value.dbt_target }}"
+    dbt_dataset = "{{ var.value.dbt_dataset }}"
+    dbt_maximum_bytes_billed = "{{ var.value.dbt_maximum_bytes_billed }}"
+    dbt_job_execution_timeout_seconds = (
+        "{{ var.value.dbt_job_execution_timeout_seconds }}"
     )
-    dbt_job_retries = Variable.get("dbt_job_retries")
-    dbt_project = Variable.get("dbt_project")
-    dbt_threads = Variable.get("dbt_threads")
-    dbt_private_key_id = Variable.get("dbt_private_key_id")
-    dbt_private_key = Variable.get("dbt_private_key")
-    dbt_client_email = Variable.get("dbt_client_email")
-    dbt_client_id = Variable.get("dbt_client_id")
-    dbt_auth_uri = Variable.get("dbt_auth_uri")
-    dbt_token_uri = Variable.get("dbt_token_uri")
-    dbt_auth_provider_x509_cert_url = Variable.get("dbt_auth_provider_x509_cert_url")
-    dbt_client_x509_cert_url = Variable.get("dbt_client_x509_cert_url")
+    dbt_job_retries = "{{ var.value.dbt_job_retries }}"
+    dbt_project = "{{ var.value.dbt_project }}"
+    dbt_threads = "{{ var.value.dbt_threads }}"
     if project == "pub":
-        dbt_project = Variable.get("public_project")
-        dbt_dataset = Variable.get("public_dataset")
+        dbt_project = "{{ var.value.public_project }}"
+        dbt_dataset = "{{ var.value.public_dataset }}"
 
     profiles_yml = f"""
 stellar_dbt:
@@ -41,26 +34,110 @@ stellar_dbt:
       job_execution_timeout_seconds: {dbt_job_execution_timeout_seconds}
       job_retries: {dbt_job_retries}
       location: us
-      method: service-account-json
+      method: oauth
       project: "{dbt_project}"
       threads: {dbt_threads}
       type: bigquery
-      keyfile_json:
-        type: "service_account"
-        project_id: "{dbt_project}"
-        private_key_id: "{dbt_private_key_id}"
-        private_key: "{dbt_private_key}"
-        client_email: "{dbt_client_email}"
-        client_id: "{dbt_client_id}"
-        auth_uri: "{dbt_auth_uri}"
-        token_uri: "{dbt_token_uri}"
-        auth_provider_x509_cert_url: "{dbt_auth_provider_x509_cert_url}"
-        client_x509_cert_url: "{dbt_client_x509_cert_url}"
+elementary:
+  outputs:
+    default:
+      dataset: elementary
+      maximum_bytes_billed: {dbt_maximum_bytes_billed}
+      job_execution_timeout_seconds: {dbt_job_execution_timeout_seconds}
+      job_retries: {dbt_job_retries}
+      location: us
+      method: oauth
+      project: "{dbt_project}"
+      threads: {dbt_threads}
+      type: bigquery
 """
 
     create_dbt_profile_cmd = f"echo '{profiles_yml}' > profiles.yml;"
 
     return create_dbt_profile_cmd
+
+
+def dbt_task(
+    dag,
+    model_name=None,
+    tag=None,
+    flag="select",
+    operator="",
+    command_type="build",
+    resource_cfg="default",
+):
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
+
+    container_resources = k8s.V1ResourceRequirements(
+        requests={
+            "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
+            "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
+        }
+    )
+    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
+
+    dbt_image = "{{ var.value.dbt_image_name }}"
+
+    args = [command_type, f"--{flag}"]
+
+    models = []
+    if tag:
+        task_name = tag
+        models.append(f"{operator}tag:{tag}")
+    if model_name:
+        task_name = model_name
+        models.append(f"{operator}{model_name}")
+    if len(models) > 1:
+        task_name = "multiple_models"
+        args.append(",".join(models))
+    else:
+        args.append(models[0])
+
+    if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
+        args.append("--full-refresh")
+
+    logging.info(f"sh commands to run in pod: {args}")
+
+    return KubernetesPodOperator(
+        task_id=f"dbt_{command_type}_{task_name}",
+        name=f"dbt_{command_type}_{task_name}",
+        namespace=Variable.get("k8s_namespace"),
+        service_account_name=Variable.get("k8s_service_account"),
+        env_vars={
+            "DBT_USE_COLORS": "0",
+            "DBT_DATASET": "{{ var.value.dbt_dataset }}",
+            "DBT_TARGET": "{{ var.value.dbt_target }}",
+            "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
+            "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
+            "DBT_THREADS": "{{ var.value.dbt_threads }}",
+            "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
+            "DBT_PROJECT": "{{ var.value.dbt_project }}",
+            "INTERNAL_SOURCE_DB": "{{ var.value.internal_source_db }}",
+            "INTERNAL_SOURCE_SCHEMA": "{{ var.value.internal_source_schema }}",
+            "PUBLIC_SOURCE_DB": "{{ var.value.public_source_db }}",
+            "PUBLIC_SOURCE_SCHEMA": "{{ var.value.public_source_schema }}",
+            "EXECUTION_DATE": "{{ ds }}",
+        },
+        image=dbt_image,
+        arguments=args,
+        dag=dag,
+        do_xcom_push=True,
+        is_delete_operator_pod=True,
+        startup_timeout_seconds=720,
+        in_cluster=in_cluster,
+        config_file=config_file_location,
+        affinity=affinity,
+        container_resources=container_resources,
+        on_failure_callback=alert_after_max_retries,
+        image_pull_policy="IfNotPresent",
+        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+    )
 
 
 def build_dbt_task(
@@ -79,10 +156,7 @@ def build_dbt_task(
     """
 
     dbt_full_refresh = ""
-    dbt_full_refresh_models = Variable.get(
-        "dbt_full_refresh_models", deserialize_json=True
-    )
-    if dbt_full_refresh_models.get(model_name):
+    if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(model_name):
         dbt_full_refresh = "--full-refresh"
 
     create_dbt_profile_cmd = create_dbt_profile(project)
@@ -95,9 +169,10 @@ def build_dbt_task(
             [
                 create_dbt_profile_cmd,
                 execution_date,
-                "dbt ",
+                "dbt",
+                "--no-use-colors",
                 command_type,
-                " --select",
+                "--select",
                 model_name,
                 dbt_full_refresh,
             ]
@@ -105,18 +180,19 @@ def build_dbt_task(
     ]
     logging.info(f"sh commands to run in pod: {args}")
 
-    config_file_location = Variable.get("kube_config_location")
-    in_cluster = False if config_file_location else True
+    namespace = conf.get("kubernetes", "NAMESPACE")
+    if namespace == "default":
+        config_file_location = Variable.get("kube_config_location")
+        in_cluster = False
+    else:
+        config_file_location = None
+        in_cluster = True
     resources_requests = (
-        Variable.get("resources", deserialize_json=True)
-        .get(resource_cfg)
-        .get("requests")
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = Variable.get("dbt_image_name")
-    if project == "pub":
-        dbt_image = Variable.get("public_dbt_image_name")
+    dbt_image = "{{ var.value.dbt_image_name }}"
 
     return KubernetesPodOperator(
         task_id=f"{project}_{model_name}",
@@ -138,8 +214,8 @@ def build_dbt_task(
         in_cluster=in_cluster,
         config_file=config_file_location,
         affinity=affinity,
-        container_resources=k8s.V1ResourceRequirements(requests=resources_requests),
+        container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
-        image_pull_policy="Always",  # TODO: Update to ifNotPresent when image pull issue is fixed
+        image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
     )

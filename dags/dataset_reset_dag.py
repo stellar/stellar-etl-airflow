@@ -1,9 +1,9 @@
 """
 When the Test net server is reset, the dataset reset DAG deletes all the datasets in the test Hubble.
 """
-import ast
-import datetime
-import json
+from ast import literal_eval
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models import Variable
@@ -20,13 +20,13 @@ dag = DAG(
     "testnet_data_reset",
     default_args=get_default_dag_args(),
     description="This DAG runs after the Testnet data reset that occurs periodically.",
-    start_date=datetime.datetime(2023, 1, 1, 0, 0),
+    start_date=datetime(2023, 1, 1, 0, 0),
     schedule_interval="10 9 * * *",
-    is_paused_upon_creation=ast.literal_eval(Variable.get("use_testnet")),
+    is_paused_upon_creation=literal_eval(Variable.get("use_testnet")),
     params={
         "alias": "testnet-reset",
     },
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={"fromjson": lambda s: loads(s)},
 )
 
 internal_project = "test-hubble-319619"

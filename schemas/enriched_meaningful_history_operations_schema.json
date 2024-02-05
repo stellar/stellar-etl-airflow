@@ -664,5 +664,131 @@
     "mode": "REPEATED",
     "name": "extra_signers",
     "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "amount",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_code",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_issuer",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "asset_type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "from",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "to",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "asset_balance_changes",
+    "type": "RECORD"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "value",
+        "type": "STRING"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "parameters",
+    "type": "RECORD"
+  },
+  {
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "type",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "value",
+        "type": "STRING"
+      }
+    ],
+    "mode": "REPEATED",
+    "name": "parameters_decoded",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "function",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_operation_type",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "extend_to",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "contract_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "contract_code_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "resource_fee",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_instructions",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_read_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_write_bytes",
+    "type": "INTEGER"
   }
 ]

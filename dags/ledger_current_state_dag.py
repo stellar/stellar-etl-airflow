@@ -1,7 +1,8 @@
-import datetime
+from datetime import datetime
 
 from airflow import DAG
 from airflow.models.variable import Variable
+from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_copy_table_task import build_copy_table
 from stellar_etl_airflow.build_dbt_task import build_dbt_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
@@ -11,17 +12,20 @@ init_sentry()
 dag = DAG(
     "ledger_current_state",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 4, 4, 0, 0),
+    start_date=datetime(2023, 4, 4, 0, 0),
     description="This DAG runs dbt to create the tables for the models in marts/ledger_current_state/",
     schedule_interval="0 */1 * * *",  # Runs hourly; NOTE: This can be changed to daily if execution time is too slow
-    params={},
+    render_template_as_native_obj=True,
+    user_defined_filters={
+        "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
+    },
     catchup=False,
 )
 
 internal_project = Variable.get("bq_project")
 internal_dataset = Variable.get("dbt_mart_dataset")
 public_project = Variable.get("public_project")
-public_dataset = Variable.get("public_dataset_new")
+public_dataset = Variable.get("public_dataset")
 
 # tasks for staging tables for ledger_current_state tables
 stg_account_signers = build_dbt_task(dag, "stg_account_signers")

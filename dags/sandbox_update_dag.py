@@ -1,8 +1,8 @@
 """
 This DAG update the Canvas sandbox dataset with transactions tables, state tables with history once a month.
 """
-import datetime
-import json
+from datetime import datetime
+from json import loads
 
 from airflow import DAG
 from airflow.models.variable import Variable
@@ -23,11 +23,11 @@ init_sentry()
 with DAG(
     "sandbox_update_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime.datetime(2023, 1, 1),
+    start_date=datetime(2023, 1, 1),
     description="This DAG updates a sandbox",
     schedule_interval="@daily",
     params={"alias": "sandbox_dataset"},
-    user_defined_filters={"fromjson": lambda s: json.loads(s)},
+    user_defined_filters={"fromjson": lambda s: loads(s)},
     catchup=False,
 ) as dag:
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)

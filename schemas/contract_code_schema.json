@@ -48,5 +48,10 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_key_hash",
+    "type": "STRING"
   }
 ]
