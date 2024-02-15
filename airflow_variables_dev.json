@@ -122,7 +122,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "chowbao/stellar-dbt:test37",
+  "dbt_image_name": "stellar/stellar-dbt:d35ca76",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "test_sdf_marts",
@@ -338,7 +338,7 @@
   },
   "currency_bucket": "currencies_ohlc",
   "max_db_entry_age_in_days": 90,
-  "public_dbt_image_name": "chowbao/stellar-dbt:test37",
+  "public_dbt_image_name": "stellar/stellar-dbt:d35ca76",
   "internal_source_db": "test-hubble-319619",
   "internal_source_schema": "test_crypto_stellar_internal",
   "public_source_db": "test-hubble-319619",
