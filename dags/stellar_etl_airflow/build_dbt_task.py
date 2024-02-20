@@ -87,9 +87,12 @@ def dbt_task(
     args = [command_type, f"--{flag}"]
 
     models = []
-    if tag:
+    if isinstance(tag, str):
         task_name = tag
         models.append(f"{operator}tag:{tag}")
+    if isinstance(tag, list):
+        task_name = "multiple_tags"
+        models.extend([f"{operator}tag:{t}" for t in tag])
     if model_name:
         task_name = model_name
         models.append(f"{operator}{model_name}")

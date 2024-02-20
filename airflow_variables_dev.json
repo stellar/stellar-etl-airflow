@@ -342,5 +342,19 @@
   "internal_source_db": "test-hubble-319619",
   "internal_source_schema": "test_crypto_stellar_internal",
   "public_source_db": "test-hubble-319619",
-  "public_source_schema": "test_crypto_stellar"
+  "public_source_schema": "test_crypto_stellar",
+  "dbt_tags": {
+    "sdf_marts": [
+      "ohlc",
+      "liquidity_pool_trade_volume",
+      "mgi",
+      "liquidity_providers",
+      "trade_agg",
+      "fee_stats",
+      "asset_stats",
+      "network_stats",
+      "partnership_assets",
+      "history_assets"
+    ]
+  }
 }
