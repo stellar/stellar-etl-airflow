@@ -374,7 +374,8 @@
       "asset_stats",
       "network_stats",
       "partnership_assets",
-      "history_assets"
+      "history_assets",
+      "soroban"
     ]
   }
 }
