@@ -4,7 +4,9 @@ from airflow import DAG
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
-from stellar_etl_airflow.default import get_default_dag_args
+from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+
+init_sentry()
 
 dag = DAG(
     "dbt_sdf_marts",
