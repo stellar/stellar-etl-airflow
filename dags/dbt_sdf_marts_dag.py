@@ -41,6 +41,7 @@ asset_stats_agg_task = dbt_task(dag, tag="asset_stats")
 network_stats_agg_task = dbt_task(dag, tag="network_stats")
 partnership_assets_task = dbt_task(dag, tag="partnership_assets")
 history_assets = dbt_task(dag, tag="history_assets")
+soroban = dbt_task(dag, tag="soroban")
 
 # DAG task graph
 wait_on_dbt_enriched_base_tables >> ohlc_task >> liquidity_pool_trade_volume_task
@@ -55,3 +56,4 @@ wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
+wait_on_dbt_enriched_base_tables >> soroban
