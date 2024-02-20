@@ -89,7 +89,6 @@
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_project": "hubble-261722",
-  "bucket_mgi": "mgi-stellar-transactions",
   "cluster_fields": {
     "accounts": ["account_id", "last_modified_ledger"],
     "account_signers": ["account_id", "signer", "last_modified_ledger"],
@@ -358,7 +357,6 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "public_dbt_image_name": "stellar/stellar-dbt:d35ca76",
   "internal_source_db": "hubble-261722",
   "internal_source_schema": "crypto_stellar_internal_2",
   "public_source_db": "crypto-stellar",
