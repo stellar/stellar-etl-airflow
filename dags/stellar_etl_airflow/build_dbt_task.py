@@ -98,7 +98,7 @@ def dbt_task(
         models.append(f"{operator}{model_name}")
     if len(models) > 1:
         task_name = "multiple_models"
-        args.append(",".join(models))
+        args.append(" ".join(models))
     else:
         args.append(models[0])
 
