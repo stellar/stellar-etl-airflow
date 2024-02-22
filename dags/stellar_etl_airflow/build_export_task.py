@@ -134,7 +134,8 @@ def generate_etl_cmd(
     if cmd is None:
         raise AirflowException("Command type is not supported: ", cmd_type)
     if use_gcs:
-        cmd.extend(["--gcs-bucket", Variable.get("gcs_exported_data_bucket_name")])
+        cmd.extend(["--cloud-storage-bucket", Variable.get("gcs_exported_data_bucket_name")])
+        cmd.extend(["--cloud-provider", "gcp"])
         batch_id = macros.get_batch_id()
         batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
         batch_insert_ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
