@@ -72,3 +72,4 @@ network_stats_agg_task >> elementary
 partnership_assets_task >> elementary
 history_assets >> elementary
 soroban >> elementary
+liquidity_pool_trade_volume_task >> elementary
