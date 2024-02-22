@@ -15,7 +15,7 @@ def elementary_task(
     resource_cfg="default",
 ):
     token = k8s.V1LocalObjectReference("slack-token-elementary")
-    slack_channel = Variable.get("stellar-elementary-alerts")
+    slack_channel = Variable.get("slack_elementary_channel")
 
     args = f"edr monitor --override-dbt-project-config --slack-token {token} --slack-channel-name {slack_channel} --suppression-interval 0"
 
