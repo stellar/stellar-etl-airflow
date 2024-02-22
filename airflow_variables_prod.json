@@ -363,5 +363,6 @@
   "internal_source_schema": "crypto_stellar_internal_2",
   "public_source_db": "crypto-stellar",
   "public_source_schema": "crypto_stellar",
-  "slack_elementary_channel": "stellar-elementary-alerts"
+  "slack_elementary_channel": "stellar-elementary-alerts",
+  "elementary_secret": "slack-token-elementary"
 }
