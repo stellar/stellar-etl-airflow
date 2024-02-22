@@ -5,8 +5,7 @@ from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes.client import client, config
-from kubernetes.client import models as k8s
+from kubernetes.client import client, config, models
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
@@ -34,7 +33,7 @@ def elementary_task(
         config_file_location = None
         in_cluster = True
 
-    container_resources = k8s.V1ResourceRequirements(
+    container_resources = models.V1ResourceRequirements(
         requests={
             "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
             "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
@@ -78,5 +77,5 @@ def elementary_task(
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+        image_pull_secrets=[models.V1LocalObjectReference("private-docker-auth")],
     )
