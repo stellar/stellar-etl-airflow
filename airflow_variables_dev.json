@@ -338,7 +338,6 @@
   },
   "currency_bucket": "currencies_ohlc",
   "max_db_entry_age_in_days": 90,
-  "public_dbt_image_name": "stellar/stellar-dbt:7a218a2",
   "internal_source_db": "test-hubble-319619",
   "internal_source_schema": "test_crypto_stellar_internal",
   "public_source_db": "test-hubble-319619",
