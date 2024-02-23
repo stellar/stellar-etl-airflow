@@ -28,7 +28,6 @@ def elementary_task(
         "$SLACK_TOKEN",
         "--slack-channel-name",
         "{{ var.value.slack_elementary_channel }}",
-        "--suppression-interval 0",
     ]
     namespace = conf.get("kubernetes", "NAMESPACE")
 
