@@ -1,11 +1,11 @@
 import logging
 
 from airflow.configuration import conf
+from airflow.kubernetes.secret import Secret
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes import client, config
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 
@@ -18,13 +18,14 @@ def elementary_task(
     slack_channel = Variable.get("slack_elementary_channel")
     elementary_secret = Variable.get("elementary_secret")
 
-    config.load_incluster_config()
-    v1 = client.CoreV1Api()
+    args = f"edr monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {slack_channel} --suppression-interval 0"
 
-    token = v1.read_namespaced_secret(name=elementary_secret, namespace="default")
-    token = token.data["token"]
-
-    args = f"edr monitor --override-dbt-project-config --slack-token {token} --slack-channel-name {slack_channel} --suppression-interval 0"
+    elementary_secret_env = Secret(
+        deploy_type="env",
+        deploy_target="SLACK_TOKEN",
+        secret=elementary_secret,
+        key="token",
+    )
 
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
@@ -67,6 +68,7 @@ def elementary_task(
             "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
+        secrets=[elementary_secret_env],
         arguments=args,
         dag=dag,
         do_xcom_push=True,
