@@ -15,11 +15,7 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    slack_channel = Variable.get("slack_elementary_channel")
-    elementary_secret = Variable.get("elementary_secret")
-
-    args = f"edr monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {slack_channel} --suppression-interval 0"
-
+    elementary_secret = "{{ var.value.elementary_secret }}"
     elementary_secret_env = Secret(
         deploy_type="env",
         deploy_target="SLACK_TOKEN",
@@ -27,7 +23,9 @@ def elementary_task(
         key="token",
     )
 
+    args = "edr monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
     namespace = conf.get("kubernetes", "NAMESPACE")
+
     if namespace == "default":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
