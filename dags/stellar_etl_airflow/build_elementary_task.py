@@ -65,7 +65,7 @@ def elementary_task(
             "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
-        secrets=[elementary_secret_env],
+        secrets=elementary_secret_env,
         arguments=args,
         dag=dag,
         do_xcom_push=True,
