@@ -100,7 +100,7 @@ def dbt_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    args = [command_type, f"--{flag}"]
+    args = ["dbt", command_type, f"--{flag}"]
 
     models = []
     if tag:
@@ -145,6 +145,7 @@ def dbt_task(
             "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
+        cmds=["sh", "-c"],
         arguments=args,
         secrets=[secret_env],
         dag=dag,
