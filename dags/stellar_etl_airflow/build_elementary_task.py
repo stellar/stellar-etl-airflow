@@ -24,8 +24,10 @@ def elementary_task(
 
     args = [
         "monitor",
-        "--slack-token $SLACK_TOKEN",
-        "--slack-channel-name {{ var.value.slack_elementary_channel }}",
+        "--slack-token",
+        "$SLACK_TOKEN",
+        "--slack-channel-name",
+        "{{ var.value.slack_elementary_channel }}",
         "--suppression-interval 0",
     ]
     namespace = conf.get("kubernetes", "NAMESPACE")
