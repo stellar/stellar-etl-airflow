@@ -15,7 +15,9 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    args = "monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
+    args = [
+        "monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
+    ]
     namespace = conf.get("kubernetes", "NAMESPACE")
 
     if namespace == "default":
