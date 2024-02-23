@@ -18,7 +18,7 @@ def elementary_task(
     elementary_secret_env = Secret(
         deploy_type="env",
         deploy_target="SLACK_TOKEN",
-        secret="{{ var.value.elementary_secret }}",
+        secret="slack-token-elementary",
         key="token",
     )
 
