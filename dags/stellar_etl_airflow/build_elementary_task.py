@@ -24,7 +24,6 @@ def elementary_task(
 
     args = [
         "monitor",
-        "--override-dbt-project-config",
         "--slack-token $SLACK_TOKEN",
         "--slack-channel-name {{ var.value.slack_elementary_channel }}",
         "--suppression-interval 0",
