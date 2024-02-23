@@ -15,13 +15,6 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    elementary_secret_env = Secret(
-        deploy_type="env",
-        deploy_target="SLACK_TOKEN",
-        secret="slack-token-elementary",
-        key="token",
-    )
-
     args = "monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
     namespace = conf.get("kubernetes", "NAMESPACE")
 
@@ -66,7 +59,6 @@ def elementary_task(
         },
         image=dbt_image,
         cmds=["edr"],
-        secrets=[elementary_secret_env],
         arguments=args,
         dag=dag,
         do_xcom_push=True,
