@@ -22,7 +22,7 @@ def elementary_task(
         key="token",
     )
 
-    args = "edr monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
+    args = "monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
     namespace = conf.get("kubernetes", "NAMESPACE")
 
     if namespace == "default":
@@ -65,6 +65,7 @@ def elementary_task(
             "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
+        cmds=["edr"],
         secrets=[elementary_secret_env],
         arguments=args,
         dag=dag,
