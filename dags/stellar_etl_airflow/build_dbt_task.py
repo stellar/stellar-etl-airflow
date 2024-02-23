@@ -2,6 +2,7 @@ import logging
 from datetime import timedelta
 
 from airflow.configuration import conf
+from airflow.kubernetes.secret import Secret
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
@@ -65,7 +66,22 @@ def dbt_task(
     operator="",
     command_type="build",
     resource_cfg="default",
+    alert=True,
 ):
+    secret_env = Secret(
+        deploy_type="env",
+        deploy_target="SLACK_TOKEN",
+        secret="slack-token-elementary",
+        key="token",
+    )
+    elementary_alert = [
+        "edr",
+        "monitor",
+        "--slack-token",
+        "$SLACK_TOKEN",
+        "--slack-channel-name",
+        "{{ var.value.slack_elementary_channel }}",
+    ]
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
         config_file_location = Variable.get("kube_config_location")
@@ -102,6 +118,10 @@ def dbt_task(
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
 
+    if alert:
+        args.append("&&")
+        args.extend(elementary_alert)
+
     logging.info(f"sh commands to run in pod: {args}")
 
     return KubernetesPodOperator(
@@ -126,6 +146,7 @@ def dbt_task(
         },
         image=dbt_image,
         arguments=args,
+        secrets=[secret_env],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
