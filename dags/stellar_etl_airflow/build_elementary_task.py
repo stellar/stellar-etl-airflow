@@ -15,11 +15,10 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    elementary_secret = "{{ var.value.elementary_secret }}"
     elementary_secret_env = Secret(
         deploy_type="env",
         deploy_target="SLACK_TOKEN",
-        secret=elementary_secret,
+        secret="{{ var.value.elementary_secret }}",
         key="token",
     )
 
