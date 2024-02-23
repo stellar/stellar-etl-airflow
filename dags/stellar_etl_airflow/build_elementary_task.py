@@ -21,7 +21,6 @@ def elementary_task(
         secret="slack-token-elementary",
         key="token",
     )
-    elementary_secret_env = elementary_secret_env.attach_to_pod()
 
     args = "edr monitor --override-dbt-project-config --slack-token $SLACK_TOKEN --slack-channel-name {{ var.value.slack_elementary_channel }} --suppression-interval 0"
     namespace = conf.get("kubernetes", "NAMESPACE")
