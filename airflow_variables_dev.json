@@ -342,5 +342,6 @@
   "public_source_db": "test-hubble-319619",
   "public_source_schema": "test_crypto_stellar",
   "slack_elementary_channel": "stellar-elementary-alerts",
-  "elementary_secret": "slack-token-elementary"
+  "elementary_secret": "slack-token-elementary",
+  "dbt_elementary_target": "elementary"
 }
