@@ -23,7 +23,6 @@ def elementary_task(
     )
 
     args = [
-        "edr",
         "monitor",
         "--slack-token",
         "$SLACK_TOKEN",
