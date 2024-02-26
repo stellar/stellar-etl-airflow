@@ -47,7 +47,7 @@ def elementary_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "{{ var.value.dbt_image_name }}"
+    dbt_image = "us-central1-docker.pkg.dev/test-hubble-319619/stellar-dbt-elementary/stellar-dbt:latest"
 
     logging.info(f"sh commands to run in pod: {args}")
 
