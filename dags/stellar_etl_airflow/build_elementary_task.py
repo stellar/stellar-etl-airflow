@@ -12,6 +12,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 
 def access_secret(secret_name, namespace):
+    config.load_kube_config()
     v1 = client.CoreV1Api()
     secret_data = v1.read_namespaced_secret(secret_name, namespace)
     secret = secret_data.data
@@ -27,11 +28,9 @@ def elementary_task(
     namespace = conf.get("kubernetes", "NAMESPACE")
 
     if namespace == "default":
-        config.load_kube_config()
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
-        config.load_incluster_config()
         config_file_location = None
         in_cluster = True
 
