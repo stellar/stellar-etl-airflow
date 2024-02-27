@@ -16,7 +16,7 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    config.load_kube_config()
+    config.load_incluster_config()
     v1 = client.CoreV1Api()
     secret_data = v1.read_namespaced_secret(
         "{{ var.value.elementary_secret }}", "default"
