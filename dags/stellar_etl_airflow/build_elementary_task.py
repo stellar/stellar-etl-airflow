@@ -1,27 +1,13 @@
-import base64
 import logging
-import os
 
 from airflow.configuration import conf
+from airflow.kubernetes.secret import Secret
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
-from kubernetes import client, config
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
-
-
-def acess_secret(secret_name, namespace):
-    if os.getenv("KUBERNETES_SERVICE_HOST"):
-        config.load_incluster_config()
-    else:
-        config.load_kube_config()
-    v1 = client.CoreV1Api()
-    secret_data = v1.read_namespaced_secret(secret_name, namespace)
-    secret = secret_data.data
-    secret = base64.b64decode(secret["token"]).decode("utf-8")
-    return secret
 
 
 def elementary_task(
@@ -29,12 +15,14 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    secret = acess_secret("{{ var.value.elementary_secret }}", "default")
+    secret_env = Secret(
+        "env", "SLACK_TOKEN", "{{ var.value.elementary_secret }}", "token"
+    )
 
     args = [
         "monitor",
         "--slack-token",
-        f"{secret}",
+        "$SLACK_TOKEN",
         "--slack-channel-name",
         "{{ var.value.slack_elementary_channel }}",
     ]
@@ -83,6 +71,7 @@ def elementary_task(
         cmds=["edr"],
         arguments=args,
         dag=dag,
+        secrets=[secret_env],
         do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
