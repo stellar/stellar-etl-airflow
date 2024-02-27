@@ -1,11 +1,12 @@
+import base64
 import logging
 
 from airflow.configuration import conf
-from airflow.kubernetes.secret import Secret
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
     KubernetesPodOperator,
 )
+from kubernetes import client, config
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 
@@ -15,17 +16,18 @@ def elementary_task(
     task_name,
     resource_cfg="default",
 ):
-    secret_env = Secret(
-        deploy_type="env",
-        deploy_target="SLACK_TOKEN",
-        secret="slack-token-elementary",
-        key="token",
+    config.load_kube_config()
+    v1 = client.CoreV1Api()
+    secret_data = v1.read_namespaced_secret(
+        "{{ var.value.elementary_secret }}", "default"
     )
+    secret = secret_data.data
+    secret = base64.b64decode(secret["token"]).decode("utf-8")
 
     args = [
         "monitor",
         "--slack-token",
-        "$SLACK_TOKEN",
+        f"{secret}",
         "--slack-channel-name",
         "{{ var.value.slack_elementary_channel }}",
     ]
@@ -46,7 +48,7 @@ def elementary_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "us-central1-docker.pkg.dev/test-hubble-319619/stellar-dbt-elementary/stellar-dbt:latest"
+    dbt_image = "{{ var.value.dbt_image_name }}"
 
     logging.info(f"sh commands to run in pod: {args}")
 
@@ -57,8 +59,8 @@ def elementary_task(
         service_account_name=Variable.get("k8s_service_account"),
         env_vars={
             "DBT_USE_COLORS": "0",
-            "DBT_DATASET": "{{ var.value.dbt_dataset }}",
-            "DBT_TARGET": "{{ var.value.dbt_elementary_target }}",
+            "DBT_DATASET": "{{ var.value.dbt_elementary_dataset }}",
+            "DBT_TARGET": "{{ var.value.dbt_target }}",
             "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
             "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
@@ -73,7 +75,6 @@ def elementary_task(
         image=dbt_image,
         cmds=["edr"],
         arguments=args,
-        secrets=[secret_env],
         dag=dag,
         do_xcom_push=True,
         is_delete_operator_pod=True,
