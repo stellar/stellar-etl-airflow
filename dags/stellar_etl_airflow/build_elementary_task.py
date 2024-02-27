@@ -1,5 +1,6 @@
 import base64
 import logging
+import os
 
 from airflow.configuration import conf
 from airflow.models import Variable
@@ -11,18 +12,24 @@ from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
+def acess_secret(secret_name, namespace):
+    if os.getenv("KUBERNETES_SERVICE_HOST"):
+        config.load_incluster_config()
+    else:
+        config.load_kube_config()
+    v1 = client.CoreV1Api()
+    secret_data = v1.read_namespaced_secret(secret_name, namespace)
+    secret = secret_data.data
+    secret = base64.b64decode(secret["token"]).decode("utf-8")
+    return secret
+
+
 def elementary_task(
     dag,
     task_name,
     resource_cfg="default",
 ):
-    config.load_config()
-    v1 = client.CoreV1Api()
-    secret_data = v1.read_namespaced_secret(
-        "{{ var.value.elementary_secret }}", "default"
-    )
-    secret = secret_data.data
-    secret = base64.b64decode(secret["token"]).decode("utf-8")
+    secret = acess_secret("{{ var.value.elementary_secret }}", "default")
 
     args = [
         "monitor",
