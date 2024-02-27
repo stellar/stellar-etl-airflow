@@ -44,7 +44,7 @@ def elementary_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    slack_secret_name = Variable.get("slack_elementary_channel")
+    slack_secret_name = Variable.get("elementary_secret")
     secret = access_secret(slack_secret_name, "default")
     args = [
         "monitor",
