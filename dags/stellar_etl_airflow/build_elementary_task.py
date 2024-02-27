@@ -42,8 +42,10 @@ def elementary_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
-    dbt_image = "us-central1-docker.pkg.dev/test-hubble-319619/stellar-dbt-elementary/stellar-dbt:latest"
-    secret = access_secret("slack-token-elementary", "default")
+    dbt_image = "{{ var.value.dbt_image_name }}"
+
+    slack_secret_name = Variable.get("slack_elementary_channel")
+    secret = access_secret(slack_secret_name, "default")
     args = [
         "monitor",
         "--slack-token",
