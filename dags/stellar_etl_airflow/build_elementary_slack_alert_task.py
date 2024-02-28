@@ -57,8 +57,8 @@ def elementary_task(
     logging.info(f"sh commands to run in pod: {args}")
 
     return KubernetesPodOperator(
-        task_id=f"elementary_{task_name}",
-        name=f"elementary_{task_name}",
+        task_id=f"elementary_slack_alert_{task_name}",
+        name=f"elementary_slack_alert_{task_name}",
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
         env_vars={
