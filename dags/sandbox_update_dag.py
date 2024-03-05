@@ -12,6 +12,7 @@ from stellar_etl_airflow.build_bq_insert_job_task import (
     file_to_string,
     get_query_filepath,
 )
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
     get_default_dag_args,
@@ -25,7 +26,7 @@ with DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2023, 1, 1),
     description="This DAG updates a sandbox",
-    schedule_interval="@daily",
+    schedule_interval="0 1 * * *",
     params={"alias": "sandbox_dataset"},
     user_defined_filters={"fromjson": lambda s: loads(s)},
     catchup=False,
@@ -36,6 +37,10 @@ with DAG(
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
 
     start_tables_task = EmptyOperator(task_id="start_tables_task")
+
+    wait_on_dag = build_cross_deps(
+        dag, "wait_on_base_tables", "history_archive_with_captive_core_combined_export"
+    )
 
     for table_id in TABLES_ID:
         query_path = get_query_filepath("update_table")
@@ -58,4 +63,4 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        start_tables_task >> tables_update_task
+        start_tables_task >> wait_on_dag >> tables_update_task

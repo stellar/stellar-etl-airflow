@@ -73,7 +73,6 @@
   "bq_dataset": "test_crypto_stellar_internal",
   "bq_project": "test-hubble-319619",
   "bq_dataset_audit_log": "audit_log",
-  "bucket_mgi": "mgi-stellar-transactions",
   "date_for_resets": {
     "date": ["2023-03-15", "2023-06-14", "2023-09-13", "2023-12-13"]
   },
@@ -338,9 +337,11 @@
   },
   "currency_bucket": "currencies_ohlc",
   "max_db_entry_age_in_days": 90,
-  "public_dbt_image_name": "stellar/stellar-dbt:9bb458f",
   "internal_source_db": "test-hubble-319619",
   "internal_source_schema": "test_crypto_stellar_internal",
   "public_source_db": "test-hubble-319619",
-  "public_source_schema": "test_crypto_stellar"
+  "public_source_schema": "test_crypto_stellar",
+  "slack_elementary_channel": "stellar-elementary-alerts",
+  "elementary_secret": "slack-token-elementary",
+  "dbt_elementary_dataset": "test_elementary"
 }
