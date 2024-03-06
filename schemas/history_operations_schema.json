@@ -1129,5 +1129,15 @@
     "mode": "NULLABLE",
     "name": "closed_at",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_result_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_trace_code",
+    "type": "STRING"
   }
 ]

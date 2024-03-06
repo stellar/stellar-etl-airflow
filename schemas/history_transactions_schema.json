@@ -147,7 +147,7 @@
   {
     "mode": "REPEATED",
     "name": "extra_signers",
-    "type": "string"
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",
@@ -173,5 +173,10 @@
     "mode": "NULLABLE",
     "name": "closed_at",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_result_code",
+    "type": "STRING"
   }
 ]
