@@ -143,7 +143,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:afcbddf",
+  "dbt_image_name": "stellar/stellar-dbt:cc28da9",
   "dbt_job_execution_timeout_seconds": 1800,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "sdf_marts",
