@@ -182,16 +182,16 @@
   {
     "mode": "NULLABLE",
     "name": "inclusion_fee_bid",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
     "name": "inclusion_fee_charged",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
     "name": "resource_fee_refund",
-    "type": "STRING"
+    "type": "INTEGER"
   }
 ]
