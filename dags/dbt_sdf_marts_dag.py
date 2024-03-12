@@ -38,6 +38,8 @@ liquidity_pool_trade_volume_task = dbt_task(dag, tag="liquidity_pool_trade_volum
 
 mgi_task = dbt_task(dag, tag="mgi")
 liquidity_providers_task = dbt_task(dag, tag="liquidity_providers")
+liquidity_pools_values_task = dbt_task(dag, tag="liquidity_pools_value")
+liquidity_pools_value_history_task = dbt_task(dag, tag="liquidity_pools_value_history")
 trade_agg_task = dbt_task(dag, tag="trade_agg")
 fee_stats_agg_task = dbt_task(dag, tag="fee_stats")
 asset_stats_agg_task = dbt_task(dag, tag="asset_stats")
@@ -55,6 +57,8 @@ wait_on_dbt_enriched_base_tables >> mgi_task
 wait_on_partner_pipeline_dag >> mgi_task
 
 wait_on_dbt_enriched_base_tables >> liquidity_providers_task
+wait_on_dbt_enriched_base_tables >> liquidity_pools_values_task
+wait_on_dbt_enriched_base_tables >> liquidity_pools_value_history_task
 wait_on_dbt_enriched_base_tables >> trade_agg_task
 wait_on_dbt_enriched_base_tables >> fee_stats_agg_task
 wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
@@ -65,6 +69,8 @@ wait_on_dbt_enriched_base_tables >> soroban
 
 mgi_task >> elementary
 liquidity_providers_task >> elementary
+liquidity_pools_values_task >> elementary
+liquidity_pools_value_history_task >> elementary
 trade_agg_task >> elementary
 fee_stats_agg_task >> elementary
 asset_stats_agg_task >> elementary
