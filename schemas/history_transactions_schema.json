@@ -178,5 +178,20 @@
     "mode": "NULLABLE",
     "name": "transaction_result_code",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "inclusion_fee_bid",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "inclusion_fee_charged",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "resource_fee_refund",
+    "type": "STRING"
   }
 ]
