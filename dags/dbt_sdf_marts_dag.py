@@ -69,8 +69,8 @@ wait_on_dbt_enriched_base_tables >> soroban
 
 mgi_task >> elementary
 liquidity_providers_task >> elementary
-liquidity_pools_values_task >> elementary
-liquidity_pools_value_history_task >> elementary
+# liquidity_pools_values_task >> elementary
+# liquidity_pools_value_history_task >> elementary
 trade_agg_task >> elementary
 fee_stats_agg_task >> elementary
 asset_stats_agg_task >> elementary
