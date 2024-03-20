@@ -147,6 +147,12 @@ select
     , ht.soroban_resources_instructions
     , ht.soroban_resources_read_bytes
     , ht.soroban_resources_write_bytes
+    , ht.transaction_result_code
+    , ht.inclusion_fee_bid
+    , ht.inclusion_fee_charged
+    , ht.resource_fee_refund
+    , ho.operation_result_code
+    , ho.operation_trace_code
 from {project_id}.{dataset_id}.history_operations as ho
 join {project_id}.{dataset_id}.history_transactions as ht
     on ho.transaction_id = ht.id
