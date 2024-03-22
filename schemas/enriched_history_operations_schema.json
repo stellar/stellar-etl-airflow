@@ -1320,5 +1320,35 @@
     "mode": "NULLABLE",
     "name": "soroban_resources_write_bytes",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_result_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "inclusion_fee_bid",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "inclusion_fee_charged",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "resource_fee_refund",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_result_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_trace_code",
+    "type": "STRING"
   }
 ]
