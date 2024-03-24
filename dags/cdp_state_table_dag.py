@@ -20,9 +20,9 @@ from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 init_sentry()
 
 dag = DAG(
-    "state_table_export",
+    "cdp_state_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 12, 17, 6, 0),
+    start_date=datetime(2024, 3, 22, 0, 0),
     description="This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.",
     schedule_interval="*/30 * * * *",
     params={
@@ -42,13 +42,14 @@ dag = DAG(
 )
 
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = "{{ var.value.bq_project }}"
-internal_dataset = "{{ var.value.bq_dataset }}"
-public_project = "{{ var.value.public_project }}"
-public_dataset = "{{ var.value.public_dataset }}"
+internal_project = "{{ var.value.cdp_bq_project }}"
+internal_dataset = "{{ var.value.cdp_bq_dataset }}"
+public_project = "{{ var.value.cdp_public_project }}"
+public_dataset = "{{ var.value.cdp_public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
-use_captive_core = literal_eval(Variable.get("use_captive_core"))
+use_captive_core = literal_eval(Variable.get("cdp_use_captive_core"))
+txmeta_datastore_url = "{{ var.value.txmeta_datastore_url }}"
 
 date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 changes_task = build_export_task(
@@ -61,6 +62,7 @@ changes_task = build_export_task(
     use_gcs=True,
     resource_cfg="state",
     use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
 )
 
 """

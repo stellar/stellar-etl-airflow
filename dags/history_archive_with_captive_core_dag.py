@@ -50,6 +50,7 @@ public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
+use_captive_core = literal_eval(Variable.get("use_captive_core"))
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -86,6 +87,7 @@ op_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
+    use_captive_core=use_captive_core,
 )
 trade_export_task = build_export_task(
     dag,
@@ -96,6 +98,7 @@ trade_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
+    use_captive_core=use_captive_core,
 )
 effects_export_task = build_export_task(
     dag,
@@ -106,6 +109,7 @@ effects_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
+    use_captive_core=use_captive_core,
 )
 tx_export_task = build_export_task(
     dag,
@@ -116,6 +120,7 @@ tx_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
+    use_captive_core=use_captive_core,
 )
 diagnostic_events_export_task = build_export_task(
     dag,
@@ -126,6 +131,7 @@ diagnostic_events_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     resource_cfg="cc",
+    use_captive_core=use_captive_core,
 )
 
 """
