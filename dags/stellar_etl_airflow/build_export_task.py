@@ -188,7 +188,14 @@ def build_export_task(
     """
 
     etl_cmd, output_file = generate_etl_cmd(
-        command, filename, cmd_type, use_gcs, use_testnet, use_futurenet, use_captive_core, txmeta_datastore_url
+        command,
+        filename,
+        cmd_type,
+        use_gcs,
+        use_testnet,
+        use_futurenet,
+        use_captive_core,
+        txmeta_datastore_url,
     )
     etl_cmd_string = " ".join(etl_cmd)
     namespace = conf.get("kubernetes", "NAMESPACE")
