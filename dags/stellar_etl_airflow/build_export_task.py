@@ -153,7 +153,7 @@ def generate_etl_cmd(
     if use_captive_core:
         cmd.append("--captive-core")
     if txmeta_datastore_url:
-        cmd.extend(["--datastore_url", txmeta_datastore_url])
+        cmd.extend(["--datastore-url", txmeta_datastore_url])
     cmd.append("--strict-export")
 
     if command == "export_all_history":
