@@ -47,6 +47,8 @@ def generate_etl_cmd(
     use_gcs=False,
     use_testnet=False,
     use_futurenet=False,
+    use_captive_core=False,
+    txmeta_datastore_url="",
 ):
     """
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
@@ -137,6 +139,7 @@ def generate_etl_cmd(
         cmd.extend(
             ["--cloud-storage-bucket", Variable.get("gcs_exported_data_bucket_name")]
         )
+        # TODO: cloud-provider should be a parameter instead of hardcoded to gcp
         cmd.extend(["--cloud-provider", "gcp"])
         batch_id = macros.get_batch_id()
         batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
@@ -147,6 +150,10 @@ def generate_etl_cmd(
         cmd.append("--testnet")
     elif use_futurenet:
         cmd.append("--futurenet")
+    if use_captive_core:
+        cmd.append("--captive-core")
+    if txmeta_datastore_url:
+        cmd.extend(["--datastore_url", txmeta_datastore_url])
     cmd.append("--strict-export")
 
     if command == "export_all_history":
@@ -164,6 +171,8 @@ def build_export_task(
     use_testnet=False,
     use_futurenet=False,
     resource_cfg="default",
+    use_captive_core=False,
+    txmeta_datastore_url="",
 ):
     """
     Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
@@ -179,7 +188,7 @@ def build_export_task(
     """
 
     etl_cmd, output_file = generate_etl_cmd(
-        command, filename, cmd_type, use_gcs, use_testnet, use_futurenet
+        command, filename, cmd_type, use_gcs, use_testnet, use_futurenet, use_captive_core, txmeta_datastore_url
     )
     etl_cmd_string = " ".join(etl_cmd)
     namespace = conf.get("kubernetes", "NAMESPACE")
