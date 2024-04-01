@@ -198,7 +198,8 @@ def build_export_task(
     else:
         arguments = f"""
                     {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
-                    \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
+                    \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json,
+                    \\"succcessful_transforms\\": `grep successful_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
                     """
     return KubernetesPodOperator(
         service_account_name=Variable.get("k8s_service_account"),
