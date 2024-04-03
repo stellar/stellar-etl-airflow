@@ -131,7 +131,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-hubble-1pt5-dev-7db0e004-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:75c9a9c",
+  "image_name": "chowbao/stellar-etl:cdp-test3",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -343,5 +343,12 @@
   "public_source_schema": "test_crypto_stellar",
   "slack_elementary_channel": "stellar-elementary-alerts",
   "elementary_secret": "slack-token-elementary",
-  "dbt_elementary_dataset": "test_elementary"
+  "dbt_elementary_dataset": "test_elementary",
+  "use_captive_core": "True",
+  "txmeta_datastore_url": "gcs://exporter-test/ledgers/testnet",
+  "cdp_use_captive_core": "False",
+  "cdp_bq_project": "test-hubble-319619",
+  "cdp_bq_dataset": "cdp_test_crypto_stellar_internal",
+  "cdp_public_project": "test-hubble-319619",
+  "cdp_public_dataset": "cdp_test_crypto_stellar"
 }
