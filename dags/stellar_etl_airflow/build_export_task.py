@@ -213,7 +213,8 @@ def build_export_task(
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
     else:
         arguments = f"""
-                    {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}   `cat stderr.out`\\",
+                    {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
+                    \\"whole message\\": \\"$(cat stderr.out)\\",
                     \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
                     """
     return KubernetesPodOperator(
