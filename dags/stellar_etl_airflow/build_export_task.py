@@ -217,8 +217,8 @@ def build_export_task(
                     \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`,
                     \\"successful_transforms\\: `grep successful_transforms stderr.out | cut -d\\":\\" -f3 | cut -d\\":\\" -f2 | tr -d '}}' `}}" >> /airflow/xcom/return.json
                     """.format(
-                        etl_cmd_string, output_file
-                    )
+            etl_cmd_string, output_file
+        )
     return KubernetesPodOperator(
         service_account_name=Variable.get("k8s_service_account"),
         namespace=Variable.get("k8s_namespace"),
