@@ -111,7 +111,7 @@ jobs:
           args: >
             components install kubectl && gcloud composer environments run
             $COMPOSER_ENVIRONMENT --location $LOCATION variables import
-            --gcsfuse/variables.json
+            -- airflow_variables_dev.json
 
   promote-to-prod:
     runs-on: ubuntu-latest
