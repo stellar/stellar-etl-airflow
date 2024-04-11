@@ -216,7 +216,7 @@ def build_export_task(
         arguments = """
                     {0} 2>> stderr.out && cat stderr.out && echo "{{\\"output\\": \\"{1}\\",
                     \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`,
-                    \\"successful_transforms\\: `grep successful_transforms stderr.out | cut -d\\",\\" -f3 | cut -d\\":\\" -f2 | sed \\"s/{2}//g\\"`}}" >> /airflow/xcom/return.json
+                    \\"successful_transforms\\": `grep successful_transforms stderr.out | cut -d\\",\\" -f3 | cut -d\\":\\" -f2 | sed \\"s/{2}//g\\"`}}" >> /airflow/xcom/return.json
                     """.format(
             etl_cmd_string, output_file, char
         )
