@@ -111,7 +111,7 @@ jobs:
           args: >
             components install kubectl && gcloud composer environments run
             $COMPOSER_ENVIRONMENT --location $LOCATION variables import
-            -- gcsfuse/variables.json
+            -- gcsfuse/actual_mount_path/variables.json
 
   promote-to-prod:
     runs-on: ubuntu-latest
