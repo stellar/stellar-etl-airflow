@@ -212,11 +212,11 @@ def build_export_task(
     if command == "export_ledger_entry_changes" or command == "export_all_history":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
     else:
-        char = "}"
+        char = '}'
         arguments = """
                     {0} 2>> stderr.out && cat stderr.out && echo "{{\\"output\\": \\"{1}\\",
                     \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`,
-                    \\"successful_transforms\\": `grep successful_transforms, stderr.out | cut -d\\",\\" -f3 | cut -d\\":\\" -f2 | tr -d \\"{2}\\"`}}" >> /airflow/xcom/return.json
+                    \\"successful_transforms\\": `grep successful_transforms stderr.out | , cut -d\\",\\" -f3 | cut -d\\":\\" -f2 | tr -d \\"{2}\\"`}}" >> /airflow/xcom/return.json
                     """.format(
             etl_cmd_string, output_file, char
         )
