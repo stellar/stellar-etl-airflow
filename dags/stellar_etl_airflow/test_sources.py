@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 
 def compare_transforms_and_bq_rows():
     # current_date is always today - 1
-    current_date = datetime.now() - timedelta(days=1)
+    current_date = datetime(2024, 4, 15, 0, 0) - timedelta(days=1)
     current_date = current_date.date()
     print("Current date is: ", current_date)
 
@@ -64,7 +64,7 @@ def compare_transforms_and_bq_rows():
 
 dag = DAG(
     "daily_test_sources",
-    start_date=datetime(2024, 4, 15),
+    start_date=datetime(2024, 4, 15, 0, 0),
     schedule_interval=timedelta(days=1),
     default_args={
         "retries": 1,
