@@ -55,12 +55,14 @@ def compare_transforms_and_bq_rows():
     #     "
     # )
     
+    
     # results = query_job.result()
     # bq_rows = [row for row in results][0][0]
 
     # # Compare successful_transforms and bq_rows
     # if successful_transforms_ledgers != bq_rows:
     #     raise ValueError('Mismatch between successful_transforms in ledgers and bq_rows')
+
 
 dag = DAG(
     "daily_test_sources",
