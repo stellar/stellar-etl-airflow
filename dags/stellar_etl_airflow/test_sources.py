@@ -7,8 +7,8 @@ from airflow.operators.python_operator import PythonOperator
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-def compare_transforms_and_bq_rows():
 
+def compare_transforms_and_bq_rows():
     # current_date is always today - 1
     current_date = datetime.now() - timedelta(days=1)
     current_date = current_date.date()
@@ -78,7 +78,3 @@ compare_task = PythonOperator(
     provide_context=True,
     dag=dag,
 )
-
-
-
-
