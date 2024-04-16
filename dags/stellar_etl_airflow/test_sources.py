@@ -1,11 +1,11 @@
+import json
+from datetime import datetime, timedelta
+
+from airflow import DAG
+from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
 from google.cloud import bigquery
-from airflow.models import TaskInstance, DagRun, DagBag
-from airflow import DAG
-from datetime import datetime, timedelta
-from airflow.models import Variable
 from google.oauth2 import service_account
-import json
 
 def compare_transforms_and_bq_rows():
 
@@ -15,15 +15,17 @@ def compare_transforms_and_bq_rows():
     print("Current date is: ", current_date)
 
     # Get all the execution dates for the current date
-    execution_dates = DagRun.find(dag_id='history_archive_without_captive_core', execution_date=current_date)
+    execution_dates = DagRun.find(
+        dag_id="history_archive_without_captive_core", execution_date=current_date
+    )
     print(f"Execution dates: {execution_dates}")
 
     # Get the DAG
     dag_bag = DagBag()
-    dag = dag_bag.get_dag('history_archive_without_captive_core')
+    dag = dag_bag.get_dag("history_archive_without_captive_core")
 
     # Get the task
-    task = dag.get_task('export_ledgers_task')
+    task = dag.get_task("export_ledgers_task")
 
     total_successful_transforms = 0
 
@@ -33,10 +35,14 @@ def compare_transforms_and_bq_rows():
         xcom_ledgers = ti.xcom_pull(task_ids=task)
 
         # Parse JSON and get successful_transforms
-        successful_transforms_ledgers = json.loads(xcom_ledgers)['successful_transforms']
+        successful_transforms_ledgers = json.loads(xcom_ledgers)[
+            "successful_transforms"
+        ]
         total_successful_transforms += successful_transforms_ledgers
 
-    print(f'Total successful transforms for {current_date}: {total_successful_transforms}')
+    print(
+        f"Total successful transforms for {current_date}: {total_successful_transforms}"
+    )
 
     # key_path = Variable.get("api_key_path")
     # credentials = service_account.Credentials.from_service_account_file(key_path)
@@ -57,17 +63,17 @@ def compare_transforms_and_bq_rows():
     #     raise ValueError('Mismatch between successful_transforms in ledgers and bq_rows')
 
 dag = DAG(
-    'daily_test_sources',
+    "daily_test_sources",
     start_date=datetime(2024, 4, 15),
     schedule_interval=timedelta(days=1),
     default_args={
-        'retries': 1,
-        'retry_delay': timedelta(minutes=5),
+        "retries": 1,
+        "retry_delay": timedelta(minutes=5),
     },
 )
 
 compare_task = PythonOperator(
-    task_id='compare_transforms_and_bq_rows',
+    task_id="compare_transforms_and_bq_rows",
     python_callable=compare_transforms_and_bq_rows,
     provide_context=True,
     dag=dag,
