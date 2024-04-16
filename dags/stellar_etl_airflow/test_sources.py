@@ -54,8 +54,6 @@ def compare_transforms_and_bq_rows():
     #     WHERE batch_run_date BETWEEN '2020-12-04' AND '2020-12-05') AS count_public,
     #     "
     # )
-    
-    
     # results = query_job.result()
     # bq_rows = [row for row in results][0][0]
 
