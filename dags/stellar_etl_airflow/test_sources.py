@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 
 def compare_transforms_and_bq_rows():
     # current_date is always today - 1
-    current_date = datetime.datetime.now() - datetime.timedelta(days=1)
+    current_date = datetime.now()
     # current_date = current_date.date()
     print("Current date is: ", current_date)
 
