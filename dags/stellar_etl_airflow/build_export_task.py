@@ -210,7 +210,10 @@ def build_export_task(
     )
     affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
     if command == "export_ledger_entry_changes" or command == "export_all_history":
-        arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
+        arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\",
+                    \\"successful_transforms\\": `grep transforms stderr.out | cut -d\\"=\\" -f4 | cut -c3- | rev | cut -c7- | rev | cut -d\\",\\" -f3 | cut -d\\":\\" -f2`,
+                    \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
+                    """
     else:
         arguments = f"""
                     {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
