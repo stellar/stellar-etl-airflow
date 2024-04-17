@@ -1,4 +1,5 @@
 import json
+import pendulum
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -9,7 +10,7 @@ from google.oauth2 import service_account
 
 
 def compare_transforms_and_bq_rows():
-    yesterday = "{{ts(execution_date - macros.timedelta(days=1))}}"
+    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
     # Get all the execution dates for the current date
     execution_dates = DagRun.find(
         dag_id="history_archive_without_captive_core", execution_date=yesterday
