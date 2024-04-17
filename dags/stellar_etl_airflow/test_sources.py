@@ -1,19 +1,27 @@
 from datetime import datetime, timedelta
 
 import pendulum
-from airflow import DAG
+from airflow import DAG, settings
 from airflow.models import DagBag, DagRun, TaskInstance, Variable
+from airflow.utils.state import State
 from airflow.operators.python_operator import PythonOperator
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
 
 def compare_transforms_and_bq_rows():
-    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
+    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC") # Try yesterday_ds again
     # Get all the execution dates for the current date
-    execution_dates = DagRun.find(
-        dag_id="history_archive_without_captive_core", execution_date=yesterday
-    )
+    # Get the session from the settings
+    session = settings.Session()
+
+     # Get all the execution dates for the current date
+    execution_dates = session.query(DagRun).filter(
+        DagRun.dag_id == "history_archive_without_captive_core",
+        DagRun.execution_date >= yesterday.start_of('day'),
+        DagRun.execution_date < yesterday.add(days=1).start_of('day'),
+        DagRun.state == State.SUCCESS
+    ).all()
     print(f"Execution dates aaaaaaaare: {execution_dates}")
 
     # Get the DAG
