@@ -29,7 +29,7 @@ def compare_transforms_and_bq_rows():
     for dag_run in execution_dates:
         # Retrieve successful_transforms from XCOM
         ti = TaskInstance(task, dag_run.execution_date)
-        xcom_ledgers = ti.xcom_pull(task_ids=task, key="return_value")
+        xcom_ledgers = ti.xcom_pull(task_ids=task.task_id, key="return_value")
 
         # Parse JSON and get successful_transforms
         successful_transforms_ledgers = json.loads(xcom_ledgers)[
