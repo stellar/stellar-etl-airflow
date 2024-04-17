@@ -26,9 +26,9 @@ def compare_transforms_and_bq_rows():
 
     total_successful_transforms = 0
 
-    for execution_date in execution_dates:
+    for dag_run in execution_dates:
         # Retrieve successful_transforms from XCOM
-        ti = TaskInstance(task, execution_date)
+        ti = TaskInstance(task, dag_run.execution_date)
         xcom_ledgers = ti.xcom_pull(task_ids=task)
 
         # Parse JSON and get successful_transforms
