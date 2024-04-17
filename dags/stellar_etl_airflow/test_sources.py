@@ -61,7 +61,11 @@ def compare_transforms_and_bq_rows():
         """
     )
     results = query_job.result()
-    print(f"results are: {results}")
+    # Convert the results to a list of rows
+    rows = [dict(row) for row in results]
+
+    # Print the number of rows in the BigQuery table
+    print(f"in public:{rows[0]['count_public']}")
 
     # # Compare successful_transforms and bq_rows
     # if successful_transforms_ledgers != bq_rows:
