@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 
 
 def compare_transforms_and_bq_rows():
-     # Try yesterday_ds again
+    # Try yesterday_ds again
     yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
     # Get all the execution dates for the current date
     # Get the session from the settings
