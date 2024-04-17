@@ -57,14 +57,11 @@ def compare_transforms_and_bq_rows():
     query_job = client.query(
         """SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_ledgers
-        WHERE DATE(batch_run_date)='2020-04-16') AS count_public,
-        (SELECT COUNT(*) FROM hubble-261722.crypto_stellar_internal_2.account_signers
-        WHERE DATE(batch_run_date)='2020-04-16') AS count_internal;
+        WHERE DATE(batch_run_date)='2020-04-16') AS count_public
         """
     )
     results = query_job.result()
-    bq_rows = [row for row in results][0][0]
-    print(f"bq_rows are: {bq_rows}")
+    print(f"results are: {results}")
 
     # # Compare successful_transforms and bq_rows
     # if successful_transforms_ledgers != bq_rows:
