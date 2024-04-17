@@ -22,7 +22,7 @@ def compare_transforms_and_bq_rows():
             DagRun.dag_id == "history_archive_without_captive_core",
             DagRun.execution_date >= yesterday.start_of('day'),
             DagRun.execution_date < yesterday.add(days=1).start_of('day'),
-            DagRun.state == State.SUCCESS
+            DagRun.state == State.SUCCESS,
         )
         .all()
     )
