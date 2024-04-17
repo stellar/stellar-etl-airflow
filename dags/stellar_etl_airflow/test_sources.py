@@ -9,14 +9,10 @@ from google.oauth2 import service_account
 
 
 def compare_transforms_and_bq_rows():
-    # current_date is always today - 1
-    current_date = datetime.now()
-    # current_date = current_date.date()
-    print("Current date is: ", current_date)
-
+    
     # Get all the execution dates for the current date
     execution_dates = DagRun.find(
-        dag_id="history_archive_without_captive_core", execution_date=current_date
+        dag_id="history_archive_without_captive_core", execution_date="{{ yesterday_ds }}"
     )
     print(f"Execution dates: {execution_dates}")
 
