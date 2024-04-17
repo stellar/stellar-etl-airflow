@@ -27,7 +27,7 @@ def compare_transforms_and_bq_rows():
         )
         .all()
     )
-    print(f"Execution dates aaaaaaaare: {execution_dates}")
+    print(f"How many execution dates: {len(execution_dates)}")
 
     # Get the DAG
     dag_bag = DagBag()
