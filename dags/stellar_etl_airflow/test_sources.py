@@ -1,7 +1,7 @@
 import json
-import pendulum
 from datetime import datetime, timedelta
 
+import pendulum
 from airflow import DAG
 from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
