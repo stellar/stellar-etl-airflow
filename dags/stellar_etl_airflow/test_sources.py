@@ -14,8 +14,7 @@ def compare_transforms_and_bq_rows():
     
     # Get all the execution dates for the current date
     execution_dates = DagRun.find(
-        dag_id="history_archive_without_captive_core",
-        execution_date=yesterday
+        dag_id="history_archive_without_captive_core", execution_date=yesterday
     )
     print(f"Execution dates: {execution_dates}")
 
