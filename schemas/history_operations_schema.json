@@ -1077,7 +1077,7 @@
       },
       {
         "mode": "REPEATED",
-        "name": "key_hash",
+        "name": "ledger_key_hash",
         "type": "STRING"
       }
     ],
