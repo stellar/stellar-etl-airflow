@@ -9,7 +9,6 @@ from google.oauth2 import service_account
 
 
 def compare_transforms_and_bq_rows():
-    
     # Get all the execution dates for the current date
     execution_dates = DagRun.find(
         dag_id="history_archive_without_captive_core",
