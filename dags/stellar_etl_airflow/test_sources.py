@@ -10,12 +10,13 @@ from google.oauth2 import service_account
 
 
 def compare_transforms_and_bq_rows():
-    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC") # Try yesterday_ds again
+     # Try yesterday_ds again
+    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
     # Get all the execution dates for the current date
     # Get the session from the settings
     session = settings.Session()
 
-     # Get all the execution dates for the current date (yesterday)
+    # Get all the execution dates for the current date (yesterday)
     execution_dates = (
         session.query(DagRun)
         .filter(
