@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-import pendulum
+#import pendulum
 from airflow import DAG, settings
 from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
@@ -11,7 +11,7 @@ from google.oauth2 import service_account
 
 def compare_transforms_and_bq_rows():
     # Try yesterday_ds again
-    yesterday = "{{ yesterday_ds }}"
+    yesterday = datetime.now() - timedelta(days=1)
     # Get all the execution dates for the current date
     # Get the session from the settings
     session = settings.Session()
