@@ -55,9 +55,9 @@ def compare_transforms_and_bq_rows():
 
     # # Query number of rows in BigQuery table
     query_job = client.query(
-        """SELECT
+        f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_ledgers
-        WHERE DATE(batch_run_date)='2020-04-16') AS count_public
+        WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
         """
     )
     results = query_job.result()
