@@ -32,7 +32,6 @@ def compare_transforms_and_bq_rows():
 
         # Parse JSON and get successful_transforms
         successful_transforms_ledgers = xcom_ledgers["successful_transforms"]
-        
         total_successful_transforms += successful_transforms_ledgers
 
     print(f"Total successful transforms for yesterday: {total_successful_transforms}")
