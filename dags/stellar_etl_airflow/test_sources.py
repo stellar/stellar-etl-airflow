@@ -12,7 +12,8 @@ def compare_transforms_and_bq_rows():
     
     # Get all the execution dates for the current date
     execution_dates = DagRun.find(
-        dag_id="history_archive_without_captive_core", execution_date="{{ yesterday_ds }}"
+        dag_id="history_archive_without_captive_core",
+        execution_date="{{ yesterday_ds }}"
     )
     print(f"Execution dates: {execution_dates}")
 
@@ -37,7 +38,7 @@ def compare_transforms_and_bq_rows():
         total_successful_transforms += successful_transforms_ledgers
 
     print(
-        f"Total successful transforms for {current_date}: {total_successful_transforms}"
+        f"Total successful transforms for {"{{ yesterday_ds }}"}: {total_successful_transforms}"
     )
 
     # key_path = Variable.get("api_key_path")
