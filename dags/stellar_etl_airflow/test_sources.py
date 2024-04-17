@@ -37,7 +37,7 @@ def compare_transforms_and_bq_rows():
         total_successful_transforms += successful_transforms_ledgers
 
     print(
-        f"Total successful transforms for {"{{ yesterday_ds }}"}: {total_successful_transforms}"
+        f"Total successful transforms for yesterday: {total_successful_transforms}"
     )
 
     # key_path = Variable.get("api_key_path")
