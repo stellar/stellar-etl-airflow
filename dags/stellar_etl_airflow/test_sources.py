@@ -61,7 +61,6 @@ def get_from_with_combinedExport():
 
             # Slice the string to get the value between the last colon and the closing brace
             value = json_str[last_colon + 1 : closing_brace]
-            
             total_successful_transforms += int(value)
 
     print(f"Total successful transforms for yesterday: {total_successful_transforms}")
