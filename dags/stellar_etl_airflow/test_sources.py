@@ -93,8 +93,8 @@ def get_from_without_captiveCore(**context):
         session.query(DagRun)
         .filter(
             DagRun.dag_id == "history_archive_without_captive_core",
-            DagRun.execution_date >= yesterday.start_of("day"),
-            DagRun.execution_date < yesterday.add(days=1).start_of("day"),
+            DagRun.execution_date >= yesterday,
+            DagRun.execution_date < yesterday.add(days=1),
             DagRun.state == State.SUCCESS,
         )
         .all()
