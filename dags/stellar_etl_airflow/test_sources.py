@@ -82,6 +82,8 @@ def get_from_without_captiveCore(**context):
     execution_date = context["execution_date"]
     yesterday = pendulum.instance(execution_date).subtract(days=1)
 
+    print(f"Yesterday date is: {yesterday}")
+
     # Get the session from the settings
     session = settings.Session()
 
