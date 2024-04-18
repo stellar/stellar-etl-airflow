@@ -7,9 +7,45 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.utils.state import State
 from google.cloud import bigquery
 from google.oauth2 import service_account
+from airflow.providers.google.cloud.hooks.gcs import GoogleCloudStorageHook
+
+key_path = Variable.get("api_key_path")
+credentials = service_account.Credentials.from_service_account_file(key_path)
+
+def get_from_with_combinedExport():
+
+    # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
+    # Get all the execution dates for the current date
+    # Get the session from the settings
+    # session = settings.Session()
+
+    # Get all the execution dates for the current date (yesterday)
+    # execution_dates = (
+    #     session.query(DagRun)
+    #     .filter(
+    #         DagRun.dag_id == "history_archive_without_captive_core",
+    #         DagRun.execution_date >= yesterday.start_of("day"),
+    #         DagRun.execution_date < yesterday.add(days=1).start_of("day"),
+    #         DagRun.state == State.SUCCESS,
+    #     )
+    #     .all()
+    # )
+
+    # Create a hook
+    gcs_hook = GoogleCloudStorageHook(key_path=key_path)
+
+    # Download the file and get its content, it runs 47 times day 16th of april
+    file_content = gcs_hook.download(
+        bucket_name='us-central1-test-hubble-2-5f1f2dbf-bucket',
+        object_name='logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__2024-04-16T00:00:00+00:00/task_id=export_all_history_task/attempt=1.log',
+    )
+
+    # Now file_content is a string with the content of the file
+    print(file_content)
 
 
-def compare_transforms_and_bq_rows():
+
+def get_from_without_captiveCore():
     # Try yesterday_ds again
     yesterday = pendulum.yesterday()
     # Get all the execution dates for the current date
@@ -49,8 +85,8 @@ def compare_transforms_and_bq_rows():
 
     print(f"Total successful transforms for yesterday: {total_successful_transforms}")
 
-    key_path = Variable.get("api_key_path")
-    credentials = service_account.Credentials.from_service_account_file(key_path)
+    # key_path = Variable.get("api_key_path")
+    # credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
     # # Query number of rows in BigQuery table
@@ -83,9 +119,16 @@ dag = DAG(
     },
 )
 
-compare_task = PythonOperator(
-    task_id="compare_transforms_and_bq_rows",
-    python_callable=compare_transforms_and_bq_rows,
+# compare_task = PythonOperator(
+#     task_id="get_from_without_captiveCore",
+#     python_callable=get_from_without_captiveCore,
+#     provide_context=True,
+#     dag=dag,
+# )
+
+compare2_task = PythonOperator(
+    task_id="get_from_with_combinedExport",
+    python_callable=get_from_with_combinedExport,
     provide_context=True,
     dag=dag,
 )
