@@ -13,6 +13,7 @@ from google.oauth2 import service_account
 key_path = Variable.get("api_key_path")
 credentials = service_account.Credentials.from_service_account_file(key_path)
 
+
 def get_from_with_combinedExport():
     # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
     # Get all the execution dates for the current date
@@ -42,7 +43,6 @@ def get_from_with_combinedExport():
 
     # Now file_content is a string with the content of the file
     print(file_content)
-
 
 
 def get_from_without_captiveCore():
