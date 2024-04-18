@@ -39,8 +39,8 @@ jobs:
       - id: "get-credentials"
         uses: "google-github-actions/get-gke-credentials@v2"
         with:
-          cluster_name: "us-central1-hubble-14c4ca64-gke"
-          location: "us-central1"
+          cluster_name: "us-central1-hubble-1pt5-dev-7db0e004-gke"
+          location: "us-central1-c"
 
       - name: Pytest
         run: pytest dags/
@@ -75,17 +75,17 @@ jobs:
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
         env:
           GOOGLE_CLOUD_PROJECT: hubble-261722
-          BUCKET: us-central1-hubble-14c4ca64-bucket
+          BUCKET: us-central1-hubble-2-d948d67b-bucket
 
       - name: Update Airflow variables
         uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: hubble-261722
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: hubble
+          COMPOSER_ENVIRONMENT: hubble-2
           LOCATION: us-central1
         with:
           args: >
             components install kubectl && gcloud composer environments run
             $COMPOSER_ENVIRONMENT --location $LOCATION variables import
-            -- gcsfuse/actual_mount_path/variables.json
+            -- gcsfuse/variables.json
