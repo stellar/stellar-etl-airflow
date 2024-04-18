@@ -11,12 +11,11 @@ from google.oauth2 import service_account
 
 
 def get_from_combinedExport():
-    
     successful_transforms = {
-        'operations': None,
-        'trades': None,
-        'effects': None,
-        'transactions': None,
+        "operations": None,
+        "trades": None,
+        "effects": None,
+        "transactions": None,
     }
 
     # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
@@ -69,7 +68,7 @@ def get_from_combinedExport():
 
             # Slice the string to get the value between the last colon and the closing brace
             value = json_str[last_colon + 1 : closing_brace]
-            
+
             for key in successful_transforms:
                 if successful_transforms[key] is None:
                     successful_transforms[key] = int(value)
@@ -80,9 +79,9 @@ def get_from_combinedExport():
 
 def get_from_without_captiveCore(**context):
     # Try yesterday_ds again
-    execution_date = context['execution_date']
+    execution_date = context["execution_date"]
     yesterday = pendulum.instance(execution_date).subtract(days=1)
-    
+
     # Get the session from the settings
     session = settings.Session()
 
@@ -153,16 +152,16 @@ dag = DAG(
     },
 )
 
-# compare_task = PythonOperator(
-#     task_id="get_from_without_captiveCore",
-#     python_callable=get_from_without_captiveCore,
-#     provide_context=True,
-#     dag=dag,
-# )
-
-compare2_task = PythonOperator(
-    task_id="get_from_combinedExport",
-    python_callable=get_from_combinedExport,
+compare_task = PythonOperator(
+    task_id="get_from_without_captiveCore",
+    python_callable=get_from_without_captiveCore,
     provide_context=True,
     dag=dag,
 )
+
+# compare2_task = PythonOperator(
+#     task_id="get_from_combinedExport",
+#     python_callable=get_from_combinedExport,
+#     provide_context=True,
+#     dag=dag,
+# )
