@@ -1074,6 +1074,11 @@
         "mode": "NULLABLE",
         "name": "contract_code_hash",
         "type": "STRING"
+      },
+      {
+        "mode": "REPEATED",
+        "name": "ledger_key_hash",
+        "type": "STRING"
       }
     ],
     "mode": "NULLABLE",
