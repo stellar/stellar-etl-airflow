@@ -29,8 +29,7 @@ def get_from_with_combinedExport():
     # )
 
     # Create a hook
-    gcs_conn = Variable.get("google_cloud_storage_default")
-    gcs_hook = GCSHook(google_cloud_storage_conn_id=gcs_conn)
+    gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
     # Download the file and get its content, it runs 47 times day 16th of april
     file_content = gcs_hook.download(
