@@ -45,19 +45,19 @@ def get_from_with_combinedExport():
             start = line.find('{\\"')
             # Slice the line from the start of the JSON string
             # Find the start and end of the JSON string
-            end = line.rfind('}') + 1  # +1 to include the '}' character
+            end = line.rfind("}") + 1  # +1 to include the '}' character
 
             # Slice the string from the start to the end of the JSON string
             json_str = line[start:end]
 
             # Find the last colon and the closing brace in the string
-            last_colon = json_str.rfind(':')
-            closing_brace = json_str.rfind('}')
+            last_colon = json_str.rfind(":")
+            closing_brace = json_str.rfind("}")
 
             # Slice the string to get the value between the last colon and the closing brace
-            value = json_str[last_colon+1:closing_brace]
+            value = json_str[last_colon + 1 : closing_brace]
 
-            print("O VALOR ÉEE:",value)
+            print("O VALOR ÉEE:", value)
 
 
 def get_from_without_captiveCore():
