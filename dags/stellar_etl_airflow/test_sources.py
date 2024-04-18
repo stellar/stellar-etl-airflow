@@ -43,6 +43,8 @@ def get_from_with_combinedExport():
     # Now file_content is a string with the content of the file
     lines = file_content.splitlines()
 
+    total_successful_transforms = 0
+
     for line in lines:
         if 'level=info msg="{\\' in line:
             start = line.find('{\\"')
@@ -60,8 +62,9 @@ def get_from_with_combinedExport():
             # Slice the string to get the value between the last colon and the closing brace
             value = json_str[last_colon + 1 : closing_brace]
 
-            print("O VALOR ÉEE:", value)
+            total_successful_transforms += value
 
+    print(f"Total successful transforms for yesterday: {total_successful_transforms}")
 
 def get_from_without_captiveCore():
     # Try yesterday_ds again
