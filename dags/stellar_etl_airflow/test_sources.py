@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 import pendulum
 from airflow import DAG, settings
@@ -81,6 +81,7 @@ def get_from_without_captiveCore(**context):
     # Try yesterday_ds again
     execution_date = context["execution_date"]
     yesterday = pendulum.instance(execution_date).subtract(days=1)
+    yesterday = datetime.combine(yesterday, time())
 
     print(f"Yesterday date is: {yesterday}")
 
