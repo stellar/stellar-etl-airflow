@@ -94,7 +94,8 @@ def get_from_without_captiveCore(**context):
         .filter(
             DagRun.dag_id == "history_archive_without_captive_core",
             DagRun.execution_date >= yesterday,
-            DagRun.execution_date < (yesterday + timedelta(days=1)),
+            DagRun.execution_date
+            < datetime.combine(yesterday + timedelta(days=1), time()),
             DagRun.state == State.SUCCESS,
         )
         .all()
