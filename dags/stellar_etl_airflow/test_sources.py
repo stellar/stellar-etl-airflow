@@ -94,11 +94,12 @@ def get_from_without_captiveCore(**context):
         .filter(
             DagRun.dag_id == "history_archive_without_captive_core",
             DagRun.execution_date >= yesterday,
-            DagRun.execution_date < yesterday.add(days=1),
+            DagRun.execution_date < (yesterday + timedelta(days=1)),
             DagRun.state == State.SUCCESS,
         )
         .all()
     )
+    print(f"today is {yesterday + timedelta(days=1)}")
     print(f"How many execution dates: {len(execution_dates)}")
 
     # Get the DAG
