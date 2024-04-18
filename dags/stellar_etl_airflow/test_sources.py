@@ -9,7 +9,6 @@ from airflow.utils.state import State
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-
 key_path = Variable.get("api_key_path")
 credentials = service_account.Credentials.from_service_account_file(key_path)
 
