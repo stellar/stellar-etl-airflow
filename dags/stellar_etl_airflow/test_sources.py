@@ -66,7 +66,6 @@ def get_from_with_combinedExport():
 
     print(f"Total successful transforms for yesterday: {total_successful_transforms}")
 
-    
 
 def get_from_without_captiveCore():
     # Try yesterday_ds again
