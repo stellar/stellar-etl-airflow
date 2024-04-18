@@ -37,6 +37,9 @@ def get_from_with_combinedExport():
         object_name="logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__2024-04-16T00:00:00+00:00/task_id=export_all_history_task/attempt=1.log",
     )
 
+    # Decode the bytes object to a string
+    file_content = file_content.decode()
+
     # Now file_content is a string with the content of the file
     lines = file_content.splitlines()
 
