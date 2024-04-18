@@ -9,6 +9,7 @@ from airflow.utils.state import State
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
+
 def get_from_with_combinedExport():
     # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
     # Get all the execution dates for the current date
