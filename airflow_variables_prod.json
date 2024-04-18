@@ -1,91 +1,5 @@
 {
-  "affinity": {
-    "default": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [
-            {
-              "matchExpressions": [
-                {
-                  "key": "cloud.google.com/gke-nodepool",
-                  "operator": "In",
-                  "values": ["default-pool"]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "backfill": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [
-            {
-              "matchExpressions": [
-                {
-                  "key": "cloud.google.com/gke-nodepool",
-                  "operator": "In",
-                  "values": ["hubble-etl"]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "cc": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [
-            {
-              "matchExpressions": [
-                {
-                  "key": "cloud.google.com/gke-nodepool",
-                  "operator": "In",
-                  "values": ["hubble-etl"]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "wocc": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [
-            {
-              "matchExpressions": [
-                {
-                  "key": "cloud.google.com/gke-nodepool",
-                  "operator": "In",
-                  "values": ["default-pool"]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "state": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [
-            {
-              "matchExpressions": [
-                {
-                  "key": "cloud.google.com/gke-nodepool",
-                  "operator": "In",
-                  "values": ["state-table"]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    }
-  },
+  "affinity": {},
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_project": "hubble-261722",
@@ -143,7 +57,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:b621192",
+  "dbt_image_name": "stellar/stellar-dbt:8ae3438",
   "dbt_job_execution_timeout_seconds": 1800,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "sdf_marts",
@@ -151,9 +65,9 @@
   "dbt_project": "hubble-261722",
   "dbt_target": "prod",
   "dbt_threads": 12,
-  "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
+  "gcs_exported_data_bucket_name": "us-central1-hubble-14c4ca64-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:75c9a9c",
+  "image_name": "stellar/stellar-etl:395f1f8",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
