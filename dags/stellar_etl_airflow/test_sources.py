@@ -4,7 +4,7 @@ import pendulum
 from airflow import DAG, settings
 from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
-from airflow.providers.google.cloud.hooks.gcs import GoogleCloudStorageHook
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.utils.state import State
 from google.cloud import bigquery
 from google.oauth2 import service_account
@@ -32,7 +32,8 @@ def get_from_with_combinedExport():
     # )
 
     # Create a hook
-    gcs_hook = GoogleCloudStorageHook(key_path=key_path)
+    gcs_conn = Variable.get("google_cloud_storage_default")
+    gcs_hook = GCSHook(google_cloud_storage_conn_id=gcs_conn)
 
     # Download the file and get its content, it runs 47 times day 16th of april
     file_content = gcs_hook.download(
