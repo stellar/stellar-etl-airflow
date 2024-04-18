@@ -4,16 +4,16 @@ import pendulum
 from airflow import DAG, settings
 from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
+from airflow.providers.google.cloud.hooks.gcs import GoogleCloudStorageHook
 from airflow.utils.state import State
 from google.cloud import bigquery
 from google.oauth2 import service_account
-from airflow.providers.google.cloud.hooks.gcs import GoogleCloudStorageHook
+
 
 key_path = Variable.get("api_key_path")
 credentials = service_account.Credentials.from_service_account_file(key_path)
 
 def get_from_with_combinedExport():
-
     # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
     # Get all the execution dates for the current date
     # Get the session from the settings
@@ -36,8 +36,8 @@ def get_from_with_combinedExport():
 
     # Download the file and get its content, it runs 47 times day 16th of april
     file_content = gcs_hook.download(
-        bucket_name='us-central1-test-hubble-2-5f1f2dbf-bucket',
-        object_name='logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__2024-04-16T00:00:00+00:00/task_id=export_all_history_task/attempt=1.log',
+        bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
+        object_name="logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__2024-04-16T00:00:00+00:00/task_id=export_all_history_task/attempt=1.log",
     )
 
     # Now file_content is a string with the content of the file
