@@ -19,25 +19,28 @@ def get_from_combinedExport(**context):
         "transactions": None,
     }
 
+    successful_values = []
+
     yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
-    print(yesterday)
-    # Get all the execution dates for the current date
-    # Get the session from the settings
-    # session = settings.Session()
+
+    session = settings.Session()
 
     # Get all the execution dates for the current date (yesterday)
-    # execution_dates = (
-    #     session.query(DagRun)
-    #     .filter(
-    #         DagRun.dag_id == "history_archive_without_captive_core",
-    #         DagRun.execution_date >= yesterday.start_of("day"),
-    #         DagRun.execution_date < yesterday.add(days=1).start_of("day"),
-    #         DagRun.state == State.SUCCESS,
-    #     )
-    #     .all()
-    # )
+    execution_dates = (
+        session.query(DagRun)
+        .filter(
+            DagRun.dag_id == "history_archive_without_captive_core",
+            DagRun.execution_date >= yesterday.start_of("day"),
+            DagRun.execution_date < yesterday.add(days=1).start_of("day"),
+            DagRun.state == State.SUCCESS,
+        )
+        .all()
+    )
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
+
+    for execution_date in execution_dates:
+        print(execution_date)
 
     # Download the file and get its content, it runs 47 times day 16th of april
     file_content = gcs_hook.download(
@@ -51,8 +54,6 @@ def get_from_combinedExport(**context):
     # Now file_content is a string with the content of the file
     lines = file_content.splitlines()
 
-    total_successful_transforms = 0
-    i = 0
     for line in lines:
         if 'level=info msg="{\\' in line:
             start = line.find('{\\"')
@@ -70,12 +71,12 @@ def get_from_combinedExport(**context):
             # Slice the string to get the value between the last colon and the closing brace
             value = json_str[last_colon + 1 : closing_brace]
 
-            for key in successful_transforms:
-                if successful_transforms[key] is None:
-                    successful_transforms[key] = int(value)
-                    break
+            successful_values.append(int(value))
 
-    print(f"Total successful transforms for yesterday: {total_successful_transforms}")
+    for key, value in zip(successful_transforms, successful_values):
+        successful_transforms[key] = value
+
+    print(f"Total successful transforms for yesterday: {successful_transforms}")
 
 
 def get_from_without_captiveCore(**context):
