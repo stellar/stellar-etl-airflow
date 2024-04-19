@@ -87,33 +87,49 @@ def get_from_combinedExport(**context):
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
+    print(f"data nas queries:{ yesterday.strftime('%Y-%m-%d') }")
+
     query_job = client.query(
-        f"""
-        SELECT
+        f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_operations
         WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
-        UNION ALL
-        SELECT
+        """
+    )
+
+    query_job2 = client.query(
+        f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_trades
         WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
-        UNION ALL
-        SELECT
+        """
+    )
+
+    query_job3 = client.query(
+        f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_effects
         WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
-        UNION ALL
-        SELECT
+        """
+    )
+
+    query_job4 = client.query(
+        f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_transactions
         WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
         """
     )
 
     results = query_job.result()
+    results2 = query_job2.result()
+    results3 = query_job3.result()
+    results4 = query_job4.result()
 
     # Convert the results to a list of rows
-    rows = [dict(row) for row in results]
+    # rows = [dict(row) for row in results]
 
     # Each item in the list rows contains the response of each query
-    print(rows)
+    print(results)
+    print(results2)
+    print(results3)
+    print(results4)
 
 
 def get_from_without_captiveCore(**context):
