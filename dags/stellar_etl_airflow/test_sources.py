@@ -49,7 +49,7 @@ def get_from_combinedExport(**context):
         # Download the file and get its content, it runs 47 times day 16th of april
         file_content = gcs_hook.download(
             bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-            object_name="logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__{execution_date_str}/task_id=export_all_history_task/attempt=1.log",
+            object_name=f"logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__{execution_date_str}/task_id=export_all_history_task/attempt=1.log",
         )
 
     # Decode the bytes object to a string
