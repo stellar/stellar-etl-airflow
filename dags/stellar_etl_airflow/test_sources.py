@@ -43,8 +43,7 @@ def get_from_combinedExport(**context):
         execution_date_str = dag_run.execution_date.strftime(
             "%Y-%m-%d %H:%M:%S%z"
         ).replace(" ", "T")
-        print(f" EM STRING É:{execution_date_str}")
-        print(type(dag_run.execution_date))
+        execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
         # Download the file and get its content, it runs 47 times day 16th of april
         file_content = gcs_hook.download(
