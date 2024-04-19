@@ -11,7 +11,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 
-def get_from_combinedExport():
+def get_from_combinedExport(**context):
     successful_transforms = {
         "operations": None,
         "trades": None,
@@ -19,7 +19,8 @@ def get_from_combinedExport():
         "transactions": None,
     }
 
-    # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
+    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
+    print(yesterday)
     # Get all the execution dates for the current date
     # Get the session from the settings
     # session = settings.Session()
@@ -36,7 +37,6 @@ def get_from_combinedExport():
     #     .all()
     # )
 
-    # Create a hook
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
     # Download the file and get its content, it runs 47 times day 16th of april
@@ -79,13 +79,9 @@ def get_from_combinedExport():
 
 
 def get_from_without_captiveCore(**context):
-    # execution_date = context["execution_date"]
-    # yesterday = pendulum.instance(execution_date).subtract(days=1)
-    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    dt = pendulum.datetime(2024, 4, 17)
-
-    # Subtract one day to get the previous day
-    yesterday = dt.subtract(days=1)
+    execution_date = context["execution_date"]
+    yesterday = pendulum.instance(execution_date).subtract(days=1)
+    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
 
     # Get the session from the settings
     session = settings.Session()
@@ -104,7 +100,6 @@ def get_from_without_captiveCore(**context):
         )
         .all()
     )
-    print(f"How many execution dates: {len(execution_dates)}")
 
     # Get the DAG
     dag_bag = DagBag()
@@ -164,16 +159,16 @@ dag = DAG(
     },
 )
 
-compare_task = PythonOperator(
-    task_id="get_from_without_captiveCore",
-    python_callable=get_from_without_captiveCore,
-    provide_context=True,
-    dag=dag,
-)
-
-# compare2_task = PythonOperator(
-#     task_id="get_from_combinedExport",
-#     python_callable=get_from_combinedExport,
+# compare_task = PythonOperator(
+#     task_id="get_from_without_captiveCore",
+#     python_callable=get_from_without_captiveCore,
 #     provide_context=True,
 #     dag=dag,
 # )
+
+compare2_task = PythonOperator(
+    task_id="get_from_combinedExport",
+    python_callable=get_from_combinedExport,
+    provide_context=True,
+    dag=dag,
+)
