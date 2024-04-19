@@ -87,8 +87,6 @@ def get_from_combinedExport(**context):
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
-    print(f"data nas queries:{ yesterday.strftime('%Y-%m-%d') }")
-
     query_job = client.query(
         f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_operations
@@ -117,19 +115,44 @@ def get_from_combinedExport(**context):
         """
     )
 
-    results = [row[0] for row in query_job.result()]
-    results2 = [row[0] for row in query_job2.result()]
-    results3 = [row[0] for row in query_job3.result()]
-    results4 = [row[0] for row in query_job4.result()]
+    BQ_results = {
+        "operations": [row[0] for row in query_job.result()],
+        "trades": [row[0] for row in query_job2.result()],
+        "effects": [row[0] for row in query_job3.result()],
+        "transactions": [row[0] for row in query_job4.result()],
+    }
 
-    # Convert the results to a list of rows
-    # rows = [dict(row) for row in results]
+    context["ti"].xcom_push(key="from BQ", value=BQ_results)
+    context["ti"].xcom_push(key="from GCS", value=successful_transforms)
 
-    # Each item in the list rows contains the response of each query
-    print(results)
-    print(results2)
-    print(results3)
-    print(results4)
+    if successful_transforms["operations"] != BQ_results["operations"]:
+        print(
+            "bq_operations are {0} and successful_transforms operations are {1}".format(
+                BQ_results["operations"], successful_transforms["operations"]
+            )
+        )
+        raise ValueError("Mismatch between operations in GCS and BQ operations")
+    elif successful_transforms["trades"] != BQ_results["trades"]:
+        print(
+            "bq_operations are {0} and successful_transforms operations are {1}".format(
+                BQ_results["trades"], successful_transforms["trades"]
+            )
+        )
+        raise ValueError("Mismatch between trades in GCS and BQ trades")
+    elif successful_transforms["effects"] != BQ_results["effects"]:
+        print(
+            "bq_operations are {0} and successful_transforms operations are {1}".format(
+                BQ_results["effects"], successful_transforms["effects"]
+            )
+        )
+        raise ValueError("Mismatch between effects in GCS and BQ effects")
+    elif successful_transforms["transactions"] != BQ_results["transactions"]:
+        print(
+            "bq_operations are {0} and successful_transforms operations are {1}".format(
+                BQ_results["transactions"], successful_transforms["transactions"]
+            )
+        )
+        raise ValueError("Mismatch between transactions in GCS and BQ transactions")
 
 
 def get_from_without_captiveCore(**context):
