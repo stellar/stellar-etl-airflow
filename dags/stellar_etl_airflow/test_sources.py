@@ -19,8 +19,6 @@ def get_from_combinedExport(**context):
         "transactions": None,
     }
 
-    successful_values = []
-
     yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
 
     session = settings.Session()
@@ -53,33 +51,35 @@ def get_from_combinedExport(**context):
             object_name=f"logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__{execution_date_str}/task_id=export_all_history_task/attempt=1.log",
         )
 
-    # Decode the bytes object to a string
-    file_content = file_content.decode()
+        # Decode the bytes object to a string
+        file_content = file_content.decode()
 
-    # Now file_content is a string with the content of the file
-    lines = file_content.splitlines()
+        # Now file_content is a string with the content of the file
+        lines = file_content.splitlines()
 
-    for line in lines:
-        if 'level=info msg="{\\' in line:
-            start = line.find('{\\"')
-            # Slice the line from the start of the JSON string
-            # Find the start and end of the JSON string
-            end = line.rfind("}") + 1  # +1 to include the '}' character
+        successful_values = []
 
-            # Slice the string from the start to the end of the JSON string
-            json_str = line[start:end]
+        for line in lines:
+            if 'level=info msg="{\\' in line:
+                start = line.find('{\\"')
+                # Slice the line from the start of the JSON string
+                # Find the start and end of the JSON string
+                end = line.rfind("}") + 1  # +1 to include the '}' character
 
-            # Find the last colon and the closing brace in the string
-            last_colon = json_str.rfind(":")
-            closing_brace = json_str.rfind("}")
+                # Slice the string from the start to the end of the JSON string
+                json_str = line[start:end]
 
-            # Slice the string to get the value between the last colon and the closing brace
-            value = json_str[last_colon + 1 : closing_brace]
+                # Find the last colon and the closing brace in the string
+                last_colon = json_str.rfind(":")
+                closing_brace = json_str.rfind("}")
 
-            successful_values.append(int(value))
+                # Slice the string to get the value between the last colon and the closing brace
+                value = json_str[last_colon + 1 : closing_brace]
 
-    for key, value in zip(successful_transforms, successful_values):
-        successful_transforms[key] = value
+                successful_values.append(int(value))
+
+        for key, value in zip(successful_transforms, successful_values):
+            successful_transforms[key] = value
 
     print(f"Total successful transforms for yesterday: {successful_transforms}")
 
