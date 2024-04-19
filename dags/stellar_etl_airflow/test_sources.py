@@ -116,10 +116,10 @@ def get_from_combinedExport(**context):
     )
 
     BQ_results = {
-        "operations": [row[0] for row in query_job.result()],
-        "trades": [row[0] for row in query_job2.result()],
-        "effects": [row[0] for row in query_job3.result()],
-        "transactions": [row[0] for row in query_job4.result()],
+        "operations": int(row[0] for row in query_job.result()),
+        "trades": int(row[0] for row in query_job2.result()),
+        "effects": int(row[0] for row in query_job3.result()),
+        "transactions": int(row[0] for row in query_job4.result()),
     }
 
     context["ti"].xcom_push(key="from BQ", value=BQ_results)
