@@ -13,10 +13,10 @@ from google.oauth2 import service_account
 
 def get_from_combinedExport(**context):
     successful_transforms = {
-        "operations": None,
-        "trades": None,
-        "effects": None,
-        "transactions": None,
+        "operations": 0,
+        "trades": 0,
+        "effects": 0,
+        "transactions": 0,
     }
 
     yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
@@ -78,10 +78,44 @@ def get_from_combinedExport(**context):
 
                 successful_values.append(int(value))
 
-        for key, value in zip(successful_transforms, successful_values):
-            successful_transforms[key] += value
+        for key, val in zip(successful_transforms, successful_values):
+            successful_transforms[key] += val
 
     print(f"Total successful transforms for yesterday: {successful_transforms}")
+
+    # key_path = Variable.get("api_key_path")
+    # credentials = service_account.Credentials.from_service_account_file(key_path)
+    # client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+
+    # query_job = client.query(
+    #     f"""SELECT
+    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_operations
+    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
+    #     """
+    # )
+
+    # query_job2 = client.query(
+    #     f"""SELECT
+    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_trades
+    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
+    #     """
+    # )
+
+    # query_job3 = client.query(
+    #     f"""SELECT
+    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_effects
+    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
+    #     """
+    # )
+
+    # query_job4 = client.query(
+    #     f"""SELECT
+    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_transactions
+    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
+    #     """
+    # )
+
+    # results = query_job.result()
 
 
 def get_from_without_captiveCore(**context):
