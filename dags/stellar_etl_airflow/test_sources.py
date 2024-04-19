@@ -79,12 +79,13 @@ def get_from_combinedExport():
 
 
 def get_from_without_captiveCore(**context):
-    # Try yesterday_ds again
-    execution_date = context["execution_date"]
-    yesterday = pendulum.instance(execution_date).subtract(days=1)
-    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    # execution_date = context["execution_date"]
+    # yesterday = pendulum.instance(execution_date).subtract(days=1)
+    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    dt = pendulum.datetime(2024, 4, 17)
 
-    print(f"Yesterday date is: {yesterday}")
+    # Subtract one day to get the previous day
+    yesterday = dt.subtract(days=1)
 
     # Get the session from the settings
     session = settings.Session()
@@ -103,7 +104,6 @@ def get_from_without_captiveCore(**context):
         )
         .all()
     )
-    print(f"today is {yesterday + timedelta(days=1)}")
     print(f"How many execution dates: {len(execution_dates)}")
 
     # Get the DAG
@@ -124,8 +124,6 @@ def get_from_without_captiveCore(**context):
         successful_transforms_ledgers = xcom_ledgers["successful_transforms"]
         total_successful_transforms += successful_transforms_ledgers
 
-    print(f"Total successful transforms for yesterday: {total_successful_transforms}")
-
     key_path = Variable.get("api_key_path")
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
@@ -141,13 +139,19 @@ def get_from_without_captiveCore(**context):
     # Convert the results to a list of rows
     rows = [dict(row) for row in results]
 
-    # Print the number of rows in the BigQuery table
-    print(f"in public:{rows[0]['count_public']}")
+    context["ti"].xcom_push(key="from BQ", value=rows[0]["count_public"])
+    context["ti"].xcom_push(key="from GCS", value=total_successful_transforms)
 
-    # # Compare successful_transforms and bq_rows
-    # if successful_transforms_ledgers != bq_rows:
-    #     print("bq_rows are {0} and successful_transforms are {1}".format(bq_rows, successful_transforms_ledgers) )
-    #     raise ValueError('Mismatch between successful_transforms in ledgers and bq_rows')
+    # Compare successful_transforms and bq_rows
+    if total_successful_transforms != rows[0]["count_public"]:
+        print(
+            "bq_rows are {0} and successful_transforms are {1}".format(
+                rows[0]["count_public"], total_successful_transforms
+            )
+        )
+        raise ValueError(
+            "Mismatch between successful_transforms in ledgers and bq_rows"
+        )
 
 
 dag = DAG(
