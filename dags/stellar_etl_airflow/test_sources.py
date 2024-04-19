@@ -147,9 +147,10 @@ def get_from_combinedExport(**context):
 
 
 def get_from_without_captiveCore(**context):
-    execution_date = context["execution_date"]
-    yesterday = pendulum.instance(execution_date).subtract(days=1)
-    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    # execution_date = context["execution_date"]
+    # yesterday = pendulum.instance(execution_date).subtract(days=1)
+    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
 
     # Get the session from the settings
     session = settings.Session()
@@ -226,9 +227,9 @@ compare_task = PythonOperator(
     dag=dag,
 )
 
-# compare2_task = PythonOperator(
-#     task_id="get_from_combinedExport",
-#     python_callable=get_from_combinedExport,
-#     provide_context=True,
-#     dag=dag,
-# )
+compare2_task = PythonOperator(
+    task_id="get_from_combinedExport",
+    python_callable=get_from_combinedExport,
+    provide_context=True,
+    dag=dag,
+)
