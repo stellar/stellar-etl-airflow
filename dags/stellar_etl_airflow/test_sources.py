@@ -39,8 +39,8 @@ def get_from_combinedExport(**context):
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
-    for execution_date in execution_dates:
-        print(execution_date)
+    for dag_run in execution_dates:
+        print(dag_run.execution_date)
 
     # Download the file and get its content, it runs 47 times day 16th of april
     file_content = gcs_hook.download(
