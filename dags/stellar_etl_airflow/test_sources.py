@@ -83,39 +83,37 @@ def get_from_combinedExport(**context):
 
     print(f"Total successful transforms for yesterday: {successful_transforms}")
 
-    # key_path = Variable.get("api_key_path")
-    # credentials = service_account.Credentials.from_service_account_file(key_path)
-    # client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+    key_path = Variable.get("api_key_path")
+    credentials = service_account.Credentials.from_service_account_file(key_path)
+    client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
-    # query_job = client.query(
-    #     f"""SELECT
-    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_operations
-    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
-    #     """
-    # )
+    query_job = client.query(
+        f"""
+        SELECT
+        (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_operations
+        WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
+        UNION ALL
+        SELECT
+        (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_trades
+        WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
+        UNION ALL
+        SELECT
+        (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_effects
+        WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
+        UNION ALL
+        SELECT
+        (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_transactions
+        WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}')
+        """
+    )
 
-    # query_job2 = client.query(
-    #     f"""SELECT
-    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_trades
-    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
-    #     """
-    # )
+    results = query_job.result()
 
-    # query_job3 = client.query(
-    #     f"""SELECT
-    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_effects
-    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
-    #     """
-    # )
+    # Convert the results to a list of rows
+    rows = [dict(row) for row in results]
 
-    # query_job4 = client.query(
-    #     f"""SELECT
-    #     (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_transactions
-    #     WHERE DATE(batch_run_date)='{yesterday.strftime("%Y-%m-%d")}') AS count_public
-    #     """
-    # )
-
-    # results = query_job.result()
+    # Each item in the list rows contains the response of each query
+    print(rows)
 
 
 def get_from_without_captiveCore(**context):
