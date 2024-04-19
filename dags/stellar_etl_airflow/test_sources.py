@@ -39,6 +39,8 @@ def get_from_combinedExport(**context):
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
+    print(f"how many runs: {len(execution_dates)}")
+
     for dag_run in execution_dates:
         execution_date_str = dag_run.execution_date.strftime(
             "%Y-%m-%d %H:%M:%S%z"
