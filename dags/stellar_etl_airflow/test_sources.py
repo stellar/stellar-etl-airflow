@@ -1,6 +1,7 @@
 from datetime import datetime, time, timedelta
 
 import pendulum
+import pytz
 from airflow import DAG, settings
 from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
@@ -81,7 +82,7 @@ def get_from_without_captiveCore(**context):
     # Try yesterday_ds again
     execution_date = context["execution_date"]
     yesterday = pendulum.instance(execution_date).subtract(days=1)
-    yesterday = datetime.combine(yesterday, time())
+    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
 
     print(f"Yesterday date is: {yesterday}")
 
@@ -95,7 +96,9 @@ def get_from_without_captiveCore(**context):
             DagRun.dag_id == "history_archive_without_captive_core",
             DagRun.execution_date >= yesterday,
             DagRun.execution_date
-            < datetime.combine(yesterday + timedelta(days=1), time()),
+            < datetime.combine(
+                yesterday + timedelta(days=1), time(), tzinfo=pytz.timezone("UTC")
+            ),
             DagRun.state == State.SUCCESS,
         )
         .all()
