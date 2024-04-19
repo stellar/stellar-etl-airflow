@@ -44,13 +44,13 @@ dag = DAG(
 )
 
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = "{{ var.value.cdp_bq_project }}"
-internal_dataset = "{{ var.value.cdp_bq_dataset }}"
-public_project = "{{ var.value.cdp_public_project }}"
-public_dataset = "{{ var.value.cdp_public_dataset }}"
+internal_project = "{{ var.value.bq_project }}"
+internal_dataset = "{{ var.value.bq_dataset }}"
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
-use_captive_core = literal_eval(Variable.get("cdp_use_captive_core"))
+use_captive_core = literal_eval(Variable.get("use_captive_core"))
 txmeta_datastore_url = "{{ var.value.txmeta_datastore_url }}"
 
 """
