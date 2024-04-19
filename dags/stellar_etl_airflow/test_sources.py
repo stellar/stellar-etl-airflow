@@ -79,7 +79,7 @@ def get_from_combinedExport(**context):
                 successful_values.append(int(value))
 
         for key, value in zip(successful_transforms, successful_values):
-            successful_transforms[key] = value
+            successful_transforms[key] += value
 
     print(f"Total successful transforms for yesterday: {successful_transforms}")
 
