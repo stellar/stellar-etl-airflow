@@ -29,7 +29,7 @@ def get_from_combinedExport(**context):
     execution_dates = (
         session.query(DagRun)
         .filter(
-            DagRun.dag_id == "history_archive_without_captive_core",
+            DagRun.dag_id == "history_archive_with_captive_core_combined_export",
             DagRun.execution_date >= yesterday.start_of("day"),
             DagRun.execution_date < yesterday.add(days=1).start_of("day"),
             DagRun.state == State.SUCCESS,
@@ -38,9 +38,6 @@ def get_from_combinedExport(**context):
     )
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
-
-    for dag_run in execution_dates:
-        print(dag_run.execution_date)
 
     for dag_run in execution_dates:
         execution_date_str = dag_run.execution_date.strftime(
