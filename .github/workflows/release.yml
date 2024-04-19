@@ -39,8 +39,8 @@ jobs:
       - id: "get-credentials"
         uses: "google-github-actions/get-gke-credentials@v2"
         with:
-          cluster_name: "us-central1-hubble-1pt5-dev-7db0e004-gke"
-          location: "us-central1-c"
+          cluster_name: "us-central1-test-hubble-2-5f1f2dbf-gke"
+          location: "us-central1"
 
       - name: Pytest
         run: pytest dags/
