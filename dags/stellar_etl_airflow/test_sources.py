@@ -117,10 +117,10 @@ def get_from_combinedExport(**context):
         """
     )
 
-    results = query_job.result()
-    results2 = query_job2.result()
-    results3 = query_job3.result()
-    results4 = query_job4.result()
+    results = [dict(row.to_dict()) for row in query_job.result()]
+    results2 = [dict(row.to_dict()) for row in query_job2.result()]
+    results3 = [dict(row.to_dict()) for row in query_job3.result()]
+    results4 = [dict(row.to_dict()) for row in query_job4.result()]
 
     # Convert the results to a list of rows
     # rows = [dict(row) for row in results]
