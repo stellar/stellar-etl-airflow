@@ -22,12 +22,12 @@ from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 init_sentry()
 
 dag = DAG(
-    "history_archive_with_captive_core",
+    "history_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 12, 18, 17, 0),
+    start_date=datetime(2024, 4, 22, 19, 0),
     catchup=True,
     description="This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
-    schedule_interval="*/30 * * * *",
+    schedule_interval="*/10 * * * *",
     params={
         "alias": "cc",
     },
@@ -50,6 +50,8 @@ public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
+use_captive_core = literal_eval(Variable.get("use_captive_core"))
+txmeta_datastore_url = "{{ var.value.txmeta_datastore_url }}"
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -67,6 +69,8 @@ write_trade_stats = build_batch_stats(dag, table_names["trades"])
 write_effects_stats = build_batch_stats(dag, table_names["effects"])
 write_tx_stats = build_batch_stats(dag, table_names["transactions"])
 write_diagnostic_events_stats = build_batch_stats(dag, table_names["diagnostic_events"])
+write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
+write_asset_stats = build_batch_stats(dag, table_names["assets"])
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -85,7 +89,8 @@ op_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
 )
 trade_export_task = build_export_task(
     dag,
@@ -95,7 +100,8 @@ trade_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
 )
 effects_export_task = build_export_task(
     dag,
@@ -105,7 +111,8 @@ effects_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
 )
 tx_export_task = build_export_task(
     dag,
@@ -115,7 +122,8 @@ tx_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
 )
 diagnostic_events_export_task = build_export_task(
     dag,
@@ -125,7 +133,30 @@ diagnostic_events_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
+)
+ledger_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_ledgers",
+    "{{ var.json.output_file_names.ledgers }}",
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
+)
+asset_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_assets",
+    "{{ var.json.output_file_names.assets }}",
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    use_captive_core=use_captive_core,
+    txmeta_datastore_url=txmeta_datastore_url,
 )
 
 """
@@ -164,6 +195,18 @@ delete_old_tx_task = build_delete_data_task(
 )
 delete_old_tx_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["transactions"], "pub"
+)
+delete_old_ledger_task = build_delete_data_task(
+    dag, internal_project, internal_dataset, table_names["ledgers"]
+)
+delete_old_ledger_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["ledgers"], "pub"
+)
+delete_old_asset_task = build_delete_data_task(
+    dag, internal_project, internal_dataset, table_names["assets"]
+)
+delete_old_asset_pub_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["assets"], "pub"
 )
 
 """
@@ -206,6 +249,26 @@ send_txs_to_bq_task = build_gcs_to_bq_task(
     internal_project,
     internal_dataset,
     table_names["transactions"],
+    "",
+    partition=True,
+    cluster=True,
+)
+send_ledgers_to_bq_task = build_gcs_to_bq_task(
+    dag,
+    ledger_export_task.task_id,
+    internal_project,
+    internal_dataset,
+    table_names["ledgers"],
+    "",
+    partition=True,
+    cluster=True,
+)
+send_assets_to_bq_task = build_gcs_to_bq_task(
+    dag,
+    asset_export_task.task_id,
+    internal_project,
+    internal_dataset,
+    table_names["assets"],
     "",
     partition=True,
     cluster=True,
@@ -259,15 +322,29 @@ send_txs_to_pub_task = build_gcs_to_bq_task(
     cluster=True,
     dataset_type="pub",
 )
-
-"""
-Batch loading of derived table, `enriched_history_operations` which denormalizes ledgers, transactions and operations data.
-Must wait on history_archive_without_captive_core_dag to finish before beginning the job.
-The internal dataset also creates a filtered table, `enriched_meaningful_history_operations` which filters down to only relevant asset ops.
-"""
-wait_on_dag = build_cross_deps(
-    dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
+send_ledgers_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    ledger_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["ledgers"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
 )
+send_assets_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    asset_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["assets"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+
 insert_enriched_hist_task = build_bq_insert_job(
     dag,
     internal_project,
@@ -300,7 +377,6 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> op_export_task
     >> delete_old_op_task
     >> send_ops_to_bq_task
-    >> wait_on_dag
     >> delete_enrich_op_task
 )
 (
@@ -313,7 +389,6 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     op_export_task
     >> delete_old_op_pub_task
     >> send_ops_to_pub_task
-    >> wait_on_dag
     >> delete_enrich_op_pub_task
     >> insert_enriched_hist_pub_task
 )
@@ -339,13 +414,66 @@ effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
     >> tx_export_task
     >> delete_old_tx_task
     >> send_txs_to_bq_task
-    >> wait_on_dag
+    >> delete_enrich_op_task
 )
-tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
+(
+    tx_export_task
+    >> delete_old_tx_pub_task
+    >> send_txs_to_pub_task
+    >> delete_enrich_op_pub_task
+)
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
 (
     [
         insert_enriched_hist_pub_task,
         insert_enriched_hist_task,
     ]
+)
+dedup_assets_bq_task = build_bq_insert_job(
+    dag,
+    internal_project,
+    internal_dataset,
+    table_names["assets"],
+    partition=True,
+    cluster=True,
+    create=True,
+)
+dedup_assets_pub_task = build_bq_insert_job(
+    dag,
+    public_project,
+    public_dataset,
+    table_names["assets"],
+    partition=True,
+    cluster=True,
+    create=True,
+    dataset_type="pub",
+)
+
+(
+    time_task
+    >> write_ledger_stats
+    >> ledger_export_task
+    >> delete_old_ledger_task
+    >> send_ledgers_to_bq_task
+    >> delete_enrich_op_task
+)
+(
+    ledger_export_task
+    >> delete_old_ledger_pub_task
+    >> send_ledgers_to_pub_task
+    >> delete_enrich_op_pub_task
+)
+(
+    time_task
+    >> write_asset_stats
+    >> asset_export_task
+    >> delete_old_asset_task
+    >> send_assets_to_bq_task
+    >> dedup_assets_bq_task
+)
+(
+    asset_export_task
+    >> delete_old_asset_pub_task
+    >> send_assets_to_pub_task
+    >> dedup_assets_pub_task
 )

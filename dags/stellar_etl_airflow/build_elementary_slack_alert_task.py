@@ -80,7 +80,6 @@ def elementary_task(
         cmds=["edr"],
         arguments=args,
         dag=dag,
-        do_xcom_push=True,
         is_delete_operator_pod=True,
         startup_timeout_seconds=720,
         in_cluster=in_cluster,

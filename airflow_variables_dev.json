@@ -62,7 +62,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:395f1f8",
+  "image_name": "stellar/stellar-etl:a334cb5",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -182,7 +182,7 @@
       "table": "raw_mgi_stellar_transactions"
     }
   },
-  "partners_bucket": "partners_data",
+  "partners_bucket": "ext-partner-sftp",
   "public_dataset": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
@@ -190,7 +190,7 @@
       "requests": {
         "cpu": "0.3",
         "memory": "900Mi",
-        "ephemeral-storage": "10Mi"
+        "ephemeral-storage": "1Gi"
       }
     },
     "cc": {
@@ -274,5 +274,7 @@
   "public_source_schema": "test_crypto_stellar",
   "slack_elementary_channel": "stellar-elementary-alerts",
   "elementary_secret": "slack-token-elementary",
-  "dbt_elementary_dataset": "test_elementary"
+  "dbt_elementary_dataset": "test_elementary",
+  "use_captive_core": "False",
+  "txmeta_datastore_url": "gcs://exporter-test/ledgers/testnet"
 }
