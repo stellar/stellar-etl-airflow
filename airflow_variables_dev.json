@@ -62,7 +62,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "chowbao/stellar-etl:cdp-test8",
+  "image_name": "chowbao/stellar-etl:cdp-test9",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -276,5 +276,5 @@
   "elementary_secret": "slack-token-elementary",
   "dbt_elementary_dataset": "test_elementary",
   "use_captive_core": "False",
-  "txmeta_datastore_url": "gcs://exporter-test/ledgers/testnet"
+  "txmeta_datastore_url": "gcs://ledger-exporter/ledgers/testnet"
 }
