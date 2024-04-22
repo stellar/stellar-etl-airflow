@@ -60,7 +60,6 @@ changes_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="state",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )

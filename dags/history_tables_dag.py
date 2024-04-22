@@ -89,7 +89,6 @@ op_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )
@@ -101,7 +100,6 @@ trade_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )
@@ -113,7 +111,6 @@ effects_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )
@@ -125,7 +122,6 @@ tx_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )
@@ -137,7 +133,6 @@ diagnostic_events_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="cc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )
@@ -149,7 +144,6 @@ ledger_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="wocc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )
@@ -161,7 +155,6 @@ asset_export_task = build_export_task(
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
-    resource_cfg="wocc",
     use_captive_core=use_captive_core,
     txmeta_datastore_url=txmeta_datastore_url,
 )

@@ -365,5 +365,5 @@
   "elementary_secret": "slack-token-elementary",
   "dbt_elementary_dataset": "elementary",
   "use_captive_core": "False",
-  "txmeta_datastore_url": "gcs://ledger-exporter/ledgers/testnet"
+  "txmeta_datastore_url": "gcs://ledger-exporter/ledgers/pubnet"
 }
