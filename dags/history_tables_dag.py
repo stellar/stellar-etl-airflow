@@ -352,14 +352,6 @@ send_assets_to_pub_task = build_gcs_to_bq_task(
     dataset_type="pub",
 )
 
-"""
-Batch loading of derived table, `enriched_history_operations` which denormalizes ledgers, transactions and operations data.
-Must wait on history_archive_without_captive_core_dag to finish before beginning the job.
-The internal dataset also creates a filtered table, `enriched_meaningful_history_operations` which filters down to only relevant asset ops.
-"""
-wait_on_dag = build_cross_deps(
-    dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
-)
 insert_enriched_hist_task = build_bq_insert_job(
     dag,
     internal_project,
@@ -392,7 +384,6 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> op_export_task
     >> delete_old_op_task
     >> send_ops_to_bq_task
-    >> wait_on_dag
     >> delete_enrich_op_task
 )
 (
@@ -405,7 +396,6 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     op_export_task
     >> delete_old_op_pub_task
     >> send_ops_to_pub_task
-    >> wait_on_dag
     >> delete_enrich_op_pub_task
     >> insert_enriched_hist_pub_task
 )
@@ -431,9 +421,9 @@ effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
     >> tx_export_task
     >> delete_old_tx_task
     >> send_txs_to_bq_task
-    >> wait_on_dag
+    >> delete_enrich_op_task
 )
-tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> wait_on_dag
+tx_export_task >> delete_old_tx_pub_task >> send_txs_to_pub_task >> delete_enrich_op_pub_task
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
 (
     [
@@ -467,8 +457,9 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> ledger_export_task
     >> delete_old_ledger_task
     >> send_ledgers_to_bq_task
+    >> delete_enrich_op_task
 )
-ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task
+ledger_export_task >> delete_old_ledger_pub_task >> send_ledgers_to_pub_task >> delete_enrich_op_pub_task
 (
     time_task
     >> write_asset_stats
