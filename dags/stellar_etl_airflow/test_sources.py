@@ -1,4 +1,5 @@
-from datetime import datetime, time, timedelta
+import re
+from datetime import datetime, timedelta
 
 import pendulum
 import pytz
@@ -75,7 +76,7 @@ def store_files(file_names, successful_transforms_folders):
     return successful_transforms_folders
 
 
-def get_from_state_tables(**context):
+def get_from_stateTables(**context):
     successful_transforms = {
         "account_signers": 0,
         "accounts": 0,
@@ -103,9 +104,10 @@ def get_from_state_tables(**context):
         "ttl": None,
     }
 
-    execution_date = context["execution_date"]
-    yesterday = pendulum.instance(execution_date).subtract(days=1)
-    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    # execution_date = context["execution_date"]
+    # yesterday = pendulum.instance(execution_date).subtract(days=1)
+    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    yesterday = pendulum.datetime(2024, 4, 16).in_timezone("UTC")
 
     session = settings.Session()
 
@@ -236,15 +238,15 @@ dag = DAG(
 )
 
 compare_task = PythonOperator(
-    task_id="get_from_historyTableExport",
+    task_id="get_from_historyTableExport_task",
     python_callable=get_from_historyTableExport,
     provide_context=True,
     dag=dag,
 )
 
-# compare2_task = PythonOperator(
-#     task_id="get_from_combinedExport",
-#     python_callable=get_from_combinedExport,
-#     provide_context=True,
-#     dag=dag,
-# )
+compare2_task = PythonOperator(
+    task_id="get_from_stateTables_task",
+    python_callable=get_from_stateTables,
+    provide_context=True,
+    dag=dag,
+)
