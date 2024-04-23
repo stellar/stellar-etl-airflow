@@ -28,6 +28,11 @@ class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
         super().__init__(**kwargs)
 
     def pre_execute(self, **kwargs):
+        if int(self.failed_transforms) <= self.max_failed_transforms:
+            capture_message(
+                f"failed_transforms is ({self.failed_transforms}) task id is ({self.export_task_id})",
+            )
+
         if int(self.failed_transforms) > self.max_failed_transforms:
             with push_scope() as scope:
                 scope.set_tag("data-quality", "max-failed-transforms")
