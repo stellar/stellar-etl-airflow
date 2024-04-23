@@ -24,14 +24,8 @@ dag = DAG(
 )
 
 # Wait on ingestion DAGs
-# NOTE: history_archive_without_captive_core is currently disabled in
-# favor of history_archive_with_captive_core_combined;
-# Update with ledger exporter project integration
-# wait_on_cc = build_cross_deps(
-#     dag, "wait_on_ledgers_txs", "history_archive_without_captive_core"
-# )
-wait_on_cc = build_cross_deps(
-    dag, "wait_on_ledgers_txs", "history_archive_with_captive_core_combined_export"
+wait_on_history_table = build_cross_deps(
+    dag, "wait_on_ledgers_txs", "history_table_export"
 )
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 
@@ -42,7 +36,7 @@ current_state_task = dbt_task(dag, tag="current_state")
 elementary = elementary_task(dag, "dbt_enriched_base_tables")
 
 # DAG task graph
-wait_on_cc >> enriched_history_operations_task
+wait_on_history_table >> enriched_history_operations_task
 
 wait_on_state_table >> current_state_task
 
