@@ -169,7 +169,7 @@ def get_from_historyTableExport(**context):
     # execution_date = context["execution_date"]
     # yesterday = pendulum.instance(execution_date)  # .subtract(days=1)
     # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    yesterday = pendulum.datetime(2024, 4, 23, 16, 30, tzinfo=pytz.UTC)
+    yesterday = pendulum.datetime(2024, 4, 23, 16, 30).in_timezone("UTC")
 
     # Get the session from the settings
     session = settings.Session()
