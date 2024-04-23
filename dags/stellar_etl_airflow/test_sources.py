@@ -12,13 +12,22 @@ from google.oauth2 import service_account
 
 
 def treating_errors(successful_transforms, BQ_results):
-    if successful_transforms["operations"] != BQ_results["operations"]:
+    if successful_transforms["ledgers"] != BQ_results["ledgers"]:
+        print(
+            "bq_ledgers are {0} and successful_transforms ledgers are {1}".format(
+                BQ_results["ledgers"], successful_transforms["ledgers"]
+            )
+        )
+        raise ValueError("Mismatch between operations in GCS and BQ operations")
+
+    elif successful_transforms["operations"] != BQ_results["operations"]:
         print(
             "bq_operations are {0} and successful_transforms operations are {1}".format(
                 BQ_results["operations"], successful_transforms["operations"]
             )
         )
         raise ValueError("Mismatch between operations in GCS and BQ operations")
+
     elif successful_transforms["trades"] != BQ_results["trades"]:
         print(
             "bq trades are {0} and successful_transforms trades are {1}".format(
@@ -26,6 +35,7 @@ def treating_errors(successful_transforms, BQ_results):
             )
         )
         raise ValueError("Mismatch between trades in GCS and BQ trades")
+
     elif successful_transforms["effects"] != BQ_results["effects"]:
         print(
             "bq effects are {0} and successful_transforms effects are {1}".format(
@@ -33,6 +43,7 @@ def treating_errors(successful_transforms, BQ_results):
             )
         )
         raise ValueError("Mismatch between effects in GCS and BQ effects")
+
     elif successful_transforms["transactions"] != BQ_results["transactions"]:
         print(
             "bq transactions are {0} and successful_transforms transactions are {1}".format(
@@ -56,15 +67,45 @@ def do_query(opType, date):
     return query_job
 
 
-def get_from_combinedExport(**context):
+def store_files(file_names, successful_transforms_folders):
+    for key in successful_transforms_folders.keys():
+        # Use a list comprehension with a regex to get the matching file names
+        matching_files = [file for file in file_names if re.search(rf"{key}", file)]
+        successful_transforms_folders[key] = matching_files
+    return successful_transforms_folders
+
+
+def get_from_state_tables(**context):
     successful_transforms = {
-        "operations": 0,
-        "trades": 0,
-        "effects": 0,
-        "transactions": 0,
+        "account_signers": 0,
+        "accounts": 0,
+        "claimable_balances": 0,
+        "liquidity_pools": 0,
+        "offers": 0,
+        "trust_lines": 0,
+        "offers": 0,
+        "config_settings": 0,
+        "contract_code": 0,
+        "contract_data": 0,
+        "ttl": 0,
+    }
+    successful_transforms_folders = {
+        "account_signers": None,
+        "accounts": None,
+        "claimable_balances": None,
+        "liquidity_pools": None,
+        "offers": None,
+        "trust_lines": None,
+        "offers": None,
+        "config_settings": None,
+        "contract_code": None,
+        "contract_data": None,
+        "ttl": None,
     }
 
-    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
+    execution_date = context["execution_date"]
+    yesterday = pendulum.instance(execution_date).subtract(days=1)
+    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
 
     session = settings.Session()
 
@@ -72,7 +113,7 @@ def get_from_combinedExport(**context):
     execution_dates = (
         session.query(DagRun)
         .filter(
-            DagRun.dag_id == "history_archive_with_captive_core_combined_export",
+            DagRun.dag_id == "state_table_export",
             DagRun.execution_date >= yesterday.start_of("day"),
             DagRun.execution_date < yesterday.add(days=1).start_of("day"),
             DagRun.state == State.SUCCESS,
@@ -82,18 +123,26 @@ def get_from_combinedExport(**context):
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
-    print(f"how many runs: {len(execution_dates)}")
-
     for dag_run in execution_dates:
         execution_date_str = dag_run.execution_date.strftime(
             "%Y-%m-%d %H:%M:%S%z"
         ).replace(" ", "T")
         execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
+        # Get a list of all the files in the bucket
+        files = gcs_hook.list(
+            "us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder"
+        )
+
+        # regex to find the name of each table in file names, example files belonging to "...offers.txt"
+        successful_transforms_folders = store_files(
+            files, successful_transforms_folders
+        )
+
         # Download the file and get its content, it runs 47 times day 16th of april
         file_content = gcs_hook.download(
             bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-            object_name=f"logs/dag_id=history_archive_with_captive_core_combined_export/run_id=scheduled__{execution_date_str}/task_id=export_all_history_task/attempt=1.log",
+            object_name=f"dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder",
         )
 
         # Decode the bytes object to a string
@@ -102,53 +151,25 @@ def get_from_combinedExport(**context):
         # Now file_content is a string with the content of the file
         lines = file_content.splitlines()
 
-        successful_values = []
+        # Count the number of lines that start with "{"
+        count = sum(1 for line in lines if line.startswith("{"))
 
-        for line in lines:
-            if 'level=info msg="{\\' in line:
-                start = line.find('{\\"')
-                # Slice the line from the start of the JSON string
-                # Find the start and end of the JSON string
-                end = line.rfind("}") + 1  # +1 to include the '}' character
+        print(count)
 
-                # Slice the string from the start to the end of the JSON string
-                json_str = line[start:end]
 
-                # Find the last colon and the closing brace in the string
-                last_colon = json_str.rfind(":")
-                closing_brace = json_str.rfind("}")
-
-                # Slice the string to get the value between the last colon and the closing brace
-                value = json_str[last_colon + 1 : closing_brace]
-
-                successful_values.append(int(value))
-
-        for key, val in zip(successful_transforms, successful_values):
-            successful_transforms[key] += val
-
-    query_job = do_query("operations", yesterday)
-    query_job2 = do_query("trades", yesterday)
-    query_job3 = do_query("effects", yesterday)
-    query_job4 = do_query("transactions", yesterday)
-
-    BQ_results = {
-        "operations": next(iter(query_job.result()))[0],
-        "trades": next(iter(query_job2.result()))[0],
-        "effects": next(iter(query_job3.result()))[0],
-        "transactions": next(iter(query_job4.result()))[0],
+def get_from_historyTableExport(**context):
+    successful_transforms = {
+        "ledgers": 0,
+        "operations": 0,
+        "trades": 0,
+        "effects": 0,
+        "transactions": 0,
     }
 
-    context["ti"].xcom_push(key="from BQ", value=BQ_results)
-    context["ti"].xcom_push(key="from GCS", value=successful_transforms)
-
-    treating_errors(successful_transforms, BQ_results)
-
-
-def get_from_without_captiveCore(**context):
-    # execution_date = context["execution_date"]
-    # yesterday = pendulum.instance(execution_date).subtract(days=1)
-    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
+    execution_date = context["execution_date"]
+    yesterday = pendulum.instance(execution_date)  # .subtract(days=1)
+    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    # yesterday = pendulum.datetime(2024, 4, 16, tz="UTC")
 
     # Get the session from the settings
     session = settings.Session()
@@ -157,7 +178,7 @@ def get_from_without_captiveCore(**context):
     execution_dates = (
         session.query(DagRun)
         .filter(
-            DagRun.dag_id == "history_archive_without_captive_core",
+            DagRun.dag_id == "history_table_export",
             DagRun.execution_date >= yesterday,
             DagRun.execution_date
             < datetime.combine(
@@ -169,39 +190,43 @@ def get_from_without_captiveCore(**context):
     )
 
     dag_bag = DagBag()
-    dag = dag_bag.get_dag("history_archive_without_captive_core")
+    dag = dag_bag.get_dag("history_table_export")
 
-    task = dag.get_task("export_ledgers_task")
+    for key in successful_transforms.keys():
+        task = dag.get_task("export_" + key + "_task")
 
-    total_successful_transforms = 0
+        total_successful_transforms = 0
 
-    for dag_run in execution_dates:
-        # Retrieve successful_transforms from XCOM
-        ti = TaskInstance(task, dag_run.execution_date)
-        xcom_ledgers = ti.xcom_pull(task_ids=task.task_id, key="return_value")
+        for dag_run in execution_dates:
+            # Retrieve successful_transforms from XCOM
+            ti = TaskInstance(task, dag_run.execution_date)
+            xcom_return = ti.xcom_pull(task_ids=task.task_id, key="return_value")
 
-        # Parse JSON and get successful_transforms
-        successful_transforms_ledgers = xcom_ledgers["successful_transforms"]
-        total_successful_transforms += successful_transforms_ledgers
+            # Parse JSON and get successful_transforms
+            successful_transforms_op = xcom_return["successful_transforms"]
+            total_successful_transforms += successful_transforms_op
+
+        successful_transforms[key] += total_successful_transforms
 
     # Query number of rows in BigQuery table
     query_job = do_query("ledgers", yesterday)
+    query_job1 = do_query("operations", yesterday)
+    query_job2 = do_query("trades", yesterday)
+    query_job3 = do_query("effects", yesterday)
+    query_job4 = do_query("transactions", yesterday)
 
-    bq_result = int(next(iter(query_job.result()))[0])
+    BQ_results = {
+        "ledgers": next(iter(query_job.result()))[0],
+        "operations": next(iter(query_job1.result()))[0],
+        "trades": next(iter(query_job2.result()))[0],
+        "effects": next(iter(query_job3.result()))[0],
+        "transactions": next(iter(query_job4.result()))[0],
+    }
 
-    context["ti"].xcom_push(key="from BQ", value=bq_result)
-    context["ti"].xcom_push(key="from GCS", value=total_successful_transforms)
+    context["ti"].xcom_push(key="from BQ", value=BQ_results)
+    context["ti"].xcom_push(key="from GCS", value=successful_transforms)
 
-    # Compare successful_transforms and bq_rows
-    if total_successful_transforms != next(iter(query_job.result()))[0]:
-        print(
-            "bq_rows are {0} and successful_transforms are {1}".format(
-                bq_result, total_successful_transforms
-            )
-        )
-        raise ValueError(
-            "Mismatch between successful_transforms in ledgers and bq_rows"
-        )
+    treating_errors(successful_transforms, BQ_results)
 
 
 dag = DAG(
@@ -215,15 +240,15 @@ dag = DAG(
 )
 
 compare_task = PythonOperator(
-    task_id="get_from_without_captiveCore",
-    python_callable=get_from_without_captiveCore,
+    task_id="get_from_historyTableExport",
+    python_callable=get_from_historyTableExport,
     provide_context=True,
     dag=dag,
 )
 
-compare2_task = PythonOperator(
-    task_id="get_from_combinedExport",
-    python_callable=get_from_combinedExport,
-    provide_context=True,
-    dag=dag,
-)
+# compare2_task = PythonOperator(
+#     task_id="get_from_combinedExport",
+#     python_callable=get_from_combinedExport,
+#     provide_context=True,
+#     dag=dag,
+# )
