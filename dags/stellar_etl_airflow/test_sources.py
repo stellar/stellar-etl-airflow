@@ -169,26 +169,21 @@ def get_from_historyTableExport(**context):
     # execution_date = context["execution_date"]
     # yesterday = pendulum.instance(execution_date)  # .subtract(days=1)
     # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    yesterday = pendulum.datetime(2024, 4, 23, tz="UTC")
+    yesterday = pendulum.datetime(2024, 4, 23, 16, 30, tzinfo=pytz.UTC)
 
     # Get the session from the settings
     session = settings.Session()
 
     # Get all the execution dates for the current date (yesterday)
-    # execution_dates = (
-    #     session.query(DagRun)
-    #     .filter(
-    #         DagRun.dag_id == "history_table_export",
-    #         DagRun.execution_date >= yesterday,
-    #         DagRun.execution_date
-    #         < datetime.combine(
-    #             yesterday + timedelta(days=1), time(), tzinfo=pytz.timezone("UTC")
-    #         ),
-    #         DagRun.state == State.SUCCESS,
-    #     )
-    #     .all()
-    # )
-    execution_dates = ["2024-04-23T16:30:00+00:00"]
+    execution_dates = (
+        session.query(DagRun)
+        .filter(
+            DagRun.dag_id == "history_table_export",
+            DagRun.execution_date == yesterday,
+            DagRun.state == State.SUCCESS,
+        )
+        .all()
+    )
 
     dag_bag = DagBag()
     dag = dag_bag.get_dag("history_table_export")
