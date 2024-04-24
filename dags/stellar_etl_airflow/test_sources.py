@@ -8,7 +8,7 @@ from airflow.models import DagBag, DagRun, TaskInstance, Variable
 from airflow.operators.python_operator import PythonOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.utils.state import State
-from google.cloud import bigquery
+from google.cloud import bigquery, storage
 from google.oauth2 import service_account
 
 
@@ -125,23 +125,28 @@ def get_from_stateTables(**context):
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
+    key_path = Variable.get("api_key_path")
+    credentials = service_account.Credentials.from_service_account_file(key_path)
+    storage_client = storage.Client(credentials=credentials)
+
     for dag_run in execution_dates:
         execution_date_str = dag_run.execution_date.strftime(
             "%Y-%m-%d %H:%M:%S%z"
         ).replace(" ", "T")
         execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
-        # Get a list of all the files in the bucket
-        files = gcs_hook.list(
-            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder"
+        bucket = storage_client.get_bucket(f"us-central1-test-hubble-2-5f1f2dbf-bucket")
+        blobs = bucket.list_blobs(
+            prefix=f"/dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
-        print(files)
+        for blob in blobs:
+            print(blob.name)
 
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
-        successful_transforms_folders = store_files(
-            files, successful_transforms_folders
-        )
+        # successful_transforms_folders = store_files(
+        #     files, successful_transforms_folders
+        # )
 
         ## Download the file and get its content, it runs 47 times day 16th of april
         # file_content = gcs_hook.download(
