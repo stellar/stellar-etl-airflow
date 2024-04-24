@@ -109,8 +109,6 @@ def get_from_stateTables(**context):
 
     # yesterday = datetime(2024, 4, 16, 0, 0, tzinfo=pytz.UTC)
 
-    print(yesterday)
-
     session = settings.Session()
 
     # Get all the execution dates for the current date (yesterday)
@@ -125,8 +123,6 @@ def get_from_stateTables(**context):
         .all()
     )
 
-    print(execution_dates)
-
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
     for dag_run in execution_dates:
@@ -137,7 +133,7 @@ def get_from_stateTables(**context):
 
         # Get a list of all the files in the bucket
         files = gcs_hook.list(
-            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder/"
+            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
         print(files)
