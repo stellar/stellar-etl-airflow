@@ -1,4 +1,5 @@
 import re
+import time
 from datetime import datetime, timedelta
 
 import pendulum
@@ -104,10 +105,10 @@ def get_from_stateTables(**context):
         "ttl": None,
     }
 
-    # execution_date = context["execution_date"]
-    # yesterday = pendulum.instance(execution_date).subtract(days=1)
-    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    yesterday = datetime(2024, 4, 16, 0, 0, tzinfo=pytz.UTC)
+    execution_date = context["execution_date"]
+    yesterday = pendulum.instance(execution_date).subtract(days=1)
+    yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+    # yesterday = datetime(2024, 4, 16, 0, 0, tzinfo=pytz.UTC)
 
     session = settings.Session()
 
