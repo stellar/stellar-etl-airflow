@@ -111,6 +111,7 @@ def get_from_stateTables(**context):
     # yesterday = datetime(2024, 4, 16, 0, 0, tzinfo=pytz.UTC)
 
     print(yesterday)
+    print(yesterday.start_of("day"))
 
     session = settings.Session()
 
@@ -125,6 +126,8 @@ def get_from_stateTables(**context):
         )
         .all()
     )
+
+    print(execution_dates)
 
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
