@@ -136,27 +136,29 @@ def get_from_stateTables(**context):
             "us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
+        print(files)
+
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
         successful_transforms_folders = store_files(
             files, successful_transforms_folders
         )
 
-        # Download the file and get its content, it runs 47 times day 16th of april
-        file_content = gcs_hook.download(
-            bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-            object_name=f"dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder",
-        )
+        ## Download the file and get its content, it runs 47 times day 16th of april
+        # file_content = gcs_hook.download(
+        #    bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
+        #    object_name=f"dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder",
+        # )
 
-        # Decode the bytes object to a string
-        file_content = file_content.decode()
+        ## Decode the bytes object to a string
+        # file_content = file_content.decode()
 
-        # Now file_content is a string with the content of the file
-        lines = file_content.splitlines()
+        ## Now file_content is a string with the content of the file
+        # lines = file_content.splitlines()
 
-        # Count the number of lines that start with "{"
-        count = sum(1 for line in lines if line.startswith("{"))
+        ## Count the number of lines that start with "{"
+        # count = sum(1 for line in lines if line.startswith("{"))
 
-        print(count)
+        # print(count)
 
 
 def get_from_historyTableExport(**context):
