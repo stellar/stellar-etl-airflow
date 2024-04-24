@@ -133,7 +133,7 @@ def get_from_stateTables(**context):
 
         # Get a list of all the files in the bucket
         files = gcs_hook.list(
-            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/dag-exported/scheduled__{execution_date_str}/changes_folder"
+            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
         print(files)
