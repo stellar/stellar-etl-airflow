@@ -107,7 +107,7 @@ def get_from_stateTables(**context):
     # execution_date = context["execution_date"]
     # yesterday = pendulum.instance(execution_date).subtract(days=1)
     # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    yesterday = pendulum.datetime(2024, 4, 16, 0, 0, tz=pendulum.UTC)
+    yesterday = datetime(2024, 4, 16, 0, 0, tzinfo=pytz.UTC)
 
     session = settings.Session()
 
