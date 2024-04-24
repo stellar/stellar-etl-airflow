@@ -106,12 +106,10 @@ def get_from_stateTables(**context):
 
     execution_date = context["execution_date"]
     yesterday = pendulum.instance(execution_date).subtract(days=1)
-    yesterday = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
-    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
+
     # yesterday = datetime(2024, 4, 16, 0, 0, tzinfo=pytz.UTC)
 
     print(yesterday)
-    print(yesterday.start_of("day"))
 
     session = settings.Session()
 
@@ -137,11 +135,9 @@ def get_from_stateTables(**context):
         ).replace(" ", "T")
         execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
-        print(f"A data é {execution_date_str}")
-
         # Get a list of all the files in the bucket
         files = gcs_hook.list(
-            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder"
+            f"us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder/"
         )
 
         print(files)
