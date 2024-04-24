@@ -141,7 +141,7 @@ def get_from_stateTables(**context):
         )
 
         for blob in blobs:
-            print(blob.name)
+            print(f"O nome da file e: {blob.name}")
 
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
         # successful_transforms_folders = store_files(
