@@ -218,6 +218,7 @@ def get_from_historyTableExport(**context):
 
             # Parse JSON and get successful_transforms
             successful_transforms_op = xcom_return["successful_transforms"]
+            print(f"successful_transforms_op type is {type(successful_transforms_op)}")
             total_successful_transforms += successful_transforms_op
 
         successful_transforms[key] += total_successful_transforms
