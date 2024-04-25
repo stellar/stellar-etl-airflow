@@ -86,12 +86,12 @@ def store_files(blobs, successful_transforms_folders):
 
 def get_from_stateTables(**context):
     successful_transforms = {
-        "account_signers": 0,
+        "signers": 0,
         "accounts": 0,
         "claimable_balances": 0,
         "liquidity_pools": 0,
         "offers": 0,
-        "trust_lines": 0,
+        "trustlines": 0,
         "offers": 0,
         "config_settings": 0,
         "contract_code": 0,
@@ -99,12 +99,12 @@ def get_from_stateTables(**context):
         "ttl": 0,
     }
     successful_transforms_folders = {
-        "account_signers": None,
+        "signers": None,
         "accounts": None,
         "claimable_balances": None,
         "liquidity_pools": None,
         "offers": None,
-        "trust_lines": None,
+        "trustlines": None,
         "offers": None,
         "config_settings": None,
         "contract_code": None,
@@ -155,28 +155,28 @@ def get_from_stateTables(**context):
             blobs, successful_transforms_folders
         )
 
-        print(f" successful_transforms_folders :{successful_transforms_folders}")
+        gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
-        # gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
+        for key in successful_transforms_folders.keys():
+            if successful_transforms_folders[key] is not None:
+                for files in successful_transforms_folders[key]:
+                    for file in files:
+                        file_content = gcs_hook.download(
+                            bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
+                            object_name=f"us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder/{file}",
+                        )
+                        print(f"The file content is: {file_content}")
 
-        # for key in successful_transforms_folders.keys():
-        #     if successful_transforms_folders[key] is not None:
-        #         for blob in successful_transforms_folders[key]:
-        #             file_content = gcs_hook.download(
-        #                 bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-        #                 object_name=f"us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder/{blob.name}",
-        #             )
+                    ## Decode the bytes object to a string
+                    # file_content = file_content.decode()
 
-        ## Decode the bytes object to a string
-        # file_content = file_content.decode()
+                    ## Now file_content is a string with the content of the file
+                    # lines = file_content.splitlines()
 
-        ## Now file_content is a string with the content of the file
-        # lines = file_content.splitlines()
+                    ## Count the number of lines that start with "{"
+                    # count = sum(1 for line in lines if line.startswith("{"))
 
-        ## Count the number of lines that start with "{"
-        # count = sum(1 for line in lines if line.startswith("{"))
-
-        # print(count)
+                    # print(count)
 
 
 def get_from_historyTableExport(**context):
