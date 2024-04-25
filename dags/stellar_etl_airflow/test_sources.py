@@ -123,7 +123,7 @@ def get_from_stateTables(**context):
         .all()
     )
 
-    gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
+    print(execution_dates)
 
     key_path = Variable.get("api_key_path")
     credentials = service_account.Credentials.from_service_account_file(key_path)
