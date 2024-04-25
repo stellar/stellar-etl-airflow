@@ -140,7 +140,9 @@ def get_from_stateTables(**context):
             prefix=f"/dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
-        print(f"blobs are: {blobs}")
+        # Iterate over the blobs and print the name of each blob
+        for blob in blobs:
+            print(f"Blob name: {blob.name}")
 
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
         # successful_transforms_folders = store_files(
