@@ -135,13 +135,12 @@ def get_from_stateTables(**context):
         ).replace(" ", "T")
         execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
-        bucket = storage_client.get_bucket(f"us-central1-test-hubble-2-5f1f2dbf-bucket")
+        bucket = storage_client.get_bucket("us-central1-test-hubble-2-5f1f2dbf-bucket")
         blobs = bucket.list_blobs(
             prefix=f"/dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
-        for blob in blobs:
-            print(f"O nome da file e: {blob.name}")
+        print(f"blobs are: {blobs}")
 
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
         # successful_transforms_folders = store_files(
