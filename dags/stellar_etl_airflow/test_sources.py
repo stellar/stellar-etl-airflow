@@ -144,8 +144,10 @@ def get_from_stateTables(**context):
         execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
         bucket = storage_client.get_bucket("us-central1-test-hubble-2-5f1f2dbf-bucket")
-        blobs = bucket.list_blobs(
-            prefix=f"dag-exported/scheduled__{execution_date_str}/changes_folder"
+        blobs = list(
+            bucket.list_blobs(
+                prefix=f"dag-exported/scheduled__{execution_date_str}/changes_folder"
+            )
         )
 
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
