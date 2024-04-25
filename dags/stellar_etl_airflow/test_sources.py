@@ -155,29 +155,31 @@ def get_from_stateTables(**context):
             blobs, successful_transforms_folders
         )
 
-        gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
+    print(successful_transforms_folders)
 
-        for key in successful_transforms_folders.keys():
-            if successful_transforms_folders[key] is not None:
-                for files in successful_transforms_folders[key]:
-                    print(f"FILES ARE: {files}")
-                    for file in files:
-                        file_content = gcs_hook.download(
-                            bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-                            object_name=f"dag-exported/scheduled__{execution_date_str}/changes_folder/{file}",
-                        )
-                        print(f"The file content is: {file_content}")
+    # gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
-                    ## Decode the bytes object to a string
-                    # file_content = file_content.decode()
+    # for key in successful_transforms_folders.keys():
+    #     if successful_transforms_folders[key] is not None:
+    #         for files in successful_transforms_folders[key]:
+    #             print(f"FILES ARE: {files}")
+    #             for file in files:
+    #                 file_content = gcs_hook.download(
+    #                     bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
+    #                     object_name=f"dag-exported/scheduled__{execution_date_str}/changes_folder/{file}",
+    #                 )
+    #                 print(f"The file content is: {file_content}")
 
-                    ## Now file_content is a string with the content of the file
-                    # lines = file_content.splitlines()
+    ## Decode the bytes object to a string
+    # file_content = file_content.decode()
 
-                    ## Count the number of lines that start with "{"
-                    # count = sum(1 for line in lines if line.startswith("{"))
+    ## Now file_content is a string with the content of the file
+    # lines = file_content.splitlines()
 
-                    # print(count)
+    ## Count the number of lines that start with "{"
+    # count = sum(1 for line in lines if line.startswith("{"))
+
+    # print(count)
 
 
 def get_from_historyTableExport(**context):
