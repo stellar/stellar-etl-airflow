@@ -137,7 +137,7 @@ def get_from_stateTables(**context):
 
         bucket = storage_client.get_bucket("us-central1-test-hubble-2-5f1f2dbf-bucket")
         blobs = bucket.list_blobs(
-            prefix=f"/dag-exported/scheduled__{execution_date_str}/changes_folder"
+            prefix=f"dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
         # Iterate over the blobs and print the name of each blob
@@ -176,10 +176,11 @@ def get_from_historyTableExport(**context):
         "transactions": 0,
     }
 
-    # execution_date = context["execution_date"]
-    # yesterday = pendulum.instance(execution_date)  # .subtract(days=1)
-    # yesterday = datetime.combine(yesterday, time(), tzinfo=pytz.timezone("UTC"))
-    yesterday = pendulum.datetime(2024, 4, 23, 16, 30).in_timezone("UTC")
+    execution_date = context["execution_date"]
+    yesterday = pendulum.instance(execution_date).subtract(days=1)
+    # yesterday = pendulum.datetime(2024, 4, 24, 0, 0).in_timezone("UTC")
+
+    print(yesterday)
 
     # Get the session from the settings
     session = settings.Session()
@@ -189,7 +190,8 @@ def get_from_historyTableExport(**context):
         session.query(DagRun)
         .filter(
             DagRun.dag_id == "history_table_export",
-            DagRun.execution_date == yesterday,
+            DagRun.execution_date >= yesterday.start_of("day"),
+            DagRun.execution_date < yesterday.add(days=1).start_of("day"),
             DagRun.state == State.SUCCESS,
         )
         .all()
