@@ -155,7 +155,7 @@ def get_from_stateTables(**context):
         successful_transforms_folders = store_files(
             blobs, successful_transforms_folders
         )
-    print(f"how many execution_dates : {len(execution_date)}")
+    print(f"how many execution_dates : {len(execution_dates)}")
     print(f"how many accounts : {len(successful_transforms_folders['accounts'])}")
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
