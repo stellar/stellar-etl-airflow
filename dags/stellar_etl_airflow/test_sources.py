@@ -1,3 +1,4 @@
+import os
 import re
 from datetime import datetime, timedelta
 
@@ -70,11 +71,16 @@ def do_query(opType, date):
     return query_job
 
 
-def store_files(file_names, successful_transforms_folders):
+def store_files(blobs, successful_transforms_folders):
     for key in successful_transforms_folders.keys():
-        # Use a list comprehension with a regex to get the matching file names
-        matching_files = [file for file in file_names if re.search(rf"{key}", file)]
+        matching_files = []
+        # Use a list comprehension with a regex to get the matching blob names
+        for blob in blobs:
+            if re.search(rf"{key}", blob.name):
+                matching_files.append(os.path.basename(blob.name))
+
         successful_transforms_folders[key] = matching_files
+
     return successful_transforms_folders
 
 
@@ -142,20 +148,22 @@ def get_from_stateTables(**context):
             prefix=f"dag-exported/scheduled__{execution_date_str}/changes_folder"
         )
 
-        # Iterate over the blobs and print the name of each blob
-        for blob in blobs:
-            print(f"Blob name: {blob.name}")
-
         # regex to find the name of each table in file names, example files belonging to "...offers.txt"
-        # successful_transforms_folders = store_files(
-        #     files, successful_transforms_folders
-        # )
+        successful_transforms_folders = store_files(
+            blobs, successful_transforms_folders
+        )
 
-        ## Download the file and get its content, it runs 47 times day 16th of april
-        # file_content = gcs_hook.download(
-        #    bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-        #    object_name=f"dag-exported/us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder",
-        # )
+        print(f" successful_transforms_folders :{successful_transforms_folders}")
+
+        # gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
+
+        # for key in successful_transforms_folders.keys():
+        #     if successful_transforms_folders[key] is not None:
+        #         for blob in successful_transforms_folders[key]:
+        #             file_content = gcs_hook.download(
+        #                 bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
+        #                 object_name=f"us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder/{blob.name}",
+        #             )
 
         ## Decode the bytes object to a string
         # file_content = file_content.decode()
@@ -207,8 +215,6 @@ def get_from_historyTableExport(**context):
     for key in successful_transforms.keys():
         task = dag.get_task("export_" + key + "_task")
 
-        print(f"Key is {key}")
-
         total_successful_transforms = 0
 
         for dag_run in execution_dates:
@@ -216,9 +222,8 @@ def get_from_historyTableExport(**context):
             ti = TaskInstance(task, dag_run.execution_date)
             xcom_return = ti.xcom_pull(task_ids=task.task_id, key="return_value")
 
-            # Parse JSON and get successful_transforms
             successful_transforms_op = xcom_return["successful_transforms"]
-            print(f"successful_transforms_op type is {type(successful_transforms_op)}")
+
             total_successful_transforms += successful_transforms_op
 
         successful_transforms[key] += total_successful_transforms
