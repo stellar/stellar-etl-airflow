@@ -59,6 +59,8 @@ def do_query(opType, date):
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
+    print(f"OpType is {opType} and date is {date.strftime('%Y-%m-%d')}")
+
     query_job = client.query(
         f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_{opType}
