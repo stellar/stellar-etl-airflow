@@ -203,6 +203,8 @@ def get_from_historyTableExport(**context):
     for key in successful_transforms.keys():
         task = dag.get_task("export_" + key + "_task")
 
+        print(f"Key is {key}")
+
         total_successful_transforms = 0
 
         for dag_run in execution_dates:
