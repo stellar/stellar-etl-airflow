@@ -199,6 +199,8 @@ def get_from_historyTableExport(**context):
         .all()
     )
 
+    print(f"The len is :{len(execution_dates)}")
+
     dag_bag = DagBag()
     dag = dag_bag.get_dag("history_table_export")
 
