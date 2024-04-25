@@ -134,8 +134,6 @@ def get_from_stateTables(**context):
         .all()
     )
 
-    print(execution_dates)
-
     key_path = Variable.get("api_key_path")
     credentials = service_account.Credentials.from_service_account_file(key_path)
     storage_client = storage.Client(credentials=credentials)
@@ -157,8 +155,8 @@ def get_from_stateTables(**context):
         successful_transforms_folders = store_files(
             blobs, successful_transforms_folders
         )
-
-    print(f"successful_transforms_folders AAAARE: {successful_transforms_folders}")
+    print(f"how many execution_dates : {len(execution_date)}")
+    print(f"how many accounts : {len(successful_transforms_folders['accounts'])}")
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
     # for dag_run in execution_dates:
