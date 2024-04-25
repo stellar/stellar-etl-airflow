@@ -160,10 +160,11 @@ def get_from_stateTables(**context):
         for key in successful_transforms_folders.keys():
             if successful_transforms_folders[key] is not None:
                 for files in successful_transforms_folders[key]:
+                    print(f"FILES ARE: {files}")
                     for file in files:
                         file_content = gcs_hook.download(
                             bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-                            object_name=f"us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__{execution_date_str}/changes_folder/{file}",
+                            object_name=f"dag-exported/scheduled__{execution_date_str}/changes_folder/{file}",
                         )
                         print(f"The file content is: {file_content}")
 
