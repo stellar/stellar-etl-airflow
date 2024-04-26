@@ -65,7 +65,7 @@ def do_query(opType, date):
     query_job = client.query(
         f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_{opType}
-        WHERE batch_run_date>='{date.strftime("%Y-%m-%d")}' and batch_run_date<'{date.add(days=1).strftime("%Y-%m-%d")}'
+        WHERE batch_run_date>='{date.strftime("%Y-%m-%d")}' and batch_run_date<'{date.add(days=1).strftime("%Y-%m-%d")} ')
         """
     )
     return query_job
@@ -188,7 +188,7 @@ def get_from_historyTableExport(**context):
     }
 
     execution_date = context["execution_date"]
-    yesterday = pendulum.instance(execution_date).subtract(days=1)
+    yesterday = pendulum.instance(execution_date).subtract(days=2)
     # yesterday = pendulum.datetime(2024, 4, 24, 0, 0).in_timezone("UTC")
 
     print(yesterday)
