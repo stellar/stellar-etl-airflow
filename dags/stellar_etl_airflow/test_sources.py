@@ -155,37 +155,38 @@ def get_from_stateTables(**context):
         successful_transforms_folders = store_files(
             blobs, successful_transforms_folders
         )
-    print(f"how many execution_dates : {len(execution_dates)}")
-    print(f"how many accounts : {len(successful_transforms_folders['accounts'])}")
+
     gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
-    # for dag_run in execution_dates:
-    #     execution_date_str = dag_run.execution_date.strftime(
-    #         "%Y-%m-%d %H:%M:%S%z"
-    #     ).replace(" ", "T")
-    #     execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
+    execution_date_strings = []
 
-    # for key in successful_transforms_folders.keys():
-    #     if successful_transforms_folders[key] is not None:
-    #         for files in successful_transforms_folders[key]:
-    #             print(f"FILES ARE: {files}")
-    #             for file in files:
-    #                 file_content = gcs_hook.download(
-    #                     bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
-    #                     object_name=f"dag-exported/scheduled__{execution_date_str}/changes_folder/{file}",
-    #                 )
-    #                 print(f"The file content is: {file_content}")
+    for dag_run in execution_dates:
+        execution_date_str = dag_run.execution_date.strftime(
+            "%Y-%m-%d %H:%M:%S%z"
+        ).replace(" ", "T")
+        execution_date_str = execution_date_str[:-2] + ":" + execution_date_str[-2:]
 
-    ## Decode the bytes object to a string
-    # file_content = file_content.decode()
+        execution_date_strings.append(execution_date_str)
 
-    ## Now file_content is a string with the content of the file
-    # lines = file_content.splitlines()
+    for key in successful_transforms_folders.keys():
+        for files in successful_transforms_folders[key]:
+            for file in files and execution_date in execution_date_strings:
+                file_content = gcs_hook.download(
+                    bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
+                    object_name=f"dag-exported/scheduled__{execution_date}/changes_folder/{file}",
+                )
+                print(f"The file content is: {file_content}")
 
-    ## Count the number of lines that start with "{"
-    # count = sum(1 for line in lines if line.startswith("{"))
+                ## Decode the bytes object to a string
+                # file_content = file_content.decode()
 
-    # print(count)
+                ## Now file_content is a string with the content of the file
+                # lines = file_content.splitlines()
+
+                ## Count the number of lines that start with "{"
+                # count = sum(1 for line in lines if line.startswith("{"))
+
+                # print(count)
 
 
 def get_from_historyTableExport(**context):
