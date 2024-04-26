@@ -89,17 +89,17 @@ def do_query2(opType, date):
 
 def get_from_stateTables(**context):
     successful_transforms = {
-        "signers": 0,
-        "accounts": 0,
-        "claimable_balances": 0,
-        "liquidity_pools": 0,
-        "offers": 0,
-        "trustlines": 0,
-        "offers": 0,
-        "config_settings": 0,
-        "contract_code": 0,
+        # "signers": 0,
+        # "accounts": 0,
+        # "claimable_balances": 0,
+        # "liquidity_pools": 0,
+        # "offers": 0,
+        # "trustlines": 0,
+        # "offers": 0,
+        # "config_settings": 0,
+        # "contract_code": 0,
         "contract_data": 0,
-        "ttl": 0,
+        # "ttl": 0,
     }
 
     execution_date = context["execution_date"]
@@ -154,6 +154,8 @@ def get_from_stateTables(**context):
 
                     ## Now file_content is a string with the content of the file
                     lines = file_content.splitlines()
+
+                    print(f"O FILE CONTENT SPLITADO E: {lines} ")
 
                     ## Count the number of lines that start with "{"
                     count = sum(1 for line in lines if line.startswith("{"))
