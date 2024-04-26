@@ -124,6 +124,8 @@ def get_from_stateTables(**context):
         )
 
         for key in successful_transforms.keys():
+            count = 0
+
             for blob in blobs:
                 if re.search(rf"{key}", blob.name):
                     file_content = gcs_hook.download(
@@ -144,6 +146,36 @@ def get_from_stateTables(**context):
 
     for key in successful_transforms.keys():
         print(f"Successful transforms for {key} is {successful_transforms[key]}")
+
+    # Query number of rows in BigQuery table
+    query_job = do_query("signers", yesterday)
+    query_job1 = do_query("accounts", yesterday)
+    query_job2 = do_query("claimable_balances", yesterday)
+    query_job3 = do_query("liquidity_pools", yesterday)
+    query_job4 = do_query("offers", yesterday)
+    query_job5 = do_query("trustlines", yesterday)
+    query_job6 = do_query("config_settings", yesterday)
+    query_job7 = do_query("contract_code", yesterday)
+    query_job8 = do_query("contract_data", yesterday)
+    query_job9 = do_query("ttl", yesterday)
+
+    BQ_results = {
+        "signers": next(iter(query_job.result()))[0],
+        "accounts": next(iter(query_job1.result()))[0],
+        "claimable_balances": next(iter(query_job2.result()))[0],
+        "liquidity_pools": next(iter(query_job3.result()))[0],
+        "offers": next(iter(query_job4.result()))[0],
+        "trustlines": next(iter(query_job5.result()))[0],
+        "config_settings": next(iter(query_job6.result()))[0],
+        "contract_code": next(iter(query_job7.result()))[0],
+        "contract_data": next(iter(query_job8.result()))[0],
+        "ttl": next(iter(query_job9.result()))[0],
+    }
+
+    context["ti"].xcom_push(key="from BQ", value=BQ_results)
+    context["ti"].xcom_push(key="from GCS", value=successful_transforms)
+
+    # treating_errors(successful_transforms, BQ_results)
 
 
 def get_from_historyTableExport(**context):
