@@ -65,7 +65,7 @@ def do_query(opType, date):
     query_job = client.query(
         f"""SELECT
         (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_{opType}
-        WHERE DATE(batch_run_date)='{date.strftime("%Y-%m-%d")}')
+        WHERE batch_run_date>='{date.strftime("%Y-%m-%d")}' and batch_run_date<'{date.add(days=1).strftime("%Y-%m-%d")}'
         """
     )
     return query_job
@@ -148,12 +148,12 @@ def get_from_stateTables(**context):
         print(f"Successful transforms for {key} is {successful_transforms[key]}")
 
     # Query number of rows in BigQuery table
-    query_job = do_query("signers", yesterday)
+    query_job = do_query("account_signers", yesterday)
     query_job1 = do_query("accounts", yesterday)
     query_job2 = do_query("claimable_balances", yesterday)
     query_job3 = do_query("liquidity_pools", yesterday)
     query_job4 = do_query("offers", yesterday)
-    query_job5 = do_query("trustlines", yesterday)
+    query_job5 = do_query("trust_lines", yesterday)
     query_job6 = do_query("config_settings", yesterday)
     query_job7 = do_query("contract_code", yesterday)
     query_job8 = do_query("contract_data", yesterday)
