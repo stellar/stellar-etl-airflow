@@ -85,19 +85,6 @@ def get_from_stateTables(**context):
         "contract_data": 0,
         "ttl": 0,
     }
-    successful_transforms_folders = {
-        "signers": None,
-        "accounts": None,
-        "claimable_balances": None,
-        "liquidity_pools": None,
-        "offers": None,
-        "trustlines": None,
-        "offers": None,
-        "config_settings": None,
-        "contract_code": None,
-        "contract_data": None,
-        "ttl": None,
-    }
 
     execution_date = context["execution_date"]
     yesterday = pendulum.instance(execution_date).subtract(days=1)
@@ -144,18 +131,19 @@ def get_from_stateTables(**context):
                         bucket_name="us-central1-test-hubble-2-5f1f2dbf-bucket",
                         object_name=f"dag-exported/scheduled__{execution_date_str}/changes_folder/{os.path.basename(blob.name)}",
                     )
-                    print(f"The file content is: {file_content}")
 
-                    ## Decode the bytes object to a string
-                    # file_content = file_content.decode()
+                    # Decode the bytes object to a string
+                    file_content = file_content.decode()
 
                     ## Now file_content is a string with the content of the file
-                    # lines = file_content.splitlines()
+                    lines = file_content.splitlines()
 
                     ## Count the number of lines that start with "{"
-                    # count = sum(1 for line in lines if line.startswith("{"))
+                    count = sum(1 for line in lines if line.startswith("{"))
 
-                    # print(count)
+                    successful_transforms[key] += count
+
+    print(f"Successful transforms for {key} is {successful_transforms[key]}")
 
 
 def get_from_historyTableExport(**context):
