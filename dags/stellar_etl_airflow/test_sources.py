@@ -108,6 +108,7 @@ def get_from_stateTables(**context):
     key_path = Variable.get("api_key_path")
     credentials = service_account.Credentials.from_service_account_file(key_path)
     storage_client = storage.Client(credentials=credentials)
+    gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
     for dag_run in execution_dates:
         execution_date_str = dag_run.execution_date.strftime(
@@ -121,8 +122,6 @@ def get_from_stateTables(**context):
                 prefix=f"dag-exported/scheduled__{execution_date_str}/changes_folder"
             )
         )
-
-        gcs_hook = GCSHook(google_cloud_storage_conn_id="google_cloud_storage_default")
 
         for key in successful_transforms.keys():
             for blob in blobs:
@@ -143,7 +142,8 @@ def get_from_stateTables(**context):
 
                     successful_transforms[key] += count
 
-    print(f"Successful transforms for {key} is {successful_transforms[key]}")
+    for key in successful_transforms.keys():
+        print(f"Successful transforms for {key} is {successful_transforms[key]}")
 
 
 def get_from_historyTableExport(**context):
