@@ -55,32 +55,65 @@ def treating_errors(successful_transforms, BQ_results):
         raise ValueError("Mismatch between transactions in GCS and BQ transactions")
 
 
-def do_query(opType, date):
+def comparison(**context):
+    execution_date = context["execution_date"]
+    yesterday = pendulum.instance(execution_date).subtract(days=1)
+
+    # Define the table names
+    tables1 = ["ledgers", "operations", "trades", "effects", "transactions"]
+    tables2 = [
+        "account_signers",
+        "accounts",
+        "claimable_balances",
+        "liquidity_pools",
+        "offers",
+        "trust_lines",
+        "config_settings",
+        "contract_code",
+        "contract_data",
+        "ttl",
+    ]
+
+    BQ_results = {}
+    internal_results = {}
+
+    # Iterate over the tables and call do_query for each table
+    for table in tables1:
+        query_job = do_query("crypto-stellar.crypto_stellar", table, yesterday, True)
+        BQ_results[table] = next(iter(query_job.result()))[0]
+
+        query_job_2 = do_query(
+            "hubble-261722.crypto_stellar_internal_2", table, yesterday, True
+        )
+        internal_results[table] = next(iter(query_job_2.result()))[0]
+
+    # Iterate over the tables and call do_query2 for each table
+    for table in tables2:
+        query_job = do_query("crypto-stellar.crypto_stellar", table, yesterday)
+        BQ_results[table] = next(iter(query_job.result()))[0]
+
+        query_job_2 = do_query(
+            "hubble-261722.crypto_stellar_internal_2", table, yesterday
+        )
+        internal_results[table] = next(iter(query_job_2.result()))[0]
+
+    context["ti"].xcom_push(key="from BQ", value=BQ_results)
+    context["ti"].xcom_push(key="from internal", value=internal_results)
+
+
+def do_query(project_dataset, opType, date, history=False):
     key_path = Variable.get("api_key_path")
     credentials = service_account.Credentials.from_service_account_file(key_path)
     client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 
     print(f"OpType is {opType} and date is {date.strftime('%Y-%m-%d')}")
 
-    query_job = client.query(
-        f"""SELECT
-        (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.history_{opType}
-        WHERE batch_run_date>='{date.strftime("%Y-%m-%d")}' and batch_run_date<'{date.add(days=1).strftime("%Y-%m-%d")}')
-        """
-    )
-    return query_job
-
-
-def do_query2(opType, date):
-    key_path = Variable.get("api_key_path")
-    credentials = service_account.Credentials.from_service_account_file(key_path)
-    client = bigquery.Client(credentials=credentials, project=credentials.project_id)
-
-    print(f"OpType is {opType} and date is {date.strftime('%Y-%m-%d')}")
+    # Add 'history_' to the table name if history is True
+    table_name = f"history_{opType}" if history else opType
 
     query_job = client.query(
         f"""SELECT
-        (SELECT COUNT(*) FROM crypto-stellar.crypto_stellar.{opType}
+        (SELECT COUNT(*) FROM {project_dataset}.{table_name}
         WHERE batch_run_date>='{date.strftime("%Y-%m-%d")}' and batch_run_date<'{date.add(days=1).strftime("%Y-%m-%d")}')
         """
     )
@@ -89,17 +122,17 @@ def do_query2(opType, date):
 
 def get_from_stateTables(**context):
     successful_transforms = {
-        # "signers": 0,
-        # "accounts": 0,
-        # "claimable_balances": 0,
-        # "liquidity_pools": 0,
-        # "offers": 0,
-        # "trustlines": 0,
-        # "offers": 0,
-        # "config_settings": 0,
-        # "contract_code": 0,
+        "signers": 0,
+        "accounts": 0,
+        "claimable_balances": 0,
+        "liquidity_pools": 0,
+        "offers": 0,
+        "trustlines": 0,
+        "offers": 0,
+        "config_settings": 0,
+        "contract_code": 0,
         "contract_data": 0,
-        # "ttl": 0,
+        "ttl": 0,
     }
 
     execution_date = context["execution_date"]
@@ -166,16 +199,18 @@ def get_from_stateTables(**context):
         print(f"Successful transforms for {key} is {successful_transforms[key]}")
 
     # Query number of rows in BigQuery table
-    query_job = do_query2("account_signers", yesterday)
-    query_job1 = do_query2("accounts", yesterday)
-    query_job2 = do_query2("claimable_balances", yesterday)
-    query_job3 = do_query2("liquidity_pools", yesterday)
-    query_job4 = do_query2("offers", yesterday)
-    query_job5 = do_query2("trust_lines", yesterday)
-    query_job6 = do_query2("config_settings", yesterday)
-    query_job7 = do_query2("contract_code", yesterday)
-    query_job8 = do_query2("contract_data", yesterday)
-    query_job9 = do_query2("ttl", yesterday)
+    query_job = do_query("crypto-stellar.crypto_stellar", "account_signers", yesterday)
+    query_job1 = do_query("crypto-stellar.crypto_stellar", "accounts", yesterday)
+    query_job2 = do_query(
+        "crypto-stellar.crypto_stellar", "claimable_balances", yesterday
+    )
+    query_job3 = do_query("crypto-stellar.crypto_stellar", "liquidity_pools", yesterday)
+    query_job4 = do_query("crypto-stellar.crypto_stellar", "offers", yesterday)
+    query_job5 = do_query("crypto-stellar.crypto_stellar", "trust_lines", yesterday)
+    query_job6 = do_query("crypto-stellar.crypto_stellar", "config_settings", yesterday)
+    query_job7 = do_query("crypto-stellar.crypto_stellar", "contract_code", yesterday)
+    query_job8 = do_query("crypto-stellar.crypto_stellar", "contract_data", yesterday)
+    query_job9 = do_query("crypto-stellar.crypto_stellar", "ttl", yesterday)
 
     BQ_results = {
         "signers": next(iter(query_job.result()))[0],
@@ -248,11 +283,15 @@ def get_from_historyTableExport(**context):
         successful_transforms[key] += total_successful_transforms
 
     # Query number of rows in BigQuery table
-    query_job = do_query("ledgers", yesterday)
-    query_job1 = do_query("operations", yesterday)
-    query_job2 = do_query("trades", yesterday)
-    query_job3 = do_query("effects", yesterday)
-    query_job4 = do_query("transactions", yesterday)
+    query_job = do_query("crypto-stellar.crypto_stellar", "ledgers", yesterday, True)
+    query_job1 = do_query(
+        "crypto-stellar.crypto_stellar", "operations", yesterday, True
+    )
+    query_job2 = do_query("crypto-stellar.crypto_stellar", "trades", yesterday, True)
+    query_job3 = do_query("crypto-stellar.crypto_stellar", "effects", yesterday, True)
+    query_job4 = do_query(
+        "crypto-stellar.crypto_stellar", "transactions", yesterday, True
+    )
 
     BQ_results = {
         "ledgers": next(iter(query_job.result()))[0],
@@ -278,16 +317,23 @@ dag = DAG(
     },
 )
 
-compare_task = PythonOperator(
-    task_id="get_from_historyTableExport_task",
-    python_callable=get_from_historyTableExport,
-    provide_context=True,
-    dag=dag,
-)
+# compare_task = PythonOperator(
+#    task_id="get_from_historyTableExport_task",
+#    python_callable=get_from_historyTableExport,
+#    provide_context=True,
+#    dag=dag,
+# )
 
-compare2_task = PythonOperator(
-    task_id="get_from_stateTables_task",
-    python_callable=get_from_stateTables,
+# compare2_task = PythonOperator(
+#    task_id="get_from_stateTables_task",
+#    python_callable=get_from_stateTables,
+#    provide_context=True,
+#    dag=dag,
+# )
+
+compare_task3 = PythonOperator(
+    task_id="comparison_task",
+    python_callable=comparison,
     provide_context=True,
     dag=dag,
 )
