@@ -57,7 +57,7 @@ def treating_errors(successful_transforms, BQ_results):
 
 def comparison(**context):
     execution_date = context["execution_date"]
-    yesterday = pendulum.instance(execution_date).subtract(days=1)
+    yesterday = pendulum.instance(execution_date).subtract(days=2)
 
     # Define the table names
     tables1 = ["ledgers", "operations", "trades", "effects", "transactions"]
