@@ -82,29 +82,31 @@ def comparison(**context):
         query_job = do_query("crypto-stellar.crypto_stellar", table, yesterday, True)
         BQ_results[table] = next(iter(query_job.result()))[0]
 
-        query_job_2 = do_query(
-            "hubble-261722.crypto_stellar_internal_2", table, yesterday, True
-        )
-        internal_results[table] = next(iter(query_job_2.result()))[0]
+        # query_job_2 = do_query(
+        #    "hubble-261722.crypto_stellar_internal_2", table, yesterday, True
+        # )
+        # internal_results[table] = next(iter(query_job_2.result()))[0]
 
     # Iterate over the tables and call do_query2 for each table
     for table in tables2:
         query_job = do_query("crypto-stellar.crypto_stellar", table, yesterday)
         BQ_results[table] = next(iter(query_job.result()))[0]
 
-        query_job_2 = do_query(
-            "hubble-261722.crypto_stellar_internal_2", table, yesterday
-        )
-        internal_results[table] = next(iter(query_job_2.result()))[0]
+        # query_job_2 = do_query(
+        #    "hubble-261722.crypto_stellar_internal_2", table, yesterday
+        # )
+        # internal_results[table] = next(iter(query_job_2.result()))[0]
 
     context["ti"].xcom_push(key="from BQ", value=BQ_results)
-    context["ti"].xcom_push(key="from internal", value=internal_results)
+    # context["ti"].xcom_push(key="from internal", value=internal_results)
 
 
 def do_query(project_dataset, opType, date, history=False):
     key_path = Variable.get("api_key_path")
     credentials = service_account.Credentials.from_service_account_file(key_path)
-    client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+    client = bigquery.Client(
+        credentials=credentials, project=credentials.project_id, location="US"
+    )
 
     print(f"OpType is {opType} and date is {date.strftime('%Y-%m-%d')}")
 
