@@ -193,5 +193,20 @@
     "mode": "NULLABLE",
     "name": "resource_fee_refund",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "non_refundable_resource_fee_charged",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "refundable_resource_fee_charged",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "rent_fee_charged",
+    "type": "INTEGER"
   }
 ]
