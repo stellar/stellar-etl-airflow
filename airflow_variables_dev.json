@@ -62,7 +62,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:a334cb5",
+  "image_name": "stellar/stellar-etl:834b7bb",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -215,7 +215,7 @@
       }
     }
   },
-  "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.sentry.io/6190849",
+  "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "table_ids": {
