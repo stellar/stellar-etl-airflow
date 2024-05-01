@@ -37,6 +37,13 @@ with DAG(
     BQ_DATASET = Variable.get("bq_dataset")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
 
+    user_defined_macros = (
+        {
+            "subtract_data_interval": macros.subtract_data_interval,
+            "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
+        },
+    )
+
     batch_run_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
     start_tables_task = EmptyOperator(task_id="start_tables_task")
