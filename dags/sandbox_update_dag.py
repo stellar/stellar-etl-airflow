@@ -46,7 +46,7 @@ with DAG(
     )
 
     wait_on_state_dag = build_cross_deps(
-        dag, "wait_on_base_tables", "state_table_export"
+        dag, "wait_on_state_tables", "state_table_export"
     )
 
     for table_id in TABLES_ID:
