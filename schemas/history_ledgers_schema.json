@@ -98,5 +98,10 @@
     "mode": "NULLABLE",
     "name": "batch_insert_ts",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_fee_write_1kb",
+    "type": "INTEGER"
   }
 ]
