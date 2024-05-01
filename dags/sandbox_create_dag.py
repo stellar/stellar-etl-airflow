@@ -1,7 +1,6 @@
 """
 This DAG creates the sandbox dataset with transactions tables, state tables with history and views.
 """
-from datetime import datetime
 from json import loads
 
 from airflow import DAG

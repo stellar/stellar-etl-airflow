@@ -8,11 +8,11 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_bq_insert_job_task import (
     file_to_string,
     get_query_filepath,
 )
-from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
@@ -57,7 +57,7 @@ with DAG(
             "dataset_id": BQ_DATASET,
             "table_id": TABLES_ID[table_id],
             "target_dataset": SANDBOX_DATASET,
-            "batch_run_date": batch_run_date
+            "batch_run_date": batch_run_date,
         }
         query = query.format(**sql_params)
         tables_update_task = BigQueryInsertJobOperator(
@@ -71,4 +71,8 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        start_tables_task >> [wait_on_history_dag, wait_on_state_dag] >> tables_update_task
+        (
+            start_tables_task
+            >> [wait_on_history_dag, wait_on_state_dag]
+            >> tables_update_task
+        )
