@@ -38,11 +38,11 @@ with DAG(
 
     start_tables_task = EmptyOperator(task_id="start_tables_task")
 
-    wait_on_dag = build_cross_deps(
-        dag, "wait_on_base_tables", "history_archive_with_captive_core_combined_export"
-    )
+    wait_on_dag = build_cross_deps(dag, "wait_on_base_tables", "history_table_export")
 
     for table_id in TABLES_ID:
+        if table_id == "diagnostic_events":
+            continue
         query_path = get_query_filepath("update_table")
         query = file_to_string(query_path)
         sql_params = {
