@@ -257,7 +257,7 @@
     "liquidity_pools_current": "liquidity_pools_current",
     "offers_current": "offers_current",
     "trustlines_current": "trust_lines_current",
-    "ttl": "ttl_current"
+    "ttl_current": "ttl_current"
   },
   "use_testnet": "True",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
