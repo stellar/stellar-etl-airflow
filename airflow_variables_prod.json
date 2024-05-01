@@ -230,8 +230,7 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "ttl": "ttl",
-    "diagnostic_events": "diagnostic_events"
+    "ttl": "ttl"
   },
   "task_timeout": {
     "build_batch_stats": 180,
