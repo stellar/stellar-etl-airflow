@@ -50,6 +50,8 @@ with DAG(
     )
 
     for table_id in TABLES_ID:
+        if table_id == "diagnostic_events":
+            continue
         query_path = get_query_filepath("update_table")
         query = file_to_string(query_path)
         sql_params = {
