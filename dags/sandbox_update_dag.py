@@ -30,19 +30,17 @@ with DAG(
     schedule_interval="0 1 * * *",
     params={"alias": "sandbox_dataset"},
     user_defined_filters={"fromjson": lambda s: loads(s)},
+    render_template_as_native_obj=True,
     catchup=True,
+    user_defined_macros={
+        "subtract_data_interval": macros.subtract_data_interval,
+        "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
+    },
 ) as dag:
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
     PROJECT = Variable.get("bq_project")
     BQ_DATASET = Variable.get("bq_dataset")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
-
-    user_defined_macros = (
-        {
-            "subtract_data_interval": macros.subtract_data_interval,
-            "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
-        },
-    )
 
     batch_run_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
