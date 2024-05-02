@@ -1,7 +1,6 @@
 """
 This DAG creates the sandbox dataset with transactions tables, state tables with history and views.
 """
-from datetime import datetime
 from json import loads
 
 from airflow import DAG
@@ -23,7 +22,6 @@ init_sentry()
 with DAG(
     "sandbox_create_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2023, 1, 1),
     description="This DAG creates a sandbox",
     schedule_interval="@once",
     params={"alias": "sandbox_dataset"},
@@ -32,8 +30,8 @@ with DAG(
     },
     catchup=False,
 ) as dag:
-    PROJECT = Variable.get("bq_project")
-    DATASET = Variable.get("bq_dataset")
+    PROJECT = Variable.get("public_project")
+    DATASET = Variable.get("public_dataset")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
     DBT_DATASET = Variable.get("dbt_mart_dataset")
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
