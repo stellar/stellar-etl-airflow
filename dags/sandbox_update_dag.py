@@ -40,6 +40,7 @@ with DAG(
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
     PROJECT = Variable.get("public_project")
     BQ_DATASET = Variable.get("public_dataset")
+    SANDBOX_PROJECT = Variable.get("bq_project")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
 
     batch_run_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
@@ -63,6 +64,7 @@ with DAG(
             "project_id": PROJECT,
             "dataset_id": BQ_DATASET,
             "table_id": TABLES_ID[table_id],
+            "target_project": SANDBOX_PROJECT,
             "target_dataset": SANDBOX_DATASET,
             "batch_run_date": batch_run_date,
         }

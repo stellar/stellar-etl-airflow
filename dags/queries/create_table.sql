@@ -1,4 +1,4 @@
-create or replace table `{project_id}.{target_dataset}.{table_id}`
+create or replace table `{target_project}.{target_dataset}.{table_id}`
 partition by date_trunc(batch_run_date, day)
 options (partition_expiration_days = 180) as (
     select *
