@@ -55,7 +55,7 @@
   "dbt_image_name": "stellar/stellar-dbt:6ee7342",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
-  "dbt_mart_dataset": "test_sdf_marts",
+  "dbt_mart_dataset": "test_crypto_stellar_dbt",
   "dbt_maximum_bytes_billed": 250000000000,
   "dbt_project": "test-hubble-319619",
   "dbt_target": "test",
@@ -235,8 +235,7 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "ttl": "ttl",
-    "diagnostic_events": "diagnostic_events"
+    "ttl": "ttl"
   },
   "task_timeout": {
     "build_batch_stats": 180,
@@ -251,9 +250,13 @@
   "dbt_tables": {
     "signers_current": "account_signers_current",
     "accounts_current": "accounts_current",
+    "config_settings_current": "config_settings_current",
+    "contract_code_current": "contract_code_current",
+    "contract_data_current": "contract_data_current",
     "liquidity_pools_current": "liquidity_pools_current",
     "offers_current": "offers_current",
-    "trustlines_current": "trust_lines_current"
+    "trustlines_current": "trust_lines_current",
+    "ttl_current": "ttl_current"
   },
   "use_testnet": "True",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
