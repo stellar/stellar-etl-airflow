@@ -38,8 +38,8 @@ with DAG(
     },
 ) as dag:
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
-    PROJECT = Variable.get("bq_project")
-    BQ_DATASET = Variable.get("bq_dataset")
+    PROJECT = Variable.get("public_project")
+    BQ_DATASET = Variable.get("public_dataset")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
 
     batch_run_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
