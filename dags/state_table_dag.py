@@ -94,11 +94,7 @@ delete_acc_pub_task = build_delete_data_task(
 #     dag, internal_project, internal_dataset, table_names["claimable_balances"]
 # )
 delete_bal_pub_task = build_delete_data_task(
-    dag,
-    public_project,
-    public_dataset,
-    table_names["claimable_balances"],
-    "pub",
+    dag, public_project, public_dataset, table_names["claimable_balances"], "pub"
 )
 # delete_off_task = build_delete_data_task(
 #     dag, internal_project, internal_dataset, table_names["offers"]
