@@ -44,8 +44,8 @@ dag = DAG(
 )
 
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = "{{ var.value.bq_project }}"
-internal_dataset = "{{ var.value.bq_dataset }}"
+# internal_project = "{{ var.value.bq_project }}"
+# internal_dataset = "{{ var.value.bq_dataset }}"
 public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
@@ -163,48 +163,52 @@ asset_export_task = build_export_task(
 The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 """
-delete_old_op_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["operations"]
-)
+# delete_old_op_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["operations"]
+# )
 delete_old_op_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["operations"], "pub"
 )
-delete_old_trade_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["trades"]
-)
+# delete_old_trade_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["trades"]
+# )
 delete_old_trade_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["trades"], "pub"
 )
-delete_enrich_op_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, "enriched_history_operations"
-)
+# delete_enrich_op_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, "enriched_history_operations"
+# )
 delete_enrich_op_pub_task = build_delete_data_task(
-    dag, public_project, public_dataset, "enriched_history_operations", "pub"
+    dag,
+    public_project,
+    public_dataset,
+    "enriched_history_operations",
+    "pub",  # PERGUNTAR SOBRE ISSO AQUI
 )
-delete_enrich_ma_op_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, "enriched_meaningful_history_operations"
-)
-delete_old_effects_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["effects"]
-)
+# delete_enrich_ma_op_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, "enriched_meaningful_history_operations"    # DEIXAR CLARO QUE RETIROU ISSO AQUI
+# )
+# delete_old_effects_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["effects"]
+# )
 delete_old_effects_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["effects"], "pub"
 )
-delete_old_tx_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["transactions"]
-)
+# delete_old_tx_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["transactions"]
+# )
 delete_old_tx_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["transactions"], "pub"
 )
-delete_old_ledger_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["ledgers"]
-)
+# delete_old_ledger_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["ledgers"]
+# )
 delete_old_ledger_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["ledgers"], "pub"
 )
-delete_old_asset_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["assets"]
-)
+# delete_old_asset_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["assets"]
+# )
 delete_old_asset_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["assets"], "pub"
 )
@@ -213,66 +217,66 @@ delete_old_asset_pub_task = build_delete_data_task(
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
-send_ops_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    op_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["operations"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_trades_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    trade_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["trades"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_effects_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    effects_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["effects"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_txs_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    tx_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["transactions"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_ledgers_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    ledger_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["ledgers"],
-    "",
-    partition=True,
-    cluster=True,
-)
-send_assets_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    asset_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["assets"],
-    "",
-    partition=True,
-    cluster=True,
-)
+# send_ops_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     op_export_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["operations"],
+#     "",
+#     partition=True,
+#     cluster=True,
+# )
+# send_trades_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     trade_export_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["trades"],
+#     "",
+#     partition=True,
+#     cluster=True,
+# )
+# send_effects_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     effects_export_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["effects"],
+#     "",
+#     partition=True,
+#     cluster=True,
+# )
+# send_txs_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     tx_export_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["transactions"],
+#     "",
+#     partition=True,
+#     cluster=True,
+# )
+# send_ledgers_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     ledger_export_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["ledgers"],
+#     "",
+#     partition=True,
+#     cluster=True,
+# )
+# send_assets_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     asset_export_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["assets"],
+#     "",
+#     partition=True,
+#     cluster=True,
+# )
 
 
 """
@@ -345,14 +349,14 @@ send_assets_to_pub_task = build_gcs_to_bq_task(
     dataset_type="pub",
 )
 
-insert_enriched_hist_task = build_bq_insert_job(
-    dag,
-    internal_project,
-    internal_dataset,
-    "enriched_history_operations",
-    partition=True,
-    cluster=True,
-)
+# insert_enriched_hist_task = build_bq_insert_job(
+#     dag,
+#     internal_project,
+#     internal_dataset,
+#     "enriched_history_operations",
+#     partition=True,
+#     cluster=True,
+# )
 insert_enriched_hist_pub_task = build_bq_insert_job(
     dag,
     public_project,
@@ -362,29 +366,31 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
     cluster=True,
     dataset_type="pub",
 )
-insert_enriched_ma_hist_task = build_bq_insert_job(
-    dag,
-    internal_project,
-    internal_dataset,
-    "enriched_meaningful_history_operations",
-    partition=True,
-    cluster=True,
-)
+# insert_enriched_ma_hist_task = build_bq_insert_job(
+#     dag,
+#     internal_project,
+#     internal_dataset,
+#     "enriched_meaningful_history_operations",
+#     partition=True,
+#     cluster=True,
+# )
 
 (
     time_task
     >> write_op_stats
     >> op_export_task
-    >> delete_old_op_task
-    >> send_ops_to_bq_task
-    >> delete_enrich_op_task
+    # >> delete_old_op_task
+    # >> send_ops_to_bq_task
+    # >> delete_enrich_op_task
 )
-(
-    delete_enrich_op_task
-    >> insert_enriched_hist_task
-    >> delete_enrich_ma_op_task
-    >> insert_enriched_ma_hist_task
-)
+
+# (
+#     delete_enrich_op_task
+#     >> insert_enriched_hist_task
+#     >> delete_enrich_ma_op_task
+#     >> insert_enriched_ma_hist_task
+# )
+
 (
     op_export_task
     >> delete_old_op_pub_task
@@ -392,30 +398,32 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> delete_enrich_op_pub_task
     >> insert_enriched_hist_pub_task
 )
-(
-    time_task
-    >> write_trade_stats
-    >> trade_export_task
-    >> delete_old_trade_task
-    >> send_trades_to_bq_task
-)
+
+# (
+#     time_task
+#     >> write_trade_stats
+#     >> trade_export_task
+#     >> delete_old_trade_task
+#     >> send_trades_to_bq_task
+# )
+
 trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task
-(
-    time_task
-    >> write_effects_stats
-    >> effects_export_task
-    >> delete_old_effects_task
-    >> send_effects_to_bq_task
-)
+# (
+#     time_task
+#     >> write_effects_stats
+#     >> effects_export_task
+#     >> delete_old_effects_task
+#     >> send_effects_to_bq_task
+# )
 effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
-(
-    time_task
-    >> write_tx_stats
-    >> tx_export_task
-    >> delete_old_tx_task
-    >> send_txs_to_bq_task
-    >> delete_enrich_op_task
-)
+# (
+#     time_task
+#     >> write_tx_stats
+#     >> tx_export_task
+#     >> delete_old_tx_task
+#     >> send_txs_to_bq_task
+#     >> delete_enrich_op_task
+# )
 (
     tx_export_task
     >> delete_old_tx_pub_task
@@ -426,18 +434,18 @@ effects_export_task >> delete_old_effects_pub_task >> send_effects_to_pub_task
 (
     [
         insert_enriched_hist_pub_task,
-        insert_enriched_hist_task,
+        # insert_enriched_hist_task,
     ]
 )
-dedup_assets_bq_task = build_bq_insert_job(
-    dag,
-    internal_project,
-    internal_dataset,
-    table_names["assets"],
-    partition=True,
-    cluster=True,
-    create=True,
-)
+# dedup_assets_bq_task = build_bq_insert_job(
+#     dag,
+#     internal_project,
+#     internal_dataset,
+#     table_names["assets"],
+#     partition=True,
+#     cluster=True,
+#     create=True,
+# )
 dedup_assets_pub_task = build_bq_insert_job(
     dag,
     public_project,
@@ -449,28 +457,28 @@ dedup_assets_pub_task = build_bq_insert_job(
     dataset_type="pub",
 )
 
-(
-    time_task
-    >> write_ledger_stats
-    >> ledger_export_task
-    >> delete_old_ledger_task
-    >> send_ledgers_to_bq_task
-    >> delete_enrich_op_task
-)
+# (
+#     time_task
+#     >> write_ledger_stats
+#     >> ledger_export_task
+#     >> delete_old_ledger_task
+#     >> send_ledgers_to_bq_task
+#     >> delete_enrich_op_task
+# )
 (
     ledger_export_task
     >> delete_old_ledger_pub_task
     >> send_ledgers_to_pub_task
     >> delete_enrich_op_pub_task
 )
-(
-    time_task
-    >> write_asset_stats
-    >> asset_export_task
-    >> delete_old_asset_task
-    >> send_assets_to_bq_task
-    >> dedup_assets_bq_task
-)
+# (
+#     time_task
+#     >> write_asset_stats
+#     >> asset_export_task
+#     >> delete_old_asset_task
+#     >> send_assets_to_bq_task
+#     >> dedup_assets_bq_task
+# )
 (
     asset_export_task
     >> delete_old_asset_pub_task
