@@ -55,14 +55,14 @@
   "dbt_image_name": "stellar/stellar-dbt:6ee7342",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
-  "dbt_mart_dataset": "test_sdf_marts",
+  "dbt_mart_dataset": "test_crypto_stellar_dbt",
   "dbt_maximum_bytes_billed": 250000000000,
   "dbt_project": "test-hubble-319619",
   "dbt_target": "test",
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:a334cb5",
+  "image_name": "stellar/stellar-etl:834b7bb",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -215,7 +215,7 @@
       }
     }
   },
-  "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.sentry.io/6190849",
+  "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "table_ids": {
@@ -235,8 +235,7 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "ttl": "ttl",
-    "diagnostic_events": "diagnostic_events"
+    "ttl": "ttl"
   },
   "task_timeout": {
     "build_batch_stats": 180,
@@ -251,9 +250,13 @@
   "dbt_tables": {
     "signers_current": "account_signers_current",
     "accounts_current": "accounts_current",
+    "config_settings_current": "config_settings_current",
+    "contract_code_current": "contract_code_current",
+    "contract_data_current": "contract_data_current",
     "liquidity_pools_current": "liquidity_pools_current",
     "offers_current": "offers_current",
-    "trustlines_current": "trust_lines_current"
+    "trustlines_current": "trust_lines_current",
+    "ttl_current": "ttl_current"
   },
   "use_testnet": "True",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",

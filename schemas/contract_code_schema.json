@@ -53,5 +53,55 @@
     "mode": "NULLABLE",
     "name": "ledger_key_hash",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_instructions",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_functions",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_globals",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_table_entries",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_types",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_data_segments",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_elem_segments",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_imports",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_exports",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "n_data_segment_bytes",
+    "type": "INTEGER"
   }
 ]

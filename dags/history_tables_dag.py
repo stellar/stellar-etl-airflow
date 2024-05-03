@@ -68,7 +68,7 @@ write_op_stats = build_batch_stats(dag, table_names["operations"])
 write_trade_stats = build_batch_stats(dag, table_names["trades"])
 write_effects_stats = build_batch_stats(dag, table_names["effects"])
 write_tx_stats = build_batch_stats(dag, table_names["transactions"])
-write_diagnostic_events_stats = build_batch_stats(dag, table_names["diagnostic_events"])
+write_diagnostic_events_stats = build_batch_stats(dag, "diagnostic_events")
 write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
 write_asset_stats = build_batch_stats(dag, table_names["assets"])
 
