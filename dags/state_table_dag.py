@@ -84,9 +84,9 @@ write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
 The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 """
-delete_acc_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["accounts"]
-)
+# delete_acc_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["accounts"]
+# )
 delete_acc_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["accounts"], "pub"
 )
@@ -142,16 +142,16 @@ The apply tasks receive the location of the file in Google Cloud storage through
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
-send_acc_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    changes_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["accounts"],
-    "/*-accounts.txt",
-    partition=True,
-    cluster=True,
-)
+# send_acc_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     changes_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["accounts"],
+#     "/*-accounts.txt",
+#     partition=True,
+#     cluster=True,
+# )
 send_bal_to_bq_task = build_gcs_to_bq_task(
     dag,
     changes_task.task_id,
@@ -317,7 +317,7 @@ send_ttl_to_pub_task = build_gcs_to_bq_task(
     dataset_type="pub",
 )
 
-date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
+# date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
 write_acc_stats >> delete_acc_pub_task >> send_acc_to_pub_task
 date_task >> changes_task >> write_bal_stats >> delete_bal_task >> send_bal_to_bq_task
 write_bal_stats >> delete_bal_pub_task >> send_bal_to_pub_task
