@@ -106,9 +106,9 @@ delete_off_task = build_delete_data_task(
 delete_off_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["offers"], "pub"
 )
-# delete_pool_task = build_delete_data_task(
-#     dag, internal_project, internal_dataset, table_names["liquidity_pools"]
-# )
+delete_pool_task = build_delete_data_task(
+    dag, internal_project, internal_dataset, table_names["liquidity_pools"]
+)
 delete_pool_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["liquidity_pools"], "pub"
 )
