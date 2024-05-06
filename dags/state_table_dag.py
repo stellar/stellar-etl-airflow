@@ -84,15 +84,15 @@ write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
 The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 """
-delete_acc_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["accounts"]
-)
+# delete_acc_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["accounts"]
+# )
 delete_acc_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["accounts"], "pub"
 )
-delete_bal_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["claimable_balances"]
-)
+# delete_bal_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["claimable_balances"]
+# )
 delete_bal_pub_task = build_delete_data_task(
     dag,
     public_project,
@@ -100,9 +100,9 @@ delete_bal_pub_task = build_delete_data_task(
     table_names["claimable_balances"],
     "pub",
 )
-delete_off_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["offers"]
-)
+# delete_off_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["offers"]
+# )
 delete_off_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["offers"], "pub"
 )
@@ -112,15 +112,15 @@ delete_off_pub_task = build_delete_data_task(
 delete_pool_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["liquidity_pools"], "pub"
 )
-delete_sign_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["signers"]
-)
+# delete_sign_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["signers"]
+# )
 delete_sign_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["signers"], "pub"
 )
-delete_trust_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["trustlines"]
-)
+# delete_trust_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["trustlines"]
+# )
 delete_trust_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["trustlines"], "pub"
 )
@@ -142,36 +142,36 @@ The apply tasks receive the location of the file in Google Cloud storage through
 Then, the task merges the entries in the file with the entries in the corresponding table in BigQuery.
 Entries are updated, deleted, or inserted as needed.
 """
-send_acc_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    changes_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["accounts"],
-    "/*-accounts.txt",
-    partition=True,
-    cluster=True,
-)
-send_bal_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    changes_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["claimable_balances"],
-    "/*-claimable_balances.txt",
-    partition=True,
-    cluster=True,
-)
-send_off_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    changes_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["offers"],
-    "/*-offers.txt",
-    partition=True,
-    cluster=True,
-)
+# send_acc_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     changes_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["accounts"],
+#     "/*-accounts.txt",
+#     partition=True,
+#     cluster=True,
+# )
+# send_bal_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     changes_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["claimable_balances"],
+#     "/*-claimable_balances.txt",
+#     partition=True,
+#     cluster=True,
+# )
+# send_off_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     changes_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["offers"],
+#     "/*-offers.txt",
+#     partition=True,
+#     cluster=True,
+# )
 # send_pool_to_bq_task = build_gcs_to_bq_task(
 #     dag,
 #     changes_task.task_id,
@@ -182,26 +182,26 @@ send_off_to_bq_task = build_gcs_to_bq_task(
 #     partition=True,
 #     cluster=True,
 # )
-send_sign_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    changes_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["signers"],
-    "/*-signers.txt",
-    partition=True,
-    cluster=True,
-)
-send_trust_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    changes_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["trustlines"],
-    "/*-trustlines.txt",
-    partition=True,
-    cluster=True,
-)
+# send_sign_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     changes_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["signers"],
+#     "/*-signers.txt",
+#     partition=True,
+#     cluster=True,
+# )
+# send_trust_to_bq_task = build_gcs_to_bq_task(
+#     dag,
+#     changes_task.task_id,
+#     internal_project,
+#     internal_dataset,
+#     table_names["trustlines"],
+#     "/*-trustlines.txt",
+#     partition=True,
+#     cluster=True,
+# )
 
 """
     Send to public dataset
@@ -317,11 +317,17 @@ send_ttl_to_pub_task = build_gcs_to_bq_task(
     dataset_type="pub",
 )
 
-date_task >> changes_task >> write_acc_stats >> delete_acc_task >> send_acc_to_bq_task
+(
+    date_task >> changes_task >> write_acc_stats
+)  # >> delete_acc_task >> send_acc_to_bq_task
 write_acc_stats >> delete_acc_pub_task >> send_acc_to_pub_task
-date_task >> changes_task >> write_bal_stats >> delete_bal_task >> send_bal_to_bq_task
+(
+    date_task >> changes_task >> write_bal_stats
+)  # >> delete_bal_task >> send_bal_to_bq_task
 write_bal_stats >> delete_bal_pub_task >> send_bal_to_pub_task
-date_task >> changes_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
+(
+    date_task >> changes_task >> write_off_stats
+)  # >> delete_off_task >> send_off_to_bq_task
 write_off_stats >> delete_off_pub_task >> send_off_to_pub_task
 (
     date_task
@@ -335,16 +341,16 @@ write_pool_stats >> delete_pool_pub_task >> send_pool_to_pub_task
     date_task
     >> changes_task
     >> write_sign_stats
-    >> delete_sign_task
-    >> send_sign_to_bq_task
+    # >> delete_sign_task
+    # >> send_sign_to_bq_task
 )
 write_sign_stats >> delete_sign_pub_task >> send_sign_to_pub_task
 (
     date_task
     >> changes_task
     >> write_trust_stats
-    >> delete_trust_task
-    >> send_trust_to_bq_task
+    # >> delete_trust_task
+    # >> send_trust_to_bq_task
 )
 write_trust_stats >> delete_trust_pub_task >> send_trust_to_pub_task
 (
