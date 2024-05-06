@@ -329,7 +329,14 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     partition=True,
     cluster=True,
 )
-
+(
+    time_task
+    >> write_op_stats
+    >> op_export_task
+    >> delete_old_op_task
+    >> send_ops_to_bq_task
+    >> delete_enrich_op_task
+)
 (
     delete_enrich_op_task
     >> insert_enriched_hist_task
