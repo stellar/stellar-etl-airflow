@@ -106,9 +106,9 @@ delete_off_task = build_delete_data_task(
 delete_off_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["offers"], "pub"
 )
-delete_pool_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["liquidity_pools"]
-)
+# delete_pool_task = build_delete_data_task(
+#     dag, internal_project, internal_dataset, table_names["liquidity_pools"]
+# )
 delete_pool_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["liquidity_pools"], "pub"
 )
@@ -323,13 +323,13 @@ date_task >> changes_task >> write_bal_stats >> delete_bal_task >> send_bal_to_b
 write_bal_stats >> delete_bal_pub_task >> send_bal_to_pub_task
 date_task >> changes_task >> write_off_stats >> delete_off_task >> send_off_to_bq_task
 write_off_stats >> delete_off_pub_task >> send_off_to_pub_task
-# (
-#     date_task
-#     >> changes_task
-#     >> write_pool_stats
-#     >> delete_pool_task
-#     >> send_pool_to_bq_task
-# )
+(
+    date_task
+    >> changes_task
+    >> write_pool_stats
+    #     >> delete_pool_task
+    #     >> send_pool_to_bq_task
+)
 write_pool_stats >> delete_pool_pub_task >> send_pool_to_pub_task
 (
     date_task
