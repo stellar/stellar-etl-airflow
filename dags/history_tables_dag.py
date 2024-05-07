@@ -204,9 +204,7 @@ delete_old_tx_pub_task = build_delete_data_task(
 delete_old_ledger_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["ledgers"], "pub"
 )
-delete_old_asset_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["assets"]
-)
+
 delete_old_asset_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["assets"], "pub"
 )
@@ -216,17 +214,6 @@ delete_old_asset_pub_task = build_delete_data_task(
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
-send_assets_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    asset_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["assets"],
-    "",
-    partition=True,
-    cluster=True,
-)
-
 
 """
 Load final public dataset, crypto-stellar
@@ -355,15 +342,7 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
         insert_enriched_hist_pub_task,
     ]
 )
-dedup_assets_bq_task = build_bq_insert_job(
-    dag,
-    internal_project,
-    internal_dataset,
-    table_names["assets"],
-    partition=True,
-    cluster=True,
-    create=True,
-)
+
 dedup_assets_pub_task = build_bq_insert_job(
     dag,
     public_project,
@@ -386,12 +365,6 @@ dedup_assets_pub_task = build_bq_insert_job(
     time_task
     >> write_asset_stats
     >> asset_export_task
-    >> delete_old_asset_task
-    >> send_assets_to_bq_task
-    >> dedup_assets_bq_task
-)
-(
-    asset_export_task
     >> delete_old_asset_pub_task
     >> send_assets_to_pub_task
     >> dedup_assets_pub_task
