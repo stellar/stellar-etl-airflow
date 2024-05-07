@@ -163,9 +163,6 @@ asset_export_task = build_export_task(
 The delete partition task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 """
-delete_old_op_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, table_names["operations"]
-)
 
 delete_old_op_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["operations"], "pub"
@@ -175,19 +172,12 @@ delete_old_trade_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["trades"], "pub"
 )
 
-delete_enrich_op_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, "enriched_history_operations"
-)
-
 delete_enrich_op_pub_task = build_delete_data_task(
     dag,
     public_project,
     public_dataset,
     "enriched_history_operations",
     "pub",
-)
-delete_enrich_ma_op_task = build_delete_data_task(
-    dag, internal_project, internal_dataset, "enriched_meaningful_history_operations"
 )
 
 delete_old_effects_pub_task = build_delete_data_task(
@@ -219,16 +209,6 @@ delete_old_asset_pub_task = build_delete_data_task(
 The send tasks receive the location of the file in Google Cloud storage through Airflow's XCOM system.
 Then, the task merges the unique entries in the file into the corresponding table in BigQuery.
 """
-send_ops_to_bq_task = build_gcs_to_bq_task(
-    dag,
-    op_export_task.task_id,
-    internal_project,
-    internal_dataset,
-    table_names["operations"],
-    "",
-    partition=True,
-    cluster=True,
-)
 send_assets_to_bq_task = build_gcs_to_bq_task(
     dag,
     asset_export_task.task_id,
@@ -236,14 +216,6 @@ send_assets_to_bq_task = build_gcs_to_bq_task(
     internal_dataset,
     table_names["assets"],
     "",
-    partition=True,
-    cluster=True,
-)
-insert_enriched_hist_task = build_bq_insert_job(
-    dag,
-    internal_project,
-    internal_dataset,
-    "enriched_history_operations",
     partition=True,
     cluster=True,
 )
@@ -348,28 +320,7 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
     dataset_type="pub",
 )
 
-insert_enriched_ma_hist_task = build_bq_insert_job(
-    dag,
-    internal_project,
-    internal_dataset,
-    "enriched_meaningful_history_operations",
-    partition=True,
-    cluster=True,
-)
-(
-    time_task
-    >> write_op_stats
-    >> op_export_task
-    >> delete_old_op_task
-    >> send_ops_to_bq_task
-    >> delete_enrich_op_task
-)
-(
-    delete_enrich_op_task
-    >> insert_enriched_hist_task
-    >> delete_enrich_ma_op_task
-    >> insert_enriched_ma_hist_task
-)
+(time_task >> write_op_stats >> op_export_task)
 
 (
     time_task
@@ -405,19 +356,11 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> send_txs_to_pub_task
     >> delete_enrich_op_pub_task
 )
-(
-    time_task
-    >> write_tx_stats
-    >> tx_export_task
-    >> delete_old_tx_task
-    >> send_txs_task
-    >> delete_enrich_op_task
-)
+(time_task >> write_tx_stats >> tx_export_task >> delete_old_tx_task >> send_txs_task)
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
 (
     [
         insert_enriched_hist_pub_task,
-        insert_enriched_hist_task,
     ]
 )
 dedup_assets_bq_task = build_bq_insert_job(
@@ -453,7 +396,6 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> ledger_export_task
     >> delete_old_ledger_task
     >> send_ledgers_task
-    >> delete_enrich_op_task
 )
 (
     time_task
