@@ -198,8 +198,15 @@ delete_old_tx_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["transactions"], "pub"
 )
 
+delete_old_tx_task = build_delete_data_task(
+    dag, internal_project, internal_dataset, table_names["transactions"], "pub"
+)
+
 delete_old_ledger_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["ledgers"], "pub"
+)
+delete_old_ledger_task = build_delete_data_task(
+    dag, internal_project, internal_dataset, table_names["ledgers"], "pub"
 )
 delete_old_asset_task = build_delete_data_task(
     dag, internal_project, internal_dataset, table_names["assets"]
@@ -288,11 +295,33 @@ send_txs_to_pub_task = build_gcs_to_bq_task(
     cluster=True,
     dataset_type="pub",
 )
+send_txs_task = build_gcs_to_bq_task(
+    dag,
+    tx_export_task.task_id,
+    internal_project,
+    internal_dataset,
+    table_names["transactions"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
 send_ledgers_to_pub_task = build_gcs_to_bq_task(
     dag,
     ledger_export_task.task_id,
     public_project,
     public_dataset,
+    table_names["ledgers"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+send_ledgers_task = build_gcs_to_bq_task(
+    dag,
+    ledger_export_task.task_id,
+    internal_project,
+    internal_dataset,
     table_names["ledgers"],
     "",
     partition=True,
@@ -378,6 +407,14 @@ insert_enriched_ma_hist_task = build_bq_insert_job(
     >> send_txs_to_pub_task
     >> delete_enrich_op_pub_task
 )
+(
+    time_task
+    >> write_tx_stats
+    >> tx_export_task
+    >> delete_old_tx_task
+    >> send_txs_task
+    >> delete_enrich_op_task
+)
 (time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
 (
     [
@@ -411,6 +448,14 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> delete_old_ledger_pub_task
     >> send_ledgers_to_pub_task
     >> delete_enrich_op_pub_task
+)
+(
+    time_task
+    >> write_ledger_stats
+    >> ledger_export_task
+    >> delete_old_ledger_task
+    >> send_ledgers_task
+    >> delete_enrich_op_task
 )
 (
     time_task
