@@ -49,7 +49,7 @@ public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
 use_captive_core = literal_eval(Variable.get("use_captive_core"))
-txmeta_datastore_url = "{{ var.value.txmeta_datastore_url }}"
+txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
 
 date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 changes_task = build_export_task(
@@ -61,7 +61,7 @@ changes_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 
 """

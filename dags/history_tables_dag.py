@@ -51,7 +51,7 @@ public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
 use_captive_core = literal_eval(Variable.get("use_captive_core"))
-txmeta_datastore_url = "{{ var.value.txmeta_datastore_url }}"
+txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
 
 """
 The time task reads in the execution time of the current run, as well as the next
@@ -90,7 +90,7 @@ op_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 trade_export_task = build_export_task(
     dag,
@@ -101,7 +101,7 @@ trade_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 effects_export_task = build_export_task(
     dag,
@@ -112,7 +112,7 @@ effects_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 tx_export_task = build_export_task(
     dag,
@@ -123,7 +123,7 @@ tx_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 diagnostic_events_export_task = build_export_task(
     dag,
@@ -134,7 +134,7 @@ diagnostic_events_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 ledger_export_task = build_export_task(
     dag,
@@ -145,7 +145,7 @@ ledger_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 asset_export_task = build_export_task(
     dag,
@@ -156,7 +156,7 @@ asset_export_task = build_export_task(
     use_futurenet=use_futurenet,
     use_gcs=True,
     use_captive_core=use_captive_core,
-    txmeta_datastore_url=txmeta_datastore_url,
+    txmeta_datastore_path=txmeta_datastore_path,
 )
 
 """
