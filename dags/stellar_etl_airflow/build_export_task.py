@@ -48,7 +48,7 @@ def generate_etl_cmd(
     use_testnet=False,
     use_futurenet=False,
     use_captive_core=False,
-    txmeta_datastore_url="",
+    txmeta_datastore_path="",
 ):
     """
     Runs the provided stellar-etl command with arguments that are appropriate for the command type.
@@ -152,8 +152,8 @@ def generate_etl_cmd(
         cmd.append("--futurenet")
     if use_captive_core:
         cmd.append("--captive-core")
-    if txmeta_datastore_url:
-        cmd.extend(["--datastore-url", txmeta_datastore_url])
+    if txmeta_datastore_path:
+        cmd.extend(["--datastore-path", txmeta_datastore_path])
     cmd.append("--strict-export")
 
     if command == "export_all_history":
@@ -172,7 +172,7 @@ def build_export_task(
     use_futurenet=False,
     resource_cfg="default",
     use_captive_core=False,
-    txmeta_datastore_url="",
+    txmeta_datastore_path="",
 ):
     """
     Creates a task that calls the provided export function with the correct arguments in the stellar-etl Docker image.
@@ -195,7 +195,7 @@ def build_export_task(
         use_testnet,
         use_futurenet,
         use_captive_core,
-        txmeta_datastore_url,
+        txmeta_datastore_path,
     )
     etl_cmd_string = " ".join(etl_cmd)
     namespace = conf.get("kubernetes", "NAMESPACE")
