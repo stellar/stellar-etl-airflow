@@ -2,6 +2,8 @@ import logging
 from datetime import datetime, timedelta
 
 from airflow.models import Variable
+
+# from airflow.providers.slack.notifications.slack import send_slack_notification
 from sentry_sdk import capture_message, init, push_scope, set_tag
 from sentry_sdk.integrations.logging import LoggingIntegration
 
@@ -61,3 +63,15 @@ def alert_after_max_retries(context):
                 f"The task {ti.task_id} belonging to DAG {ti.dag_id} failed after max retries.",
                 "fatal",
             )
+
+
+def alert_sla_miss(*args, **kwargs):
+    """
+    When a task takes longer then expected to run while having a defined SLA,
+    it misses it.
+    This alerts the IT team about the unexpected behavior in order
+    to enable faster response in case of underlying infrastructure issues.
+    """
+
+    logging.info(args)
+    logging.info(kwargs)
