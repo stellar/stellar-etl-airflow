@@ -239,4 +239,5 @@ def build_export_task(
         affinity=affinity,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
+        sla=timedelta(minutes=4),
     )
