@@ -245,7 +245,7 @@
     "build_delete_data_task": 180,
     "build_export_task": 180,
     "build_gcs_to_bq_task": 300,
-    "build_time_task": 120
+    "build_time_task": 300
   },
   "dbt_tables": {
     "signers_current": "account_signers_current",
