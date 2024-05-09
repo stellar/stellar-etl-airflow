@@ -52,6 +52,7 @@ def elementary_task(
         f"{secret}",
         "--slack-channel-name",
         "{{ var.value.slack_elementary_channel }}",
+        "--suppression-interval 24",
     ]
 
     logging.info(f"sh commands to run in pod: {args}")
