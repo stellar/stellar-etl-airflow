@@ -536,47 +536,68 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ## **DAG Diagrams**
 
-### **History Archive with Captive Core DAG**
+- The sources are: ledgers, operations, transactions, trades, effects, claimable_balances, accounts, account_signers, liquidity_pools, offers, trust_lines, config_settings, contract_data, contract_code and assets.
+
+- The DAGs that export the sources are: History Table Export and State Table Export.
+
+### **History Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_with_captive_core_dag.py):
 
-- exports transactions, operations, trades, and effects from Stellar using CaptiveCore
-- inserts into BigQuery
-  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
+- exports part of sources: ledgers, operations, transactions, trades, effects and assets from Stellar using CaptiveCore
+- inserts into BigQuery publicly (crypto-stellar).
 
-![History Archive with Captive Core Dag](documentation/images/history_archive_with_captive_core.png)
-
-### **History Archive without Captive Core DAG**
-
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_without_captive_core_dag.py):
-
-- exports assets and ledgers from Stellar's history archives
-- inserts into BigQuery
-  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
-
-![History Archive Dag](documentation/images/history_archive_without_captive_core.png)
+![History Table Export Dag](documentation/images/history_table_export.png)
 
 ### **State Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/state_table_dag.py)
 
-- exports accounts, account_signers, offers, claimable_balances, liquidity pools, and trustlines
-- inserts into BigQuery
+- exports accounts, account_signers, offers, claimable_balances, liquidity pools, trustlines, contract_data, contract_code, config_settings and ttl.
+- inserts into BigQuery publicly (crypto stellar).
 
-![Bucket List DAG](documentation/images/state_table_export.png)
+![State Table Export DAG](documentation/images/state_table_export.png)
 
-### **Bucket List DAG (Unsupported)**
+### **Daily Euro Ohlc DAG**
 
-> _*NOTE:*_ Bucket List DAG is unsupported.
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/daily_euro_ohlc_dag.py)
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bucket_list_dag.py):
+- This DAG updates the currency tables in Bigquery every day.
 
-- exports from Stellar's bucket list, which contains data on accounts, offers, trustlines, account signers, liqudity pools, and claimable balances
-- inserts into BigQuery
+### **Dbt Enriched Base Tables**
 
-![Bucket List DAG](documentation/images/bucket_list_export.png)
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_enriched_base_tables_dag.py)
 
-### **Sandbox update DAG**
+- This DAG runs dbt models at every 30 minutes. If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
+
+![Enriched Base Tables DAG](documentation/images/enriched_base_tables.png)
+
+### **Dbt SDF Marts DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_sdf_marts_dag.py)
+
+- This DAG runs dbt models at every 30 minutes. If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
+
+![Dbt SDF Marts DAG](documentation/images/dbt_sdf_marts.png)
+
+### **Partner Pipeline DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/partner_pipeline_dag.py)
+
+- This DAG automates daily updates to partner tables in BigQuery, hubble and crypto stellar.
+
+![Partner Pipeline DAG](documentation/images/partner_pipeline_dag.png)
+
+### **Sandbox DAGs**
+
+- The data comes from test(Testnet), which is reseted every 3 to 4 months.
+- The tables contains 6 months of production data.
+
+#### **Sandbox create DAGs**
+
+- This DAG runs only once and creates the Canvas sandbox dataset with the sources, which are transactions tables, state tables and views for each table.
+
+#### **Sandbox Update DAGs**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
 

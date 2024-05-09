@@ -19,7 +19,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 with DAG(
     dag_id="daily_euro_ohlc_dag",
     start_date=datetime(2023, 1, 1, 0, 0),
-    description="This DAG updates the currency tables in Bigquey every day",
+    description="This DAG updates the currency tables in Bigquery every day",
     schedule_interval="35 0 * * *",
     params={
         "alias": "euro",
