@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 
 from airflow.models import Variable
-from airflow.providers.slack.notifications.slack import send_slack_notification
 from sentry_sdk import capture_message, init, push_scope, set_tag
 from sentry_sdk.integrations.logging import LoggingIntegration
 
@@ -62,26 +61,3 @@ def alert_after_max_retries(context):
                 f"The task {ti.task_id} belonging to DAG {ti.dag_id} failed after max retries.",
                 "fatal",
             )
-
-
-def alert_sla_miss(dag, task_list, blocking_task_list, slas, blocking_tis):
-    """
-    When a task takes longer then expected to run while having a defined SLA,
-    it misses it.
-    This alerts the IT team about the unexpected behavior in order
-    to enable faster response in case of underlying infrastructure issues.
-    """
-    dag_id = slas[0].dag_id
-    task_id = slas[0].task_id
-    execution_date = slas[0].execution_date.isoformat()
-
-    channel = "#alerts-hubble-testnet"
-    alert_msg = f"""
-        :warning: The task {task_id} belonging to DAG {dag_id} missed its SLA.
-        for the run date {execution_date}.
-    """
-    return send_slack_notification(
-        slack_conn_id="slack_api",
-        text=alert_msg,
-        channel=channel,
-    )
