@@ -1,5 +1,6 @@
 import base64
 import logging
+from datetime import timedelta
 
 from airflow.configuration import conf
 from airflow.models import Variable
@@ -89,4 +90,9 @@ def elementary_task(
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                f"elementary_{task_name}"
+            ]
+        ),
     )

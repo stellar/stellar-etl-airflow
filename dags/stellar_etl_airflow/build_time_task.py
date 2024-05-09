@@ -88,4 +88,9 @@ def build_time_task(
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                "get_ledger_range_from_times"
+            ]
+        ),
     )
