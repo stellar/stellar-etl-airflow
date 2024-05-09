@@ -74,8 +74,11 @@ def alert_sla_miss(dag, task_list, blocking_task_list, slas, blocking_tis):
     task_id = slas[0].task_id
     execution_date = slas[0].execution_date.isoformat()
 
-    alert_msg = f"""
-        :warning: The task {task_id} belonging to DAG {dag_id} missed its SLA.
-        for the run date {execution_date}.
-    """
-    logging.warn(alert_msg)
+    with push_scope() as scope:
+        scope.set_extra("dag_id", dag_id)
+        scope.set_extra("task_id", task_id)
+        scope.set_extra("execution_date", execution_date)
+        capture_message(
+            f"The task {task_id} belonging to DAG {dag_id} missed its SLA for the run date {execution_date}.",
+            "warn",
+        )
