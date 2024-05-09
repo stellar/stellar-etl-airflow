@@ -247,6 +247,28 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 300
   },
+  "task_sla": {
+    "get_ledger_range_from_times": 240,
+    "export_task": 240,
+    "enriched_history_operations": 480,
+    "current_state": 480,
+    "elementary_dbt_enriched_base_tables": 240,
+    "ohlc": 720,
+    "liquidity_pool_trade_volume": 840,
+    "mgi": 480,
+    "liquidity_providers": 720,
+    "liquidity_pools_value": 840,
+    "liquidity_pools_value_history": 600,
+    "trade_agg": 720,
+    "fee_stats": 840,
+    "asset_stats": 600,
+    "network_stats": 720,
+    "partnership_assets": 600,
+    "history_assets": 720,
+    "soroban": 720,
+    "snapshot_state": 600,
+    "elementary_dbt_sdf_marts": 300
+  },
   "dbt_tables": {
     "signers_current": "account_signers_current",
     "accounts_current": "accounts_current",
