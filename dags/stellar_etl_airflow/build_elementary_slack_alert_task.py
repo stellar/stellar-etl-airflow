@@ -48,12 +48,12 @@ def elementary_task(
     secret = access_secret(slack_secret_name, "default")
     args = [
         "monitor",
+        "--suppression-interval",
+        "24",
         "--slack-token",
         f"{secret}",
         "--slack-channel-name",
         "{{ var.value.slack_elementary_channel }}",
-        "--alert-suppression-interval",
-        "24",
     ]
 
     logging.info(f"sh commands to run in pod: {args}")
