@@ -520,10 +520,14 @@ You can clear failed tasks in the [task-instance context menu](https://airflow.a
 This section contains information about the Airflow setup. It includes our DAG diagrams and explanations of tasks. For general Airflow knowledge, check out the Airflow [concepts overview](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html) or the Airflow [tutorial](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html).
 
 - [DAG Diagrams](#dag-diagrams)
-  - [History Archive with Captive Core DAG](#history-archive-with-captive-core-dag)
-  - [History Archive without Captive Core DAG](#history-archive-without-captive-core-dag)
+  - [History Tables Export DAG](#history-tables-export-dag)
   - [State Table Export DAG](#state-table-export-dag)
-  - [Bucket List DAG (Unsupported)](#bucket-list-dag-nsupported)
+  - [Daily Euro Ohlc DAG](#daily-euro-ohlc-dag)
+  - [Dbt Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
+  - [Dbt SDF Marts DAG](#dbt-sdf-marts-dag)
+  - [Partner Pipeline DAG](#partner-pipeline-dag)
+  - [Sandbox DAGs](#Sandbox-dags)
+  - [Cleanup metadata DAG](#Cleanup-metadata-dag)
 - [Task Explanations](#task-explanations)
   - [build_time_task](#build_time_task)
   - [build_export_task](#build_export_task)
