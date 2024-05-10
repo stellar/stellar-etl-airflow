@@ -48,8 +48,8 @@ def elementary_task(
     secret = access_secret(slack_secret_name, "default")
     args = [
         "monitor",
-        # "--suppression-interval",
-        # "24",
+        "--suppression-interval",
+        "24",
         "--slack-token",
         f"{secret}",
         "--slack-channel-name",
