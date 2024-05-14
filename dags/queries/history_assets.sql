@@ -33,10 +33,11 @@ with
             , new_load_dedup.asset_type
         from new_load_dedup
         left join
-            deduplicated_table on
-        new_load_dedup.asset_code = deduplicated_table.asset_code
-        and new_load_dedup.asset_issuer = deduplicated_table.asset_issuer
-        and new_load_dedup.asset_type = deduplicated_table.asset_type
+            deduplicated_table
+            on
+            new_load_dedup.asset_code = deduplicated_table.asset_code
+            and new_load_dedup.asset_issuer = deduplicated_table.asset_issuer
+            and new_load_dedup.asset_type = deduplicated_table.asset_type
         where
             deduplicated_table.asset_code is null
             and deduplicated_table.asset_issuer is null
