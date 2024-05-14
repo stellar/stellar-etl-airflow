@@ -14,6 +14,8 @@ rules = all
 # Comma separated list of rules to exclude, or None
 # Rules not existing in our code style
 exclude_rules = L009,L022,L031,L034,L037,L051,L044,L027,L046
+# The depth to recursively parse to (0 for unlimited)
+recurse = 0
 # Below controls SQLFluff output, see max_line_length for SQL output
 output_line_length = 100
 # Number of passes to run before admitting defeat
@@ -62,11 +64,8 @@ template_blocks_indent = True
 [sqlfluff:layout:type:comma]
 line_position = leading
 
-[sqlfluff:layout:type:binary_operator]
-line_position = leading
-
-[sqlfluff:layout:type:comparison_operator]
-line_position = leading
+[sqlfluff:layout:operators]
+operator_new_lines = after
 
 [sqlfluff:templater]
 unwrap_wrapped_queries = True
