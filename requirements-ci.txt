@@ -10,7 +10,6 @@ apache-airflow-providers-sqlite==3.3.2
 connexion==2.14.2 # needed
 flask==2.2.5 # needed
 flask-session==0.5.0 # needed
-jsonlines==3.0
 pendulum==2.1.2 # needed
 pytest==7.4.4 # needed
 sentry-sdk==1.19.0 # needed
