@@ -6,6 +6,8 @@ apache-airflow-providers-google==8.6.0
 apache-airflow-providers-http==4.3.0
 apache-airflow-providers-imap==3.1.1
 apache-airflow-providers-sqlite==3.3.2
+flask==2.2.5 # needed
+flask-session==0.5.0 # needed
 freezegun==1.5.1
 jsonlines==3.0
 pendulum==2.1.2 # needed
