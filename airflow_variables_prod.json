@@ -57,7 +57,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:a09a75d",
+  "dbt_image_name": "stellar/stellar-dbt:b7e0010",
   "dbt_job_execution_timeout_seconds": 1800,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "crypto_stellar_dbt",
@@ -67,7 +67,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-hubble-2-d948d67b-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:2de3397",
+  "image_name": "stellar/stellar-etl:2f8c44a",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -282,5 +282,5 @@
   "elementary_secret": "slack-token-elementary",
   "dbt_elementary_dataset": "elementary",
   "use_captive_core": "False",
-  "txmeta_datastore_path": "ledger-exporter/ledgers"
+  "txmeta_datastore_path": "sdf-ledger-close-metas/ledgers"
 }
