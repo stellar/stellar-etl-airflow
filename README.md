@@ -524,8 +524,9 @@ This section contains information about the Airflow setup. It includes our DAG d
 - [DAG Diagrams](#dag-diagrams)
   - [History Table Export DAG](#history-table-export-dag)
   - [State Table Export DAG](#state-table-export-dag)
-  - [Sandbox update DAG](#sandbox-update-dag)
-  - [Cleanup metadata DAG](#cleanup-metadata-dag)
+  - [Sandbox Create DAG](#sandbox-create-dag)
+  - [Sandbox Update DAG](#sandbox-update-dag)
+  - [Cleanup Metadata DAG](#cleanup-metadata-dag)
   - [Partner Pipeline DAG](#partner-pipeline-dag)
   - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
   - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
@@ -547,13 +548,18 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ## **DAG Diagrams**
 
+- The sources are: ledgers, operations, transactions, trades, effects, claimable_balances, accounts, account_signers, liquidity_pools, offers, trust_lines, config_settings, contract_data, contract_code and assets.
+
+- The DAGs that export the sources are: History Table Export and State Table Export.
+
+- All the other tables that are not listed above are exclusive to internal datasets.
+
 ### **History Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_tables_dag.py):
 
-- exports transactions, operations, trades, effects, diagnostic events, ledgers, and assets
-- inserts into BigQuery
-  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
+- Exports part of sources: ledgers, operations, transactions, trades, effects and assets from Stellar using CaptiveCore
+- Inserts into BigQuery publicly (crypto-stellar).
 
 ![history_table_export DAG](documentation/images/history_table_export.png)
 
@@ -561,12 +567,21 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/state_table_dag.py)
 
-- exports accounts, account_signers, offers, claimable_balances, liquidity pools, and trustlines
-- inserts into BigQuery
+- Exports accounts, account_signers, offers, claimable_balances, liquidity pools, trustlines, contract_data, contract_code, config_settings and ttl.
+- Inserts into BigQuery publicly (crypto stellar).
 
 ![state_table_export DAG](documentation/images/state_table_export.png)
 
-### **Sandbox update DAG**
+### **Sandbox DAGs**
+
+- The data comes from test(Testnet), which is reseted every 3 to 4 months.
+- The tables contains 6 months of production data.
+
+#### **Sandbox Create DAG**
+
+- This DAG runs only once and creates the Canvas sandbox dataset with the sources, which are transactions tables, state tables and views for each table.
+
+#### **Sandbox Update DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
 
@@ -574,7 +589,7 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![sandbox_update_dag DAG](documentation/images/sandbox_update_dag.png)
 
-### **Cleanup metadata DAG**
+### **Cleanup Metadata DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/cleanup_metadata_dag.py)
 
@@ -597,6 +612,7 @@ This section contains information about the Airflow setup. It includes our DAG d
 - Creates the DBT staging views for models
 - Updates the enriched_history_operations table
 - Updates the current state tables
+- If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
 
 ![dbt_enriched_base_tables DAG](documentation/images/dbt_enriched_base_tables.png)
 
@@ -604,7 +620,8 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_sdf_marts_dag.py)
 
-- Updates the DBT mart tables
+- Updates the DBT mart tables every 30 minutes.
+- If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
 
 ![dbt_sdf_marts DAG](documentation/images/dbt_sdf_marts.png)
 
