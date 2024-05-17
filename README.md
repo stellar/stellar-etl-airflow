@@ -596,7 +596,6 @@ This section contains information about the Airflow setup. It includes our DAG d
 - The sandbox dags are used to provide Canvas with a subset of network data that will fit within their systems
 - The tables contain 6 months of the targeted environment's (pubnet, testnet, or futurenet) data.
 
-
 ##### **Sandbox Create DAG**
 
 - This DAG runs only once and creates the Canvas sandbox dataset with copies of transactions tables, state tables, and current state views.
