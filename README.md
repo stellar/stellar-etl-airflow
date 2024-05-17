@@ -16,15 +16,17 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
     - [Clearing Failures](#clearing-failures)
 - [Understanding the Setup](#understanding-the-setup)
   - [DAG Diagrams](#dag-diagrams)
-    - [History Table Export DAG](#history-table-export-dag)
-    - [State Table Export DAG](#state-table-export-dag)
-    - [Sandbox update DAG](#sandbox-update-dag)
-    - [Cleanup metadata DAG](#cleanup-metadata-dag)
-    - [Partner Pipeline DAG](#partner-pipeline-dag)
-    - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
-    - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
-    - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
-    - [Audit Log DAG](#audit-log-dag)
+    - [Public DAGs](#public-dags)
+      - [History Table Export DAG](#history-table-export-dag)
+      - [State Table Export DAG](#state-table-export-dag)
+      - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
+    - [SDF Internal DAGs](#sdf-internal-dags)
+      - [Sandbox update DAG](#sandbox-update-dag)
+      - [Cleanup metadata DAG](#cleanup-metadata-dag)
+      - [Partner Pipeline DAG](#partner-pipeline-dag)
+      - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
+      - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
+      - [Audit Log DAG](#audit-log-dag)
   - [Task Explanations](#task-explanations)
     - [build_time_task](#build_time_task)
     - [build_export_task](#build_export_task)
@@ -111,7 +113,7 @@ Cloud Composer may take a while to setup the environment. Once the process is fi
 
 > _*Note:*_ Cloud Composer 1 is in the post-maintenance mode. Google does not release any further updates to Cloud Composer 1, including new versions of Airflow, bugfixes, and security updates. [Composer 1](https://cloud.google.com/composer/docs/concepts/overview)
 
-> _*For Cloud Composer 2:*_ Be wary of the default "autopilot" mode for environment resource management. The ephemeral storage provided by autopilot-ed containers is [capped at 10GB](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests), which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`) run with `captive-core`.
+> _*For Cloud Composer 2:*_ Be wary of the default "autopilot" mode for environment resource management. The ephemeral storage provided by autopilot-ed containers is [capped at 10GB](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests), which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`) run with `captive-core`. One workaround to provide captive-core with the storage it needs is to [mount a volume to the KubernetesPod](https://darsh7.medium.com/cloud-composer-gce-persistent-disk-volume-for-kubernetespodoperator-cbca3ea57e39) and have captive-core run from that mounted volume rather than the ephemeral storage supplied by default.
 
 > _*Note*_: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
 > Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-2.7.1-airflow-2.6.3` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
@@ -453,7 +455,7 @@ The `airflow_variables_*.txt` files provide a set of default values for variable
 | dbt_image_name                    | name of the `stellar-dbt` image to use                                                                                               | No, unless you need a specific image version              |
 | dbt_job_execution_timeout_seconds | timeout for dbt tasks in seconds                                                                                                     | No, unless you want a different timeout                   |
 | dbt_job_retries                   | number of times dbt_jobs will retry                                                                                                  | No, unless you want a different retry limit               |
-| dbt_mart_dataset                  | BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets) to DBT marts to                                                  | Yes. Change to your dataset name                          |
+| dbt_mart_dataset                  | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets) for DBT marts                                        | Yes. Change to your dataset name                          |
 | dbt_maximum_bytes_billed          | the max number of BigQuery bytes that can be billed when running DBT                                                                 | No, unless you want a different limit                     |
 | dbt_project                       | name of the Biquery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                     | Yes. Change to your project name                          |
 | dbt_target                        | the `target` that will used to run dbt                                                                                               | No, unless you want a different target                    |
@@ -464,7 +466,6 @@ The `airflow_variables_*.txt` files provide a set of default values for variable
 | public_source_db                  | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
 | public_source_schema              | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
 | slack_elementary_channel          | Name of slack channel to send elementary alerts                                                                                      | Yes. Change to your slack channel name.                   |
-| elementary_secret                 | Name of the slack secret to use to send alerts to slack                                                                              | Yes. Change to your secret name.                          |
 | dbt_elementary_dataset            | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
 
 ### **Kubernetes-Specific Variables**
@@ -522,16 +523,19 @@ You can clear failed tasks in the [grid-view](https://airflow.apache.org/docs/ap
 This section contains information about the Airflow setup. It includes our DAG diagrams and explanations of tasks. For general Airflow knowledge, check out the Airflow [concepts overview](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html) or the Airflow [tutorial](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html).
 
 - [DAG Diagrams](#dag-diagrams)
-  - [History Table Export DAG](#history-table-export-dag)
-  - [State Table Export DAG](#state-table-export-dag)
-  - [Sandbox Create DAG](#sandbox-create-dag)
-  - [Sandbox Update DAG](#sandbox-update-dag)
-  - [Cleanup Metadata DAG](#cleanup-metadata-dag)
-  - [Partner Pipeline DAG](#partner-pipeline-dag)
-  - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
-  - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
-  - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
-  - [Audit Log DAG](#audit-log-dag)
+  - [Public DAGs](#public-dags)
+    - [History Table Export DAG](#history-table-export-dag)
+    - [State Table Export DAG](#state-table-export-dag)
+    - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
+  - [SDF Internal DAGs](#sdf-internal-dags)
+    - [Sandbox DAGs](#sandbox-dags)
+      - [Sandbox Create DAG](#sandbox-create-dag)
+      - [Sandbox Update DAG](#sandbox-update-dag)
+    - [Cleanup Metadata DAG](#cleanup-metadata-dag)
+    - [Partner Pipeline DAG](#partner-pipeline-dag)
+    - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
+    - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
+    - [Audit Log DAG](#audit-log-dag)
 - [Task Explanations](#task-explanations)
   - [build_time_task](#build_time_task)
   - [build_export_task](#build_export_task)
@@ -554,7 +558,9 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 - All the other tables that are not listed above are exclusive to internal datasets.
 
-### **History Table Export DAG**
+### **Public DAGs**
+
+#### **History Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_tables_dag.py):
 
@@ -563,7 +569,7 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![history_table_export DAG](documentation/images/history_table_export.png)
 
-### **State Table Export DAG**
+#### **State Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/state_table_dag.py)
 
@@ -572,40 +578,7 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![state_table_export DAG](documentation/images/state_table_export.png)
 
-### **Sandbox DAGs**
-
-- The data comes from test(Testnet), which is reseted every 3 to 4 months.
-- The tables contains 6 months of production data.
-
-#### **Sandbox Create DAG**
-
-- This DAG runs only once and creates the Canvas sandbox dataset with the sources, which are transactions tables, state tables and views for each table.
-
-#### **Sandbox Update DAG**
-
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
-
-- This DAG update the Canvas sandbox dataset with transactions tables, state tables with history once a daily.
-
-![sandbox_update_dag DAG](documentation/images/sandbox_update_dag.png)
-
-### **Cleanup Metadata DAG**
-
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/cleanup_metadata_dag.py)
-
-- A maintenance workflow that you can deploy into Airflow to periodically clean
-  out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
-  having too much data in your Airflow MetaStore.
-
-![cleanup_metadata_dag DAG](documentation/images/cleanup_metadata_dag.png)
-
-### **Partner Pipeline DAG**
-
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/partner_pipeline_dag.py)
-
-- Used by SDF for internal partnership pipelines
-
-### **DBT Enriched Base Tables DAG**
+#### **DBT Enriched Base Tables DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_enriched_base_tables_dag.py)
 
@@ -616,16 +589,52 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![dbt_enriched_base_tables DAG](documentation/images/dbt_enriched_base_tables.png)
 
-### **DBT SDF Marts DAG**
+### **SDF Internal DAGs**
+
+#### **Sandbox DAGs**
+
+- The sandbox dags are used to provide Canvas with a subset of network data that will fit within their systems
+- The tables contain 6 months of the targeted environment's (pubnet, testnet, or futurenet) data.
+
+
+##### **Sandbox Create DAG**
+
+- This DAG runs only once and creates the Canvas sandbox dataset with copies of transactions tables, state tables, and current state views.
+
+##### **Sandbox Update DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
+
+- This DAG update the Canvas sandbox dataset with transactions tables and state tables with history once a daily.
+
+![sandbox_update_dag DAG](documentation/images/sandbox_update_dag.png)
+
+#### **Cleanup Metadata DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/cleanup_metadata_dag.py)
+
+- A maintenance workflow that you can deploy into Airflow to periodically clean
+  out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
+  having too much data in your Airflow MetaStore.
+
+![cleanup_metadata_dag DAG](documentation/images/cleanup_metadata_dag.png)
+
+#### **Partner Pipeline DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/partner_pipeline_dag.py)
+
+- Used by SDF for internal partnership pipelines
+
+#### **DBT SDF Marts DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_sdf_marts_dag.py)
 
-- Updates the DBT mart tables every 30 minutes.
+- Updates the DBT mart tables daily
 - If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
 
 ![dbt_sdf_marts DAG](documentation/images/dbt_sdf_marts.png)
 
-### **Daily Euro OHLC DAG**
+#### **Daily Euro OHLC DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/daily_euro_ohlc_dag.py)
 
@@ -633,7 +642,7 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ![daily_euro_ohlc_dag DAG](documentation/images/daily_euro_ohlc_dag.png)
 
-### **Audit Log DAG**
+#### **Audit Log DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/audit_log_dag.py)
 
