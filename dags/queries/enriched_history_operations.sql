@@ -125,15 +125,15 @@ select
     , protocol_version
     , successful_transaction_count
     , failed_transaction_count
-    , ho.batch_id as batch_id
-    , ho.batch_run_date as batch_run_date
+    , ho.batch_id
+    , ho.batch_run_date
     , current_timestamp() as batch_insert_ts
     --new protocol 19 fields for transaction preconditions
-    , ht.ledger_bounds as ledger_bounds
-    , ht.min_account_sequence as min_account_sequence
-    , ht.min_account_sequence_age as min_account_sequence_age
-    , ht.min_account_sequence_ledger_gap as min_account_sequence_ledger_gap
-    , ht.extra_signers as extra_signers
+    , ht.ledger_bounds
+    , ht.min_account_sequence
+    , ht.min_account_sequence_age
+    , ht.min_account_sequence_ledger_gap
+    , ht.extra_signers
     , details.asset_balance_changes
     , details.parameters
     , details.parameters_decoded
