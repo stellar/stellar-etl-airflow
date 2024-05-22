@@ -13,6 +13,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
+    alert_sla_miss,
     get_default_dag_args,
     init_sentry,
 )
@@ -30,6 +31,7 @@ with DAG(
     },
     render_template_as_native_obj=True,
     catchup=False,
+    sla_miss_callback=alert_sla_miss,
 ) as dag:
     PROJECT = "{{ var.value.bq_project }}"
     DATASET = "{{ var.value.bq_dataset }}"

@@ -13,6 +13,7 @@ from stellar_etl_airflow.build_bq_insert_job_task import (
 )
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
+    alert_sla_miss,
     get_default_dag_args,
     init_sentry,
 )
@@ -29,6 +30,7 @@ with DAG(
         "fromjson": lambda s: loads(s),
     },
     catchup=False,
+    sla_miss_callback=alert_sla_miss,
 ) as dag:
     PROJECT = Variable.get("public_project")
     DATASET = Variable.get("public_dataset")

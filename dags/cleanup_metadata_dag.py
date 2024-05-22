@@ -27,6 +27,7 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import load_only
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
+    alert_sla_miss,
     get_default_dag_args,
     init_sentry,
 )
@@ -207,6 +208,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     schedule_interval="@daily",
     start_date=START_DATE,
+    sla_miss_callback=alert_sla_miss,
 )
 if hasattr(dag, "doc_md"):
     dag.doc_md = __doc__

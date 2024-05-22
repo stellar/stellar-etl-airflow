@@ -14,7 +14,7 @@ from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
 )
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 from stellar_etl_airflow.build_coingecko_api_to_gcs_task import response_to_gcs
-from stellar_etl_airflow.default import alert_after_max_retries
+from stellar_etl_airflow.default import alert_after_max_retries, alert_sla_miss
 
 with DAG(
     dag_id="daily_euro_ohlc_dag",
@@ -26,6 +26,7 @@ with DAG(
     },
     user_defined_filters={"fromjson": lambda s: loads(s)},
     catchup=False,
+    sla_miss_callback=alert_sla_miss,
 ) as dag:
     currency_ohlc = Variable.get("currency_ohlc", deserialize_json=True)
     project_name = Variable.get("bq_project")
