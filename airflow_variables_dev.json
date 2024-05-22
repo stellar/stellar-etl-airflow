@@ -241,15 +241,16 @@
     "build_batch_stats": 180,
     "build_bq_insert_job": 180,
     "build_copy_table": 180,
-    "build_dbt_task": 300,
+    "build_dbt_task": 960,
     "build_delete_data_task": 180,
-    "build_export_task": 180,
+    "build_export_task": 420,
     "build_gcs_to_bq_task": 300,
-    "build_time_task": 300
+    "build_time_task": 480
   },
   "task_sla": {
-    "get_ledger_range_from_times": 240,
-    "export_task": 240,
+    "default": 60,
+    "build_time_task": 360,
+    "build_export_task": 300,
     "enriched_history_operations": 480,
     "current_state": 480,
     "elementary_dbt_enriched_base_tables": 240,
@@ -261,13 +262,15 @@
     "liquidity_pools_value_history": 600,
     "trade_agg": 720,
     "fee_stats": 840,
-    "asset_stats": 600,
+    "asset_stats": 720,
     "network_stats": 720,
     "partnership_assets": 600,
     "history_assets": 720,
     "soroban": 720,
     "snapshot_state": 600,
-    "elementary_dbt_sdf_marts": 300
+    "elementary_dbt_sdf_marts": 300,
+    "build_bq_insert_job": 120,
+    "sandbox_create": 60
   },
   "dbt_tables": {
     "signers_current": "account_signers_current",
