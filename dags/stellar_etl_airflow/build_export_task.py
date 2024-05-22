@@ -240,6 +240,8 @@ def build_export_task(
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
         sla=timedelta(
-            seconds=Variable.get("task_sla", deserialize_json=True)["export_task"]
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                build_export_task.__name__
+            ]
         ),
     )

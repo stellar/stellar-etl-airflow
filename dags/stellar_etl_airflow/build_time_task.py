@@ -90,7 +90,7 @@ def build_time_task(
         image_pull_policy=Variable.get("image_pull_policy"),
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[
-                "get_ledger_range_from_times"
+                build_time_task.__name__
             ]
         ),
     )
