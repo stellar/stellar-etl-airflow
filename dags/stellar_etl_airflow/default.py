@@ -25,9 +25,6 @@ def get_base_dag_args():
         "depends_on_past": False,
         "retries": 5,
         "retry_delay": timedelta(minutes=5),
-        "sla": timedelta(
-            seconds=Variable.get("task_sla", deserialize_json=True)["default"]
-        ),
     }
 
 
