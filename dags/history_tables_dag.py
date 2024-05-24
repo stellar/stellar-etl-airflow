@@ -44,7 +44,6 @@ dag = DAG(
     },
 )
 
-
 table_names = Variable.get("table_ids", deserialize_json=True)
 internal_project = "{{ var.value.bq_project }}"
 internal_dataset = "{{ var.value.bq_dataset }}"
@@ -61,21 +60,6 @@ The time task reads in the execution time of the current run, as well as the nex
 execution time. It converts these two times into ledger ranges.
 """
 time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
-
-
-"""
-The write batch stats task will take a snapshot of the DAG run_id, execution date,
-start and end ledgers so that reconciliation and data validation are easier. The
-record is written to an internal dataset for data eng use only.
-"""
-write_op_stats = build_batch_stats(dag, table_names["operations"])
-write_trade_stats = build_batch_stats(dag, table_names["trades"])
-write_effects_stats = build_batch_stats(dag, table_names["effects"])
-write_tx_stats = build_batch_stats(dag, table_names["transactions"])
-write_diagnostic_events_stats = build_batch_stats(dag, "diagnostic_events")
-write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
-write_asset_stats = build_batch_stats(dag, table_names["assets"])
-
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -301,7 +285,6 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
 
 (
     time_task
-    >> write_op_stats
     >> op_export_task
     >> delete_old_op_pub_task
     >> send_ops_to_pub_task
@@ -310,18 +293,11 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
 )
 
 
-(
-    time_task
-    >> write_trade_stats
-    >> trade_export_task
-    >> delete_old_trade_pub_task
-    >> send_trades_to_pub_task
-)
+(time_task >> trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task)
 
 
 (
     time_task
-    >> write_effects_stats
     >> effects_export_task
     >> delete_old_effects_pub_task
     >> send_effects_to_pub_task
@@ -330,13 +306,12 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
 
 (
     time_task
-    >> write_tx_stats
     >> tx_export_task
     >> delete_old_tx_pub_task
     >> send_txs_to_pub_task
     >> delete_enrich_op_pub_task
 )
-(time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
+(time_task >> diagnostic_events_export_task)
 (
     [
         insert_enriched_hist_pub_task,
@@ -355,7 +330,6 @@ dedup_assets_pub_task = build_bq_insert_job(
 )
 (
     time_task
-    >> write_ledger_stats
     >> ledger_export_task
     >> delete_old_ledger_pub_task
     >> send_ledgers_to_pub_task
@@ -363,7 +337,6 @@ dedup_assets_pub_task = build_bq_insert_job(
 )
 (
     time_task
-    >> write_asset_stats
     >> asset_export_task
     >> delete_old_asset_pub_task
     >> send_assets_to_pub_task
