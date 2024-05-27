@@ -32,21 +32,31 @@ def build_time_task(
     Returns:
         the newly created task
     """
-    start_time = "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}"
-    end_time = (
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}"
-        if use_next_exec_time
-        else "{{ ts }}"
-    )
+    # start_time = "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}"
+    # end_time = (
+    #    "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}"
+    #    if use_next_exec_time
+    #    else "{{ ts }}"
+    # )
+    start_time = "2024-05-27T17:20:00+00:00"
+    end_time = "2024-05-27T17:30:00+00:00"
+
     command = ["stellar-etl"]
+    # Inclui no stellar etl get ledger ranges from times em vez de output mandar para o GCS bucket
+    # Depois refatorar no airflow como pegar o ledgers ranges para construir novamente o generate_etl_command
     args = [
         "get_ledger_range_from_times",
         "-s",
         start_time,
         "-o",
-        "/airflow/xcom/return.json",
+        "us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/scheduled__2024-05-27T17:20:00+00:00/",  # mandar pro backend de metadados no GCS, que possui: task instance id, start time e end time (tem que ser o nome da file esses três). Talvez fique mais eficiente, verificar tempo de task
         "-e",
         end_time,
+        "--testnet",
+        "--cloud-storage-bucket",
+        "us-central1-test-hubble-2-5f1f2dbf-bucket",
+        "--cloud-provider",
+        "gcp",
     ]
     logging.info(f"Constructing command with args: {args}")
     if use_testnet:
