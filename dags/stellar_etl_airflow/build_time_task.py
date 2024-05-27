@@ -14,8 +14,9 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_time_task(
     dag,
-    use_testnet=False,
+    use_testnet=True,
     use_next_exec_time=True,
+    use_gcs=True,
     resource_cfg="default",
     use_futurenet=False,
 ):
@@ -38,8 +39,8 @@ def build_time_task(
     #    if use_next_exec_time
     #    else "{{ ts }}"
     # )
-    start_time = "2024-05-27T17:20:00+00:00"
-    end_time = "2024-05-27T17:30:00+00:00"
+    start_time = "2024-05-27T17:10:00+00:00"
+    end_time = "2024-05-27T17:20:00+00:00"
 
     command = ["stellar-etl"]
     # Inclui no stellar etl get ledger ranges from times em vez de output mandar para o GCS bucket
@@ -52,17 +53,17 @@ def build_time_task(
         "us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/scheduled__2024-05-27T17:20:00+00:00/",  # mandar pro backend de metadados no GCS, que possui: task instance id, start time e end time (tem que ser o nome da file esses três). Talvez fique mais eficiente, verificar tempo de task
         "-e",
         end_time,
-        "--testnet",
-        "--cloud-storage-bucket",
-        "us-central1-test-hubble-2-5f1f2dbf-bucket",
-        "--cloud-provider",
-        "gcp",
     ]
     logging.info(f"Constructing command with args: {args}")
     if use_testnet:
         args.append("--testnet")
     elif use_futurenet:
         args.append("--futurenet")
+    elif use_gcs:
+        args.extend(
+            ["--cloud-storage-bucket", Variable.get("gcs_exported_data_bucket_name")]
+        )
+        args.extend(["--cloud-provider", "gcp"])
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
         config_file_location = Variable.get("kube_config_location")
