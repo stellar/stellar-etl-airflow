@@ -285,60 +285,60 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
 
 (
     time_task
-    # >> op_export_task
-    # >> delete_old_op_pub_task
-    # >> send_ops_to_pub_task
-    # >> delete_enrich_op_pub_task
-    # >> insert_enriched_hist_pub_task
+    >> op_export_task
+    >> delete_old_op_pub_task
+    >> send_ops_to_pub_task
+    >> delete_enrich_op_pub_task
+    >> insert_enriched_hist_pub_task
 )
 
 
-# (time_task >> trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task)
+(time_task >> trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task)
 
 
-# (
-#     time_task
-#     >> effects_export_task
-#     >> delete_old_effects_pub_task
-#     >> send_effects_to_pub_task
-# )
+(
+    time_task
+    >> effects_export_task
+    >> delete_old_effects_pub_task
+    >> send_effects_to_pub_task
+)
 
 
-# (
-#     time_task
-#     >> tx_export_task
-#     >> delete_old_tx_pub_task
-#     >> send_txs_to_pub_task
-#     >> delete_enrich_op_pub_task
-# )
-# (time_task >> diagnostic_events_export_task)
-# (
-#     [
-#         insert_enriched_hist_pub_task,
-#     ]
-# )
+(
+    time_task
+    >> tx_export_task
+    >> delete_old_tx_pub_task
+    >> send_txs_to_pub_task
+    >> delete_enrich_op_pub_task
+)
+(time_task >> diagnostic_events_export_task)
+(
+    [
+        insert_enriched_hist_pub_task,
+    ]
+)
 
-# dedup_assets_pub_task = build_bq_insert_job(
-#     dag,
-#     public_project,
-#     public_dataset,
-#     table_names["assets"],
-#     partition=True,
-#     cluster=True,
-#     create=True,
-#     dataset_type="pub",
-# )
-# (
-#     time_task
-#     >> ledger_export_task
-#     >> delete_old_ledger_pub_task
-#     >> send_ledgers_to_pub_task
-#     >> delete_enrich_op_pub_task
-# )
-# (
-#     time_task
-#     >> asset_export_task
-#     >> delete_old_asset_pub_task
-#     >> send_assets_to_pub_task
-#     >> dedup_assets_pub_task
-# )
+dedup_assets_pub_task = build_bq_insert_job(
+    dag,
+    public_project,
+    public_dataset,
+    table_names["assets"],
+    partition=True,
+    cluster=True,
+    create=True,
+    dataset_type="pub",
+)
+(
+    time_task
+    >> ledger_export_task
+    >> delete_old_ledger_pub_task
+    >> send_ledgers_to_pub_task
+    >> delete_enrich_op_pub_task
+)
+(
+    time_task
+    >> asset_export_task
+    >> delete_old_asset_pub_task
+    >> send_assets_to_pub_task
+    >> dedup_assets_pub_task
+)
