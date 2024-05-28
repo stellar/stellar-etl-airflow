@@ -59,7 +59,7 @@ def build_time_task(
         args.append("--testnet")
     elif use_futurenet:
         args.append("--futurenet")
-    elif use_gcs:
+    if use_gcs:
         args.extend(
             ["--cloud-storage-bucket", Variable.get("gcs_exported_data_bucket_name")]
         )
