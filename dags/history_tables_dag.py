@@ -51,7 +51,6 @@ public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
-use_gcs = literal_eval(Variable.get("use_gcs"))
 use_captive_core = literal_eval(Variable.get("use_captive_core"))
 txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
 
@@ -60,7 +59,7 @@ txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
 The time task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
 """
-time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet, use_gcs=use_gcs)
+time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet, use_gcs=True)
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
