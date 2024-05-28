@@ -50,7 +50,7 @@ def build_time_task(
         "-s",
         start_time,
         "-o",
-        "airflow/xcom/return.json",
+        "/airflow/xcom/return.json",
         "-e",
         end_time,
     ]
