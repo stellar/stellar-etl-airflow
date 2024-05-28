@@ -60,7 +60,7 @@ The time task reads in the execution time of the current run, as well as the nex
 execution time. It converts these two times into ledger ranges.
 """
 time_task = build_time_task(
-    dag, use_testnet=use_testnet, use_futurenet=use_futurenet) #use_gcs=True
+    dag, use_testnet=use_testnet, use_futurenet=use_futurenet) # use_gcs=True
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
