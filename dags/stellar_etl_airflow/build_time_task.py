@@ -14,8 +14,8 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_time_task(
     dag,
-    use_gcs=True,
-    use_testnet=True,
+    #use_gcs=True,
+    use_testnet=False,
     use_next_exec_time=True,
     resource_cfg="default",
     use_futurenet=False,
@@ -39,8 +39,8 @@ def build_time_task(
         if use_next_exec_time
         else "{{ ts }}"
     )
-    start_time = "2024-05-27T17:10:00+00:00"
-    end_time = "2024-05-27T17:20:00+00:00"
+    #start_time = "2024-05-27T17:10:00+00:00"
+    #end_time = "2024-05-27T17:20:00+00:00"
 
     command = ["stellar-etl"]
     # Inclui no stellar etl get ledger ranges from times em vez de output mandar para o GCS bucket
@@ -50,16 +50,18 @@ def build_time_task(
         "-s",
         start_time,
         "-o",
-        "us-central1-test-hubble-2-5f1f2dbf-bucket/dag-exported/scheduled__2024-05-27T17:20:00+00:00/ledgers_range.txt",
+        "airflow/xcom/return.json",
         "-e",
         end_time,
     ]
     logging.info(f"Constructing command with args: {args}")
+    """
     if use_gcs:
         args.extend(
             ["--cloud-storage-bucket", Variable.get("gcs_exported_data_bucket_name")]
         )
         args.extend(["--cloud-provider", "gcp"])
+    """
     if use_testnet:
         args.append("--testnet")
     elif use_futurenet:

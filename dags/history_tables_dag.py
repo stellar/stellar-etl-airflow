@@ -60,8 +60,7 @@ The time task reads in the execution time of the current run, as well as the nex
 execution time. It converts these two times into ledger ranges.
 """
 time_task = build_time_task(
-    dag, use_testnet=use_testnet, use_futurenet=use_futurenet, use_gcs=True
-)
+    dag, use_testnet=use_testnet, use_futurenet=use_futurenet) #use_gcs=True
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -287,13 +286,12 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
 
 (
     time_task
-    # >> op_export_task
-    # >> delete_old_op_pub_task
-    # >> send_ops_to_pub_task
-    # >> delete_enrich_op_pub_task
-    # >> insert_enriched_hist_pub_task
+    >> op_export_task
+    >> delete_old_op_pub_task
+    >> send_ops_to_pub_task
+    >> delete_enrich_op_pub_task
+    >> insert_enriched_hist_pub_task
 )
-"""
 
 (time_task >> trade_export_task >> delete_old_trade_pub_task >> send_trades_to_pub_task)
 
@@ -344,4 +342,3 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> send_assets_to_pub_task
     >> dedup_assets_pub_task
 )
-"""
