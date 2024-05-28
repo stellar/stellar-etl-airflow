@@ -55,15 +55,15 @@ def build_time_task(
         end_time,
     ]
     logging.info(f"Constructing command with args: {args}")
-    if use_testnet:
-        args.append("--testnet")
-    elif use_futurenet:
-        args.append("--futurenet")
     if use_gcs:
         args.extend(
             ["--cloud-storage-bucket", Variable.get("gcs_exported_data_bucket_name")]
         )
         args.extend(["--cloud-provider", "gcp"])
+    if use_testnet:
+        args.append("--testnet")
+    elif use_futurenet:
+        args.append("--futurenet")
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
         config_file_location = Variable.get("kube_config_location")
