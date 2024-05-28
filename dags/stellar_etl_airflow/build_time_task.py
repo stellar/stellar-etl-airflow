@@ -14,7 +14,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_time_task(
     dag,
-    #use_gcs=True,
+    # use_gcs=True,
     use_testnet=False,
     use_next_exec_time=True,
     resource_cfg="default",
