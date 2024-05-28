@@ -39,8 +39,8 @@ def build_time_task(
         if use_next_exec_time
         else "{{ ts }}"
     )
-    #start_time = "2024-05-27T17:10:00+00:00"
-    #end_time = "2024-05-27T17:20:00+00:00"
+    # start_time = "2024-05-27T17:10:00+00:00"
+    # end_time = "2024-05-27T17:20:00+00:00"
 
     command = ["stellar-etl"]
     # Inclui no stellar etl get ledger ranges from times em vez de output mandar para o GCS bucket
