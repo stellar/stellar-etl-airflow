@@ -1,0 +1,137 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "max_tries",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "pool_slots",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "queued_by_job_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "duration",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "trigger_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "trigger_timeout",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "job_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "next_kwargs",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "map_index",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "updated_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "start_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "try_number",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "priority_weight",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "end_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "queued_dttm",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "pid",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operator",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "dag_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "run_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "state",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "hostname",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "unixname",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "pool",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "queue",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "task_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "external_executor_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "next_method",
+    "type": "STRING"
+  }
+]

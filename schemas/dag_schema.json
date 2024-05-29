@@ -1,0 +1,127 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "next_dagrun_create_after",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "max_active_tasks",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "has_task_concurrency_limits",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "max_active_runs",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "next_dagrun_data_interval_start",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "next_dagrun_data_interval_end",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "has_import_errors",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "scheduler_lock",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "pickle_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "is_paused",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "is_subdag",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "is_active",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_parsed_time",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_pickled",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_expired",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "next_dagrun",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "processor_subdir",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fileloc",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "owners",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "description",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "default_view",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "schedule_interval",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "root_dag_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "timetable_description",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "dag_id",
+    "type": "STRING"
+  }
+]
