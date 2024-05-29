@@ -247,6 +247,31 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 120
   },
+  "airflow_metadata": {
+    "tables": {
+      "dag": {
+        "date_column": "",
+        "is_incremental": false
+      },
+      "dag_run": {
+        "date_column": "start_date",
+        "is_incremental": true
+      },
+      "task_instance": {
+        "date_column": "start_date",
+        "is_incremental": true
+      },
+      "task_fail": {
+        "date_column": "start_date",
+        "is_incremental": true
+      },
+      "sla_miss": {
+        "date_column": "execution_date",
+        "is_incremental": true
+      }
+    },
+    "bq_dataset": "test_airflow_metadata"
+  },
   "dbt_tables": {
     "signers_current": "account_signers_current",
     "accounts_current": "accounts_current",
