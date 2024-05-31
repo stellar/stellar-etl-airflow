@@ -16,10 +16,17 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
     - [Clearing Failures](#clearing-failures)
 - [Understanding the Setup](#understanding-the-setup)
   - [DAG Diagrams](#dag-diagrams)
-    - [History Archive with Captive Core DAG](#history-archive-with-captive-core-dag)
-    - [History Archive without Captive Core DAG](#history-archive-without-captive-core-dag)
-    - [State Table Export DAG](#state-table-export-dag)
-    - [Bucket List DAG (Unsupported)](#bucket-list-dag-unsupported)
+    - [Public DAGs](#public-dags)
+      - [History Table Export DAG](#history-table-export-dag)
+      - [State Table Export DAG](#state-table-export-dag)
+      - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
+    - [SDF Internal DAGs](#sdf-internal-dags)
+      - [Sandbox update DAG](#sandbox-update-dag)
+      - [Cleanup metadata DAG](#cleanup-metadata-dag)
+      - [Partner Pipeline DAG](#partner-pipeline-dag)
+      - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
+      - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
+      - [Audit Log DAG](#audit-log-dag)
   - [Task Explanations](#task-explanations)
     - [build_time_task](#build_time_task)
     - [build_export_task](#build_export_task)
@@ -28,7 +35,9 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
     - [build_batch_stats](#build_batch_stats)
     - [bq_insert_job_task](#bq_insert_job_task)
     - [cross_dependency_task](#cross_dependency_task)
-    - [delete_data_task](#delete_data_task)
+    - [build_delete_data_task](#build_delete_data_task)
+    - [build_dbt_task](#build_dbt_task)
+    - [build_elementary_slack_alert_task](#build_elementary_slack_alert_task)
 - [Further Development](#further-development)
   - [Extensions](#extensions)
     - [Pre-commit Git hook scripts](#pre-commit-git-hook-scripts)
@@ -38,6 +47,8 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
   - [Testing Changes](#testing-changes)
 
 <br>
+
+---
 
 # Installation and Setup
 
@@ -49,11 +60,11 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 
 <br>
 
+---
+
 ## **Google Cloud Platform**
 
 Below are instructions to intialize the Google Cloud SDK and create the GCP project, dataset, and GCS bucket if needed.
-
-<br>
 
 ### **Setup the Cloud SDK**
 
@@ -77,11 +88,7 @@ Below are instructions to intialize the Google Cloud SDK and create the GCP proj
 - Open the [Cloud Storage browser](https://console.cloud.google.com/storage/browser)
 - [Create](https://cloud.google.com/storage/docs/creating-buckets) a new Google Storage bucket that will store exported files
 
-  > **_NOTE:_** Creating a new Cloud Composer environment will automatically create a new GCS bucket.
-
-  > **_NOTE:_** The dataset name you choose corresponds to the Airflow variable "gcs_exported_data_bucket_name".
-
-  > **_NOTE:_** Creating a new environment with Cloud Composer will create a new GCS bucket.
+  > **_NOTE:_** Creating a new Cloud Composer environment will automatically create a new GCS bucket which corresponds to the Airflow variable "gcs_exported_data_bucket_name".
 
 > **_WARNING:_** Make sure that you adhere to the [location requirements](https://cloud.google.com/bigquery/docs/batch-loading-data#data-locations) for Cloud Storage buckets and BigQuery datasets. Otherwise, it will not be possible to upload data to BigQuery.
 
@@ -93,24 +100,27 @@ Below are instructions to intialize the Google Cloud SDK and create the GCP proj
 
 Cloud Composer is the preferred method of deployment. [Cloud Composer](https://cloud.google.com/composer) is a managed service used for Airflow deployment that provides much of the infrastructure required to host an Airflow instance. The steps for setting up a Cloud Composer environment are detailed below.
 
+> _*Note:*_ more general instructions for setting up the environment can be found [here](https://cloud.google.com/composer/docs/composer-2/create-environments)
+
 <br>
+
+---
 
 ### **Create Google Cloud Composer environment**
 
 Create a new Cloud Composer environment using the [UI](https://console.cloud.google.com/composer/environments/create) or by following the setup instructions in [Create Cloud Composer environments](https://cloud.google.com/composer/docs/how-to/managing/creating)
-
-> **_For AIRFLOW 2.x:_** Be wary of choosing "autopilot" for environment resource management. The ephemeral storage provided by autopilot-ed containers is [capped at 10GB](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests), which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`), or any task that runs captive core.
-> You can add a second node pool to your Composer 1 environment, and configure it to be managed by autopilot if desired.
-> Composer 2 environments use autopilot exclusively for resource management.
-
-> **_Note_**: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
-> Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-1.16.11-airflow-1.10.14` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
-
-> **_TROUBLESHOOTING:_** If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with Owner permissions and use it to create the Composer environment.
-
 Cloud Composer may take a while to setup the environment. Once the process is finished, you can view the environment by going to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments).
 
-> **_NOTE:_** Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
+> _*Note:*_ Cloud Composer 1 is in the post-maintenance mode. Google does not release any further updates to Cloud Composer 1, including new versions of Airflow, bugfixes, and security updates. [Composer 1](https://cloud.google.com/composer/docs/concepts/overview)
+
+> _*For Cloud Composer 2:*_ Be wary of the default "autopilot" mode for environment resource management. The ephemeral storage provided by autopilot-ed containers is [capped at 10GB](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests), which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`) run with `captive-core`. One workaround to provide captive-core with the storage it needs is to [mount a volume to the KubernetesPod](https://darsh7.medium.com/cloud-composer-gce-persistent-disk-volume-for-kubernetespodoperator-cbca3ea57e39) and have captive-core run from that mounted volume rather than the ephemeral storage supplied by default.
+
+> _*Note*_: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
+> Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-2.7.1-airflow-2.6.3` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
+
+> _*TROUBLESHOOTING:*_ If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with `Owner` permissions and use it to create the Composer environment.
+
+> _*NOTE:*_ Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
 
 <br>
 
@@ -130,13 +140,16 @@ Afterwards, you can navigate to the Airflow UI for your Cloud Composer environme
 
 The Airflow DAGs require service account keys to perform their operations. Generate a [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) for a service account that has access to BigQuery and Google Cloud Storage. Then, add this key file to the data folder in your `airflow_bucket`.
 
-> **_NOTE:_** The name of the key file corresponds to the Airflow variable "api_key_path". The data folder in Cloud Storage corresponds to the path "/home/airflow/gcs/data/", but ensure that the variable has the correct filename.
+> **_NOTE:_** The name of the key file corresponds to the Airflow variable `api_key_path`. The data folder in Cloud Storage corresponds to the path `/home/airflow/gcs/data/`, but ensure that the variable has the correct filename.
+
+> **_NOTE:_** It is also possible to save the generated [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) in [GCP Secret Manager](https://cloud.google.com/secret-manager/docs).
+> There are extra steps to enable the workers to access the secrets. Instructions can be found [here](https://cloud.google.com/composer/docs/composer-2/configure-secret-manager)
 
 <br>
 
 ### **Add private docker registry auth secrets**
 
-If you want to pull an image from a private docker registry to use in KubernetesPodOperator in airflow you will need to add auth json credentials to kubernetes and the service account. [Kubernetes docs](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials)
+If you want to pull an image from a private docker registry to use in `KubernetesPodOperator` in airflow you will need to add auth json credentials to kubernetes and the service account. [Kubernetes docs](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials)
 
 - Create the kubernetes secret from auth json
 
@@ -153,44 +166,6 @@ kubectl patch serviceaccount <serviceaccount name> -p '{"imagePullSecrets": [{"n
 ```
 
 <br>
-
-### **Add Kubernetes Node Pool**
-
-If the Kubernetes pods contain long-running or resource intensive operations, it is best to create a separate node pool for task execution. Executing the tasks on the same node pool as the `airflow-scheduler` will contribute to resource starvation and transient failures in the DAG.
-
-Find the Kubernetes cluster name that is used by your Cloud Composer environment. To do so, select the environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value of `GKE cluster`. The cluster name is the final part of this path.
-
-Then, run the command:
-
-```bash
-gcloud container node-pools create <pool_name> --cluster <cluster_name> \
---zone <composer_zone> --project <project_id>
-```
-
-Alternatively, node pools can be created through the UI with the `ADD NODE POOL` button. Select the environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value under `GKE cluster`
-
-Security can only be applied upon pool creation, so ensure that your security account and scopes are correct. If they need to be updated, you will need to delete the node pool and recreate it.
-
-> **_NOTE:_** The name of the pool will be used in the Airflow variable "affinity".
->
-> A sample affinity configuration is below, as well as defined in the `airflow_variables.txt`. The user must supply the node pool name in `values`.
-
-```
-"affinity": {
-        "nodeAffinity": {
-            "requiredDuringSchedulingIgnoredDuringExecution": {
-                "nodeSelectorTerms": [{
-                    "matchExpressions": [{
-                        "key": "cloud.google.com/gke-nodepool",
-                        "operator": "In",
-                        "values": [<node-pool-1>,
-						           <node-pool-2>,]
-                        }]
-                    }]
-                }
-            }
-        },
-```
 
 ### **Create Namespace for ETL Tasks (Optional)**
 
@@ -211,7 +186,7 @@ To find the value of `<airflow_worker_namespace>`, select your Cloud Composer en
 
 A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Look for the value of `Namespace`.
 
-> **_NOTE:_** The name of the newly created namespace corresponds to the Airflow variable "namespace".
+> **_NOTE:_** The name of the newly created namespace corresponds to the Airflow variable `namespace`.
 
 <br>
 
@@ -342,7 +317,7 @@ name: etl-data
 
 <details>
 <summary>Add Poststart Script to Airflow Workers</summary>
-Find the namespace name in the airflow-worker config file. It should be near the top of the file, and may look like `composer-1-12-0-airflow-1-10-10-2fca78f7`. This value will be used in later commands.
+Find the namespace name in the airflow-worker config file. It should be near the top of the file, and may look like `composer-2-6-4-airflow-2-6-3-14c4ca64`. This value will be used in later commands.
 
 Next, open the cloud shell. Keep your airflow-worker configuration file open, or save it. In the cloud shell, create a text file called `poststart.sh` by running the command: `nano poststart.sh`. Then, copy the text from the `poststart.sh` file in this repository into the newly opened file.
 
@@ -433,7 +408,7 @@ Click the Admin tab, then Connections. Click create, then:
 
 Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
 
-The `airflow_variables.txt` file provides a set of default values for variables.
+The `airflow_variables_*.txt` files provide a set of default values for variables.
 
 <br>
 
@@ -443,30 +418,55 @@ The `airflow_variables.txt` file provides a set of default values for variables.
 
 ### **Normal Variables**
 
-| Variable name                 | Description                                                                                                                                         | Should be changed?                                                    |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| affinity                      | JSON object that represents the pod's [affinity](https://cloud.google.com/composer/docs/how-to/using/using-kubernetes-pod-operator#affinity-config) | Yes, if you followed the optional step and made a new node pool.      |
-| api_key_path                  | path to the Google Cloud Platform [API key](https://cloud.google.com/docs/authentication/api-keys?authuser=1)                                       | No, unless your filename is different.                                |
-| bq_dataset                    | name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                                     | Yes. Change to your dataset name.                                     |
-| bq_project                    | name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                                   | Yes. Change to your project name.                                     |
-| gcs_exported_data_bucket_name | name of the Google Cloud Storage [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data                     | Yes. Change to the name of the bucket you made.                       |
-| image_name                    | name of the ETL's Docker image                                                                                                                      | No, unless you need a specific image version.                         |
-| image_output_path             | local output path within the ETL image                                                                                                              | No.                                                                   |
-| image_pull_policy             | Specifies how image pull behavior. Valid values are: `Always`, `IfNotPresent`, or `Never`                                                           | No, unless you handle image updates manually.                         |
-| local_output_path             | local output path within the airflow-worker that is used for temporary storage                                                                      | No, unless you changed the path when modifying the Kubernetes config. |
-| namespace                     | namespace name for ETL tasks that generate Kubernetes pods                                                                                          | Yes, if you followed the optional step and made a new namespace       |
-| output_file_names             | JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure                       | Yes, if desired. Make sure each type has a different filename.        |
-| output_path                   | shared output path for exported data                                                                                                                | No, unless you have a different shared storage solution.              |
-| owner                         | the name of the owner of the Airflow DAGs                                                                                                           | Yes.                                                                  |
-| schema_filepath               | file path to schema folder                                                                                                                          | No, unless schemas are in a different location                        |
-| table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                                            | Yes, if desired. Make sure each type has a different table name.      |
-| cluster_fields                | JSON object. Each key should be a BigQuery table, and the value is a list of columns that the table is clustered by                                 | Yes, if desired for tables that want clustering                       |
-| partition_fields              | JSON object. Each key should be a BigQuery table, and the value is a JSON object of type and field to partition by                                  | Yes, if desired for tables that want partitioning                     |
-| gcs_exported_object_prefix    | String to prefix run_id export task output path with                                                                                                | Yes, if desired to prefix run_id                                      |
-| sentry_dsn                    | Sentry Data Source Name to tell where Sentry SDK should send events                                                                                 | Yes                                                                   |
-| sentry_environment            | Environment that sentry alerts will fire                                                                                                            | Yes                                                                   |
-| use_testnet                   | Flag to use testnet data instead of mainnet                                                                                                         | Yes, if desired to use testnet data                                   |
-| task_timeout                  | JSON object. Each key should be the airflow util task name, and the value is the timeout in seconds                                                 | Yes, if desired to give tasks timeout                                 |
+| Variable name                 | Description                                                                                                                     | Should be changed?                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| api_key_path                  | Path to the Google Cloud Platform [API key](https://cloud.google.com/docs/authentication/api-keys?authuser=1)                   | No, unless your filename is different.                                |
+| bq_dataset                    | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                 | Yes. Change to your dataset name.                                     |
+| bq_project                    | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)               | Yes. Change to your project name.                                     |
+| cluster_fields                | JSON object. Each key should be a BigQuery table, and the value is a list of columns that the table is clustered by             | Yes, if desired for tables that want clustering                       |
+| gcs_exported_data_bucket_name | Name of the Google Cloud Storage [bucket](https://cloud.google.com/storage/docs/creating-buckets) that will store exported data | Yes. Change to the name of the bucket you made.                       |
+| gcs_exported_object_prefix    | String to prefix run_id export task output path with                                                                            | Yes, if desired to prefix run_id                                      |
+| image_name                    | Name of the ETL's Docker image                                                                                                  | No, unless you need a specific image version.                         |
+| image_output_path             | Local output path within the ETL image                                                                                          | No.                                                                   |
+| image_pull_policy             | Specifies how image pull behavior. Valid values are: `Always`, `IfNotPresent`, or `Never`                                       | No, unless you handle image updates manually.                         |
+| local_output_path             | Local output path within the airflow-worker that is used for temporary storage                                                  | No, unless you changed the path when modifying the Kubernetes config. |
+| namespace                     | Namespace name for ETL tasks that generate Kubernetes pods                                                                      | Yes, if you followed the optional step and made a new namespace       |
+| output_file_names             | JSON object. Each key should be a data structure, and the value should be the name of the output file for that data structure   | Yes, if desired. Make sure each type has a different filename.        |
+| output_path                   | Shared output path for exported data                                                                                            | No, unless you have a different shared storage solution.              |
+| owner                         | The name of the owner of the Airflow DAGs                                                                                       | Yes.                                                                  |
+| partition_fields              | JSON object. Each key should be a BigQuery table, and the value is a JSON object of type and field to partition by              | Yes, if desired for tables that want partitioning                     |
+| public_dataset                | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                 | Yes. Change to your dataset name.                                     |
+| public_project                | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)               | Yes. Change to your project name.                                     |
+| sentry_dsn                    | Sentry Data Source Name to tell where Sentry SDK should send events                                                             | Yes                                                                   |
+| sentry_environment            | Environment that sentry alerts will fire                                                                                        | Yes                                                                   |
+| schema_filepath               | File path to schema folder                                                                                                      | No, unless schemas are in a different location                        |
+| table_ids                     | JSON object. Each key should be a data structure, and the value should be the name of the BigQuery table                        | Yes, if desired. Make sure each type has a different table name.      |
+| task_timeout                  | JSON object. Each key should be the airflow util task name, and the value is the timeout in seconds                             | Yes, if desired to give tasks timeout                                 |
+| use_testnet                   | Flag to use testnet data instead of pubnet                                                                                      | Yes, if desired to use testnet data                                   |
+| use_futurenet                 | Flag to use futurenet data instead of pubnet                                                                                    | Yes, if desired to use futurenet data                                 |
+| use_captive_core              | Flag to use captive-core instead of the txmeta datastore                                                                        | Yes, if desired to run with captive-core                              |
+| txmeta_datastore_path         | Bucket path to the txmeta datastore                                                                                             | Yes, change to your txmeta bucket path                                |
+
+### **DBT Variables**
+
+| Variable name                     | Description                                                                                                                          | Should be changed?                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| dbt_full_refresh_models           | JSON object. Each key should be a DBT model, and the value is a boolean controlling if the model should be run with `--full-refresh` | Yes, if desired for models that need to be full-refreshed |
+| dbt_image_name                    | name of the `stellar-dbt` image to use                                                                                               | No, unless you need a specific image version              |
+| dbt_job_execution_timeout_seconds | timeout for dbt tasks in seconds                                                                                                     | No, unless you want a different timeout                   |
+| dbt_job_retries                   | number of times dbt_jobs will retry                                                                                                  | No, unless you want a different retry limit               |
+| dbt_mart_dataset                  | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets) for DBT marts                                        | Yes. Change to your dataset name                          |
+| dbt_maximum_bytes_billed          | the max number of BigQuery bytes that can be billed when running DBT                                                                 | No, unless you want a different limit                     |
+| dbt_project                       | name of the Biquery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                     | Yes. Change to your project name                          |
+| dbt_target                        | the `target` that will used to run dbt                                                                                               | No, unless you want a different target                    |
+| dbt_threads                       | the number of threads that dbt will spawn to build a model                                                                           | No, unless you want a different thread count              |
+| dbt_tables                        | name of dbt tables to copy to sandbox                                                                                                | No                                                        |
+| internal_source_db                | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
+| internal_source_schema            | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
+| public_source_db                  | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
+| public_source_schema              | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
+| slack_elementary_channel          | Name of slack channel to send elementary alerts                                                                                      | Yes. Change to your slack channel name.                   |
+| dbt_elementary_dataset            | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
 
 ### **Kubernetes-Specific Variables**
 
@@ -488,6 +488,8 @@ Here are some example `volume_config` values. Note that a ReadWriteMany volume i
 
 <br>
 
+---
+
 # Execution Procedures
 
 - [Starting Up](#starting-up)
@@ -499,8 +501,7 @@ Here are some example `volume_config` values. Note that a ReadWriteMany volume i
 > **_NOTE:_** Google Cloud Composer instance of airflow has limited CLI support.
 > [Supported Airflow CLI commands](https://cloud.google.com/composer/docs/composer-2/access-airflow-cli#supported-commands)
 
-First, this image has a shows the Airflow web UI components for pausing and triggering DAGs:
-![Airflow UI](documentation/images/AirflowUI.png)
+First, this [image](https://airflow.apache.org/docs/apache-airflow/2.7.3/ui.html#dags-view) shows the Airflow web UI components for pausing and triggering DAGs:
 
 - Ensure that the Airflow scheduler is running: `airflow scheduler`
 - Ensure that the Airflow web server is running: `airflow webserver -p <port>`
@@ -511,19 +512,30 @@ First, this image has a shows the Airflow web UI components for pausing and trig
 
 ### **Clearing Failures**
 
-You can clear failed tasks in the [task-instance context menu](https://airflow.apache.org/docs/apache-airflow/1.10.14/ui.html#task-instance-context-menu) in the Airflow UI. Clearing failed tasks gives them a chance to run again without requiring you to run the entire DAG again.
+You can clear failed tasks in the [grid-view](https://airflow.apache.org/docs/apache-airflow/2.7.3/ui.html#grid-view) in the Airflow UI. Clearing failed tasks gives them a chance to run again without requiring you to run the entire DAG again.
 
 <br>
+
+---
 
 # Understanding the Setup
 
 This section contains information about the Airflow setup. It includes our DAG diagrams and explanations of tasks. For general Airflow knowledge, check out the Airflow [concepts overview](https://airflow.apache.org/docs/apache-airflow/stable/concepts.html) or the Airflow [tutorial](https://airflow.apache.org/docs/apache-airflow/stable/tutorial.html).
 
 - [DAG Diagrams](#dag-diagrams)
-  - [History Archive with Captive Core DAG](#history-archive-with-captive-core-dag)
-  - [History Archive without Captive Core DAG](#history-archive-without-captive-core-dag)
-  - [State Table Export DAG](#state-table-export-dag)
-  - [Bucket List DAG (Unsupported)](#bucket-list-dag-nsupported)
+  - [Public DAGs](#public-dags)
+    - [History Table Export DAG](#history-table-export-dag)
+    - [State Table Export DAG](#state-table-export-dag)
+    - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
+  - [SDF Internal DAGs](#sdf-internal-dags)
+    - [Sandbox DAGs](#sandbox-dags)
+      - [Sandbox Create DAG](#sandbox-create-dag)
+      - [Sandbox Update DAG](#sandbox-update-dag)
+    - [Cleanup Metadata DAG](#cleanup-metadata-dag)
+    - [Partner Pipeline DAG](#partner-pipeline-dag)
+    - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
+    - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
+    - [Audit Log DAG](#audit-log-dag)
 - [Task Explanations](#task-explanations)
   - [build_time_task](#build_time_task)
   - [build_export_task](#build_export_task)
@@ -532,59 +544,71 @@ This section contains information about the Airflow setup. It includes our DAG d
   - [build_batch_stats](#build_batch_stats)
   - [bq_insert_job_task](#bq_insert_job_task)
   - [cross_dependency_task](#cross_dependency_task)
-  - [delete_data_task](#delete_data_task)
+  - [build_delete_data_task](#build_delete_data_task)
+  - [build_dbt_task](#build_dbt_task)
+  - [build_elementary_slack_alert_task](#build_elementary_slack_alert_task)
+
+---
 
 ## **DAG Diagrams**
 
-### **History Archive with Captive Core DAG**
+- The sources are: ledgers, operations, transactions, trades, effects, claimable_balances, accounts, account_signers, liquidity_pools, offers, trust_lines, config_settings, contract_data, contract_code and assets.
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_with_captive_core_dag.py):
+- The DAGs that export the sources are: History Table Export and State Table Export.
 
-- exports transactions, operations, trades, and effects from Stellar using CaptiveCore
-- inserts into BigQuery
-  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
+- All the other tables that are not listed above are exclusive to internal datasets.
 
-![History Archive with Captive Core Dag](documentation/images/history_archive_with_captive_core.png)
+### **Public DAGs**
 
-### **History Archive without Captive Core DAG**
+#### **History Table Export DAG**
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_archive_without_captive_core_dag.py):
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/history_tables_dag.py):
 
-- exports assets and ledgers from Stellar's history archives
-- inserts into BigQuery
-  > _*NOTE:*_ SDF writes to both a private dataset and public dataset. Non-SDF instances will probably only need to write to a single private dataset.
+- Exports part of sources: ledgers, operations, transactions, trades, effects and assets from Stellar using CaptiveCore
+- Inserts into BigQuery publicly (crypto-stellar).
 
-![History Archive Dag](documentation/images/history_archive_without_captive_core.png)
+![history_table_export DAG](documentation/images/history_table_export.png)
 
-### **State Table Export DAG**
+#### **State Table Export DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/state_table_dag.py)
 
-- exports accounts, account_signers, offers, claimable_balances, liquidity pools, and trustlines
-- inserts into BigQuery
+- Exports accounts, account_signers, offers, claimable_balances, liquidity pools, trustlines, contract_data, contract_code, config_settings and ttl.
+- Inserts into BigQuery publicly (crypto stellar).
 
-![Bucket List DAG](documentation/images/state_table_export.png)
+![state_table_export DAG](documentation/images/state_table_export.png)
 
-### **Bucket List DAG (Unsupported)**
+#### **DBT Enriched Base Tables DAG**
 
-> _*NOTE:*_ Bucket List DAG is unsupported.
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_enriched_base_tables_dag.py)
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/bucket_list_dag.py):
+- Creates the DBT staging views for models
+- Updates the enriched_history_operations table
+- Updates the current state tables
+- If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
 
-- exports from Stellar's bucket list, which contains data on accounts, offers, trustlines, account signers, liqudity pools, and claimable balances
-- inserts into BigQuery
+![dbt_enriched_base_tables DAG](documentation/images/dbt_enriched_base_tables.png)
 
-![Bucket List DAG](documentation/images/bucket_list_export.png)
+### **SDF Internal DAGs**
 
-### **Sandbox update DAG**
+#### **Sandbox DAGs**
+
+- The sandbox dags are used to provide Canvas with a subset of network data that will fit within their systems
+- The tables contain 6 months of the targeted environment's (pubnet, testnet, or futurenet) data.
+
+##### **Sandbox Create DAG**
+
+- This DAG runs only once and creates the Canvas sandbox dataset with copies of transactions tables, state tables, and current state views.
+
+##### **Sandbox Update DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/sandbox_update_dag.py)
 
-- This DAG update the Canvas sandbox dataset with transactions tables, state tables with history once a month.
+- This DAG update the Canvas sandbox dataset with transactions tables and state tables with history once a daily.
 
-![sandbox update DAG](documentation/images/sandbox_update_dag.png)
+![sandbox_update_dag DAG](documentation/images/sandbox_update_dag.png)
 
-### **Cleanup metadata DAG**
+#### **Cleanup Metadata DAG**
 
 [This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/cleanup_metadata_dag.py)
 
@@ -592,9 +616,42 @@ This section contains information about the Airflow setup. It includes our DAG d
   out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
   having too much data in your Airflow MetaStore.
 
-![Cleanup metadata DAG](documentation/images/cleanup_metadata_dag.png)
+![cleanup_metadata_dag DAG](documentation/images/cleanup_metadata_dag.png)
+
+#### **Partner Pipeline DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/partner_pipeline_dag.py)
+
+- Used by SDF for internal partnership pipelines
+
+#### **DBT SDF Marts DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_sdf_marts_dag.py)
+
+- Updates the DBT mart tables daily
+- If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
+
+![dbt_sdf_marts DAG](documentation/images/dbt_sdf_marts.png)
+
+#### **Daily Euro OHLC DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/daily_euro_ohlc_dag.py)
+
+- Updates the currency table in Bigquey for Euro
+
+![daily_euro_ohlc_dag DAG](documentation/images/daily_euro_ohlc_dag.png)
+
+#### **Audit Log DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/audit_log_dag.py)
+
+- Runs an audit log SQL to update the audit log dashboard
+
+![audit_log_dag DAG](documentation/images/audit_log_dag.png)
 
 <br>
+
+---
 
 ## **Task Explanations**
 
@@ -650,11 +707,23 @@ The file is named after the destination_blob_name parameter and the columns para
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_check_execution_date_task.py) checks if the current date is in the list of dates that are set to reset the DAG.
 If the current date is in the list, the DAG will continue to run the tasks that are set to run on the reset date. If the current date is not in the list, the DAG will stop running the tasks that are set to run on the reset date.
 
+### **build_dbt_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_dbt_task.py) contains methods for creating dbt tasks. DBT tasks run `dbt build` for the specified model.
+
+### **build_elementary_slack_alert_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_elementary_slack_alert_task.py) contains methods for enabling the elementary slack alerts.
+
 <br>
+
+---
 
 # Further Development
 
 This section details further areas of development. It covers a basic guide on how to add new features and test changes to existing features. It also contains a list of project TODOs (check the GitHub [issues page](https://github.com/stellar/stellar-etl-airflow/issues) for more!)
+
+---
 
 ## **Extensions**
 
