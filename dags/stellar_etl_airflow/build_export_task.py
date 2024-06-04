@@ -208,7 +208,7 @@ def build_export_task(
     resources_requests = (
         f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
+
     if command == "export_ledger_entry_changes" or command == "export_all_history":
         arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
     else:
@@ -236,7 +236,6 @@ def build_export_task(
         container_resources=resources_requests,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
     )

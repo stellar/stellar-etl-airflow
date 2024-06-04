@@ -80,7 +80,6 @@ def dbt_task(
             "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
         }
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
@@ -131,7 +130,6 @@ def dbt_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
@@ -189,7 +187,6 @@ def build_dbt_task(
     resources_requests = (
         f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
@@ -211,7 +208,6 @@ def build_dbt_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",

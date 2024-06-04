@@ -1,5 +1,4 @@
 {
-  "affinity": {},
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_project": "hubble-261722",

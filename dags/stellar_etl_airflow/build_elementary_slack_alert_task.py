@@ -40,7 +40,6 @@ def elementary_task(
             "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
         }
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
@@ -84,7 +83,6 @@ def elementary_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
