@@ -251,6 +251,9 @@ print_configuration = PythonOperator(
     python_callable=print_configuration_function,
     provide_context=True,
     dag=dag,
+    sla=timedelta(
+        seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+    ),
 )
 
 
@@ -446,6 +449,9 @@ analyze_op = PythonOperator(
     provide_context=True,
     on_failure_callback=alert_after_max_retries,
     dag=dag,
+    sla=timedelta(
+        seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+    ),
 )
 
 cleanup_session_op = PythonOperator(
@@ -454,6 +460,9 @@ cleanup_session_op = PythonOperator(
     provide_context=True,
     on_failure_callback=alert_after_max_retries,
     dag=dag,
+    sla=timedelta(
+        seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+    ),
 )
 
 cleanup_session_op.set_downstream(analyze_op)
@@ -466,6 +475,9 @@ for db_object in DATABASE_OBJECTS:
         provide_context=True,
         on_failure_callback=alert_after_max_retries,
         dag=dag,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+        ),
     )
 
     print_configuration.set_downstream(cleanup_op)

@@ -1,6 +1,7 @@
 """
 This DAG creates the sandbox dataset with transactions tables, state tables with history and views.
 """
+from datetime import timedelta
 from json import loads
 
 from airflow import DAG
@@ -63,6 +64,11 @@ with DAG(
                 }
             },
             on_failure_callback=alert_after_max_retries,
+            sla=timedelta(
+                seconds=Variable.get("task_sla", deserialize_json=True)[
+                    "create_sandbox"
+                ]
+            ),
         )
 
         start_tables_task >> tables_create_task
@@ -87,5 +93,10 @@ with DAG(
                 }
             },
             on_failure_callback=alert_after_max_retries,
+            sla=timedelta(
+                seconds=Variable.get("task_sla", deserialize_json=True)[
+                    "create_sandbox"
+                ]
+            ),
         )
         start_views_task >> dbt_tables_create_task

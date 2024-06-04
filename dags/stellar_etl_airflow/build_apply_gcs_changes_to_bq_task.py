@@ -3,6 +3,7 @@ This file contains functions for creating Airflow tasks to merge data on ledger 
 a file in Google Cloud storage into a BigQuery table.
 """
 import logging
+from datetime import timedelta
 from json import loads
 from os.path import basename, join, splitext
 
@@ -281,4 +282,7 @@ def build_apply_gcs_changes_to_bq_task(dag, data_type):
         dag=dag,
         provide_context=True,
         on_failure_callback=alert_after_max_retries,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)["default"]
+        ),
     )
