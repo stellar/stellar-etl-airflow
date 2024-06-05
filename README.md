@@ -461,12 +461,13 @@ The `airflow_variables_*.txt` files provide a set of default values for variable
 | dbt_target                        | the `target` that will used to run dbt                                                                                               | No, unless you want a different target                    |
 | dbt_threads                       | the number of threads that dbt will spawn to build a model                                                                           | No, unless you want a different thread count              |
 | dbt_tables                        | name of dbt tables to copy to sandbox                                                                                                | No                                                        |
-| internal_source_db                | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
-| internal_source_schema            | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
-| public_source_db                  | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
-| public_source_schema              | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
-| slack_elementary_channel          | Name of slack channel to send elementary alerts                                                                                      | Yes. Change to your slack channel name.                   |
+| dbt_internal_source_db            | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
+| dbt_internal_source_schema        | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
+| dbt_public_source_db              | Name of the BigQuery [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console)                    | Yes. Change to your project name.                         |
+| dbt_public_source_schema          | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
+| dbt_slack_elementary_channel      | Name of slack channel to send elementary alerts                                                                                      | Yes. Change to your slack channel name.                   |
 | dbt_elementary_dataset            | Name of the BigQuery [dataset](https://cloud.google.com/bigquery/docs/datasets)                                                      | Yes. Change to your dataset name.                         |
+| dbt_elementary_secret             | Necessary argument for elementary task                                                                                               | No                                                        |
 
 ### **Kubernetes-Specific Variables**
 
