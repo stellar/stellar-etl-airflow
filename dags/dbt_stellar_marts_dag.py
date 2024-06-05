@@ -10,7 +10,7 @@ from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 init_sentry()
 
 dag = DAG(
-    "dbt_sdf_marts",
+    "dbt_stellar_marts",
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 4, 24, 16, 0),
     description="This DAG runs dbt models at a daily cadence",
@@ -20,7 +20,7 @@ dag = DAG(
     },
     max_active_runs=3,
     catchup=True,
-    tags=["dbt-sdf-marts"],
+    tags=["dbt-stellar-marts"],  # trocar
 )
 
 # Wait on ingestion DAGs
@@ -49,7 +49,7 @@ history_assets = dbt_task(dag, tag="history_assets")
 soroban = dbt_task(dag, tag="soroban")
 snapshot_state = dbt_task(dag, tag="snapshot_state")
 
-elementary = elementary_task(dag, "dbt_sdf_marts")
+elementary = elementary_task(dag, "dbt_stellar_marts")
 
 # DAG task graph
 wait_on_dbt_enriched_base_tables >> ohlc_task >> liquidity_pool_trade_volume_task
