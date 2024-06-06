@@ -20,7 +20,7 @@ dag = DAG(
     },
     max_active_runs=3,
     catchup=True,
-    tags=["dbt-stellar-marts"],  # trocar
+    tags=["dbt-stellar-marts"],
 )
 
 # Wait on ingestion DAGs
