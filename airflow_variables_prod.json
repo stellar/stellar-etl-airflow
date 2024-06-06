@@ -42,7 +42,7 @@
     "config_settings": ["last_modified_ledger"],
     "ttl": ["last_modified_ledger", "key_hash"]
   },
-  "dbt_dataset": "",
+  "dbt_dataset_for_test": "",
   "dbt_full_refresh_models": {
     "history_assets": false,
     "int_partnership_assets__account_holders_activity": false,
