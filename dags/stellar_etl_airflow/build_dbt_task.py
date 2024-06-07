@@ -12,7 +12,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 def create_dbt_profile(project="prod"):
     dbt_target = "{{ var.value.dbt_target }}"
-    dbt_dataset = "{{ var.value.dbt_dataset }}"
+    dbt_dataset = "{{ var.value.dbt_dataset_for_test }}"
     dbt_maximum_bytes_billed = "{{ var.value.dbt_maximum_bytes_billed }}"
     dbt_job_execution_timeout_seconds = (
         "{{ var.value.dbt_job_execution_timeout_seconds }}"
@@ -80,7 +80,6 @@ def dbt_task(
             "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
         }
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
@@ -111,17 +110,17 @@ def dbt_task(
         service_account_name=Variable.get("k8s_service_account"),
         env_vars={
             "DBT_USE_COLORS": "0",
-            "DBT_DATASET": "{{ var.value.dbt_dataset }}",
+            "DBT_DATASET": "{{ var.value.dbt_dataset_for_test }}",
             "DBT_TARGET": "{{ var.value.dbt_target }}",
             "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
             "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
             "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
             "DBT_PROJECT": "{{ var.value.dbt_project }}",
-            "INTERNAL_SOURCE_DB": "{{ var.value.internal_source_db }}",
-            "INTERNAL_SOURCE_SCHEMA": "{{ var.value.internal_source_schema }}",
-            "PUBLIC_SOURCE_DB": "{{ var.value.public_source_db }}",
-            "PUBLIC_SOURCE_SCHEMA": "{{ var.value.public_source_schema }}",
+            "INTERNAL_SOURCE_DB": "{{ var.value.dbt_internal_source_db }}",
+            "INTERNAL_SOURCE_SCHEMA": "{{ var.value.dbt_internal_source_schema }}",
+            "PUBLIC_SOURCE_DB": "{{ var.value.dbt_public_source_db }}",
+            "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
             "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
@@ -131,7 +130,6 @@ def dbt_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
@@ -189,7 +187,6 @@ def build_dbt_task(
     resources_requests = (
         f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
@@ -211,7 +208,6 @@ def build_dbt_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
