@@ -4,7 +4,6 @@ from airflow import DAG
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
-from stellar_etl_airflow.build_elementary_slack_alert_task import elementary_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
@@ -49,8 +48,6 @@ history_assets = dbt_task(dag, tag="history_assets")
 soroban = dbt_task(dag, tag="soroban")
 snapshot_state = dbt_task(dag, tag="snapshot_state")
 
-elementary = elementary_task(dag, "dbt_stellar_marts")
-
 # DAG task graph
 wait_on_dbt_enriched_base_tables >> ohlc_task >> liquidity_pool_trade_volume_task
 
@@ -68,17 +65,3 @@ wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> soroban
 wait_on_dbt_enriched_base_tables >> snapshot_state
-
-mgi_task >> elementary
-liquidity_providers_task >> elementary
-liquidity_pools_values_task >> elementary
-liquidity_pools_value_history_task >> elementary
-trade_agg_task >> elementary
-fee_stats_agg_task >> elementary
-asset_stats_agg_task >> elementary
-network_stats_agg_task >> elementary
-partnership_assets_task >> elementary
-history_assets >> elementary
-soroban >> elementary
-liquidity_pool_trade_volume_task >> elementary
-snapshot_state >> elementary
