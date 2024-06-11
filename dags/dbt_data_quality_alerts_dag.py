@@ -28,7 +28,7 @@ dag = DAG(
 dbt_unit_tests = dbt_task(
     dag,
     command_type="test",
-    tag="unit_tests",
+    tag="singular_test",
 )
 unit_tests_elementary_alerts = elementary_task(dag, "dbt_data_quality")
 start_tests = EmptyOperator(task_id="start_tests_task")

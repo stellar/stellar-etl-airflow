@@ -30,7 +30,7 @@ wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_
 
 # DBT models to run
 enriched_history_operations_task = dbt_task(
-    dag, tag="enriched_history_operations", excluded=["unit_tests"]
+    dag, tag="enriched_history_operations", excluded="singular_test"
 )
 current_state_task = dbt_task(dag, tag="current_state")
 
