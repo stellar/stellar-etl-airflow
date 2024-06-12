@@ -61,3 +61,24 @@ def alert_after_max_retries(context):
                 f"The task {ti.task_id} belonging to DAG {ti.dag_id} failed after max retries.",
                 "fatal",
             )
+
+
+def alert_sla_miss(dag, task_list, blocking_task_list, slas, blocking_tis):
+    """
+    When a task takes longer then expected to run while having a defined SLA,
+    it misses it.
+    This alerts the IT team about the unexpected behavior in order
+    to enable faster response in case of underlying infrastructure issues.
+    """
+    dag_id = slas[0].dag_id
+    task_id = slas[0].task_id
+    execution_date = slas[0].execution_date.isoformat()
+
+    with push_scope() as scope:
+        scope.set_extra("dag_id", dag_id)
+        scope.set_extra("task_id", task_id)
+        scope.set_extra("execution_date", execution_date)
+        capture_message(
+            f"SLA Miss! The task {task_id} belonging to DAG {dag_id} missed its SLA for the run date {execution_date}.",
+            "warn",
+        )

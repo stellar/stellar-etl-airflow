@@ -63,7 +63,6 @@ def build_time_task(
     resources_requests = (
         f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     return KubernetesPodOperator(
         task_id="get_ledger_range_from_times",
@@ -84,8 +83,12 @@ def build_time_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy=Variable.get("image_pull_policy"),
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                build_time_task.__name__
+            ]
+        ),
     )

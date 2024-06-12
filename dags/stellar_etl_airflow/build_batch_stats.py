@@ -35,4 +35,9 @@ def build_batch_stats(dag, table):
                 "useLegacySql": False,
             }
         },
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                build_batch_stats.__name__
+            ]
+        ),
     )

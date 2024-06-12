@@ -58,5 +58,8 @@ def build_copy_table(
             ]
         ),
         on_failure_callback=alert_after_max_retries,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)["default"]
+        ),
         configuration=configuration,
     )

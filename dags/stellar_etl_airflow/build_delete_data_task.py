@@ -27,6 +27,11 @@ def build_delete_data_task(dag, project, dataset, table, dataset_type="bq"):
             ]
         ),
         on_failure_callback=alert_after_max_retries,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                build_delete_data_task.__name__
+            ]
+        ),
         configuration={
             "query": {
                 "query": DELETE_ROWS_QUERY,
