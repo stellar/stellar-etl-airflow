@@ -12,7 +12,7 @@ init_sentry()
 dag = DAG(
     "dbt_stellar_marts",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 4, 24, 16, 0),
+    start_date=datetime(2024, 6, 11, 17, 30),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 16 * * *",  # Runs at 16:00 UTC
     user_defined_filters={

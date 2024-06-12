@@ -278,5 +278,5 @@
   "dbt_elementary_secret": "slack-token-elementary",
   "dbt_elementary_dataset": "test_elementary",
   "use_captive_core": "False",
-  "txmeta_datastore_path": "sdf-ledger-close-metas/ledgers"
+  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers"
 }
