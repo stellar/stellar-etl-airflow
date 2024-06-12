@@ -267,7 +267,7 @@
     "history_assets": 720,
     "soroban": 720,
     "snapshot_state": 600,
-    "elementary_dbt_sdf_marts": 1620,
+    "elementary_dbt_stellar_marts": 1620,
     "create_sandbox": 2400,
     "update_sandbox": 60,
     "cleanup_metadata": 60,
