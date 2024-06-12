@@ -17,7 +17,11 @@ from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
 from stellar_etl_airflow.build_time_task import build_time_task
-from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+from stellar_etl_airflow.default import (
+    alert_sla_miss,
+    get_default_dag_args,
+    init_sentry,
+)
 
 init_sentry()
 
@@ -42,6 +46,7 @@ dag = DAG(
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
+    sla_miss_callback=alert_sla_miss,
 )
 
 

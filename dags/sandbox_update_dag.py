@@ -16,6 +16,7 @@ from stellar_etl_airflow.build_bq_insert_job_task import (
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
+    alert_sla_miss,
     get_default_dag_args,
     init_sentry,
 )
@@ -36,6 +37,7 @@ with DAG(
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
+    sla_miss_callback=alert_sla_miss,
 ) as dag:
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
     PROJECT = Variable.get("public_project")

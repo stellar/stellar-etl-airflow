@@ -27,6 +27,7 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import load_only
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
+    alert_sla_miss,
     get_default_dag_args,
     init_sentry,
 )
@@ -207,6 +208,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     schedule_interval="@daily",
     start_date=START_DATE,
+    sla_miss_callback=alert_sla_miss,
 )
 if hasattr(dag, "doc_md"):
     dag.doc_md = __doc__
@@ -249,6 +251,9 @@ print_configuration = PythonOperator(
     python_callable=print_configuration_function,
     provide_context=True,
     dag=dag,
+    sla=timedelta(
+        seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+    ),
 )
 
 
@@ -444,6 +449,9 @@ analyze_op = PythonOperator(
     provide_context=True,
     on_failure_callback=alert_after_max_retries,
     dag=dag,
+    sla=timedelta(
+        seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+    ),
 )
 
 cleanup_session_op = PythonOperator(
@@ -452,6 +460,9 @@ cleanup_session_op = PythonOperator(
     provide_context=True,
     on_failure_callback=alert_after_max_retries,
     dag=dag,
+    sla=timedelta(
+        seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+    ),
 )
 
 cleanup_session_op.set_downstream(analyze_op)
@@ -464,6 +475,9 @@ for db_object in DATABASE_OBJECTS:
         provide_context=True,
         on_failure_callback=alert_after_max_retries,
         dag=dag,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)["cleanup_metadata"]
+        ),
     )
 
     print_configuration.set_downstream(cleanup_op)

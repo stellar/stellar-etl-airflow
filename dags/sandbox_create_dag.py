@@ -1,6 +1,7 @@
 """
 This DAG creates the sandbox dataset with transactions tables, state tables with history and views.
 """
+from datetime import timedelta
 from json import loads
 
 from airflow import DAG
@@ -13,6 +14,7 @@ from stellar_etl_airflow.build_bq_insert_job_task import (
 )
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
+    alert_sla_miss,
     get_default_dag_args,
     init_sentry,
 )
@@ -29,6 +31,7 @@ with DAG(
         "fromjson": lambda s: loads(s),
     },
     catchup=False,
+    sla_miss_callback=alert_sla_miss,
 ) as dag:
     PROJECT = Variable.get("public_project")
     DATASET = Variable.get("public_dataset")
@@ -61,6 +64,11 @@ with DAG(
                 }
             },
             on_failure_callback=alert_after_max_retries,
+            sla=timedelta(
+                seconds=Variable.get("task_sla", deserialize_json=True)[
+                    "create_sandbox"
+                ]
+            ),
         )
 
         start_tables_task >> tables_create_task
@@ -85,5 +93,10 @@ with DAG(
                 }
             },
             on_failure_callback=alert_after_max_retries,
+            sla=timedelta(
+                seconds=Variable.get("task_sla", deserialize_json=True)[
+                    "create_sandbox"
+                ]
+            ),
         )
         start_views_task >> dbt_tables_create_task
