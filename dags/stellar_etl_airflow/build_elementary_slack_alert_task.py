@@ -41,18 +41,17 @@ def elementary_task(
             "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
         }
     )
-    affinity = Variable.get("affinity", deserialize_json=True).get(resource_cfg)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    slack_secret_name = Variable.get("elementary_secret")
+    slack_secret_name = Variable.get("dbt_elementary_secret")
     secret = access_secret(slack_secret_name, "default")
     args = [
         "monitor",
         "--slack-token",
         f"{secret}",
         "--slack-channel-name",
-        "{{ var.value.slack_elementary_channel }}",
+        "{{ var.value.dbt_slack_elementary_channel }}",
     ]
 
     logging.info(f"sh commands to run in pod: {args}")
@@ -71,10 +70,10 @@ def elementary_task(
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
             "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
             "DBT_PROJECT": "{{ var.value.dbt_project }}",
-            "INTERNAL_SOURCE_DB": "{{ var.value.internal_source_db }}",
-            "INTERNAL_SOURCE_SCHEMA": "{{ var.value.internal_source_schema }}",
-            "PUBLIC_SOURCE_DB": "{{ var.value.public_source_db }}",
-            "PUBLIC_SOURCE_SCHEMA": "{{ var.value.public_source_schema }}",
+            "INTERNAL_SOURCE_DB": "{{ var.value.dbt_internal_source_db }}",
+            "INTERNAL_SOURCE_SCHEMA": "{{ var.value.dbt_internal_source_schema }}",
+            "PUBLIC_SOURCE_DB": "{{ var.value.dbt_public_source_db }}",
+            "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
             "EXECUTION_DATE": "{{ ds }}",
         },
         image=dbt_image,
@@ -85,7 +84,6 @@ def elementary_task(
         startup_timeout_seconds=720,
         in_cluster=in_cluster,
         config_file=config_file_location,
-        affinity=affinity,
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",

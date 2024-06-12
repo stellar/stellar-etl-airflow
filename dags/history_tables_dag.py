@@ -29,7 +29,7 @@ init_sentry()
 dag = DAG(
     "history_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 4, 23, 15, 0),
+    start_date=datetime(2024, 6, 11, 17, 30),
     catchup=True,
     description="This DAG exports trades and operations from the history archive using CaptiveCore. This supports parsing sponsorship and AMMs.",
     schedule_interval="*/10 * * * *",

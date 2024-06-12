@@ -1,5 +1,4 @@
 {
-  "affinity": {},
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_project": "hubble-261722",
@@ -43,7 +42,7 @@
     "config_settings": ["last_modified_ledger"],
     "ttl": ["last_modified_ledger", "key_hash"]
   },
-  "dbt_dataset": "",
+  "dbt_dataset_for_test": "",
   "dbt_full_refresh_models": {
     "history_assets": false,
     "int_partnership_assets__account_holders_activity": false,
@@ -304,12 +303,12 @@
   },
   "currency_bucket": "ext-asset-pricing",
   "max_db_entry_age_in_days": 180,
-  "internal_source_db": "hubble-261722",
-  "internal_source_schema": "crypto_stellar_internal_2",
-  "public_source_db": "crypto-stellar",
-  "public_source_schema": "crypto_stellar",
-  "slack_elementary_channel": "alerts-hubble-data-quality",
-  "elementary_secret": "slack-token-elementary",
+  "dbt_internal_source_db": "hubble-261722",
+  "dbt_internal_source_schema": "crypto_stellar_internal_2",
+  "dbt_public_source_db": "crypto-stellar",
+  "dbt_public_source_schema": "crypto_stellar",
+  "dbt_slack_elementary_channel": "alerts-hubble-data-quality",
+  "dbt_elementary_secret": "slack-token-elementary",
   "dbt_elementary_dataset": "elementary",
   "use_captive_core": "False",
   "txmeta_datastore_path": "sdf-ledger-close-metas/ledgers"
