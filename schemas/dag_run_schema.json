@@ -1,0 +1,87 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "queued_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "data_interval_start",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "data_interval_end",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "log_template_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "updated_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "execution_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "external_trigger",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "end_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "start_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_scheduling_decision",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "creating_job_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "dag_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "dag_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "state",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "run_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "run_type",
+    "type": "STRING"
+  }
+]

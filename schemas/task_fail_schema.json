@@ -1,0 +1,42 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "end_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "duration",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "map_index",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "start_date",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "task_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "dag_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "run_id",
+    "type": "STRING"
+  }
+]
