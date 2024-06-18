@@ -132,7 +132,6 @@ send_contract_events_to_pub_task = build_gcs_to_bq_task(
 )
 
 
-
 (
     time_task
     >> write_contract_events_stats
