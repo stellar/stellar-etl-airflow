@@ -78,6 +78,7 @@ def build_gcs_to_bq_task(
         "operations",
         "trades",
         "effects",
+        "contract_events",
     ]
     if cluster:
         cluster_fields = Variable.get("cluster_fields", deserialize_json=True)

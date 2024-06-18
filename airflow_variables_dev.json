@@ -44,7 +44,8 @@
     "contract_data": ["last_modified_ledger", "contract_id"],
     "contract_code": ["last_modified_ledger", "contract_code_hash"],
     "config_settings": ["last_modified_ledger"],
-    "ttl": ["last_modified_ledger", "key_hash"]
+    "ttl": ["last_modified_ledger", "key_hash"],
+    "history_contract_events": ["contract_id"]
   },
   "dbt_dataset_for_test": "test",
   "dbt_full_refresh_models": {
@@ -61,7 +62,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:274b138",
+  "image_name": "chowbao/stellar-etl:contract_events",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -172,6 +173,10 @@
     "ttl": {
       "field": "closed_at",
       "type": "MONTH"
+    },
+    "history_contract_events": {
+      "field": "closed_at",
+      "type": "MONTH"
     }
   },
   "partners_data": {
@@ -234,7 +239,8 @@
     "contract_data": "contract_data",
     "contract_code": "contract_code",
     "config_settings": "config_settings",
-    "ttl": "ttl"
+    "ttl": "ttl",
+    "contract_events": "history_contract_events"
   },
   "task_timeout": {
     "build_batch_stats": 180,
