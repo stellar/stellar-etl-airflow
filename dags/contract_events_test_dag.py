@@ -51,8 +51,6 @@ dag = DAG(
 
 
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = "{{ var.value.bq_project }}"
-internal_dataset = "{{ var.value.bq_dataset }}"
 public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
