@@ -85,4 +85,9 @@ def build_bq_insert_job(
         ),
         on_failure_callback=alert_after_max_retries,
         configuration=configuration,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                build_bq_insert_job.__name__
+            ]
+        ),
     )

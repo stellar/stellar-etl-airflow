@@ -135,6 +135,11 @@ def build_gcs_to_bq_task(
             + '\')["failed_transforms"] }}',
             max_failed_transforms=0,
             on_failure_callback=alert_after_max_retries,
+            sla=timedelta(
+                seconds=Variable.get("task_sla", deserialize_json=True)[
+                    build_gcs_to_bq_task.__name__
+                ]
+            ),
             dag=dag,
         )
 
@@ -165,5 +170,10 @@ def build_gcs_to_bq_task(
             time_partitioning=time_partition,
             cluster_fields=cluster_fields,
             on_failure_callback=alert_after_max_retries,
+            sla=timedelta(
+                seconds=Variable.get("task_sla", deserialize_json=True)[
+                    build_gcs_to_bq_task.__name__
+                ]
+            ),
             dag=dag,
         )

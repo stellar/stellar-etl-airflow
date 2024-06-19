@@ -12,7 +12,11 @@ from stellar_etl_airflow.build_check_execution_date_task import (
     path_to_execute,
 )
 from stellar_etl_airflow.build_delete_data_for_reset_task import build_delete_data_task
-from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+from stellar_etl_airflow.default import (
+    alert_sla_miss,
+    get_default_dag_args,
+    init_sentry,
+)
 
 init_sentry()
 
@@ -27,6 +31,7 @@ dag = DAG(
         "alias": "testnet-reset",
     },
     user_defined_filters={"fromjson": lambda s: loads(s)},
+    sla_miss_callback=alert_sla_miss,
 )
 
 internal_project = "test-hubble-319619"
