@@ -2,6 +2,7 @@
 This file contains functions for creating Airflow tasks to merge data on ledger entry changes from
 a file in Google Cloud storage into a BigQuery table.
 """
+
 import logging
 from datetime import timedelta
 from json import loads

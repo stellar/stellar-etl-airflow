@@ -3,6 +3,7 @@ A maintenance workflow that you can deploy into Airflow to periodically clean
 out the DagRun, TaskInstance, Log, XCom, Job DB and SlaMiss entries to avoid
 having too much data in your Airflow MetaStore.
 """
+
 import logging
 from datetime import timedelta
 
@@ -61,9 +62,11 @@ DATABASE_OBJECTS = [
     },
     {
         "airflow_db_model": TaskInstance,
-        "age_check_column": TaskInstance.execution_date
-        if AIRFLOW_VERSION < ["2", "2", "0"]
-        else TaskInstance.start_date,
+        "age_check_column": (
+            TaskInstance.execution_date
+            if AIRFLOW_VERSION < ["2", "2", "0"]
+            else TaskInstance.start_date
+        ),
         "keep_last": False,
         "keep_last_filters": None,
         "keep_last_group_by": None,
@@ -77,9 +80,9 @@ DATABASE_OBJECTS = [
     },
     {
         "airflow_db_model": XCom,
-        "age_check_column": XCom.execution_date
-        if AIRFLOW_VERSION < ["2", "2", "5"]
-        else XCom.timestamp,
+        "age_check_column": (
+            XCom.execution_date if AIRFLOW_VERSION < ["2", "2", "5"] else XCom.timestamp
+        ),
         "keep_last": False,
         "keep_last_filters": None,
         "keep_last_group_by": None,
@@ -107,9 +110,11 @@ try:
     DATABASE_OBJECTS.append(
         {
             "airflow_db_model": TaskReschedule,
-            "age_check_column": TaskReschedule.execution_date
-            if AIRFLOW_VERSION < ["2", "2", "0"]
-            else TaskReschedule.start_date,
+            "age_check_column": (
+                TaskReschedule.execution_date
+                if AIRFLOW_VERSION < ["2", "2", "0"]
+                else TaskReschedule.start_date
+            ),
             "keep_last": False,
             "keep_last_filters": None,
             "keep_last_group_by": None,

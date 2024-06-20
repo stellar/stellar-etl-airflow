@@ -2,6 +2,7 @@
 The state_table_export DAG exports ledger entry changes (accounts, offers, and trustlines) within a bounded range using stellar-core.
 This DAG should be triggered manually if it is required to export entry changes within a specified time range.
 """
+
 from ast import literal_eval
 from datetime import datetime
 from json import loads

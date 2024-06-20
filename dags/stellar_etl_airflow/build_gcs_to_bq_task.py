@@ -1,6 +1,7 @@
 """
 This file contains functions for creating Airflow tasks to load files from Google Cloud Storage into BigQuery.
 """
+
 from datetime import timedelta
 
 from airflow.models import Variable

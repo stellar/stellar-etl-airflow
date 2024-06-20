@@ -24,8 +24,7 @@ END_DAY=$5
 GCS_BUCKET=gs://us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__
 
 # make state tables
-for day in $(seq $START_DAY $END_DAY)
-do
+for day in $(seq $START_DAY $END_DAY); do
     echo "Removing files matching pattern $PATTERN for month $MONTH and day $day"
     if [ $day -lt 10 ]; then
         gsutil -m rm -rf $GCS_BUCKET$YEAR-$MONTH-0$day*/$PATTERN*

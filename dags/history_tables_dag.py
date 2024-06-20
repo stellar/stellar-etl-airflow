@@ -2,6 +2,7 @@
 The history_archive_export DAG exports operations and trades from the history archives.
 It is scheduled to export information to BigQuery at regular intervals.
 """
+
 from ast import literal_eval
 from datetime import datetime
 from json import loads
