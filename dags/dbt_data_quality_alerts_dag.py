@@ -18,7 +18,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 6, 11, 0, 0),
     description="This DAG runs dbt tests and Elementary alerts at a half-hourly cadence",
-    schedule_interval="*/30 * * * *",
+    schedule="*/15,*/45 * * * *",  # Runs every 15th minute and every 45th minute
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
