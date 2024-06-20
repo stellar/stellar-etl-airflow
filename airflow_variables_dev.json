@@ -251,6 +251,7 @@
     "build_time_task": 480,
     "build_export_task": 840,
     "enriched_history_operations": 780,
+    "enriched_history_operations_with_exclude": 780,
     "current_state": 720,
     "elementary_dbt_enriched_base_tables": 1080,
     "ohlc": 720,
