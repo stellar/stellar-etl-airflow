@@ -4,47 +4,68 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 
 ## **Table of Contents**
 
+- [stellar-etl-airflow](#stellar-etl-airflow)
+  - [**Table of Contents**](#table-of-contents)
 - [Installation and Setup](#installation-and-setup)
-  - [Google Cloud Platform](#google-cloud-platform)
-  - [Cloud Composer](#cloud-composer)
-  - [Airflow Variables Explanation](#airflow-variables-explanation)
-    - [Normal Variables](#normal-variables)
-    - [Kubernetes Specific Variables](#kubernetes-specific-variables)
+  - [**Google Cloud Platform**](#google-cloud-platform)
+    - [**Setup the Cloud SDK**](#setup-the-cloud-sdk)
+    - [**Create Google Project**](#create-google-project)
+    - [**Create BigQuery Dataset**](#create-bigquery-dataset)
+    - [**Create Google Cloud Storage bucket**](#create-google-cloud-storage-bucket)
+  - [**Cloud Composer**](#cloud-composer)
+    - [**Create Google Cloud Composer environment**](#create-google-cloud-composer-environment)
+    - [**Upload DAGs and Schemas to Cloud Composer**](#upload-dags-and-schemas-to-cloud-composer)
+    - [**Add Service Account Key**](#add-service-account-key)
+    - [**Add private docker registry auth secrets**](#add-private-docker-registry-auth-secrets)
+    - [**Create Namespace for ETL Tasks (Optional)**](#create-namespace-for-etl-tasks-optional)
+    - [**Authenticating Tasks in an Autopilot-Managed Environment**](#authenticating-tasks-in-an-autopilot-managed-environment)
+    - [**Modify Kubernetes Config for Airflow Workers**](#modify-kubernetes-config-for-airflow-workers)
+    - [**Add Airflow Variables and Connections**](#add-airflow-variables-and-connections)
+  - [**Airflow Variables Explanation**](#airflow-variables-explanation)
+    - [**Normal Variables**](#normal-variables)
+    - [**DBT Variables**](#dbt-variables)
+    - [**Kubernetes-Specific Variables**](#kubernetes-specific-variables)
 - [Execution Procedures](#execution-procedures)
-  - [Starting Up](#starting-up)
-  - [Handling Failures](#handling-failures)
-    - [Clearing Failures](#clearing-failures)
+  - [**Starting Up**](#starting-up)
+  - [**Handling Failures**](#handling-failures)
+    - [**Clearing Failures**](#clearing-failures)
 - [Understanding the Setup](#understanding-the-setup)
-  - [DAG Diagrams](#dag-diagrams)
-    - [Public DAGs](#public-dags)
-      - [History Table Export DAG](#history-table-export-dag)
-      - [State Table Export DAG](#state-table-export-dag)
-      - [DBT Enriched Base Tables DAG](#dbt-enriched-base-tables-dag)
-    - [SDF Internal DAGs](#sdf-internal-dags)
-      - [Sandbox update DAG](#sandbox-update-dag)
-      - [Cleanup metadata DAG](#cleanup-metadata-dag)
-      - [Partner Pipeline DAG](#partner-pipeline-dag)
-      - [DBT SDF Marts DAG](#dbt-sdf-marts-dag)
-      - [Daily Euro OHLC DAG](#daily-euro-ohlc-dag)
-      - [Audit Log DAG](#audit-log-dag)
-  - [Task Explanations](#task-explanations)
-    - [build_time_task](#build_time_task)
-    - [build_export_task](#build_export_task)
-    - [build_gcs_to_bq_task](#build_gcs_to_bq_task)
-    - [build_apply_gcs_changes_to_bq_task](#build_apply_gcs_changes_to_bq_task)
-    - [build_batch_stats](#build_batch_stats)
-    - [bq_insert_job_task](#bq_insert_job_task)
-    - [cross_dependency_task](#cross_dependency_task)
-    - [build_delete_data_task](#build_delete_data_task)
-    - [build_dbt_task](#build_dbt_task)
-    - [build_elementary_slack_alert_task](#build_elementary_slack_alert_task)
+  - [**DAG Diagrams**](#dag-diagrams)
+    - [**Public DAGs**](#public-dags)
+      - [**History Table Export DAG**](#history-table-export-dag)
+      - [**State Table Export DAG**](#state-table-export-dag)
+      - [**DBT Enriched Base Tables DAG**](#dbt-enriched-base-tables-dag)
+    - [**SDF Internal DAGs**](#sdf-internal-dags)
+      - [**Sandbox DAGs**](#sandbox-dags)
+        - [**Sandbox Create DAG**](#sandbox-create-dag)
+        - [**Sandbox Update DAG**](#sandbox-update-dag)
+      - [**Cleanup Metadata DAG**](#cleanup-metadata-dag)
+      - [**Partner Pipeline DAG**](#partner-pipeline-dag)
+      - [**DBT Stellar Marts DAG**](#dbt-stellar-marts-dag)
+      - [**DBT Data Quality Alerts DAG**](#dbt-data-quality-alerts-dag)
+      - [**Daily Euro OHLC DAG**](#daily-euro-ohlc-dag)
+      - [**Audit Log DAG**](#audit-log-dag)
+  - [**Task Explanations**](#task-explanations)
+    - [**build\_time\_task**](#build_time_task)
+    - [**build\_export\_task**](#build_export_task)
+    - [**build\_gcs\_to\_bq\_task**](#build_gcs_to_bq_task)
+    - [**build\_apply\_gcs\_changes\_to\_bq\_task**](#build_apply_gcs_changes_to_bq_task)
+    - [**build\_batch\_stats**](#build_batch_stats)
+    - [**bq\_insert\_job\_task**](#bq_insert_job_task)
+    - [**cross\_dependency\_task**](#cross_dependency_task)
+    - [**build\_delete\_data\_task**](#build_delete_data_task)
+    - [**build\_copy\_table\_task**](#build_copy_table_task)
+    - [**build\_coingecko\_api\_to\_gcs\_task**](#build_coingecko_api_to_gcs_task)
+    - [**build\_check\_execution\_date\_task**](#build_check_execution_date_task)
+    - [**build\_dbt\_task**](#build_dbt_task)
+    - [**build\_elementary\_slack\_alert\_task**](#build_elementary_slack_alert_task)
 - [Further Development](#further-development)
-  - [Extensions](#extensions)
-    - [Pre-commit Git hook scripts](#pre-commit-git-hook-scripts)
-    - [Adding New DAGs](#adding-new-dags)
-    - [Adding tasks to existing DAGs](#adding-tasks-to-existing-dags)
-    - [Adding New Tasks](#adding-new-tasks)
-  - [Testing Changes](#testing-changes)
+  - [**Extensions**](#extensions)
+    - [**Pre-commit Git hook scripts**](#pre-commit-git-hook-scripts)
+    - [**Adding New DAGs**](#adding-new-dags)
+    - [**Adding tasks to existing DAGs**](#adding-tasks-to-existing-dags)
+    - [**Adding New Tasks**](#adding-new-tasks)
+  - [**Testing Changes**](#testing-changes)
 
 <br>
 
@@ -586,7 +607,6 @@ This section contains information about the Airflow setup. It includes our DAG d
 - Creates the DBT staging views for models
 - Updates the enriched_history_operations table
 - Updates the current state tables
-- If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
 
 ![dbt_enriched_base_tables DAG](documentation/images/dbt_enriched_base_tables.png)
 
@@ -625,14 +645,22 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 - Used by SDF for internal partnership pipelines
 
-#### **DBT SDF Marts DAG**
+#### **DBT Stellar Marts DAG**
 
-[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_sdf_marts_dag.py)
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_stellar_marts_dag.py)
 
 - Updates the DBT mart tables daily
+
+![dbt_stellar_marts DAG](documentation/images/dbt_stellar_marts.png)
+
+#### **DBT Data Quality Alerts DAG**
+
+[This DAG](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/dbt_data_quality_alerts_dag.py)
+
+- Runs DBT tests tagged as `singular_test` in `stellar-dbt` and elementary alerts at a half-hourly cadence
 - If found any warnings, it sends a Slack notification about what table has a warning, the time and date it ocurred.
 
-![dbt_sdf_marts DAG](documentation/images/dbt_sdf_marts.png)
+![dbt_data_quality_alerts DAG](documentation/images/dbt_data_quality_alerts.png)
 
 #### **Daily Euro OHLC DAG**
 
