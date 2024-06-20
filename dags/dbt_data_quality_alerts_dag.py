@@ -35,8 +35,8 @@ dbt_unit_tests = dbt_task(
     command_type="test",
     tag="singular_test",
 )
-unit_tests_elementary_alerts = elementary_task(dag, "dbt_data_quality")
+singular_tests_elementary_alerts = elementary_task(dag, "dbt_data_quality")
 start_tests = EmptyOperator(task_id="start_tests_task")
 
 # DAG task graph
-start_tests >> dbt_unit_tests >> unit_tests_elementary_alerts
+start_tests >> dbt_unit_tests >> singular_tests_elementary_alerts
