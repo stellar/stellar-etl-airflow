@@ -53,6 +53,7 @@ partnership_assets_task = dbt_task(dag, tag="partnership_assets")
 history_assets = dbt_task(dag, tag="history_assets")
 soroban = dbt_task(dag, tag="soroban")
 snapshot_state = dbt_task(dag, tag="snapshot_state")
+relevant_asset_trades = dbt_task(dag, tag="relevant_asset_trades")
 
 elementary = elementary_task(dag, "dbt_stellar_marts")
 
@@ -73,6 +74,7 @@ wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> soroban
 wait_on_dbt_enriched_base_tables >> snapshot_state
+wait_on_dbt_enriched_base_tables >> relevant_asset_trades
 
 mgi_task >> elementary
 liquidity_providers_task >> elementary
@@ -87,3 +89,4 @@ history_assets >> elementary
 soroban >> elementary
 liquidity_pool_trade_volume_task >> elementary
 snapshot_state >> elementary
+relevant_asset_trades >> elementary
