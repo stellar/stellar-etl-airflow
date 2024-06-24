@@ -77,7 +77,7 @@ write_effects_stats = build_batch_stats(dag, table_names["effects"])
 write_tx_stats = build_batch_stats(dag, table_names["transactions"])
 write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
 write_asset_stats = build_batch_stats(dag, table_names["assets"])
-
+write_contract_events_stats = build_batch_stats(dag, "contract_events")
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -155,6 +155,17 @@ asset_export_task = build_export_task(
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
 )
+contract_events_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_contract_events",
+    "{{ var.json.output_file_names.contract_events }}",
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    use_captive_core=use_captive_core,
+    txmeta_datastore_path=txmeta_datastore_path,
+)
 
 
 """
@@ -198,6 +209,10 @@ delete_old_ledger_pub_task = build_delete_data_task(
 
 delete_old_asset_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["assets"], "pub"
+)
+
+delete_contract_events_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["contract_events"], "pub"
 )
 
 
@@ -279,6 +294,19 @@ send_assets_to_pub_task = build_gcs_to_bq_task(
 )
 
 
+send_contract_events_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    contract_events_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["contract_events"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+
+
 insert_enriched_hist_pub_task = build_bq_insert_job(
     dag,
     public_project,
@@ -353,4 +381,12 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> delete_old_asset_pub_task
     >> send_assets_to_pub_task
     >> dedup_assets_pub_task
+)
+
+(
+    time_task
+    >> write_contract_events_stats
+    >> contract_events_export_task
+    >> delete_contract_events_task
+    >> send_contract_events_to_pub_task
 )

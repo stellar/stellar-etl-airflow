@@ -62,7 +62,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "chowbao/stellar-etl:contract_events3",
+  "image_name": "chowbao/stellar-etl:contract_events4",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "kube_config_location": "",
@@ -93,7 +93,6 @@
     "contract_code": "contract_code.txt",
     "config_settings": "config_settings.txt",
     "ttl": "ttl.txt",
-    "diagnostic_events": "diagnostic_events.txt",
     "contract_events": "contract_events.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
