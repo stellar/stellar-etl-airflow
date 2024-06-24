@@ -25,7 +25,7 @@ dag = DAG(
     max_active_runs=3,
     catchup=True,
     tags=["dbt-stellar-marts"],
-    sla_miss_callback=alert_sla_miss,
+    #sla_miss_callback=alert_sla_miss,
 )
 
 # Wait on ingestion DAGs
