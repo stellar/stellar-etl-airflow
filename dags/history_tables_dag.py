@@ -46,7 +46,7 @@ dag = DAG(
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
-    #sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 )
 
 

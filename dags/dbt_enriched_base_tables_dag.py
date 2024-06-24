@@ -25,7 +25,7 @@ dag = DAG(
     max_active_runs=1,
     catchup=False,
     tags=["dbt-enriched-base-tables"],
-    #sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 )
 
 # Wait on ingestion DAGs
