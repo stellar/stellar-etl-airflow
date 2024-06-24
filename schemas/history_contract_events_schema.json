@@ -6,6 +6,16 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "transaction_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "successful",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "in_successful_contract_call",
     "type": "BOOLEAN"
   },
