@@ -26,5 +26,4 @@ if [ -z "${table}" ]; then
     exit 1
 fi
 
-
 bq update ${PROJECT_ID}:${DATASET_ID}."${table}" schemas/"${table}"_schema.json

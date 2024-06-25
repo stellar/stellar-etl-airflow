@@ -24,8 +24,7 @@ SCHEMA_DIR=$WORKDIR/schemas/
 PARTITION_TABLES=(history_operations history_transactions history_ledgers history_assets history_trades history_effects accounts claimable_balances offers liquidity_pools account_signers trust_lines)
 
 # make partitioned tables
-for table in ${PARTITION_TABLES[@]}
-do
+for table in ${PARTITION_TABLES[@]}; do
     echo "Creating partitioned table $table in $DATASET_ID"
     if [ "$table" = "history_operations" ]; then
         cluster=transaction_id,source_account,type
@@ -65,9 +64,9 @@ do
         partition=closed_at
     fi
     bq mk --table \
-    --schema $SCHEMA_DIR${table}_schema.json \
-    --time_partitioning_field $partition \
-    --time_partitioning_type MONTH \
-    --clustering_fields $cluster \
-    $PROJECT_ID:$DATASET_ID.$table
+        --schema $SCHEMA_DIR${table}_schema.json \
+        --time_partitioning_field $partition \
+        --time_partitioning_type MONTH \
+        --clustering_fields $cluster \
+        $PROJECT_ID:$DATASET_ID.$table
 done
