@@ -25,7 +25,14 @@ jobs:
         with:
           python-version: 3.8
 
+      - id: file_changes
+        uses: trilom/file-changes-action@v1.2.3
+        with:
+          output: " "
+
       - uses: pre-commit/action@v3.0.0
+        env:
+          extra_args: --color=always --files ${{ steps.file_changes.outputs.files}}
 
   tests:
     runs-on: ubuntu-latest
