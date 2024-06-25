@@ -40,76 +40,12 @@
       "account",
       "type"
     ],
-    "history_assets": [
-      "asset_code",
-      "asset_issuer",
-      "asset_type"
-    ],
-    "history_effects": [
-      "address",
-      "operation_id",
-      "type"
-    ],
-    "history_ledgers": [
-      "sequence",
-      "closed_at"
-    ],
-    "history_operations": [
-      "transaction_id",
-      "source_account",
-      "type"
-    ],
-    "history_trades": [
-      "selling_asset_id",
-      "buying_asset_id",
-      "trade_type"
-    ],
-    "history_transactions": [
-      "account",
-      "ledger_sequence",
-      "successful"
-    ],
-    "liquidity_pools": [
-      "liquidity_pool_id",
-      "asset_a_id",
-      "asset_b_id",
-      "last_modified_ledger"
-    ],
-    "offers": [
-      "selling_asset_id",
-      "buying_asset_id",
-      "last_modified_ledger"
-    ],
-    "trust_lines": [
-      "account_id",
-      "asset_id",
-      "liquidity_pool_id",
-      "last_modified_ledger"
+    "history_contract_events": [
+      "contract_id"
     ],
     "ttl": [
       "last_modified_ledger",
       "key_hash"
-    ]
-  },
-  "currency_bucket": "currencies_ohlc",
-  "currency_ohlc": {
-    "columns_ohlc_currency": [
-      "time",
-      "open",
-      "high",
-      "low",
-      "close"
-    ],
-    "currency": "euro_ohlc",
-    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
-    "table_name": "euro_usd_ohlc"
-  },
-  "date_for_resets": {
-    "date": [
-      "2023-03-15",
-      "2023-06-14",
-      "2023-09-13",
-      "2023-12-13"
     ]
   },
   "dbt_dataset_for_test": "test",
@@ -145,7 +81,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:274b138",
+  "image_name": "stellar/stellar-etl:29ab062",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -162,6 +98,7 @@
     "config_settings": "config_settings.txt",
     "contract_code": "contract_code.txt",
     "contract_data": "contract_data.txt",
+    "contract_events": "contract_events.txt",
     "diagnostic_events": "diagnostic_events.txt",
     "dimAccounts": "dimAccounts.txt",
     "dimMarkets": "dimMarkets.txt",
@@ -218,6 +155,10 @@
       "field": "batch_run_date",
       "type": "MONTH"
     },
+    "history_contract_events": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
     "history_effects": {
       "field": "batch_run_date",
       "type": "MONTH"
@@ -247,10 +188,6 @@
       "type": "MONTH"
     },
     "offers": {
-      "field": "batch_run_date",
-      "type": "MONTH"
-    },
-    "trust_lines": {
       "field": "batch_run_date",
       "type": "MONTH"
     },
@@ -310,6 +247,7 @@
     "config_settings": "config_settings",
     "contract_code": "contract_code",
     "contract_data": "contract_data",
+    "contract_events": "history_contract_events",
     "effects": "history_effects",
     "enriched_history_operations": "enriched_history_operations",
     "ledgers": "history_ledgers",
@@ -347,6 +285,7 @@
     "network_stats": 720,
     "ohlc": 720,
     "partnership_assets": 660,
+    "relevant_asset_trades": 1200,
     "snapshot_state": 600,
     "soroban": 720,
     "trade_agg": 720,
@@ -362,9 +301,6 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 480
   },
-  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
-  "use_captive_core": "False",
-  "use_futurenet": "False",
   "use_testnet": "True",
   "volume_config": {},
   "volume_name": "etl-data"

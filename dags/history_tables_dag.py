@@ -47,13 +47,11 @@ dag = DAG(
         "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
-    sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 )
 
 
 table_names = Variable.get("table_ids", deserialize_json=True)
-internal_project = "{{ var.value.bq_project }}"
-internal_dataset = "{{ var.value.bq_dataset }}"
 public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
 use_testnet = literal_eval(Variable.get("use_testnet"))
@@ -78,10 +76,9 @@ write_op_stats = build_batch_stats(dag, table_names["operations"])
 write_trade_stats = build_batch_stats(dag, table_names["trades"])
 write_effects_stats = build_batch_stats(dag, table_names["effects"])
 write_tx_stats = build_batch_stats(dag, table_names["transactions"])
-write_diagnostic_events_stats = build_batch_stats(dag, "diagnostic_events")
 write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
 write_asset_stats = build_batch_stats(dag, table_names["assets"])
-
+write_contract_events_stats = build_batch_stats(dag, "contract_events")
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -137,17 +134,6 @@ tx_export_task = build_export_task(
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
 )
-diagnostic_events_export_task = build_export_task(
-    dag,
-    "archive",
-    "export_diagnostic_events",
-    "{{ var.json.output_file_names.diagnostic_events }}",
-    use_testnet=use_testnet,
-    use_futurenet=use_futurenet,
-    use_gcs=True,
-    use_captive_core=use_captive_core,
-    txmeta_datastore_path=txmeta_datastore_path,
-)
 ledger_export_task = build_export_task(
     dag,
     "archive",
@@ -164,6 +150,17 @@ asset_export_task = build_export_task(
     "archive",
     "export_assets",
     "{{ var.json.output_file_names.assets }}",
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    use_captive_core=use_captive_core,
+    txmeta_datastore_path=txmeta_datastore_path,
+)
+contract_events_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_contract_events",
+    "{{ var.json.output_file_names.contract_events }}",
     use_testnet=use_testnet,
     use_futurenet=use_futurenet,
     use_gcs=True,
@@ -213,6 +210,10 @@ delete_old_ledger_pub_task = build_delete_data_task(
 
 delete_old_asset_pub_task = build_delete_data_task(
     dag, public_project, public_dataset, table_names["assets"], "pub"
+)
+
+delete_contract_events_task = build_delete_data_task(
+    dag, public_project, public_dataset, table_names["contract_events"], "pub"
 )
 
 
@@ -294,6 +295,19 @@ send_assets_to_pub_task = build_gcs_to_bq_task(
 )
 
 
+send_contract_events_to_pub_task = build_gcs_to_bq_task(
+    dag,
+    contract_events_export_task.task_id,
+    public_project,
+    public_dataset,
+    table_names["contract_events"],
+    "",
+    partition=True,
+    cluster=True,
+    dataset_type="pub",
+)
+
+
 insert_enriched_hist_pub_task = build_bq_insert_job(
     dag,
     public_project,
@@ -342,12 +356,6 @@ insert_enriched_hist_pub_task = build_bq_insert_job(
     >> send_txs_to_pub_task
     >> delete_enrich_op_pub_task
 )
-(time_task >> write_diagnostic_events_stats >> diagnostic_events_export_task)
-(
-    [
-        insert_enriched_hist_pub_task,
-    ]
-)
 
 dedup_assets_pub_task = build_bq_insert_job(
     dag,
@@ -374,4 +382,12 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> delete_old_asset_pub_task
     >> send_assets_to_pub_task
     >> dedup_assets_pub_task
+)
+
+(
+    time_task
+    >> write_contract_events_stats
+    >> contract_events_export_task
+    >> delete_contract_events_task
+    >> send_contract_events_to_pub_task
 )

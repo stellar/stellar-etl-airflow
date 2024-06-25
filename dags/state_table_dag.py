@@ -45,7 +45,7 @@ dag = DAG(
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
     catchup=True,
-    sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 )
 
 
