@@ -1,6 +1,7 @@
 """
 This DAG creates the sandbox dataset with transactions tables, state tables with history and views.
 """
+
 from datetime import timedelta
 from json import loads
 

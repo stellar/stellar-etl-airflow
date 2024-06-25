@@ -21,9 +21,9 @@ FIELD=batch_insert_ts
 echo "Creating default value field $FIELD in $TABLE in $DATASET_ID"
 
 bq query --use_legacy_sql=false \
-"ALTER TABLE \`$PROJECT_ID.$DATASET_ID.$TABLE\` \
+    "ALTER TABLE \`$PROJECT_ID.$DATASET_ID.$TABLE\` \
 ADD COLUMN $FIELD TIMESTAMP;"
 
 bq query --use_legacy_sql=false \
-"ALTER TABLE \`$PROJECT_ID.$DATASET_ID.$TABLE\` \
+    "ALTER TABLE \`$PROJECT_ID.$DATASET_ID.$TABLE\` \
 ALTER COLUMN $FIELD SET DEFAULT CURRENT_TIMESTAMP();"
