@@ -83,5 +83,30 @@
     "mode": "NULLABLE",
     "name": "ledger_key_hash",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "key",
+    "type": "JSON"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "key_decoded",
+    "type": "JSON"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "val",
+    "type": "JSON"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "val_decoded",
+    "type": "JSON"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "contract_data_xdr",
+    "type": "STRING"
   }
 ]
