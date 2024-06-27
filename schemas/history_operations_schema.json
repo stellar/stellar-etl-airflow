@@ -1144,5 +1144,10 @@
     "mode": "NULLABLE",
     "name": "operation_trace_code",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
   }
 ]
