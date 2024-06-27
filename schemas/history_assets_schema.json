@@ -1,11 +1,6 @@
 [
   {
     "mode": "NULLABLE",
-    "name": "id",
-    "type": "FLOAT"
-  },
-  {
-    "mode": "NULLABLE",
     "name": "asset_type",
     "type": "STRING"
   },
