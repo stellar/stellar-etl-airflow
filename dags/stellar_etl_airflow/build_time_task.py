@@ -1,6 +1,7 @@
 """
 This file contains functions for creating Airflow tasks to convert from a time range to a ledger range.
 """
+
 import logging
 from datetime import timedelta
 

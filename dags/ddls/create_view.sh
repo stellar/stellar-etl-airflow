@@ -30,8 +30,8 @@ fi
 
 # read view sql
 # query=$(<$QUERY_DIR$view.sql)
-query=`cat $QUERY_DIR$view.sql`
-if [ ${#query} <= 0 ]; then
+query=$(cat $QUERY_DIR$view.sql)
+if [ ${#query} -le 0 ]; then
     echo "$QUERY_DIR$view.sql is empty. Please provide a valid .sql file."
     exit 1
 fi
@@ -42,7 +42,7 @@ query=${query//"DATASET"/$DATASET_ID}
 
 echo "Creating view $view in $DATASET_ID"
 bq mk \
-    --use_legacy_sql=false  \
+    --use_legacy_sql=false \
     --view "$query" \
     --project_id $PROJECT_ID \
     $DATASET_ID.$view
