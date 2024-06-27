@@ -95,7 +95,7 @@ select
     , type
     -- transaction fields
     , transaction_hash
-    , ledger_sequence
+    , hl.ledger_sequence
     , ht.account as txn_account
     , account_sequence
     , max_fee
