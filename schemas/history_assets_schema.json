@@ -1,11 +1,6 @@
 [
   {
     "mode": "NULLABLE",
-    "name": "id",
-    "type": "FLOAT"
-  },
-  {
-    "mode": "NULLABLE",
     "name": "asset_type",
     "type": "STRING"
   },
@@ -37,6 +32,16 @@
   {
     "mode": "NULLABLE",
     "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "closed_at",
     "type": "TIMESTAMP"
   }
 ]
