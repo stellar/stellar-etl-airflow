@@ -64,6 +64,7 @@ def dbt_task(
     flag="select",
     operator="",
     command_type="build",
+    excluded=None,
     resource_cfg="default",
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
@@ -97,6 +98,15 @@ def dbt_task(
         args.append(",".join(models))
     else:
         args.append(models[0])
+    # --exclude selector added for necessary use cases
+    # Argument should be string or list of strings
+    if excluded:
+        task_name = f"{task_name}_with_exclude"
+        args.append("--exclude")
+        if isinstance(excluded, list):
+            args.append(" ".join(excluded))
+        else:
+            args.append(excluded)
 
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")

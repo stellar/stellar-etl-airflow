@@ -4,9 +4,7 @@ from datetime import timedelta
 
 from airflow.configuration import conf
 from airflow.models import Variable
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
-    KubernetesPodOperator,
-)
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes import client, config
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
@@ -93,4 +91,5 @@ def elementary_task(
                 f"elementary_{task_name}"
             ]
         ),
+        trigger_rule="all_done",
     )
