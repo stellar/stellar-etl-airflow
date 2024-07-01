@@ -103,5 +103,15 @@
     "mode": "NULLABLE",
     "name": "soroban_fee_write_1kb",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "node_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "signature",
+    "type": "STRING"
   }
 ]
