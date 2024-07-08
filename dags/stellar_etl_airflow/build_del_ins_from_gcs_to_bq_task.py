@@ -183,3 +183,4 @@ def build_del_ins_from_gcs_to_bq_task(project, dataset, data_type, export_task_i
         )
 
     gcs_to_bq_operator.execute(context)
+    
