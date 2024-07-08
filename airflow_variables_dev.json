@@ -343,6 +343,7 @@
     "build_delete_data_task": 1020,
     "build_export_task": 840,
     "build_gcs_to_bq_task": 960,
+    "build_del_ins_from_gcs_to_bq_task" : 2000,
     "build_time_task": 480,
     "cleanup_metadata": 60,
     "create_sandbox": 2400,
@@ -374,6 +375,7 @@
     "build_copy_table": 180,
     "build_dbt_task": 960,
     "build_delete_data_task": 180,
+    "build_del_ins_from_gcs_to_bq_task": 400,
     "build_export_task": 420,
     "build_gcs_to_bq_task": 300,
     "build_time_task": 480

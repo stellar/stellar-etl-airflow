@@ -549,6 +549,7 @@ This section contains information about the Airflow setup. It includes our DAG d
   - [build_delete_data_task](#build_delete_data_task)
   - [build_dbt_task](#build_dbt_task)
   - [build_elementary_slack_alert_task](#build_elementary_slack_alert_task)
+  - [build_del_ins_from_gcs_to_bq_task](#build_del_ins_from_gcs_to_bq_task)
 
 ---
 
@@ -668,6 +669,10 @@ This section contains information about the Airflow setup. It includes our DAG d
 ### **build_gcs_to_bq_task**
 
 [This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_gcs_to_bq_task.py) contains methods for creating tasks that appends information from a Google Cloud Storage file to a BigQuery table. These tasks will create a new table if one does not exist. These tasks are used for history archive data structures, as Stellar wants to keep a complete record of the ledger's entire history.
+
+### **build_del_ins_from_gcs_to_bq_task**
+
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_del_ins_from_gcs_to_bq_task.py) contains methods for deleting data from old partitions if the table exists and also import fresh data from gcs to the corresponding Big Query table. These tasks will create a new table if one does not exist. These tasks are used for history archive data structures, as Stellar wants to keep a complete record of the ledger's entire history.
 
 ### **build_apply_gcs_changes_to_bq_task**
 
