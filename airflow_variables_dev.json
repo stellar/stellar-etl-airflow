@@ -279,7 +279,7 @@
   "resources": {
     "default": {
       "requests": {
-        "cpu": "0.3",
+        "cpu": "0.5",
         "ephemeral-storage": "1Gi",
         "memory": "900Mi"
       }
