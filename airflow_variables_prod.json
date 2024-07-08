@@ -277,9 +277,9 @@
   "resources": {
     "default": {
       "requests": {
-        "cpu": "3.5",
+        "cpu": "1.5",
         "ephemeral-storage": "1Gi",
-        "memory": "5Gi"
+        "memory": "2Gi"
       }
     }
   },
