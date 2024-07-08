@@ -277,28 +277,7 @@
   "public_dataset": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
-    "cc": {
-      "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
-    },
     "default": {
-      "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
-    },
-    "state": {
-      "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
-    },
-    "wocc": {
       "requests": {
         "cpu": "0.3",
         "ephemeral-storage": "1Gi",

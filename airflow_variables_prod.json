@@ -275,32 +275,11 @@
   "public_dataset": "crypto_stellar",
   "public_project": "crypto-stellar",
   "resources": {
-    "cc": {
-      "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "10Gi",
-        "memory": "15Gi"
-      }
-    },
     "default": {
       "requests": {
         "cpu": "3.5",
         "ephemeral-storage": "1Gi",
         "memory": "5Gi"
-      }
-    },
-    "state": {
-      "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "12Gi",
-        "memory": "20Gi"
-      }
-    },
-    "wocc": {
-      "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "10Gi",
-        "memory": "15Gi"
       }
     }
   },
