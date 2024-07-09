@@ -1,7 +1,9 @@
 import logging
+import re
 import time
 
 from airflow.configuration import conf
+from airflow.models import Variable
 from airflow.utils.state import TaskInstanceState
 
 base_log_folder = conf.get("logging", "base_log_folder")
@@ -24,15 +26,45 @@ def check_dbt_transient_errors(context):
     Searches through the logs to find failure messages
     and returns True if the errors found are transient.
     """
-    dbt_transient_error_message = "Could not serialize access to table"
-
     log_file_path = get_log_file_name(context)
     log_contents = read_log_file(log_file_path)
 
+    dbt_transient_error_patterns = Variable.get(
+        "dbt_transient_errors_patterns", deserialize_json=True
+    )
+
+    dbt_summary_line = None
     for line in log_contents:
-        if dbt_transient_error_message in line:
-            return True
-    return False
+        if "Done. PASS=" in line:
+            dbt_summary_line = line
+            break
+    # Check if dbt summary has been logged
+    if dbt_summary_line:
+        match = re.search(r"ERROR=(\d+)", dbt_summary_line)
+        if match:
+            dbt_errors = int(match.group(1))
+            # Check if dbt pipeline returned errors
+            if dbt_errors > 0:
+                for line in log_contents:
+                    for (
+                        transient_error,
+                        patterns,
+                    ) in dbt_transient_error_patterns.items():
+                        if all(sentence in line for sentence in patterns):
+                            logging.info(
+                                f"Found {transient_error} dbt transient error, proceeding to retry"
+                            )
+                            return True
+                logging.info("Could not find dbt transient errors, skipping retry")
+                return False
+            else:
+                logging.info(
+                    "dbt pipeline finished without errors, task failed but will not retry"
+                )
+                return False
+
+    logging.info("Task failed before finishing dbt pipeline, proceeding to retry")
+    return True
 
 
 def read_log_file(log_file_path):
@@ -57,7 +89,7 @@ def read_log_file(log_file_path):
     return log_contents
 
 
-def skip_retry_callback(context) -> None:
+def skip_retry_dbt_errors(context) -> None:
     """
     Set task state to SKIPPED in case errors found in dbt are not transient.
     """
