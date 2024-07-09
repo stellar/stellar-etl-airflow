@@ -146,6 +146,12 @@
   },
   "dbt_target": "test",
   "dbt_threads": 12,
+  "dbt_transient_errors_patterns": {
+    "elementary_concurrent_access": [
+      "Could not serialize access to table",
+      "due to concurrent update"
+    ]
+  },
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:8d5e683",
