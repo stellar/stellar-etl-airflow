@@ -25,16 +25,6 @@
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
-    "name": "index",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "id",
-    "type": "STRING"
-  },
-  {
     "fields": [
       {
         "fields": [
@@ -874,5 +864,15 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "index",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "STRING"
   }
 ]
