@@ -216,7 +216,7 @@ for data_type, export_task in export_tasks.items():
         public_dataset,
     )
     del_ins_tasks[data_type] = create_del_ins_task(
-        dag, f"del_ins_{data_type}_task", task_vars, build_del_ins_from_gcs_to_bq_task
+        dag, task_vars, build_del_ins_from_gcs_to_bq_task
     )
 
 """

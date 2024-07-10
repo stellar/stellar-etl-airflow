@@ -136,41 +136,32 @@ for data_type, source_object_suffix in data_types_and_suffixes.items():
         source_object_suffix=source_object_suffix,
     )
     del_ins_tasks[data_type] = create_del_ins_task(
-        dag, f"del_ins_{data_type}_task", task_vars, build_del_ins_from_gcs_to_bq_task
+        dag, task_vars, build_del_ins_from_gcs_to_bq_task
     )
 
 # Set task dependencies
 (date_task >> changes_task >> write_acc_stats >> del_ins_tasks["accounts"])
-
 (date_task >> changes_task >> write_bal_stats >> del_ins_tasks["claimable_balances"])
-
 (date_task >> changes_task >> write_off_stats >> del_ins_tasks["offers"])
-
 (date_task >> changes_task >> write_pool_stats >> del_ins_tasks["liquidity_pools"])
-
 (date_task >> changes_task >> write_sign_stats >> del_ins_tasks["signers"])
-
 (date_task >> changes_task >> write_trust_stats >> del_ins_tasks["trustlines"])
-
 (
     date_task
     >> changes_task
     >> write_contract_data_stats
     >> del_ins_tasks["contract_data"]
 )
-
 (
     date_task
     >> changes_task
     >> write_contract_code_stats
     >> del_ins_tasks["contract_code"]
 )
-
 (
     date_task
     >> changes_task
     >> write_config_settings_stats
     >> del_ins_tasks["config_settings"]
 )
-
 (date_task >> changes_task >> write_ttl_stats >> del_ins_tasks["ttl"])
