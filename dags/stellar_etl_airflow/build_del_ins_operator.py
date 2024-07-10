@@ -37,7 +37,9 @@ def initialize_task_vars(
             + '\')["output"] }}'
             + source_object_suffix
         ]
+    task_id = f"del_ins_{data_type}_task"
     return {
+        "task_id": task_id,
         "project": public_project,
         "dataset": public_dataset,
         "table_name": table_name,
@@ -48,6 +50,7 @@ def initialize_task_vars(
         "batch_id": batch_id,
         "batch_date": batch_date,
         "source_objects": source_objects,
+        "data_type": data_type,
     }
 
 
@@ -65,7 +68,7 @@ def create_del_ins_task(dag, task_id, task_vars, del_ins_callable):
         PythonOperator: The created PythonOperator.
     """
     return PythonOperator(
-        task_id=task_id,
+        task_id=task_vars["task_id"],
         python_callable=del_ins_callable,
         op_kwargs=task_vars,
         provide_context=True,
