@@ -31,6 +31,7 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
     - [build_time_task](#build_time_task)
     - [build_export_task](#build_export_task)
     - [build_gcs_to_bq_task](#build_gcs_to_bq_task)
+    - [build_del_ins_from_gcs_to_bq_task](#build_del_ins_from_gcs_to_bq_task)
     - [build_apply_gcs_changes_to_bq_task](#build_apply_gcs_changes_to_bq_task)
     - [build_batch_stats](#build_batch_stats)
     - [bq_insert_job_task](#bq_insert_job_task)
@@ -542,13 +543,13 @@ This section contains information about the Airflow setup. It includes our DAG d
   - [build_export_task](#build_export_task)
   - [build_gcs_to_bq_task](#build_gcs_to_bq_task)
   - [build_apply_gcs_changes_to_bq_task](#build_apply_gcs_changes_to_bq_task)
+  - [build_del_ins_from_gcs_to_bq_task](#build_del_ins_from_gcs_to_bq_task)
   - [build_batch_stats](#build_batch_stats)
   - [bq_insert_job_task](#bq_insert_job_task)
   - [cross_dependency_task](#cross_dependency_task)
   - [build_delete_data_task](#build_delete_data_task)
   - [build_dbt_task](#build_dbt_task)
   - [build_elementary_slack_alert_task](#build_elementary_slack_alert_task)
-  - [build_del_ins_from_gcs_to_bq_task](#build_del_ins_from_gcs_to_bq_task)
 
 ---
 
@@ -671,7 +672,7 @@ This section contains information about the Airflow setup. It includes our DAG d
 
 ### **build_del_ins_from_gcs_to_bq_task**
 
-[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_del_ins_from_gcs_to_bq_task.py) contains methods for deleting data from old partitions if the table exists and also import fresh data from gcs to the corresponding Big Query table. These tasks will create a new table if one does not exist. These tasks are used for history archive data structures, as Stellar wants to keep a complete record of the ledger's entire history.
+[This file](https://github.com/stellar/stellar-etl-airflow/blob/master/dags/stellar_etl_airflow/build_del_ins_from_gcs_to_bq_task.py) contains methods for deleting data from a specified BigQuery table according to the batch interval and also imports data from gcs to the corresponding BigQuery table. These tasks will create a new table if one does not exist. These tasks are used for history and state data structures, as Stellar wants to keep a complete record of the ledger's entire history.
 
 ### **build_apply_gcs_changes_to_bq_task**
 
