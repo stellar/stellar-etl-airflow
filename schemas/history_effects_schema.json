@@ -864,5 +864,15 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "index",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "STRING"
   }
 ]

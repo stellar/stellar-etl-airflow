@@ -149,7 +149,7 @@
   "dbt_threads": 12,
   "gcs_exported_data_bucket_name": "us-central1-hubble-14c4ca64-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:b3fb467",
+  "image_name": "stellar/stellar-etl:e6a47f9",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
