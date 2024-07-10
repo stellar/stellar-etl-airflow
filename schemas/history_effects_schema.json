@@ -27,7 +27,7 @@
   {
     "mode": "NULLABLE",
     "name": "index",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
