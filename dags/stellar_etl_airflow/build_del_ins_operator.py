@@ -67,18 +67,7 @@ def create_del_ins_task(dag, task_id, task_vars, del_ins_callable):
     return PythonOperator(
         task_id=task_id,
         python_callable=del_ins_callable,
-        op_args=[
-            task_vars["project"],
-            task_vars["dataset"],
-            task_vars["table_name"],
-            task_vars["export_task_id"],
-            task_vars["source_object_suffix"],
-            task_vars["partition"],
-            task_vars["cluster"],
-            task_vars["batch_id"],
-            task_vars["batch_date"],
-            task_vars["source_objects"],
-        ],
+        op_kwargs=task_vars,
         provide_context=True,
         dag=dag,
     )

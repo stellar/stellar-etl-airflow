@@ -68,7 +68,10 @@ use_futurenet = literal_eval(Variable.get("use_futurenet"))
 use_captive_core = literal_eval(Variable.get("use_captive_core"))
 txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
 
-# Define tasks
+"""
+The date task reads in the execution time of the current run, as well as the next
+execution time. It converts these two times into ledger ranges.
+"""
 date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 
 changes_task = build_export_task(
@@ -83,7 +86,30 @@ changes_task = build_export_task(
     txmeta_datastore_path=txmeta_datastore_path,
 )
 
-# Define del_ins tasks
+"""
+The write batch stats task will take a snapshot of the DAG run_id, execution date,
+start and end ledgers so that reconciliation and data validation are easier. The
+record is written to an internal dataset for data eng use only.
+"""
+write_acc_stats = build_batch_stats(dag, table_names["accounts"])
+write_bal_stats = build_batch_stats(dag, table_names["claimable_balances"])
+write_off_stats = build_batch_stats(dag, table_names["offers"])
+write_pool_stats = build_batch_stats(dag, table_names["liquidity_pools"])
+write_sign_stats = build_batch_stats(dag, table_names["signers"])
+write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
+write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
+write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
+write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
+write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
+
+"""
+The delete part of the task checks to see if the given partition/batch id exists in
+Bigquery. If it does, the records are deleted prior to reinserting the batch.
+
+The Insert part of the task receives the location of the file in Google Cloud storage through Airflow's XCOM system.
+Then, the task merges the entries in the file with the entries in the corresponding table in the public dataset.
+Entries are updated, deleted, or inserted as needed.
+"""
 del_ins_tasks = {}
 data_types_and_suffixes = {
     "accounts": "/*-accounts.txt",
@@ -113,19 +139,7 @@ for data_type, source_object_suffix in data_types_and_suffixes.items():
         dag, f"del_ins_{data_type}_task", task_vars, build_del_ins_from_gcs_to_bq_task
     )
 
-# Define other tasks
-write_acc_stats = build_batch_stats(dag, table_names["accounts"])
-write_bal_stats = build_batch_stats(dag, table_names["claimable_balances"])
-write_off_stats = build_batch_stats(dag, table_names["offers"])
-write_pool_stats = build_batch_stats(dag, table_names["liquidity_pools"])
-write_sign_stats = build_batch_stats(dag, table_names["signers"])
-write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
-write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
-write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
-write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
-write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
-
-# Set dependencies
+# Set task dependencies
 (date_task >> changes_task >> write_acc_stats >> del_ins_tasks["accounts"])
 
 (date_task >> changes_task >> write_bal_stats >> del_ins_tasks["claimable_balances"])
