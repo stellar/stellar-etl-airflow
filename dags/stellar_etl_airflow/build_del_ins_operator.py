@@ -54,13 +54,12 @@ def initialize_task_vars(
     }
 
 
-def create_del_ins_task(dag, task_id, task_vars, del_ins_callable):
+def create_del_ins_task(dag, task_vars, del_ins_callable):
     """
     Create a PythonOperator for delete and insert tasks.
 
     Args:
         dag (DAG): The DAG to which the task belongs.
-        task_id (str): Task ID.
         task_vars (dict): Task variables.
         del_ins_callable (callable): The callable function to be used in the PythonOperator.
 
