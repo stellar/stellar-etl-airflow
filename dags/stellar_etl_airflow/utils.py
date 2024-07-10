@@ -62,8 +62,15 @@ def check_dbt_transient_errors(context):
                     "dbt pipeline finished without errors, task failed but will not retry"
                 )
                 return False
-
-    logging.info("Task failed before finishing dbt pipeline, proceeding to retry")
+    # Check for transient errors in case dbt pipeline didn't finish
+    for line in log_contents:
+        for transient_error, patterns in dbt_transient_error_patterns.items():
+            if all(sentence in line for sentence in patterns):
+                logging.info(
+                    f"Found {transient_error} dbt transient error, proceeding to retry"
+                )
+                return True
+    logging.info("Task failed due to unforeseen error, proceeding to retry")
     return True
 
 
