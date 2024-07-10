@@ -25,6 +25,16 @@
     "type": "STRING"
   },
   {
+    "mode": "NULLABLE",
+    "name": "index",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "STRING"
+  },
+  {
     "fields": [
       {
         "fields": [
