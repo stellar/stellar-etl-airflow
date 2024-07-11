@@ -112,16 +112,16 @@ Entries are updated, deleted, or inserted as needed.
 """
 del_ins_tasks = {}
 data_types_and_suffixes = {
-    "accounts": "/*-accounts.txt",
-    "claimable_balances": "/*-claimable_balances.txt",
-    "offers": "/*-offers.txt",
-    "liquidity_pools": "/*-liquidity_pools.txt",
-    "signers": "/*-signers.txt",
-    "trustlines": "/*-trustlines.txt",
-    "contract_data": "/*-contract_data.txt",
-    "contract_code": "/*-contract_code.txt",
-    "config_settings": "/*-config_settings.txt",
-    "ttl": "/*-ttl.txt",
+    table_names["accounts"]: "/*-accounts.txt",
+    table_names["claimable_balances"]: "/*-claimable_balances.txt",
+    table_names["offers"]: "/*-offers.txt",
+    table_names["liquidity_pools"]: "/*-liquidity_pools.txt",
+    table_names["signers"]: "/*-signers.txt",
+    table_names["trustlines"]: "/*-trustlines.txt",
+    table_names["contract_data"]: "/*-contract_data.txt",
+    table_names["contract_code"]: "/*-contract_code.txt",
+    table_names["config_settings"]: "/*-config_settings.txt",
+    table_names["ttl"]: "/*-ttl.txt",
 }
 
 for data_type, source_object_suffix in data_types_and_suffixes.items():
