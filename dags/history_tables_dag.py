@@ -196,14 +196,15 @@ Then, the task merges the unique entries in the file into the corresponding tabl
 """
 del_ins_tasks = {}
 export_tasks = {
-    "operations": op_export_task,
-    "trades": trade_export_task,
-    "effects": effects_export_task,
-    "transactions": tx_export_task,
-    "ledgers": ledger_export_task,
-    "assets": asset_export_task,
-    "contract_events": contract_events_export_task,
+    table_names["operations"]: op_export_task,
+    table_names["trades"]: trade_export_task,
+    table_names["effects"]: effects_export_task,
+    table_names["transactions"]: tx_export_task,
+    table_names["ledgers"]: ledger_export_task,
+    table_names["assets"]: asset_export_task,
+    table_names["contract_events"]: contract_events_export_task,
 }
+
 
 for data_type, export_task in export_tasks.items():
     task_vars = initialize_task_vars(
