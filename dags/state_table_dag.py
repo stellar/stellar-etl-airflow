@@ -68,6 +68,24 @@ use_futurenet = literal_eval(Variable.get("use_futurenet"))
 use_captive_core = literal_eval(Variable.get("use_captive_core"))
 txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
 
+# Ensure all required keys are present in table_names
+required_keys = [
+    "accounts",
+    "claimable_balances",
+    "offers",
+    "liquidity_pools",
+    "signers",
+    "trustlines",
+    "contract_data",
+    "contract_code",
+    "config_settings",
+    "ttl",
+]
+
+missing_keys = [key for key in required_keys if key not in table_names]
+if missing_keys:
+    raise KeyError(f"Missing Id in the table_ids Airflow Variable: {missing_keys}")
+
 """
 The date task reads in the execution time of the current run, as well as the next
 execution time. It converts these two times into ledger ranges.
@@ -126,14 +144,7 @@ source_object_suffix_mapping = {
     "ttl": "/*-ttl.txt",
 }
 
-# filter for only the required tables pertaining to the DAG
-table_id_and_suffixes = {
-    key: suffix
-    for key, suffix in source_object_suffix_mapping.items()
-    if key in table_names
-}
-
-for table_id, source_object_suffix in table_id_and_suffixes.items():
+for table_id, source_object_suffix in source_object_suffix_mapping.items():
     table_name = table_names[table_id]  # Get the expanded table name
     task_vars = initialize_task_vars(
         table_id,

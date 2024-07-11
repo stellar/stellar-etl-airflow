@@ -136,8 +136,9 @@ def build_del_ins_from_gcs_to_bq_task(
     if table_name == "history_assets":
         staging_table_suffix = "_staging"
 
+    schema_fields = read_local_schema(f"{table_name}")
+
     if table_id in history_tables:
-        schema_fields = read_local_schema(f"history_{table_id}")
         gcs_to_bq_operator = CustomGCSToBigQueryOperator(
             task_id=f"send_{table_name}_to_bq",
             execution_timeout=timedelta(
@@ -172,7 +173,6 @@ def build_del_ins_from_gcs_to_bq_task(
             dag=dag,
         )
     else:
-        schema_fields = read_local_schema(f"{table_name}")
         gcs_to_bq_operator = GCSToBigQueryOperator(
             task_id=f"send_{table_name}_to_bq",
             execution_timeout=timedelta(
