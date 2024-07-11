@@ -111,31 +111,41 @@ Then, the task merges the entries in the file with the entries in the correspond
 Entries are updated, deleted, or inserted as needed.
 """
 del_ins_tasks = {}
-data_types_and_suffixes = {
-    table_names["accounts"]: "/*-accounts.txt",
-    table_names["claimable_balances"]: "/*-claimable_balances.txt",
-    table_names["offers"]: "/*-offers.txt",
-    table_names["liquidity_pools"]: "/*-liquidity_pools.txt",
-    table_names["signers"]: "/*-signers.txt",
-    table_names["trustlines"]: "/*-trustlines.txt",
-    table_names["contract_data"]: "/*-contract_data.txt",
-    table_names["contract_code"]: "/*-contract_code.txt",
-    table_names["config_settings"]: "/*-config_settings.txt",
-    table_names["ttl"]: "/*-ttl.txt",
+
+# Define the suffixes for the DAG related tables
+source_object_suffix_mapping = {
+    "accounts": "/*-accounts.txt",
+    "claimable_balances": "/*-claimable_balances.txt",
+    "offers": "/*-offers.txt",
+    "liquidity_pools": "/*-liquidity_pools.txt",
+    "signers": "/*-signers.txt",
+    "trustlines": "/*-trustlines.txt",
+    "contract_data": "/*-contract_data.txt",
+    "contract_code": "/*-contract_code.txt",
+    "config_settings": "/*-config_settings.txt",
+    "ttl": "/*-ttl.txt",
 }
 
-for data_type, source_object_suffix in data_types_and_suffixes.items():
+# filter for only the required tables pertaining to the DAG
+table_id_and_suffixes = {
+    key: suffix
+    for key, suffix in source_object_suffix_mapping.items()
+    if key in table_names
+}
+
+for table_id, source_object_suffix in table_id_and_suffixes.items():
+    table_name = table_names[table_id]  # Get the expanded table name
     task_vars = initialize_task_vars(
-        data_type,
+        table_id,
+        table_name,
         changes_task.task_id,
         batch_id,
         batch_date,
-        table_names,
         public_project,
         public_dataset,
         source_object_suffix=source_object_suffix,
     )
-    del_ins_tasks[data_type] = create_del_ins_task(
+    del_ins_tasks[table_id] = create_del_ins_task(
         dag, task_vars, build_del_ins_from_gcs_to_bq_task
     )
 
