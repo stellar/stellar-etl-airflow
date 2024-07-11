@@ -35,9 +35,16 @@ def check_dbt_transient_errors(context):
 
     dbt_summary_line = None
     for line in log_contents:
-        if "Done. PASS=" in line:
-            dbt_summary_line = line
-            break
+        # Check for transient errors message patterns
+        for transient_error, patterns in dbt_transient_error_patterns.items():
+            if all(sentence in line for sentence in patterns):
+                logging.info(
+                    f"Found {transient_error} dbt transient error, proceeding to retry"
+                )
+                return True
+            elif "Done. PASS=" in line:
+                dbt_summary_line = line
+                break
     # Check if dbt summary has been logged
     if dbt_summary_line:
         match = re.search(r"ERROR=(\d+)", dbt_summary_line)
@@ -45,16 +52,6 @@ def check_dbt_transient_errors(context):
             dbt_errors = int(match.group(1))
             # Check if dbt pipeline returned errors
             if dbt_errors > 0:
-                for line in log_contents:
-                    for (
-                        transient_error,
-                        patterns,
-                    ) in dbt_transient_error_patterns.items():
-                        if all(sentence in line for sentence in patterns):
-                            logging.info(
-                                f"Found {transient_error} dbt transient error, proceeding to retry"
-                            )
-                            return True
                 logging.info("Could not find dbt transient errors, skipping retry")
                 return False
             else:
@@ -62,14 +59,7 @@ def check_dbt_transient_errors(context):
                     "dbt pipeline finished without errors, task failed but will not retry"
                 )
                 return False
-    # Check for transient errors in case dbt pipeline didn't finish
-    for line in log_contents:
-        for transient_error, patterns in dbt_transient_error_patterns.items():
-            if all(sentence in line for sentence in patterns):
-                logging.info(
-                    f"Found {transient_error} dbt transient error, proceeding to retry"
-                )
-                return True
+    # Logic could not identify the error and assumes it is transient
     logging.info("Task failed due to unforeseen error, proceeding to retry")
     return True
 
