@@ -2,11 +2,11 @@ from airflow.operators.python import PythonOperator
 
 
 def initialize_task_vars(
-    data_type,
+    table_id,
+    table_name,
     export_task_id,
     batch_id,
     batch_date,
-    table_names,
     public_project,
     public_dataset,
     source_object_suffix="",
@@ -16,11 +16,11 @@ def initialize_task_vars(
     Initialize task variables for data export and import.
 
     Args:
-        data_type (str): Type of data (e.g., operations, trades).
+        table_id (str): The ID of the table (json key).
+        table_name (str): The name of the table (json value).
         export_task_id (str): Task ID of the export task.
         batch_id (str): Batch ID.
         batch_date (str): Batch date.
-        table_names (dict): Dictionary of table names.
         public_project (str): Public project name.
         public_dataset (str): Public dataset name.
         source_object_suffix (str): Suffix for source objects.
@@ -29,7 +29,6 @@ def initialize_task_vars(
     Returns:
         dict: Task variables.
     """
-    table_name = table_names[data_type] if data_type in table_names else data_type
     if source_objects is None:
         source_objects = [
             "{{ task_instance.xcom_pull(task_ids='"
@@ -37,7 +36,7 @@ def initialize_task_vars(
             + '\')["output"] }}'
             + source_object_suffix
         ]
-    task_id = f"del_ins_{data_type}_task"
+    task_id = f"del_ins_{table_name}_task"
     return {
         "task_id": task_id,
         "project": public_project,
@@ -50,7 +49,7 @@ def initialize_task_vars(
         "batch_id": batch_id,
         "batch_date": batch_date,
         "source_objects": source_objects,
-        "data_type": data_type,
+        "table_id": table_id,
     }
 
 
