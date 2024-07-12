@@ -146,9 +146,15 @@
   },
   "dbt_target": "test",
   "dbt_threads": 12,
+  "dbt_transient_errors_patterns": {
+    "elementary_concurrent_access": [
+      "Could not serialize access to table",
+      "due to concurrent update"
+    ]
+  },
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:b3fb467",
+  "image_name": "stellar/stellar-etl:98bea9a",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -334,6 +340,7 @@
     "asset_stats": 720,
     "build_batch_stats": 840,
     "build_bq_insert_job": 1080,
+    "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 1020,
     "build_export_task": 840,
     "build_gcs_to_bq_task": 960,
@@ -367,6 +374,7 @@
     "build_bq_insert_job": 180,
     "build_copy_table": 180,
     "build_dbt_task": 960,
+    "build_del_ins_from_gcs_to_bq_task": 400,
     "build_delete_data_task": 180,
     "build_export_task": 420,
     "build_gcs_to_bq_task": 300,
