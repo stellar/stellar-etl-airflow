@@ -8,6 +8,7 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
 )
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
+from stellar_etl_airflow.utils import skip_retry_dbt_errors
 
 
 def create_dbt_profile(project="prod"):
@@ -64,6 +65,7 @@ def dbt_task(
     flag="select",
     operator="",
     command_type="build",
+    excluded=None,
     resource_cfg="default",
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
@@ -97,6 +99,15 @@ def dbt_task(
         args.append(",".join(models))
     else:
         args.append(models[0])
+    # --exclude selector added for necessary use cases
+    # Argument should be string or list of strings
+    if excluded:
+        task_name = f"{task_name}_with_exclude"
+        args.append("--exclude")
+        if isinstance(excluded, list):
+            args.append(" ".join(excluded))
+        else:
+            args.append(excluded)
 
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
@@ -132,6 +143,7 @@ def dbt_task(
         config_file=config_file_location,
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
+        on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
@@ -213,6 +225,7 @@ def build_dbt_task(
         config_file=config_file_location,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
+        on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(

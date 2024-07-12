@@ -1,14 +1,13 @@
-"""
-This file contains functions for creating Airflow tasks to load files from Google Cloud Storage into BigQuery.
-"""
-
 from datetime import timedelta
 
 from airflow.models import Variable
+from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
     GCSToBigQueryOperator,
 )
 from sentry_sdk import capture_message, push_scope
+from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_apply_gcs_changes_to_bq_task import read_local_schema
 from stellar_etl_airflow.default import alert_after_max_retries
 
@@ -28,7 +27,14 @@ class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
         self.export_task_id = export_task_id
         super().__init__(**kwargs)
 
-    def pre_execute(self, **kwargs):
+    def pre_execute(self, context, **kwargs):
+        # Expand the template fields using Jinja2 templating from the context
+        self.failed_transforms = self.render_template(self.failed_transforms, context)
+        self.max_failed_transforms = self.render_template(
+            self.max_failed_transforms, context
+        )
+        self.export_task_id = self.render_template(self.export_task_id, context)
+
         if int(self.failed_transforms) > self.max_failed_transforms:
             with push_scope() as scope:
                 scope.set_tag("data-quality", "max-failed-transforms")
@@ -43,33 +49,56 @@ class CustomGCSToBigQueryOperator(GCSToBigQueryOperator):
                     f"failed_transforms ({self.failed_transforms}) has exceeded the max value ({self.max_failed_transforms})",
                     "fatal",
                 )
-        super().pre_execute(**kwargs)
+        super().pre_execute(context, **kwargs)
 
 
-def build_gcs_to_bq_task(
-    dag,
-    export_task_id,
+def build_del_ins_from_gcs_to_bq_task(
     project,
     dataset,
-    data_type,
+    table_id,
+    table_name,
+    export_task_id,
     source_object_suffix,
     partition,
     cluster,
-    dataset_type="bq",
+    batch_id,
+    batch_date,
+    source_objects,
+    **context,
 ):
-    """
-    Creates a task to load a file from Google Cloud Storage into BigQuery.
-    The name of the file being loaded is retrieved through Airflow's Xcom.
-    Data types should be: 'ledgers', 'operations', 'trades', 'transactions', or 'factEvents'.
+    dag = context["dag"]
 
-    Parameters:
-        dag - parent dag that the task will be attached to
-        export_task_id - id of export task that this should consume the XCOM return value of
-        source_object_suffix - string, suffix of source object path
-        partition - bool if the table is partitioned
-    Returns:
-        the newly created task
-    """
+    # Delete operation
+
+    DELETE_ROWS_QUERY = (
+        f"DELETE FROM {dataset}.{table_name} "
+        f"WHERE batch_run_date = '{batch_date}'"
+        f"AND batch_id = '{batch_id}';"
+    )
+    delete_task = BigQueryInsertJobOperator(
+        project_id=project,
+        task_id=f"delete_old_partition_{table_name}_bq",
+        execution_timeout=timedelta(
+            seconds=Variable.get("task_timeout", deserialize_json=True)[
+                build_del_ins_from_gcs_to_bq_task.__name__
+            ]
+        ),
+        on_failure_callback=alert_after_max_retries,
+        sla=timedelta(
+            seconds=Variable.get("task_sla", deserialize_json=True)[
+                build_del_ins_from_gcs_to_bq_task.__name__
+            ]
+        ),
+        configuration={
+            "query": {
+                "query": DELETE_ROWS_QUERY,
+                "useLegacySql": False,
+            }
+        },
+    )
+    delete_task.execute(context)
+
+    # Insert operation
 
     bucket_name = Variable.get("gcs_exported_data_bucket_name")
     history_tables = [
@@ -81,36 +110,40 @@ def build_gcs_to_bq_task(
         "effects",
         "contract_events",
     ]
+
     if cluster:
         cluster_fields = Variable.get("cluster_fields", deserialize_json=True)
         cluster_fields = (
-            cluster_fields[f"history_{data_type}"]
-            if data_type in history_tables
-            else cluster_fields[data_type]
+            cluster_fields[f"{table_name}"]
+            if table_id in history_tables
+            else cluster_fields[table_name]
         )
     else:
         cluster_fields = None
-    dataset_name = dataset
+
     time_partition = {}
     if partition:
         partition_fields = Variable.get("partition_fields", deserialize_json=True)
         partition_fields = (
-            partition_fields[f"history_{data_type}"]
-            if data_type in history_tables
-            else partition_fields[data_type]
+            partition_fields[f"{table_name}"]
+            if table_id in history_tables
+            else partition_fields[table_name]
         )
         time_partition["type"] = partition_fields["type"]
         time_partition["field"] = partition_fields["field"]
+
     staging_table_suffix = ""
-    if data_type == "history_assets":
+    if table_name == "history_assets":
         staging_table_suffix = "_staging"
-    if data_type in history_tables:
-        schema_fields = read_local_schema(f"history_{data_type}")
-        return CustomGCSToBigQueryOperator(
-            task_id=f"send_{data_type}_to_{dataset_type}",
+
+    schema_fields = read_local_schema(f"{table_name}")
+
+    if table_id in history_tables:
+        gcs_to_bq_operator = CustomGCSToBigQueryOperator(
+            task_id=f"send_{table_name}_to_bq",
             execution_timeout=timedelta(
                 seconds=Variable.get("task_timeout", deserialize_json=True)[
-                    build_gcs_to_bq_task.__name__
+                    build_del_ins_from_gcs_to_bq_task.__name__
                 ]
             ),
             bucket=bucket_name,
@@ -118,16 +151,11 @@ def build_gcs_to_bq_task(
             schema_update_options=["ALLOW_FIELD_ADDITION"],
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
-            source_objects=[
-                "{{ task_instance.xcom_pull(task_ids='"
-                + export_task_id
-                + '\')["output"] }}'
-                + source_object_suffix
-            ],
-            destination_project_dataset_table=f"{project}.{dataset_name}.{data_type}{staging_table_suffix}",
+            source_objects=source_objects,
+            destination_project_dataset_table=f"{project}.{dataset}.{table_name}{staging_table_suffix}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",
-            schema_update_option="ALLOW_FIELD_ADDITION",
+            # schema_update_option="ALLOW_FIELD_ADDITION",
             max_bad_records=0,
             time_partitioning=time_partition,
             cluster_fields=cluster_fields,
@@ -139,19 +167,17 @@ def build_gcs_to_bq_task(
             on_failure_callback=alert_after_max_retries,
             sla=timedelta(
                 seconds=Variable.get("task_sla", deserialize_json=True)[
-                    build_gcs_to_bq_task.__name__
+                    build_del_ins_from_gcs_to_bq_task.__name__
                 ]
             ),
             dag=dag,
         )
-
     else:
-        schema_fields = read_local_schema(f"{data_type}")
-        return GCSToBigQueryOperator(
-            task_id=f"send_{data_type}_to_{dataset_type}",
+        gcs_to_bq_operator = GCSToBigQueryOperator(
+            task_id=f"send_{table_name}_to_bq",
             execution_timeout=timedelta(
                 seconds=Variable.get("task_timeout", deserialize_json=True)[
-                    build_gcs_to_bq_task.__name__
+                    build_del_ins_from_gcs_to_bq_task.__name__
                 ]
             ),
             bucket=bucket_name,
@@ -159,13 +185,8 @@ def build_gcs_to_bq_task(
             schema_update_options=["ALLOW_FIELD_ADDITION"],
             autodetect=False,
             source_format="NEWLINE_DELIMITED_JSON",
-            source_objects=[
-                "{{ task_instance.xcom_pull(task_ids='"
-                + export_task_id
-                + '\')["output"] }}'
-                + source_object_suffix
-            ],
-            destination_project_dataset_table=f"{project}.{dataset_name}.{data_type}{staging_table_suffix}",
+            source_objects=source_objects,
+            destination_project_dataset_table=f"{project}.{dataset}.{table_name}{staging_table_suffix}",
             write_disposition="WRITE_APPEND",
             create_disposition="CREATE_IF_NEEDED",
             max_bad_records=0,
@@ -174,8 +195,10 @@ def build_gcs_to_bq_task(
             on_failure_callback=alert_after_max_retries,
             sla=timedelta(
                 seconds=Variable.get("task_sla", deserialize_json=True)[
-                    build_gcs_to_bq_task.__name__
+                    build_del_ins_from_gcs_to_bq_task.__name__
                 ]
             ),
             dag=dag,
         )
+
+    gcs_to_bq_operator.execute(context)

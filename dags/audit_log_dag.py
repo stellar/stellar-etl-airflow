@@ -1,6 +1,7 @@
 """
 This DAG runs an audit log SQL to update the audit log dashboard.
 """
+
 from datetime import datetime
 from json import loads
 

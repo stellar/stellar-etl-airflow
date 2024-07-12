@@ -492,6 +492,33 @@
                     "mode": "NULLABLE",
                     "name": "abs_before_epoch",
                     "type": "INTEGER"
+                  },
+                  {
+                    "fields": [
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before",
+                        "type": "STRING"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "rel_before",
+                        "type": "INTEGER"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "unconditional",
+                        "type": "BOOLEAN"
+                      },
+                      {
+                        "mode": "NULLABLE",
+                        "name": "abs_before_epoch",
+                        "type": "INTEGER"
+                      }
+                    ],
+                    "mode": "REPEATED",
+                    "name": "or",
+                    "type": "RECORD"
                   }
                 ],
                 "mode": "REPEATED",
@@ -832,5 +859,20 @@
     "mode": "NULLABLE",
     "name": "closed_at",
     "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "index",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "id",
+    "type": "STRING"
   }
 ]

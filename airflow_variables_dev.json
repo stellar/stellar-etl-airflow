@@ -1,33 +1,32 @@
 {
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
   "bq_dataset": "test_crypto_stellar_internal",
-  "bq_project": "test-hubble-319619",
   "bq_dataset_audit_log": "audit_log",
-  "date_for_resets": {
-    "date": ["2023-03-15", "2023-06-14", "2023-09-13", "2023-12-13"]
-  },
+  "bq_project": "test-hubble-319619",
   "cluster_fields": {
-    "accounts": ["account_id", "last_modified_ledger"],
-    "account_signers": ["account_id", "signer", "last_modified_ledger"],
-    "claimable_balances": ["asset_id", "last_modified_ledger"],
-    "history_assets": ["asset_code", "asset_issuer", "asset_type"],
-    "history_effects": ["address", "operation_id", "type"],
-    "history_ledgers": ["sequence", "closed_at"],
-    "history_operations": ["transaction_id", "source_account", "type"],
-    "history_trades": ["selling_asset_id", "buying_asset_id", "trade_type"],
-    "history_transactions": ["account", "ledger_sequence", "successful"],
-    "offers": ["selling_asset_id", "buying_asset_id", "last_modified_ledger"],
-    "liquidity_pools": [
-      "liquidity_pool_id",
-      "asset_a_id",
-      "asset_b_id",
+    "account_signers": [
+      "account_id",
+      "signer",
       "last_modified_ledger"
     ],
-    "trust_lines": [
+    "accounts": [
       "account_id",
-      "asset_id",
-      "liquidity_pool_id",
       "last_modified_ledger"
+    ],
+    "claimable_balances": [
+      "asset_id",
+      "last_modified_ledger"
+    ],
+    "config_settings": [
+      "last_modified_ledger"
+    ],
+    "contract_code": [
+      "last_modified_ledger",
+      "contract_code_hash"
+    ],
+    "contract_data": [
+      "last_modified_ledger",
+      "contract_id"
     ],
     "enriched_history_operations": [
       "ledger_sequence",
@@ -41,39 +40,138 @@
       "account",
       "type"
     ],
-    "contract_data": ["last_modified_ledger", "contract_id"],
-    "contract_code": ["last_modified_ledger", "contract_code_hash"],
-    "config_settings": ["last_modified_ledger"],
-    "ttl": ["last_modified_ledger", "key_hash"]
+    "history_assets": [
+      "asset_code",
+      "asset_issuer",
+      "asset_type"
+    ],
+    "history_contract_events": [
+      "contract_id"
+    ],
+    "history_effects": [
+      "address",
+      "operation_id",
+      "type"
+    ],
+    "history_ledgers": [
+      "sequence",
+      "closed_at"
+    ],
+    "history_operations": [
+      "transaction_id",
+      "source_account",
+      "type"
+    ],
+    "history_trades": [
+      "selling_asset_id",
+      "buying_asset_id",
+      "trade_type"
+    ],
+    "history_transactions": [
+      "account",
+      "ledger_sequence",
+      "successful"
+    ],
+    "liquidity_pools": [
+      "liquidity_pool_id",
+      "asset_a_id",
+      "asset_b_id",
+      "last_modified_ledger"
+    ],
+    "offers": [
+      "selling_asset_id",
+      "buying_asset_id",
+      "last_modified_ledger"
+    ],
+    "trust_lines": [
+      "account_id",
+      "asset_id",
+      "liquidity_pool_id",
+      "last_modified_ledger"
+    ],
+    "ttl": [
+      "last_modified_ledger",
+      "key_hash"
+    ]
+  },
+  "currency_bucket": "currencies_ohlc",
+  "currency_ohlc": {
+    "columns_ohlc_currency": [
+      "time",
+      "open",
+      "high",
+      "low",
+      "close"
+    ],
+    "currency": "euro_ohlc",
+    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
+    "table_name": "euro_usd_ohlc"
+  },
+  "date_for_resets": {
+    "date": [
+      "2023-03-15",
+      "2023-06-14",
+      "2023-09-13",
+      "2023-12-13"
+    ]
   },
   "dbt_dataset_for_test": "test",
+  "dbt_elementary_dataset": "test_elementary",
+  "dbt_elementary_secret": "slack-token-elementary",
   "dbt_full_refresh_models": {
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:b7e0010",
+  "dbt_image_name": "stellar/stellar-dbt:1a777f9",
+  "dbt_internal_source_db": "test-hubble-319619",
+  "dbt_internal_source_schema": "test_crypto_stellar_internal",
   "dbt_job_execution_timeout_seconds": 300,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "test_crypto_stellar_dbt",
   "dbt_maximum_bytes_billed": 250000000000,
   "dbt_project": "test-hubble-319619",
+  "dbt_public_source_db": "test-hubble-319619",
+  "dbt_public_source_schema": "test_crypto_stellar",
+  "dbt_slack_elementary_channel": "stellar-elementary-alerts",
+  "dbt_tables": {
+    "accounts_current": "accounts_current",
+    "config_settings_current": "config_settings_current",
+    "contract_code_current": "contract_code_current",
+    "contract_data_current": "contract_data_current",
+    "liquidity_pools_current": "liquidity_pools_current",
+    "offers_current": "offers_current",
+    "signers_current": "account_signers_current",
+    "trustlines_current": "trust_lines_current",
+    "ttl_current": "ttl_current"
+  },
   "dbt_target": "test",
   "dbt_threads": 12,
+  "dbt_transient_errors_patterns": {
+    "elementary_concurrent_access": [
+      "Could not serialize access to table",
+      "due to concurrent update"
+    ]
+  },
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-2-5f1f2dbf-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:274b138",
+  "image_name": "stellar/stellar-etl:98bea9a",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
-  "kube_config_location": "",
-  "kubernetes_sidecar_image": "alpine",
   "k8s_namespace": "hubble-composer",
   "k8s_service_account": "hubble-composer-service-account",
+  "kube_config_location": "",
+  "kubernetes_sidecar_image": "alpine",
   "local_output_path": "/home/airflow/etlData/",
+  "max_db_entry_age_in_days": 90,
   "output_file_names": {
     "accounts": "accounts.txt",
     "assets": "assets.txt",
     "changes": "changes_folder",
     "claimable_balances": "claimable_balances.txt",
+    "config_settings": "config_settings.txt",
+    "contract_code": "contract_code.txt",
+    "contract_data": "contract_data.txt",
+    "contract_events": "contract_events.txt",
     "dimAccounts": "dimAccounts.txt",
     "dimMarkets": "dimMarkets.txt",
     "dimOffers": "dimOffers.txt",
@@ -88,76 +186,24 @@
     "trades": "trades.txt",
     "transactions": "transactions.txt",
     "trustlines": "trustlines.txt",
-    "contract_data": "contract_data.txt",
-    "contract_code": "contract_code.txt",
-    "config_settings": "config_settings.txt",
-    "ttl": "ttl.txt",
-    "diagnostic_events": "diagnostic_events.txt"
+    "ttl": "ttl.txt"
   },
   "output_path": "/home/airflow/gcs/data/",
   "owner": "SDF",
   "partition_fields": {
-    "enriched_history_operations": {
-      "type": "MONTH",
-      "field": "closed_at"
-    },
-    "enriched_meaningful_history_operations": {
-      "type": "MONTH",
-      "field": "closed_at"
-    },
-    "history_assets": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "accounts": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
     "account_signers": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "claimable_balances": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "history_effects": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "history_ledgers": {
-      "type": "MONTH",
-      "field": "closed_at"
-    },
-    "history_operations": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "history_trades": {
-      "type": "MONTH",
-      "field": "ledger_closed_at"
-    },
-    "history_transactions": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "offers": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "liquidity_pools": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "trust_lines": {
-      "type": "MONTH",
-      "field": "batch_run_date"
-    },
-    "mgi": {
-      "field": "tran_evnt_date",
+      "field": "batch_run_date",
       "type": "MONTH"
     },
-    "contract_data": {
+    "accounts": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "claimable_balances": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "config_settings": {
       "field": "closed_at",
       "type": "MONTH"
     },
@@ -165,8 +211,60 @@
       "field": "closed_at",
       "type": "MONTH"
     },
-    "config_settings": {
+    "contract_data": {
       "field": "closed_at",
+      "type": "MONTH"
+    },
+    "enriched_history_operations": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
+    "enriched_meaningful_history_operations": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
+    "history_assets": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "history_contract_events": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
+    "history_effects": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "history_ledgers": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
+    "history_operations": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "history_trades": {
+      "field": "ledger_closed_at",
+      "type": "MONTH"
+    },
+    "history_transactions": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "liquidity_pools": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "mgi": {
+      "field": "tran_evnt_date",
+      "type": "MONTH"
+    },
+    "offers": {
+      "field": "batch_run_date",
+      "type": "MONTH"
+    },
+    "trust_lines": {
+      "field": "batch_run_date",
       "type": "MONTH"
     },
     "ttl": {
@@ -174,6 +272,7 @@
       "type": "MONTH"
     }
   },
+  "partners_bucket": "ext-partner-sftp",
   "partners_data": {
     "mgi": {
       "prefix_folder": "mgi",
@@ -181,47 +280,52 @@
       "table": "raw_mgi_stellar_transactions"
     }
   },
-  "partners_bucket": "ext-partner-sftp",
   "public_dataset": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
-    "default": {
-      "requests": {
-        "cpu": "0.3",
-        "memory": "900Mi",
-        "ephemeral-storage": "1Gi"
-      }
-    },
     "cc": {
       "requests": {
         "cpu": "0.3",
-        "memory": "900Mi",
-        "ephemeral-storage": "1Gi"
+        "ephemeral-storage": "1Gi",
+        "memory": "900Mi"
       }
     },
-    "wocc": {
+    "default": {
       "requests": {
         "cpu": "0.3",
-        "memory": "900Mi",
-        "ephemeral-storage": "1Gi"
+        "ephemeral-storage": "1Gi",
+        "memory": "900Mi"
       }
     },
     "state": {
       "requests": {
         "cpu": "0.3",
-        "memory": "900Mi",
-        "ephemeral-storage": "1Gi"
+        "ephemeral-storage": "1Gi",
+        "memory": "900Mi"
+      }
+    },
+    "wocc": {
+      "requests": {
+        "cpu": "0.3",
+        "ephemeral-storage": "1Gi",
+        "memory": "900Mi"
       }
     }
   },
+  "sandbox_dataset": "crypto_stellar_internal_sandbox",
+  "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
-  "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",
     "claimable_balances": "claimable_balances",
+    "config_settings": "config_settings",
+    "contract_code": "contract_code",
+    "contract_data": "contract_data",
+    "contract_events": "history_contract_events",
     "effects": "history_effects",
+    "enriched_history_operations": "enriched_history_operations",
     "ledgers": "history_ledgers",
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
@@ -230,83 +334,56 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "enriched_history_operations": "enriched_history_operations",
-    "contract_data": "contract_data",
-    "contract_code": "contract_code",
-    "config_settings": "config_settings",
     "ttl": "ttl"
+  },
+  "task_sla": {
+    "asset_stats": 720,
+    "build_batch_stats": 840,
+    "build_bq_insert_job": 1080,
+    "build_del_ins_from_gcs_to_bq_task": 2000,
+    "build_delete_data_task": 1020,
+    "build_export_task": 840,
+    "build_gcs_to_bq_task": 960,
+    "build_time_task": 480,
+    "cleanup_metadata": 60,
+    "create_sandbox": 2400,
+    "current_state": 720,
+    "default": 60,
+    "elementary_dbt_data_quality": 1620,
+    "enriched_history_operations": 780,
+    "enriched_history_operations_with_exclude": 780,
+    "fee_stats": 840,
+    "history_assets": 720,
+    "liquidity_pool_trade_volume": 1140,
+    "liquidity_pools_value": 840,
+    "liquidity_pools_value_history": 600,
+    "liquidity_providers": 720,
+    "mgi": 660,
+    "network_stats": 720,
+    "ohlc": 720,
+    "partnership_assets": 660,
+    "relevant_asset_trades": 1200,
+    "singular_test": 600,
+    "snapshot_state": 600,
+    "soroban": 720,
+    "trade_agg": 720,
+    "update_sandbox": 60
   },
   "task_timeout": {
     "build_batch_stats": 180,
     "build_bq_insert_job": 180,
     "build_copy_table": 180,
     "build_dbt_task": 960,
+    "build_del_ins_from_gcs_to_bq_task": 400,
     "build_delete_data_task": 180,
     "build_export_task": 420,
     "build_gcs_to_bq_task": 300,
     "build_time_task": 480
   },
-  "task_sla": {
-    "default": 60,
-    "build_time_task": 480,
-    "build_export_task": 840,
-    "enriched_history_operations": 720,
-    "current_state": 540,
-    "elementary_dbt_enriched_base_tables": 1020,
-    "ohlc": 720,
-    "liquidity_pool_trade_volume": 1140,
-    "mgi": 660,
-    "liquidity_providers": 720,
-    "liquidity_pools_value": 840,
-    "liquidity_pools_value_history": 600,
-    "trade_agg": 720,
-    "fee_stats": 840,
-    "asset_stats": 720,
-    "network_stats": 720,
-    "partnership_assets": 660,
-    "history_assets": 720,
-    "soroban": 720,
-    "snapshot_state": 600,
-    "elementary_dbt_stellar_marts": 1620,
-    "create_sandbox": 2400,
-    "update_sandbox": 60,
-    "cleanup_metadata": 60,
-    "build_delete_data_task": 1020,
-    "build_batch_stats": 840,
-    "build_bq_insert_job": 1080,
-    "build_gcs_to_bq_task": 960
-  },
-  "dbt_tables": {
-    "signers_current": "account_signers_current",
-    "accounts_current": "accounts_current",
-    "config_settings_current": "config_settings_current",
-    "contract_code_current": "contract_code_current",
-    "contract_data_current": "contract_data_current",
-    "liquidity_pools_current": "liquidity_pools_current",
-    "offers_current": "offers_current",
-    "trustlines_current": "trust_lines_current",
-    "ttl_current": "ttl_current"
-  },
-  "use_testnet": "True",
-  "sandbox_dataset": "crypto_stellar_internal_sandbox",
-  "volume_config": {},
-  "volume_name": "etl-data",
-  "use_futurenet": "False",
-  "currency_ohlc": {
-    "currency": "euro_ohlc",
-    "table_name": "euro_usd_ohlc",
-    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
-    "columns_ohlc_currency": ["time", "open", "high", "low", "close"]
-  },
-  "currency_bucket": "currencies_ohlc",
-  "max_db_entry_age_in_days": 90,
-  "dbt_internal_source_db": "test-hubble-319619",
-  "dbt_internal_source_schema": "test_crypto_stellar_internal",
-  "dbt_public_source_db": "test-hubble-319619",
-  "dbt_public_source_schema": "test_crypto_stellar",
-  "dbt_slack_elementary_channel": "stellar-elementary-alerts",
-  "dbt_elementary_secret": "slack-token-elementary",
-  "dbt_elementary_dataset": "test_elementary",
+  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
   "use_captive_core": "False",
-  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers"
+  "use_futurenet": "False",
+  "use_testnet": "True",
+  "volume_config": {},
+  "volume_name": "etl-data"
 }

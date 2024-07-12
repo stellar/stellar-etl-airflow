@@ -1,4 +1,4 @@
-name: release
+name: CI-CD-PROD
 
 on:
   pull_request:

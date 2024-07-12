@@ -4,7 +4,6 @@ from airflow import DAG
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
-from stellar_etl_airflow.build_elementary_slack_alert_task import elementary_task
 from stellar_etl_airflow.default import (
     alert_sla_miss,
     get_default_dag_args,
@@ -25,7 +24,7 @@ dag = DAG(
     max_active_runs=1,
     catchup=False,
     tags=["dbt-enriched-base-tables"],
-    sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 )
 
 # Wait on ingestion DAGs
@@ -35,16 +34,12 @@ wait_on_history_table = build_cross_deps(
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 
 # DBT models to run
-enriched_history_operations_task = dbt_task(dag, tag="enriched_history_operations")
+enriched_history_operations_task = dbt_task(
+    dag, tag="enriched_history_operations", excluded="singular_test"
+)
 current_state_task = dbt_task(dag, tag="current_state")
-
-elementary = elementary_task(dag, "dbt_enriched_base_tables")
 
 # DAG task graph
 wait_on_history_table >> enriched_history_operations_task
 
 wait_on_state_table >> current_state_task
-
-enriched_history_operations_task >> elementary
-
-current_state_task >> elementary
