@@ -8,6 +8,7 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
 )
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
+from stellar_etl_airflow.utils import skip_retry_dbt_errors
 
 
 def create_dbt_profile(project="prod"):
@@ -142,6 +143,7 @@ def dbt_task(
         config_file=config_file_location,
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
+        on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
@@ -223,6 +225,7 @@ def build_dbt_task(
         config_file=config_file_location,
         container_resources=resources_requests,
         on_failure_callback=alert_after_max_retries,
+        on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
