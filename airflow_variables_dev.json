@@ -283,33 +283,26 @@
   "public_dataset": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
-    "cc": {
-      "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
-    },
     "default": {
-      "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
+      "requests": {
+        "cpu": "0.2",
+        "ephemeral-storage": "500Mi",
+        "memory": "250Mi"
+      }
     },
-    "state": {
+    "stellar-etl": {
       "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
+        "cpu": "0.2",
+        "ephemeral-storage": "500Mi",
+        "memory": "250Mi"
+      }
     },
-    "wocc": {
+    "dbt": {
       "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "900Mi"
-      }
+        "cpu": "0.2",
+        "ephemeral-storage": "500Mi",
+        "memory": "250Mi"
+      }
     }
   },
   "sandbox_dataset": "crypto_stellar_internal_sandbox",

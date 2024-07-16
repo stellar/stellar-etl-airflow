@@ -112,6 +112,7 @@ op_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 trade_export_task = build_export_task(
@@ -124,6 +125,7 @@ trade_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 effects_export_task = build_export_task(
@@ -136,6 +138,7 @@ effects_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 tx_export_task = build_export_task(
@@ -148,6 +151,7 @@ tx_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 ledger_export_task = build_export_task(
@@ -160,6 +164,7 @@ ledger_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 asset_export_task = build_export_task(
@@ -172,6 +177,7 @@ asset_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 contract_events_export_task = build_export_task(
@@ -184,6 +190,7 @@ contract_events_export_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellar-etl",
 )
 
 """

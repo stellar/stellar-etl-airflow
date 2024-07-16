@@ -281,32 +281,25 @@
   "public_dataset": "crypto_stellar",
   "public_project": "crypto-stellar",
   "resources": {
-    "cc": {
-      "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "10Gi",
-        "memory": "15Gi"
-      }
-    },
     "default": {
       "requests": {
-        "cpu": "3.5",
+        "cpu": "0.5",
         "ephemeral-storage": "1Gi",
-        "memory": "5Gi"
+        "memory": "1Gi"
       }
     },
-    "state": {
+    "stellar-etl": {
       "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "12Gi",
-        "memory": "20Gi"
+        "cpu": "0.5",
+        "ephemeral-storage": "1Gi",
+        "memory": "1Gi"
       }
     },
-    "wocc": {
+    "dbt": {
       "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "10Gi",
-        "memory": "15Gi"
+        "cpu": "0.5",
+        "ephemeral-storage": "1Gi",
+        "memory": "1Gi"
       }
     }
   },
