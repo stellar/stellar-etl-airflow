@@ -283,21 +283,21 @@
   "public_dataset": "test_crypto_stellar",
   "public_project": "test-hubble-319619",
   "resources": {
-    "default": {
+    "dbt": {
       "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",
         "memory": "250Mi"
       }
     },
-    "stellar-etl": {
+    "default": {
       "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",
         "memory": "250Mi"
       }
     },
-    "dbt": {
+    "stellar-etl": {
       "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",

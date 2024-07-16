@@ -281,6 +281,13 @@
   "public_dataset": "crypto_stellar",
   "public_project": "crypto-stellar",
   "resources": {
+    "dbt": {
+      "requests": {
+        "cpu": "0.5",
+        "ephemeral-storage": "1Gi",
+        "memory": "1Gi"
+      }
+    },
     "default": {
       "requests": {
         "cpu": "0.5",
@@ -289,13 +296,6 @@
       }
     },
     "stellar-etl": {
-      "requests": {
-        "cpu": "0.5",
-        "ephemeral-storage": "1Gi",
-        "memory": "1Gi"
-      }
-    },
-    "dbt": {
       "requests": {
         "cpu": "0.5",
         "ephemeral-storage": "1Gi",
