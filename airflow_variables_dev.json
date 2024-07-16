@@ -284,21 +284,21 @@
   "public_project": "test-hubble-319619",
   "resources": {
     "dbt": {
-      "requests": {
+      "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",
         "memory": "250Mi"
       }
     },
     "default": {
-      "requests": {
+      "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",
         "memory": "250Mi"
       }
     },
     "stellar-etl": {
-      "requests": {
+      "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",
         "memory": "250Mi"
