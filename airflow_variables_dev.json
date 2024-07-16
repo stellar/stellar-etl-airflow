@@ -297,7 +297,7 @@
         "memory": "250Mi"
       }
     },
-    "stellar-etl": {
+    "stellaretl": {
       "requests": {
         "cpu": "0.2",
         "ephemeral-storage": "500Mi",

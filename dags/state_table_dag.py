@@ -102,7 +102,7 @@ changes_task = build_export_task(
     use_gcs=True,
     use_captive_core=use_captive_core,
     txmeta_datastore_path=txmeta_datastore_path,
-    resource_cfg="stellar-etl",
+    resource_cfg="stellaretl",
 )
 
 """
