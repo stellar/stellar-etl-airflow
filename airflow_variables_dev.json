@@ -359,6 +359,7 @@
     "liquidity_pools_value_history": 600,
     "liquidity_providers": 720,
     "mgi": 660,
+    "monitoring_packages": 720,
     "network_stats": 720,
     "ohlc": 720,
     "partnership_assets": 660,
