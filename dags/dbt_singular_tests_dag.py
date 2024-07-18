@@ -33,6 +33,7 @@ with DAG(
         dag,
         command_type="test",
         tag="singular_test",
+        resource_cfg="dbt",
     )
 
     singular_tests

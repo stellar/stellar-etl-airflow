@@ -285,23 +285,23 @@
   "resources": {
     "dbt": {
       "requests": {
-        "cpu": "0.2",
+        "cpu": "1",
         "ephemeral-storage": "500Mi",
-        "memory": "250Mi"
+        "memory": "600Mi"
       }
     },
     "default": {
       "requests": {
-        "cpu": "0.2",
+        "cpu": "0.3",
         "ephemeral-storage": "500Mi",
-        "memory": "250Mi"
+        "memory": "600Mi"
       }
     },
     "stellaretl": {
       "requests": {
-        "cpu": "0.2",
+        "cpu": "0.3",
         "ephemeral-storage": "500Mi",
-        "memory": "250Mi"
+        "memory": "600Mi"
       }
     }
   },

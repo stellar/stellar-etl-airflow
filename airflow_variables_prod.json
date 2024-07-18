@@ -283,7 +283,7 @@
   "resources": {
     "dbt": {
       "requests": {
-        "cpu": "0.5",
+        "cpu": "1",
         "ephemeral-storage": "1Gi",
         "memory": "1Gi"
       }

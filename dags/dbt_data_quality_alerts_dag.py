@@ -29,6 +29,6 @@ with DAG(
 ) as dag:
 
     # Trigger elementary
-    elementary_alerts = elementary_task(dag, "dbt_data_quality")
+    elementary_alerts = elementary_task(dag, "dbt_data_quality", resource_cfg="dbt")
 
     elementary_alerts
