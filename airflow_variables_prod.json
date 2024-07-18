@@ -123,7 +123,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:1a777f9",
+  "dbt_image_name": "stellar/stellar-dbt:5c7c924",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
   "dbt_job_execution_timeout_seconds": 1800,
@@ -155,7 +155,7 @@
   },
   "gcs_exported_data_bucket_name": "us-central1-hubble-14c4ca64-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:98bea9a",
+  "image_name": "stellar/stellar-etl:ab57fa4",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -281,32 +281,25 @@
   "public_dataset": "crypto_stellar",
   "public_project": "crypto-stellar",
   "resources": {
-    "cc": {
+    "dbt": {
       "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "10Gi",
-        "memory": "15Gi"
+        "cpu": "1",
+        "ephemeral-storage": "1Gi",
+        "memory": "1Gi"
       }
     },
     "default": {
       "requests": {
-        "cpu": "3.5",
+        "cpu": "0.5",
         "ephemeral-storage": "1Gi",
-        "memory": "5Gi"
+        "memory": "1Gi"
       }
     },
-    "state": {
+    "stellaretl": {
       "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "12Gi",
-        "memory": "20Gi"
-      }
-    },
-    "wocc": {
-      "requests": {
-        "cpu": "3.5",
-        "ephemeral-storage": "10Gi",
-        "memory": "15Gi"
+        "cpu": "0.5",
+        "ephemeral-storage": "1Gi",
+        "memory": "1Gi"
       }
     }
   },
