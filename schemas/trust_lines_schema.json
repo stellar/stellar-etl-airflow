@@ -12,7 +12,7 @@
   {
     "mode": "NULLABLE",
     "name": "asset_type",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
