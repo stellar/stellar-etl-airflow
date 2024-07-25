@@ -1,0 +1,46 @@
+name: CI-CD-DEV
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    branches:
+      - master
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.pull_request.merged == false &&
+      github.event.pull_request.state == 'open'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - id: file_changes
+        uses: trilom/file-changes-action@v1.2.4
+        with:
+          output: " "
+
+      - uses: pre-commit/action@v3.0.0
+        env:
+          extra_args: --color=always --files ${{ steps.file_changes.outputs.files}}
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: [pre-commit]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
