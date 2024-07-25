@@ -10,9 +10,9 @@ on:
     branch_name:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Deploy Branch'
+        description: "Deploy Branch"
         # Default value if no value is explicitly provided
-        default: 'test'
+        default: "test"
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
@@ -20,9 +20,9 @@ on:
     env_name:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Deploy Environment'
+        description: "Deploy Environment"
         # Default value if no value is explicitly provided
-        default: 'dev'
+        default: "dev"
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
@@ -37,9 +37,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
-    - name: Display Branch Name
-      run: echo "Hello ${{ inputs.branch_name }}"
+      # Runs a single command using the runners shell
+      - name: Display Branch Name
+        run: echo "Hello ${{ inputs.branch_name }}"
 
-    - name: Display Environment Name
-      run: echo "Hello ${{ inputs.env_name }}"
+      - name: Display Environment Name
+        run: echo "Hello ${{ inputs.env_name }}"
