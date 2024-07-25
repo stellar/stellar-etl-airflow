@@ -1,6 +1,9 @@
 name: Deploy
 
 on:
+  push:
+    branches:
+      - "github-actions-for-release-proces"
   workflow_dispatch:
     inputs:
       envName:
