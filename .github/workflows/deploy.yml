@@ -9,8 +9,8 @@ on:
         required: true
         type: choice
         options:
-        - dev
-        - prod
+          - dev
+          - prod
 
 jobs:
   log:
