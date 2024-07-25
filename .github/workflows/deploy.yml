@@ -89,7 +89,7 @@ jobs:
         env:
           PROJECT_ID: test-hubble-319619
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: test-hubble-2
+          COMPOSER_ENVIRONMENT: test-hubble
           LOCATION: us-central1
         with:
           args: >
