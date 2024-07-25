@@ -66,7 +66,7 @@ jobs:
       - id: "get-credentials"
         uses: "google-github-actions/get-gke-credentials@v2"
         with:
-          cluster_name: "us-central1-test-hubble-2-5f1f2dbf-gke"
+          cluster_name: "us-central1-test-hubble-43c3e190-gke"
           location: "us-central1"
 
       - name: Pytest
