@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Display Environment Name
-        run: echo "Hello ${{ inputs.env_name }}"
+        run: echo "Hello ${{ inputs.envName }}"
 
   tests:
     runs-on: ubuntu-latest
