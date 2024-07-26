@@ -124,7 +124,7 @@ jobs:
         uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: hubble-261722
-          APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
+          APPLICATION_CREDENTIALS: "${{ secrets.CREDS_PROD_HUBBLE }}"
           COMPOSER_ENVIRONMENT: hubble
           LOCATION: us-central1
         with:
