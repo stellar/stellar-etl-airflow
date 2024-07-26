@@ -13,13 +13,6 @@ on:
           - prod
 
 jobs:
-  log:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Display Environment Name
-        run: echo "Hello ${{ inputs.envName }}"
-
   tests:
     runs-on: ubuntu-latest
 
@@ -74,33 +67,35 @@ jobs:
           pip install --upgrade pip
           pip install google-cloud-storage==2.1.0
 
-      # - name: Authenticate to test-hubble GCP
-      #   uses: google-github-actions/auth@v1
-      #   with:
-      #     credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
+      - name: Authenticate to test-hubble GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
-      # - name: Upload files to dev GCS bucket
-      #   run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
-      #   env:
-      #     GOOGLE_CLOUD_PROJECT: test-hubble-319619
-      #     BUCKET: us-central1-test-hubble-43c3e190-bucket
+      - name: Upload files to dev GCS bucket
+        run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
+        env:
+          GOOGLE_CLOUD_PROJECT: test-hubble-319619
+          BUCKET: us-central1-test-hubble-43c3e190-bucket
 
-      # - name: Update Airflow variables
-      #   uses: actions-hub/gcloud@master
-      #   env:
-      #     PROJECT_ID: test-hubble-319619
-      #     APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
-      #     COMPOSER_ENVIRONMENT: test-hubble
-      #     LOCATION: us-central1
-      #   with:
-      #     args: >
-      #       components install kubectl && gcloud composer environments run
-      #       $COMPOSER_ENVIRONMENT --location $LOCATION variables import
-      #       -- gcsfuse/actual_mount_path/variables.json
+      - name: Update Airflow variables
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: test-hubble-319619
+          APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
+          COMPOSER_ENVIRONMENT: test-hubble
+          LOCATION: us-central1
+        with:
+          args: >
+            components install kubectl && gcloud composer environments run
+            $COMPOSER_ENVIRONMENT --location $LOCATION variables import
+            -- gcsfuse/actual_mount_path/variables.json
+
   deploy-to-prod:
-    if: ${{ github.event.inputs.envName == 'prod' && github.ref == 'refs/heads/test-release-master' }}
+    if: ${{ github.event.inputs.envName == 'prod' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs: [tests]
+
     steps:
       - uses: actions/checkout@v3
 
@@ -108,3 +103,32 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-cloud-storage==2.1.0
+
+      - name: Authenticate to hubble GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.CREDS_PROD_HUBBLE }}"
+
+      - name: Upload files to prod GCS bucket
+        run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
+        env:
+          GOOGLE_CLOUD_PROJECT: hubble-261722
+          BUCKET: us-central1-hubble-14c4ca64-bucket
+
+      - name: Update Airflow variables
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: hubble-261722
+          APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
+          COMPOSER_ENVIRONMENT: hubble
+          LOCATION: us-central1
+        with:
+          args: >
+            components install kubectl && gcloud composer environments run
+            $COMPOSER_ENVIRONMENT --location $LOCATION variables import
+            -- gcsfuse/actual_mount_path/variables.json
