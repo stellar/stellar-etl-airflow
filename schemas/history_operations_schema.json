@@ -1176,5 +1176,10 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "details_json",
+    "type": "JSON"
   }
 ]
