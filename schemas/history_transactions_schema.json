@@ -210,7 +210,7 @@
     "type": "INTEGER"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REPEATED",
     "name": "signatures",
     "type": "STRING"
   }
