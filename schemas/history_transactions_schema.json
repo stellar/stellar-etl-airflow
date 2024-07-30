@@ -211,7 +211,7 @@
   },
   {
     "mode": "REPEATED",
-    "name": "signatures",
+    "name": "tx_signers",
     "type": "STRING"
   }
 ]
