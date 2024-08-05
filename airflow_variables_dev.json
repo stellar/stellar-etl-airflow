@@ -378,5 +378,6 @@
   "use_futurenet": "False",
   "use_testnet": "True",
   "volume_config": {},
-  "volume_name": "etl-data"
+  "volume_name": "etl-data",
+  "elementary_slack_webhook": ""
 }

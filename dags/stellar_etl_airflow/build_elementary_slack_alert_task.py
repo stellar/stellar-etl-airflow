@@ -42,14 +42,15 @@ def elementary_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    slack_secret_name = Variable.get("dbt_elementary_secret")
-    secret = access_secret(slack_secret_name, "default")
+    ## NOTE: The slack token for elementary alerts is currently broken
+    # slack_secret_name = Variable.get("dbt_elementary_secret")
+    # secret = access_secret(slack_secret_name, "default")
+
+    elementary_slack_webhook = "{{ var.value.elementary_slack_webhook }}"
     args = [
         "monitor",
-        "--slack-token",
-        f"{secret}",
-        "--slack-channel-name",
-        "{{ var.value.dbt_slack_elementary_channel }}",
+        "--slack-webhook",
+        f"{elementary_slack_webhook}",
     ]
 
     logging.info(f"sh commands to run in pod: {args}")
