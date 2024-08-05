@@ -153,6 +153,7 @@
       "due to concurrent update"
     ]
   },
+  "elementary_slack_webhook": "",
   "gcs_exported_data_bucket_name": "us-central1-hubble-14c4ca64-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:63b5833",
@@ -376,6 +377,5 @@
   "use_futurenet": "False",
   "use_testnet": "False",
   "volume_config": "{}",
-  "volume_name": "etl-data",
-  "elementary_slack_webhook": ""
+  "volume_name": "etl-data"
 }
