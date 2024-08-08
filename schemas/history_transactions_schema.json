@@ -208,5 +208,10 @@
     "mode": "NULLABLE",
     "name": "rent_fee_charged",
     "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "tx_signers",
+    "type": "STRING"
   }
 ]
