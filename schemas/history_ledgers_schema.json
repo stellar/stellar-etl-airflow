@@ -113,5 +113,10 @@
     "mode": "NULLABLE",
     "name": "signature",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "total_byte_size_of_bucket_list",
+    "type": "INTEGER"
   }
 ]
