@@ -154,7 +154,7 @@
   },
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-43c3e190-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "amishastellar/stellar-etl:50a3124",
+  "image_name": "stellar/stellar-etl:cb48295",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
