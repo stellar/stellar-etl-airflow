@@ -118,6 +118,7 @@
   "dbt_dataset_for_test": "test",
   "dbt_elementary_dataset": "test_elementary",
   "dbt_elementary_secret": "slack-token-elementary",
+  "dbt_elementary_target": "elementary",
   "dbt_full_refresh_models": {
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false

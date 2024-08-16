@@ -62,7 +62,7 @@ def elementary_task(
         env_vars={
             "DBT_USE_COLORS": "0",
             "DBT_DATASET": "{{ var.value.dbt_elementary_dataset }}",
-            "DBT_TARGET": "{{ var.value.dbt_target }}",
+            "DBT_TARGET": "{{ var.value.dbt_elementary_target }}",
             "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
             "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
