@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-
+from stellar_etl_airflow.default import alert_after_max_retries
 
 def initialize_task_vars(
     table_id,
@@ -70,5 +70,6 @@ def create_del_ins_task(dag, task_vars, del_ins_callable):
         python_callable=del_ins_callable,
         op_kwargs=task_vars,
         provide_context=True,
+        on_failure_callback=alert_after_max_retries,
         dag=dag,
     )
