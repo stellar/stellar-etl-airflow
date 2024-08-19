@@ -1,6 +1,7 @@
 from airflow.operators.python import PythonOperator
 from stellar_etl_airflow.default import alert_after_max_retries
 
+
 def initialize_task_vars(
     table_id,
     table_name,
