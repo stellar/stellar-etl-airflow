@@ -132,7 +132,7 @@ def dbt_task(
             "INTERNAL_SOURCE_SCHEMA": "{{ var.value.dbt_internal_source_schema }}",
             "PUBLIC_SOURCE_DB": "{{ var.value.dbt_public_source_db }}",
             "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
-            "EXECUTION_DATE": "{{ ds }}",
+            "EXECUTION_DATE": "{{ ts }}",
         },
         image=dbt_image,
         arguments=args,
@@ -173,7 +173,7 @@ def build_dbt_task(
 
     create_dbt_profile_cmd = create_dbt_profile(project)
 
-    execution_date = "EXECUTION_DATE=" + "{{ ds }}"
+    execution_date = "EXECUTION_DATE=" + "{{ ts }}"
 
     command = ["sh", "-c"]
     args = [
