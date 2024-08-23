@@ -83,7 +83,6 @@ def build_del_ins_from_gcs_to_bq_task(
                 build_del_ins_from_gcs_to_bq_task.__name__
             ]
         ),
-        on_failure_callback=alert_after_max_retries,
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[
                 build_del_ins_from_gcs_to_bq_task.__name__
@@ -164,7 +163,6 @@ def build_del_ins_from_gcs_to_bq_task(
             + export_task_id
             + '\')["failed_transforms"] }}',
             max_failed_transforms=0,
-            on_failure_callback=alert_after_max_retries,
             sla=timedelta(
                 seconds=Variable.get("task_sla", deserialize_json=True)[
                     build_del_ins_from_gcs_to_bq_task.__name__
@@ -192,7 +190,6 @@ def build_del_ins_from_gcs_to_bq_task(
             max_bad_records=0,
             time_partitioning=time_partition,
             cluster_fields=cluster_fields,
-            on_failure_callback=alert_after_max_retries,
             sla=timedelta(
                 seconds=Variable.get("task_sla", deserialize_json=True)[
                     build_del_ins_from_gcs_to_bq_task.__name__

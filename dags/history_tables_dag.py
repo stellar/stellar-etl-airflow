@@ -28,7 +28,6 @@ from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
 from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import (
-    alert_after_max_retries,
     alert_sla_miss,
     get_default_dag_args,
     init_sentry,
