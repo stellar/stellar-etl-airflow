@@ -46,21 +46,17 @@ def alert_after_max_retries(context):
     This returns the try number relative to the last clearing.
     """
     ti = context["task_instance"]
-    actual_try_number = ti.try_number
-    relative_first_try = ti.max_tries - ti.task.retries + 1
-    relative_try = actual_try_number - relative_first_try + 1
 
-    if int(relative_try) >= int(ti.max_tries):
-        with push_scope() as scope:
-            scope.set_tag("data-quality", "max-retries")
-            scope.set_extra("dag_id", ti.dag_id)
-            scope.set_extra("task_id", ti.task_id)
-            scope.set_extra("run_id", ti.run_id)
-            scope.set_extra("duration", ti.duration)
-            capture_message(
-                f"The task {ti.task_id} belonging to DAG {ti.dag_id} failed after max retries.",
-                "fatal",
-            )
+    with push_scope() as scope:
+        scope.set_tag("data-quality", "max-retries")
+        scope.set_extra("dag_id", ti.dag_id)
+        scope.set_extra("task_id", ti.task_id)
+        scope.set_extra("run_id", ti.run_id)
+        scope.set_extra("duration", ti.duration)
+        capture_message(
+            f"The task {ti.task_id} belonging to DAG {ti.dag_id} failed after max retries.",
+            "fatal",
+        )
 
 
 def alert_sla_miss(dag, task_list, blocking_task_list, slas, blocking_tis):
