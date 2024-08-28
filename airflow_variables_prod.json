@@ -124,7 +124,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:e82c6e548",
+  "dbt_image_name": "stellar/stellar-dbt:333f8f1df",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
   "dbt_job_execution_timeout_seconds": 1800,
@@ -156,7 +156,7 @@
   },
   "gcs_exported_data_bucket_name": "us-central1-hubble-14c4ca64-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:425fa7d8b",
+  "image_name": "stellar/stellar-etl:e82c6e548",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
