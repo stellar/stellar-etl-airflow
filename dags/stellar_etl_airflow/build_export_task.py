@@ -211,10 +211,10 @@ def build_export_task(
     )
 
     if command == "export_ledger_entry_changes" or command == "export_all_history":
-        arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
+        arguments = f"""{etl_cmd_string} 1>> stdout.out 2>> stderr.out && cat stdout.out && cat stderr.out && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
     else:
         arguments = f"""
-                    {etl_cmd_string} 2>> stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
+                    {etl_cmd_string} 1>> stdout.out 2>> stderr.out && cat stdout.out && cat stderr.out && echo "{{\\"output\\": \\"{output_file}\\",
                     \\"failed_transforms\\": `grep failed_transforms stderr.out | cut -d\\",\\" -f2 | cut -d\\":\\" -f2`}}" >> /airflow/xcom/return.json
                     """
     return KubernetesPodOperator(
