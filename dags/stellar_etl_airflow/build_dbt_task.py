@@ -133,7 +133,7 @@ def dbt_task(
             "PUBLIC_SOURCE_DB": "{{ var.value.dbt_public_source_db }}",
             "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
             "EXECUTION_DATE": "{{ ts }}",
-            "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date }}",
+            "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.isoformat() }}",
         },
         image=dbt_image,
         arguments=args,
