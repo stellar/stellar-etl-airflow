@@ -229,6 +229,8 @@ WITH jobChangeEvent AS (
     JSON_EXTRACT_SCALAR(protopayload_auditlog.metadataJson, '$.jobChange.after') AS jobChangeAfter,
     REGEXP_EXTRACT(protopayload_auditlog.metadataJson, r'BigQueryAuditMetadata","(.*?)":') AS eventName,
   FROM {project_id}.{dataset_id}.cloudaudit_googleapis_com_data_access
+  where true
+    and timestamp >= current_timestamp - interval 30 day
 ),
 /*
  * TableCreation: Table creation event.
@@ -272,6 +274,8 @@ tableCreationEvent AS (
     JSON_EXTRACT_SCALAR(protopayload_auditlog.metadataJson,
       '$.tableCreation.reason')  AS tableCreationReason,
   FROM {project_id}.{dataset_id}.cloudaudit_googleapis_com_activity
+  where true
+    and timestamp >= current_timestamp - interval 30 day
 ),
 /*
  * TableChange: Table metadata change event
@@ -317,6 +321,8 @@ tableChangeEvent AS (
     CAST(JSON_EXTRACT_SCALAR(protopayload_auditlog.metadataJson,
       '$.tableChange.truncated') AS BOOL) AS tableChangeTruncated
   FROM {project_id}.{dataset_id}.cloudaudit_googleapis_com_activity
+  where true
+    and timestamp >= current_timestamp - interval 30 day
 ),
 /*
  * TableDeletion: Table deletion event
@@ -337,6 +343,8 @@ tableDeletionEvent AS (
     JSON_EXTRACT_SCALAR(protopayload_auditlog.metadataJson,
       '$.tableDeletion.reason') AS tableDeletionReason,
   FROM {project_id}.{dataset_id}.cloudaudit_googleapis_com_activity
+  where true
+    and timestamp >= current_timestamp - interval 30 day
 ),
 /*
  * TableDataRead: Data from tableDataRead audit logs
@@ -382,6 +390,8 @@ tableDataReadEvent AS (
       JSON_EXTRACT(protopayload_auditlog.metadataJson, '$.tableDataRead.sessionName')
       IGNORE NULLS ORDER BY protopayload_auditlog.resourceName) AS tableDataReadSessionName,
   FROM {project_id}.{dataset_id}.cloudaudit_googleapis_com_data_access
+  where true
+    and timestamp >= current_timestamp - interval 30 day
   GROUP BY jobId
 ),
 /*
@@ -411,6 +421,8 @@ tableDataChangeEvent AS (
     JSON_EXTRACT_SCALAR(protopayload_auditlog.metadataJson,
       '$.tableDataChange.jobName') AS tableDataChangeJobName,
   FROM {project_id}.{dataset_id}.cloudaudit_googleapis_com_data_access
+  where true
+    and timestamp >= current_timestamp - interval 30 day
 )
  -- End of WITH clauses
 SELECT
