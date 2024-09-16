@@ -24,7 +24,7 @@ with DAG(
     "partner_pipeline_dag",
     default_args=get_default_dag_args(),
     start_date=datetime(2023, 1, 1, 0, 0),
-    description="This DAG automates daily updates to partner tables in BigQuery.",
+    description="This DAG automates daily updates to partner tables in BigQuery. See https://docs.google.com/document/d/1JRWgClSq5M07SxLkzp8qJ_6kvuApcOZK8BEZ6mk5Qvg/edit#heading=h.rw9o90o9j7j2 for playbook in case of task failures.",
     schedule_interval="0 16 * * *",
     params={
         "alias": "partner",
