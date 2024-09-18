@@ -67,6 +67,7 @@ def dbt_task(
     command_type="build",
     excluded=None,
     resource_cfg="default",
+    run_singular_test="false"
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
@@ -134,6 +135,7 @@ def dbt_task(
             "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
             "EXECUTION_DATE": "{{ ts }}",
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
+            "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
         },
         image=dbt_image,
         arguments=args,
