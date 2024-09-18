@@ -34,7 +34,7 @@ with DAG(
         command_type="test",
         tag="singular_test",
         resource_cfg="dbt",
-        run_singular_test="true"
+        run_singular_test="true",
     )
 
     singular_tests

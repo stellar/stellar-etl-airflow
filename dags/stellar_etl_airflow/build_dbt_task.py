@@ -67,7 +67,7 @@ def dbt_task(
     command_type="build",
     excluded=None,
     resource_cfg="default",
-    run_singular_test="false"
+    run_singular_test="false",
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
