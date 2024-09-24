@@ -18,7 +18,7 @@ with DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 6, 25, 0, 0),
     description="This DAG runs non-model dbt tests half-hourly cadence",
-    schedule="*/30 * * * *",  # Runs every 30 minutes
+    schedule="0 0 * * *	",  # Every day at 12:00 AM UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
