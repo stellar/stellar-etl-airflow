@@ -358,6 +358,7 @@
     "partnership_assets": 660,
     "relevant_asset_trades": 1200,
     "singular_test": 600,
+    "recency": 600,
     "snapshot_state": 600,
     "soroban": 720,
     "trade_agg": 720,
