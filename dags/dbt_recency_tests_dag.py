@@ -16,9 +16,9 @@ init_sentry()
 with DAG(
     "dbt_recency_tests",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 6, 25, 0, 0),
+    start_date=datetime(2024, 9, 30, 0, 0),
     description="This DAG runs non-model dbt tests half-hourly cadence",
-    schedule="0 0 * * *	",  # Every day at 12:00 AM UTC
+    schedule="0 20 * * *",  # Every day at 8:00 PM UTC / 3:00 PM CST
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
