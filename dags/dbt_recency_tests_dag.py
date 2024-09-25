@@ -16,7 +16,7 @@ init_sentry()
 with DAG(
     "dbt_recency_tests",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 9, 30, 0, 0),
+    start_date=datetime(2024, 9, 24, 0, 0),
     description="This DAG runs recency tests at a daily cadence",
     schedule="0 20 * * *",  # Every day at 8:00 PM UTC / 3:00 PM CST
     user_defined_filters={
