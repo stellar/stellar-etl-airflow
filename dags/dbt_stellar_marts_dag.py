@@ -17,7 +17,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 6, 11, 17, 30),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 16 * * *",  # Runs at 16:00 UTC
+    schedule_interval="0 0 * * *",  # Runs at 00:00 UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
@@ -40,7 +40,6 @@ wait_on_partner_pipeline_dag = build_cross_deps(
 ohlc_task = dbt_task(dag, tag="ohlc")
 liquidity_pool_trade_volume_task = dbt_task(dag, tag="liquidity_pool_trade_volume")
 
-mgi_task = dbt_task(dag, tag="mgi")
 liquidity_providers_task = dbt_task(dag, tag="liquidity_providers")
 liquidity_pools_values_task = dbt_task(dag, tag="liquidity_pools_value")
 liquidity_pools_value_history_task = dbt_task(dag, tag="liquidity_pools_value_history")
@@ -57,9 +56,6 @@ snapshot_state = dbt_task(dag, tag="snapshot_state")
 
 # DAG task graph
 wait_on_dbt_enriched_base_tables >> ohlc_task >> liquidity_pool_trade_volume_task
-
-wait_on_dbt_enriched_base_tables >> mgi_task
-wait_on_partner_pipeline_dag >> mgi_task
 
 wait_on_dbt_enriched_base_tables >> liquidity_providers_task
 wait_on_dbt_enriched_base_tables >> liquidity_pools_values_task
