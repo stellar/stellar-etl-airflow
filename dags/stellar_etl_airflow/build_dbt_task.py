@@ -87,7 +87,7 @@ def dbt_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    args = [command_type, f"--{flag}"]
+    args = [command_type, f"--{flag}"] if flag else [command_type]
 
     models = []
     if tag:
@@ -99,8 +99,9 @@ def dbt_task(
     if len(models) > 1:
         task_name = "multiple_models"
         args.append(",".join(models))
-    else:
+    elif len(models):
         args.append(models[0])
+
     # --exclude selector added for necessary use cases
     # Argument should be string or list of strings
     if excluded:
