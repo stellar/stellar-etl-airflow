@@ -31,6 +31,7 @@ with DAG(
     # DBT tests to run
     source_freshness_tests = dbt_task(
         dag,
+        model_name="all_sources",
         command_type="source freshness",
         flag=None,
         tag=None,
