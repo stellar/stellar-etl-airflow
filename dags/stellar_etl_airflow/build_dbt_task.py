@@ -65,6 +65,7 @@ def dbt_task(
     tag=None,
     flag="select",
     operator="",
+    cmd_args=[],
     command_type="build",
     excluded=None,
     resource_cfg="default",
@@ -94,6 +95,9 @@ def dbt_task(
 
     if flag:
         args.append(f"--{flag}")
+
+    if len(cmd_args):
+        args = [*args, *cmd_args]
 
     models = []
     if tag:

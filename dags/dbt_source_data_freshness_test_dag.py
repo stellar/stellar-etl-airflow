@@ -33,6 +33,7 @@ with DAG(
         dag,
         command_type="source",
         sub_command="freshness",
+        cmd_args=["source:crypto_stellar.*", "source:crypto_stellar_internal_2.*"],
         flag=None,
         tag=None,
         resource_cfg="dbt",
