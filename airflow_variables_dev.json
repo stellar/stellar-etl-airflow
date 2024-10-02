@@ -331,7 +331,6 @@
     "ttl": "ttl"
   },
   "task_sla": {
-    "all_sources": 720,
     "asset_stats": 720,
     "build_batch_stats": 840,
     "build_bq_insert_job": 1080,
@@ -348,6 +347,7 @@
     "enriched_history_operations": 780,
     "enriched_history_operations_with_exclude": 780,
     "fee_stats": 840,
+    "freshness": 720,
     "history_assets": 720,
     "liquidity_pool_trade_volume": 1140,
     "liquidity_pools_value": 840,

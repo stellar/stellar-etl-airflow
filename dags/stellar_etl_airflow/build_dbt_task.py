@@ -61,6 +61,7 @@ elementary:
 def dbt_task(
     dag,
     model_name=None,
+    sub_command=None,
     tag=None,
     flag="select",
     operator="",
@@ -87,7 +88,12 @@ def dbt_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    args = [command_type, f"--{flag}"] if flag else [command_type]
+    args = [command_type]
+    if sub_command:
+        args.append(sub_command)
+
+    if flag:
+        args.append(f"--{flag}")
 
     models = []
     if tag:
@@ -96,6 +102,8 @@ def dbt_task(
     if model_name:
         task_name = model_name
         models.append(f"{operator}{model_name}")
+    if sub_command:
+        task_name = sub_command
     if len(models) > 1:
         task_name = "multiple_models"
         args.append(",".join(models))
@@ -117,7 +125,6 @@ def dbt_task(
 
     logging.info(f"sh commands to run in pod: {args}")
 
-    command_type = command_type.replace(" ", "_")
     return KubernetesPodOperator(
         task_id=f"dbt_{command_type}_{task_name}",
         name=f"dbt_{command_type}_{task_name}",
