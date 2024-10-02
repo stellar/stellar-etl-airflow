@@ -35,9 +35,8 @@ with DAG(
         sub_command="freshness",
         cmd_args=[
             "source:{{ var.value.dbt_internal_source_schema }}.*",
-            "source:{{ var.value.dbt_public_source_db }}.*",
+            "source:{{ var.value.dbt_public_source_schema }}.*",
         ],
-        flag=None,
         tag=None,
         resource_cfg="dbt",
     )
