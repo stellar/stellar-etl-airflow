@@ -34,8 +34,8 @@ with DAG(
         command_type="source",
         sub_command="freshness",
         cmd_args=[
-            "source:{{ var.value.dbt_internal_source_schema }}.*",
-            "source:{{ var.value.dbt_public_source_schema }}.*",
+            "source:crypto_stellar.*",
+            "source:crypto_stellar_internal_2.*",
         ],
         tag=None,
         resource_cfg="dbt",
