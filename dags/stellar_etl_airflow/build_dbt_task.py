@@ -117,6 +117,7 @@ def dbt_task(
 
     logging.info(f"sh commands to run in pod: {args}")
 
+    command_type = command_type.replace(" ", "_")
     return KubernetesPodOperator(
         task_id=f"dbt_{command_type}_{task_name}",
         name=f"dbt_{command_type}_{task_name}",
