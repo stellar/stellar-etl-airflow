@@ -33,10 +33,11 @@ with DAG(
         dag,
         command_type="source",
         sub_command="freshness",
-        cmd_args=["source:crypto_stellar.*", "source:crypto_stellar_internal_2.*"],
+        cmd_args=[
+            "source:{{ var.value.dbt_internal_source_schema }}.*",
+            "source:{{ var.value.dbt_public_source_db }}.*",
+        ],
         flag=None,
         tag=None,
         resource_cfg="dbt",
     )
-
-    source_freshness_tests
