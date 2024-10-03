@@ -23,6 +23,7 @@ def elementary_task(
     dag,
     task_name,
     resource_cfg="default",
+    command="monitor"
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
 
@@ -45,7 +46,7 @@ def elementary_task(
     slack_secret_name = Variable.get("dbt_elementary_secret")
     secret = access_secret(slack_secret_name, "default")
     args = [
-        "monitor",
+        f"{command}",
         "--slack-token",
         f"{secret}",
         "--slack-channel-name",
