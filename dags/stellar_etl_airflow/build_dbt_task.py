@@ -61,11 +61,9 @@ elementary:
 def dbt_task(
     dag,
     model_name=None,
-    sub_command=None,
     tag=None,
     flag="select",
     operator="",
-    cmd_args=[],
     command_type="build",
     excluded=None,
     resource_cfg="default",
@@ -89,15 +87,7 @@ def dbt_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    args = [command_type]
-    if sub_command:
-        args.append(sub_command)
-
-    if flag:
-        args.append(f"--{flag}")
-
-    if len(cmd_args):
-        args = [*args, *cmd_args]
+    args = [command_type, f"--{flag}"]
 
     models = []
     if tag:
@@ -106,14 +96,11 @@ def dbt_task(
     if model_name:
         task_name = model_name
         models.append(f"{operator}{model_name}")
-    if sub_command:
-        task_name = sub_command
     if len(models) > 1:
         task_name = "multiple_models"
         args.append(",".join(models))
-    elif len(models):
+    else:
         args.append(models[0])
-
     # --exclude selector added for necessary use cases
     # Argument should be string or list of strings
     if excluded:
