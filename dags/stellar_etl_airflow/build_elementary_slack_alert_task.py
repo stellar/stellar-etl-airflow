@@ -51,7 +51,7 @@ def elementary_task(
     ]
 
     if len(cmd_args):
-        args.append(cmd_args)
+        args = [*args, *cmd_args]
 
     logging.info(f"sh commands to run in pod: {args}")
 
