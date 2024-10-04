@@ -28,7 +28,10 @@ with DAG(
 
     # Trigger elementary
     elementary_alerts = elementary_task(
-        dag, "generate_report", resource_cfg="dbt", command="send-report"
+        dag,
+        "generate_report",
+        resource_cfg="dbt",
+        command="send-report --select last_invocation",
     )
 
     elementary_alerts
