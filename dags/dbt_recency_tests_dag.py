@@ -18,7 +18,7 @@ with DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 9, 24, 0, 0),
     description="This DAG runs recency tests at a daily cadence",
-    schedule="0 20 * * *",  # Every day at 8:00 PM UTC / 3:00 PM CST
+    schedule="0 3 * * *",  # Every day at 3:00 AM UTC / 9:00 PM CST
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
