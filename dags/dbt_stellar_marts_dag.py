@@ -32,10 +32,6 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
 )
 
-wait_on_partner_pipeline_dag = build_cross_deps(
-    dag, "wait_on_partner_pipeline_dag", "partner_pipeline_dag"
-)
-
 # DBT models to run
 ohlc_task = dbt_task(dag, tag="ohlc")
 liquidity_pool_trade_volume_task = dbt_task(dag, tag="liquidity_pool_trade_volume")
