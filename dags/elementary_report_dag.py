@@ -27,6 +27,8 @@ with DAG(
 ) as dag:
 
     # Trigger elementary
-    elementary_alerts = elementary_task(dag, "generate_report", resource_cfg="dbt",command="send-report")
+    elementary_alerts = elementary_task(
+        dag, "generate_report", resource_cfg="dbt", command="send-report"
+    )
 
     elementary_alerts
