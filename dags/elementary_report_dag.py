@@ -32,7 +32,7 @@ with DAG(
         "generate_report",
         resource_cfg="dbt",
         command="send-report",
-        cmd_args=["--select", "last_invocation", "--days-back", "2"],
+        cmd_args=["--select", "last_invocation", "--days-back", "1"],
     )
 
     elementary_alerts
