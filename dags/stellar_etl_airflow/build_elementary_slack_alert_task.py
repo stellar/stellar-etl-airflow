@@ -19,7 +19,9 @@ def access_secret(secret_name, namespace):
     return secret
 
 
-def elementary_task(dag, task_name, resource_cfg="default", command="monitor"):
+def elementary_task(
+    dag, task_name, cmd_args=[], resource_cfg="default", command="monitor"
+):
     namespace = conf.get("kubernetes", "NAMESPACE")
 
     if namespace == "default":
@@ -47,6 +49,9 @@ def elementary_task(dag, task_name, resource_cfg="default", command="monitor"):
         "--slack-channel-name",
         "{{ var.value.dbt_slack_elementary_channel }}",
     ]
+
+    if len(cmd_args):
+        args.append(cmd_args)
 
     logging.info(f"sh commands to run in pod: {args}")
 
