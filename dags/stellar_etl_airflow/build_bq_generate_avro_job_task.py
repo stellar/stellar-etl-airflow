@@ -62,4 +62,3 @@ def build_bq_generate_avro_job(
             ]
         ),
     )
-

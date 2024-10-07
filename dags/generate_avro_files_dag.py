@@ -2,10 +2,10 @@ from datetime import datetime
 
 from airflow import DAG
 from kubernetes.client import models as k8s
-from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_bq_generate_avro_job_task import (
-    build_bq_generate_avro_job
+    build_bq_generate_avro_job,
 )
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.default import (
     alert_sla_miss,
     get_default_dag_args,
