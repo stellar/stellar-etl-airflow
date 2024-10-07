@@ -29,6 +29,10 @@ dag = DAG(
     sla_miss_callback=alert_sla_miss,
 )
 
+public_project = "{{ var.value.public_project }}"
+public_dataset = "{{ var.value.public_dataset }}"
+gcs_bucket = "{{ var.value.avro_gcs_bucket }}"
+
 # Wait on ingestion DAGs
 wait_on_history_table = build_cross_deps(
     dag, "wait_on_ledgers_txs", "history_table_export"
