@@ -34,6 +34,7 @@ def build_bq_generate_avro_job(
     sql_params = {
         "project_id": project,
         "dataset_id": dataset,
+        "batch_run_date": batch_run_date,
         "prev_batch_run_date": prev_batch_run_date,
         "next_batch_run_date": next_batch_run_date,
         "uri": uri,
