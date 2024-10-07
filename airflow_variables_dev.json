@@ -1,5 +1,6 @@
 {
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
+  "avro_gcs_bucket": "test_dune_bucket_sdf",
   "bq_dataset": "test_crypto_stellar_internal",
   "bq_dataset_audit_log": "audit_log",
   "bq_project": "test-hubble-319619",
@@ -339,6 +340,7 @@
     "build_export_task": 840,
     "build_gcs_to_bq_task": 960,
     "build_time_task": 480,
+    "build_bq_generate_avro_job": 600,
     "cleanup_metadata": 60,
     "create_sandbox": 2400,
     "current_state": 720,
@@ -373,7 +375,8 @@
     "build_delete_data_task": 180,
     "build_export_task": 420,
     "build_gcs_to_bq_task": 300,
-    "build_time_task": 480
+    "build_time_task": 480,
+    "build_bq_generate_avro_job": 600
   },
   "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
   "use_captive_core": "False",

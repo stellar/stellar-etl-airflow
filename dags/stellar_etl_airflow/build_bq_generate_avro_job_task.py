@@ -29,8 +29,10 @@ def build_bq_generate_avro_job(
     next_batch_run_date = (
         "{{ batch_run_date_as_datetime_string(dag, data_interval_end) }}"
     )
-    batch_run_time = f"{batch_run_date.hour}:{batch_run_date.minute}:{batch_run_date.second}":
-    uri = f"gs://{gcs_bucket}/avro/{table}/{batch_run_date.year}/{batch_run_date.month}/{batch_run_date.day}/{batch_run_time}/*.avro"
+    uri_datetime = (
+        "{{ batch_run_date_as_directory_string(dag, data_interval_start) }}"
+    )
+    uri = f"gs://{gcs_bucket}/avro/{table}/{uri_datetime}/*.avro"
     sql_params = {
         "project_id": project,
         "dataset_id": dataset,
@@ -51,14 +53,14 @@ def build_bq_generate_avro_job(
         task_id=f"generate_avro_{table}",
         execution_timeout=timedelta(
             seconds=Variable.get("task_timeout", deserialize_json=True)[
-                build_bq_insert_job.__name__
+                build_bq_generate_avro_job.__name__
             ]
         ),
         on_failure_callback=alert_after_max_retries,
         configuration=configuration,
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[
-                build_bq_insert_job.__name__
+                build_bq_generate_avro_job.__name__
             ]
         ),
     )

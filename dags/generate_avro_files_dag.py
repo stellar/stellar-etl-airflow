@@ -25,7 +25,6 @@ dag = DAG(
     },
     max_active_runs=5,
     catchup=True,
-    tags=["dbt-enriched-base-tables"],
     sla_miss_callback=alert_sla_miss,
 )
 
