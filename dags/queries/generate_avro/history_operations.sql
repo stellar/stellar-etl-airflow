@@ -17,4 +17,3 @@ as (
     and closed_at < '{next_batch_run_date}'
   order by closed_at asc
 )
-
