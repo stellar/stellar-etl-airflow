@@ -81,6 +81,7 @@ batch_id = batch_id
 batch_run_date = batch_run_date
 prev_batch_run_date = prev_batch_run_date
 next_batch_run_date = next_batch_run_date
+uri = uri
 
 # Some rules can be configured directly from the config common to other rules
 [sqlfluff:rules]

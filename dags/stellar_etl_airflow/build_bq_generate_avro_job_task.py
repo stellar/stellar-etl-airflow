@@ -23,7 +23,7 @@ def build_bq_generate_avro_job(
     next_batch_run_date = (
         "{{ batch_run_date_as_datetime_string(dag, data_interval_end) }}"
     )
-    uri_datetime = ("{{ batch_run_date_as_directory_string(dag, data_interval_start) }}")
+    uri_datetime = "{{ batch_run_date_as_directory_string(dag, data_interval_start) }}"
     uri = f"gs://{gcs_bucket}/avro/{table}/{uri_datetime}/*.avro"
     sql_params = {
         "project_id": project,
