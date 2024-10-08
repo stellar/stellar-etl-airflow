@@ -42,6 +42,7 @@ wait_on_history_table = build_cross_deps(
 )
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 
+# Add dummy_task so DAG generates the avro_tables loop and dependency graph correctly
 dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
 
 # Generate AVRO files
