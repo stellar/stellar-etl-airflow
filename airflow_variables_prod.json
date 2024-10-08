@@ -1,5 +1,6 @@
 {
   "api_key_path": "/home/airflow/gcs/data/apiKey.json",
+  "avro_gcs_bucket": "dune_bucket_sdf",
   "bq_dataset": "crypto_stellar_internal_2",
   "bq_dataset_audit_log": "audit_log",
   "bq_project": "hubble-261722",
@@ -331,6 +332,7 @@
   "task_sla": {
     "asset_stats": 420,
     "build_batch_stats": 600,
+    "build_bq_generate_avro_job": 600,
     "build_bq_insert_job": 840,
     "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 780,
@@ -364,6 +366,7 @@
   },
   "task_timeout": {
     "build_batch_stats": 180,
+    "build_bq_generate_avro_job": 600,
     "build_bq_insert_job": 180,
     "build_copy_table": 180,
     "build_dbt_task": 1800,
