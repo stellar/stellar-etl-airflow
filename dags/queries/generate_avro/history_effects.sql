@@ -7,11 +7,12 @@ options (
 as (
     select
         *
-        except(details, batch_id, batch_insert_ts, batch_run_date)
+        except (details, batch_id, batch_insert_ts, batch_run_date)
         , details.*
-        except(predicate)
+        except (predicate)
     from {project_id}.{dataset_id}.history_effects
-    where true
+    where
+        true
         and batch_run_date >= '{batch_run_date}'
         and batch_run_date < '{next_batch_run_date}'
         and closed_at >= '{batch_run_date}'
