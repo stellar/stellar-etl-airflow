@@ -72,4 +72,3 @@ for table in avro_tables:
     dummy_task >> avro_task
     wait_on_history_table >> avro_task
     wait_on_state_table >> avro_task
-
