@@ -334,13 +334,13 @@
   "task_sla": {
     "asset_stats": 720,
     "build_batch_stats": 840,
+    "build_bq_generate_avro_job": 600,
     "build_bq_insert_job": 1080,
     "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 1020,
     "build_export_task": 840,
     "build_gcs_to_bq_task": 960,
     "build_time_task": 480,
-    "build_bq_generate_avro_job": 600,
     "cleanup_metadata": 60,
     "create_sandbox": 2400,
     "current_state": 720,
@@ -368,6 +368,7 @@
   },
   "task_timeout": {
     "build_batch_stats": 180,
+    "build_bq_generate_avro_job": 600,
     "build_bq_insert_job": 180,
     "build_copy_table": 180,
     "build_dbt_task": 960,
@@ -375,8 +376,7 @@
     "build_delete_data_task": 180,
     "build_export_task": 420,
     "build_gcs_to_bq_task": 300,
-    "build_time_task": 480,
-    "build_bq_generate_avro_job": 600
+    "build_time_task": 480
   },
   "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
   "use_captive_core": "False",

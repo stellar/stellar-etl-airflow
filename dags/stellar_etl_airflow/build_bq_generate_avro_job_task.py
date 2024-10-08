@@ -1,13 +1,12 @@
-import os
 from datetime import timedelta
 
 from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-from stellar_etl_airflow.build_bq_insert_job_task import (
-    get_query_filepath,
-    file_to_string,
-)
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.build_bq_insert_job_task import (
+    file_to_string,
+    get_query_filepath,
+)
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
@@ -24,9 +23,7 @@ def build_bq_generate_avro_job(
     next_batch_run_date = (
         "{{ batch_run_date_as_datetime_string(dag, data_interval_end) }}"
     )
-    uri_datetime = (
-        "{{ batch_run_date_as_directory_string(dag, data_interval_start) }}"
-    )
+    uri_datetime = ("{{ batch_run_date_as_directory_string(dag, data_interval_start) }}")
     uri = f"gs://{gcs_bucket}/avro/{table}/{uri_datetime}/*.avro"
     sql_params = {
         "project_id": project,

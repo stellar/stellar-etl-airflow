@@ -1,12 +1,12 @@
 from datetime import datetime
 
 from airflow import DAG
+from airflow.operators.dummy import DummyOperator
 from stellar_etl_airflow import macros
-from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_bq_generate_avro_job_task import (
     build_bq_generate_avro_job,
 )
-from airflow.operators.dummy import DummyOperator
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.default import (
     alert_sla_miss,
     get_default_dag_args,
@@ -42,7 +42,7 @@ wait_on_history_table = build_cross_deps(
 )
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
 
-dummy_task = DummyOperator(task_id='dummy_task', dag=dag)
+dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
 
 # Generate AVRO files
 avro_tables = [

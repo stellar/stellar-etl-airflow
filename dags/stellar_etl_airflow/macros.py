@@ -13,4 +13,6 @@ def get_batch_id():
 
 def batch_run_date_as_directory_string(dag, start_time):
     time = subtract_data_interval(dag, start_time)
-    return f"{time.year}/{time.month}/{time.day}/{time.hour}:{time.minute}:{time.second}"
+    return (
+        f"{time.year}/{time.month}/{time.day}/{time.hour}:{time.minute}:{time.second}"
+    )
