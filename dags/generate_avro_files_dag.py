@@ -57,8 +57,8 @@ avro_tables = [
     "offers",
     "trust_lines",
     "ttl",
-    # "history_effects",
-    # "history_operations",
+    "history_effects",
+    "history_operations",
 ]
 
 for table in avro_tables:
