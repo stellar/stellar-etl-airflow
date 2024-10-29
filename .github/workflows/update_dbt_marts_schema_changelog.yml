@@ -1,9 +1,8 @@
 name: Update changelog for DBT marts
 
 on:
-  push:
-    branches:
-      - patch/add-data-changelog
+  schedule:
+    - cron: '0 23 * * 1-5'  # This will run at 11 PM UTC, which is 5 PM CST
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
@@ -15,7 +14,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # if: github.event.pull_request.merged == true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
