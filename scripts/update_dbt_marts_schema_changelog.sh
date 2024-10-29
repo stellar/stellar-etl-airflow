@@ -1,7 +1,7 @@
 #!/bin/bash
 
 result=$(bq query --format=prettyjson --nouse_legacy_sql \
-'SELECT
+    'SELECT
         date(detected_at) as date
         , table_name
         , sub_type as operation
@@ -20,5 +20,5 @@ echo ""
 echo "| Date       |       Table Name                | Operation     | Columns                  |"
 echo "|------------|---------------------------------|---------------|--------------------------|"
 
-echo "$result" | jq -r '.[] | "| \(.date) | \(.table_name) | \(.operation) | \(.columns | join(", ")) |"'
+echo "$result" | jq -r '.[] | "| \(.date) | \(.table_name | ljust(50)) | \(.sub_type) | \(.columns | join(", ")) |"'
 echo ""

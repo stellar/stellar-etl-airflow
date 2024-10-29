@@ -2,7 +2,7 @@ name: Update changelog for DBT marts
 
 on:
   schedule:
-    - cron: '0 23 * * 1-5'  # This will run at 11 PM UTC, which is 5 PM CST
+    - cron: "0 23 * * 1-5" # This will run at 11 PM UTC, which is 5 PM CST
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
