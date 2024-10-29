@@ -20,9 +20,5 @@ echo ""
 echo "| Date       |       Table Name                | Operation     | Columns                  |"
 echo "|------------|---------------------------------|---------------|--------------------------|"
 
-echo "$result" | jq -r '.[] | 
-  "\(.date) | \(.table_name) | \(.operation) | \(.columns | join(", "))" ' | while IFS= read -r line; do
-    IFS='|' read -ra fields <<< "$line"
-    printf "| %-10s | %-60s | %-15s | %s |\n" "${fields[0]}" "${fields[1]}" "${fields[2]}" "${fields[3]}"
-done
+echo "$result" | jq -r '.[] | "| \(.date) | \(.table_name | ljust(50)) | \(.sub_type) | \(.columns | join(", ")) |"'
 echo ""
