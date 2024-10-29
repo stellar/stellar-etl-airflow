@@ -1,0 +1,66 @@
+name: Update Data Schema Changelog
+
+on:
+  push:
+    branches:
+      - patch/add-data-changelog
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  IS_RECENCY_AIRFLOW_TASK: "false"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Authenticate to crypto-stellar GCP
+        uses: "google-github-actions/auth@v2"
+        with:
+          project_id: hubble-261722
+          credentials_json: "${{ secrets.CREDS_PROD_HUBBLE }}"
+
+      - name: Set up Google Cloud SDK
+        run: |
+          echo "Installing Google Cloud SDK..."
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
+      - name: Create new branch
+        id: create_branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          BRANCH_NAME="update-data-schema-changelog-${{ github.run_id }}"
+          git checkout -b $BRANCH_NAME
+          echo "::set-output name=branch::$BRANCH_NAME"
+
+      - name: Run Bash Script
+        run: |
+          cd $GITHUB_WORKSPACE
+          output=$(. scripts/update_data_schema_changelog.sh)
+          echo "$output" > CHANGELOG_DATA_SCHEMA.md
+
+      - name: Commit changes
+        run: |
+          git add CHANGELOG_DATA_SCHEMA.md
+          git commit -m "Update data schema changelog" || echo "No changes to commit"
+
+      - name: Push branch
+        run: |
+          git push origin ${{ steps.create_branch.outputs.branch }}
+
+      - name: Create Pull Request
+        run: |
+          gh pr create -B master -H ${{ steps.create_branch.outputs.branch }} \
+          --title 'Merge ${{ steps.create_branch.outputs.branch }} into master' \
+          --body 'Created by GitHub action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
