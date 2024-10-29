@@ -1,4 +1,4 @@
-name: Update Data Schema Changelog
+name: Update changelog for DBT marts
 
 on:
   push:
@@ -45,13 +45,13 @@ jobs:
       - name: Run Bash Script
         run: |
           cd $GITHUB_WORKSPACE
-          output=$(. scripts/update_data_schema_changelog.sh)
-          echo "$output" > CHANGELOG_DATA_SCHEMA.md
+          output=$(. scripts/update_dbt_marts_schema_changelog.sh)
+          echo "$output" > changelog/dbt_marts.md
 
       - name: Commit changes
         run: |
-          git add CHANGELOG_DATA_SCHEMA.md
-          if git commit -m "Update data schema changelog"; then
+          git add changelog/dbt_marts.md
+          if git commit -m "Update changelog for DBT marts"; then
             echo "Changes committed."
             echo "::set-output name=changes_committed::true"
           else
