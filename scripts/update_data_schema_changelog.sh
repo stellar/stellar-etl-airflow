@@ -23,3 +23,4 @@ echo "| Date       | Database Name | Schema Name | Table Name                   
 echo "|------------|---------------|-------------|--------------------------------|--------------|--------------------------|"
 
 echo "$result" | jq -r '.[] | "| \(.date) | \(.database_name) | \(.schema_name) | \(.table_name) | \(.sub_type) | \(.columns | join(", ")) |"'
+echo ""
