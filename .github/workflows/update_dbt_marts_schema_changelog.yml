@@ -1,6 +1,9 @@
 name: Update changelog for DBT marts
 
 on:
+  push:
+    branches:
+      - patch/add-data-changelog
   schedule:
     - cron: "0 23 * * 1-5" # This will run at 11 PM UTC, which is 5 PM CST
 
