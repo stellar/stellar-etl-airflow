@@ -51,13 +51,21 @@ jobs:
       - name: Commit changes
         run: |
           git add CHANGELOG_DATA_SCHEMA.md
-          git commit -m "Update data schema changelog" || echo "No changes to commit"
+          if git commit -m "Update data schema changelog"; then
+            echo "Changes committed."
+            echo "::set-output name=changes_committed::true"
+          else
+            echo "No changes to commit."
+            echo "::set-output name=changes_committed::false"
+          fi
 
       - name: Push branch
+        if: steps.commit_changes.outputs.changes_committed == 'true'
         run: |
           git push origin ${{ steps.create_branch.outputs.branch }}
 
       - name: Create Pull Request
+        if: steps.commit_changes.outputs.changes_committed == 'true'
         run: |
           gh pr create -B master -H ${{ steps.create_branch.outputs.branch }} \
           --title 'Merge ${{ steps.create_branch.outputs.branch }} into master' \
