@@ -1,9 +1,6 @@
 name: Update changelog for DBT marts
 
 on:
-  push:
-    branches:
-      - patch/add-data-changelog
   schedule:
     - cron: "0 23 * * 1-5" # This will run at 11 PM UTC, which is 5 PM CST
 
@@ -53,17 +50,13 @@ jobs:
         id: commit_changes
         run: |
           git add changelog/dbt_marts.md
-          if git commit --no-verify -m "Update changelog for DBT marts"; then
+          if git commit -m "Update changelog for DBT marts"; then
             echo "Changes committed."
             echo "changes_committed=true" >> $GITHUB_OUTPUT
           else
             echo "No changes to commit."
             echo "changes_committed=false" >> $GITHUB_OUTPUT
           fi
-
-      - name: Use that secret output (protected by a mask)
-        run: |
-          echo "the secret number is ${{ steps.commit_changes.outputs.changes_committed }}"
 
       - name: Push branch
         if: steps.commit_changes.outputs.changes_committed == 'true'
