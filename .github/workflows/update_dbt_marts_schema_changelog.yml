@@ -53,7 +53,7 @@ jobs:
         id: commit_changes
         run: |
           git add changelog/dbt_marts.md
-          if git commit -m "Update changelog for DBT marts"; then
+          if git commit --no-verify -m "Update changelog for DBT marts"; then
             echo "Changes committed."
             echo "changes_committed=true" >> $GITHUB_OUTPUT
           else
