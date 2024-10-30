@@ -1,11 +1,9 @@
 import os
 import json
 
-# Directories containing old and new schemas
 old_schemas_dir = "original_schemas"
 new_schemas_dir = "new_schemas"
 
-# Check if the directories exist
 if not os.path.exists(old_schemas_dir):
     print(f"Directory {old_schemas_dir} does not exist.")
     exit(1)
