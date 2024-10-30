@@ -23,16 +23,19 @@ jobs:
 
       - name: Run Bash Script
         run: |
+          set -x
           cd $GITHUB_WORKSPACE
           cp -r schemas/ new_schemas/
-          git checkout master
-          cp -r schemas/ old_schemas
+          git clone --branch master https://github.com/stellar/stellar-etl-airflow.git repo_master_copy
+          cp -r repo_master_copy/schemas/ old_schemas/
           output=$(python3 scripts/get_source_data_schema_changelog.py)
           echo "$output" > changelog/source_data.md
 
       - name: Commit changes
         id: commit_changes
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add changelog/source_data.md
           if git commit -m "Update changelog for Source data"; then
             echo "Changes committed."
