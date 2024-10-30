@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 
 old_schemas_dir = "original_schemas"
 new_schemas_dir = "new_schemas"
@@ -23,15 +24,7 @@ tables_added = [model for model in new_schemas if model not in old_schemas]
 tables_removed = [model for model in old_schemas if model not in new_schemas]
 common_tables = [model for model in new_schemas if model in old_schemas]
 
-if tables_added:
-    print("")
-    print("## Tables Added:")
-    print([table for table in tables_added])
-
-if tables_removed:
-    print("")
-    print("## Tables Removed:")
-    print([table for table in tables_removed])
+schema_changes = {}
 
 for schema in common_tables:
     old_file_path = os.path.join(old_schemas_dir, schema + '_schema.json')
@@ -50,16 +43,52 @@ for schema in common_tables:
         if name in old_dict and new_dict[name]['type'] != old_dict[name]['type']
     ]
 
-    if added or deleted or type_changed:
-        print("")
-        print(f"## {schema}")
-
     if added:
-        print(f'**Added columns:** {[field for field in added]}')
+        if schema not in schema_changes:
+            schema_changes[schema] = {}
+        schema_changes[schema]['added'] = added
 
     if deleted:
-        print(f'**Deleted columns:** {[field for field in deleted]}')
+        if schema not in schema_changes:
+            schema_changes[schema] = {}
+        schema_changes[schema]['deleted'] = deleted
 
     if type_changed:
-        for (field, new_type, old_type) in type_changed:
-            print(f'Type changed for column {field} from {old_type} to {new_type}')
+        if schema not in schema_changes:
+            schema_changes[schema] = {}
+        schema_changes[schema]['type_changed'] = type_changed
+
+if tables_added or tables_removed or schema_changes:
+    today = datetime.now()
+    formatted_date = today.strftime("%Y-%m-%d")
+    print(formatted_date)
+
+if tables_added:
+    print("")
+    print("## Tables Added:")
+    print([table for table in tables_added])
+
+if tables_removed:
+    print("")
+    print("## Tables Removed:")
+    print([table for table in tables_removed])
+
+if schema_changes:
+    print("")
+    print("## Schema Changes:")
+
+for schema in schema_changes:
+    print("")
+    print(schema)
+    for operation_type in schema_changes[schema]:
+        data = schema_changes[schema][operation_type]
+        if operation_type == 'added':
+            print("")
+            print(f'**Added columns:** {[field for field in data]}')
+        elif operation_type == 'deleted':
+            print("")
+            print(f'**Deleted columns:** {[field for field in data]}')
+        elif operation_type == 'type_changed':
+            for (field, new_type, old_type) in data:
+                print("")
+                print(f'**Type changed** for column {field} from {old_type} to {new_type}')
