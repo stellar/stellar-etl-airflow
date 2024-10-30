@@ -1,0 +1,43 @@
+name: Update changelog for Source Data
+
+on:
+  push:
+    branches:
+      - patch/update-source-data-schema-changelog
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run Bash Script
+        run: |
+          cd $GITHUB_WORKSPACE
+          cp -r schemas/ new_schemas/
+          git checkout main
+          cp -r schemas/ old_schemas
+          output=$(python3 scripts/get_source_data_schema_changelog.py)
+          echo "$output" > changelog/source_data.md
+
+      - name: Commit changes
+        id: commit_changes
+        run: |
+          git add changelog/source_data.md
+          if git commit -m "Update changelog for Source data"; then
+            echo "Changes committed."
+            echo "changes_committed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes to commit."
+            echo "changes_committed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push branch
+        if: steps.commit_changes.outputs.changes_committed == 'true'
+        run: |
+          git push
