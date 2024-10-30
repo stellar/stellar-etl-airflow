@@ -46,12 +46,12 @@ for schema in common_tables:
     if added:
         if schema not in schema_changes:
             schema_changes[schema] = {}
-        schema_changes[schema]['added'] = added
+        schema_changes[schema]['column_added'] = added
 
     if deleted:
         if schema not in schema_changes:
             schema_changes[schema] = {}
-        schema_changes[schema]['deleted'] = deleted
+        schema_changes[schema]['column_removed'] = deleted
 
     if type_changed:
         if schema not in schema_changes:
@@ -59,9 +59,8 @@ for schema in common_tables:
         schema_changes[schema]['type_changed'] = type_changed
 
 if tables_added or tables_removed or schema_changes:
-    today = datetime.now()
-    formatted_date = today.strftime("%Y-%m-%d")
-    print(formatted_date)
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    print(f"## {current_date}")
 
 if tables_added:
     print("")
@@ -70,25 +69,21 @@ if tables_added:
 
 if tables_removed:
     print("")
-    print("## Tables Removed:")
+    print("### Tables Removed:")
     print([table for table in tables_removed])
 
 if schema_changes:
     print("")
-    print("## Schema Changes:")
+    print("### Schema Changes:")
 
-for schema in schema_changes:
-    print("")
-    print(schema)
-    for operation_type in schema_changes[schema]:
-        data = schema_changes[schema][operation_type]
-        if operation_type == 'added':
-            print("")
-            print(f'**Added columns:** {[field for field in data]}')
-        elif operation_type == 'deleted':
-            print("")
-            print(f'**Deleted columns:** {[field for field in data]}')
-        elif operation_type == 'type_changed':
-            for (field, new_type, old_type) in data:
-                print("")
-                print(f'**Type changed** for column {field} from {old_type} to {new_type}')
+    markdown_table = "|       Table Name                | Operation     | Columns                  |\n"
+    markdown_table += "|---------------------------------|---------------|--------------------------|\n"
+
+    for table_name, operations in schema_changes.items():
+        for operation, columns in operations.items():
+            if operation in ['column_added', 'column_removed']:
+                columns_str = ", ".join(columns)
+            if operation in ['type_changed']:
+                columns_str = ", ".join([f"{column[0]} ({column[2]} -> {column[1]})" for column in columns])
+            markdown_table += f"| {table_name:<33} | {operation:<13} | {columns_str:<24} |\n"
+    print(markdown_table)
