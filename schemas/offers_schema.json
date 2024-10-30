@@ -47,7 +47,7 @@
   {
     "mode": "NULLABLE",
     "name": "buying_asset_id",
-    "type": "INTEGER"
+    "type": "STRING"
   },
   {
     "mode": "NULLABLE",

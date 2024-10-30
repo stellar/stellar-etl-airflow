@@ -27,9 +27,10 @@ jobs:
           cd $GITHUB_WORKSPACE
           cp -r schemas/ new_schemas/
           git clone --branch master https://github.com/stellar/stellar-etl-airflow.git repo_master_copy
-          cp -r repo_master_copy/schemas/ old_schemas/
+          cp -r repo_master_copy/schemas/ original_schemas/
           output=$(python3 scripts/get_source_data_schema_changelog.py)
-          echo "$output" > changelog/source_data.md
+          if [[ -n "$output" ]]; then
+            echo "hello"
 
       - name: Commit changes
         id: commit_changes

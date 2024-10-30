@@ -7,7 +7,7 @@
   {
     "mode": "NULLABLE",
     "name": "asset_code",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
