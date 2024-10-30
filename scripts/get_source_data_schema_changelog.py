@@ -72,14 +72,24 @@ if tables_removed:
     print("### Tables Removed:")
     print([table for table in tables_removed])
 
+def sort_schema_changes(changes):
+    sorted_data = {}
+
+    for table_name in sorted(changes.keys()):
+        sorted_operations = {op_type: sorted(changes[table_name][op_type]) 
+                            for op_type in sorted(changes[table_name].keys())}
+        sorted_data[table_name] = sorted_operations
+    return sorted_data
+
 if schema_changes:
+    sorted_schema_changes = sort_schema_changes(schema_changes)
     print("")
     print("### Schema Changes:")
 
     markdown_table = "|       Table Name                | Operation     | Columns                  |\n"
     markdown_table += "|---------------------------------|---------------|--------------------------|\n"
 
-    for table_name, operations in schema_changes.items():
+    for table_name, operations in sorted_schema_changes.items():
         for operation, columns in operations.items():
             if operation in ['column_added', 'column_removed']:
                 columns_str = ", ".join(columns)

@@ -21,11 +21,6 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "selling_asset_code",
-    "type": "STRING"
-  },
-  {
-    "mode": "NULLABLE",
     "name": "selling_asset_issuer",
     "type": "STRING"
   },

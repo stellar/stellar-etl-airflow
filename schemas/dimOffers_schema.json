@@ -43,5 +43,10 @@
     "mode": "NULLABLE",
     "name": "new_id",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "another_new_id",
+    "type": "INTEGER"
   }
 ]
