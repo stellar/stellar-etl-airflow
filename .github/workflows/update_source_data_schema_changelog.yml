@@ -16,11 +16,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
       - name: Run Bash Script
         run: |
           cd $GITHUB_WORKSPACE
           cp -r schemas/ new_schemas/
-          git checkout main
+          git checkout master
           cp -r schemas/ old_schemas
           output=$(python3 scripts/get_source_data_schema_changelog.py)
           echo "$output" > changelog/source_data.md
