@@ -31,7 +31,7 @@ jobs:
           output=$(python3 scripts/get_source_data_schema_changelog.py)
           existing_changelog=$(<changelog/source_data.md)
           echo "$output" > changelog/source_data.md
-          echo "$existing_changelog"> changelog/source_data.md
+          echo "$existing_changelog" >> changelog/source_data.md
 
       - name: Commit changes
         id: commit_changes
