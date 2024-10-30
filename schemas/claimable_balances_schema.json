@@ -5,6 +5,11 @@
     "type": "STRING"
   },
   {
+    "mode": "NULLABLE",
+    "name": "new_id",
+    "type": "STRING"
+  },
+  {
     "fields": [
       {
         "mode": "NULLABLE",
