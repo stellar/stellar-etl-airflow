@@ -1,9 +1,9 @@
 name: Update changelog for Source Data
 
 on:
-  push:
+  pull_request:
     branches:
-      - patch/update-source-data-schema-changelog
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}

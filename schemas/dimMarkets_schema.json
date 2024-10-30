@@ -11,6 +11,11 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "base_issuer",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "base_code",
     "type": "STRING"
   },
