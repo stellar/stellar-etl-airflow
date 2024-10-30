@@ -60,6 +60,7 @@ for schema in common_tables:
 
 if tables_added or tables_removed or schema_changes:
     current_date = datetime.now().strftime("%Y-%m-%d")
+    print("")
     print(f"## {current_date}")
 
 if tables_added:
