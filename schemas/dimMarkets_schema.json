@@ -1,7 +1,7 @@
 [
   {
     "mode": "NULLABLE",
-    "name": "counter_issuer",
+    "name": "counter_issuers",
     "type": "STRING"
   },
   {

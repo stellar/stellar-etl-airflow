@@ -7,7 +7,7 @@
   {
     "mode": "NULLABLE",
     "name": "open",
-    "type": "FLOAT"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
