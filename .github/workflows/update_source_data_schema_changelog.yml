@@ -19,37 +19,25 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.12
 
       - name: Run Bash Script
         run: |
           set -x
           cd $GITHUB_WORKSPACE
+          OLD_SCHEMAS_DIR=original_schemas
           cp -r schemas/ new_schemas/
           git clone --branch master https://github.com/stellar/stellar-etl-airflow.git repo_master_copy
-          cp -r repo_master_copy/schemas/ original_schemas/
-          output=$(python3 scripts/get_source_data_schema_changelog.py)
-          if [[ -n "$output" ]]; then
-            existing_changelog=$(<changelog/source_data.md)
-            echo "$output" > changelog/source_data.md
-            echo "$existing_changelog" >> changelog/source_data.md
-          fi
+          cp -r repo_master_copy/schemas/ OLD_SCHEMAS_DIR
+          export OLD_SCHEMAS_DIR
+          python3 scripts/update_source_data_schema_changelog.py
 
-      - name: Commit changes
-        id: commit_changes
+      - name: Commit and Push Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add changelog/source_data.md
           if git commit -m "Update changelog for Source data"; then
             echo "Changes committed."
-            echo "changes_committed=true" >> $GITHUB_OUTPUT
-          else
-            echo "No changes to commit."
-            echo "changes_committed=false" >> $GITHUB_OUTPUT
+            git push
           fi
-
-      - name: Push branch
-        if: steps.commit_changes.outputs.changes_committed == 'true'
-        run: |
-          git push
