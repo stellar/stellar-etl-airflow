@@ -29,12 +29,11 @@ def write_file(filepath: str, content: str, mode="a") -> None:
 def sort_schema_changes(schema_changes: {}) -> {}:
     sorted_data = {}
 
-    for schema_name in sorted(schema_changes.keys()):
+    for table_name, op_types in sorted(schema_changes.items()):
         sorted_operations = {
-            op_type: sorted(schema_changes[schema_name][op_type])
-            for op_type in sorted(schema_changes[schema_name].keys())
+            op_type: sorted(columns) for op_type, columns in sorted(op_types.items())
         }
-        sorted_data[schema_name] = sorted_operations
+        sorted_data[table_name] = sorted_operations
     return sorted_data
 
 
@@ -188,6 +187,7 @@ def main():
     )
 
     if len(new_changelog):
+        # TODO: Append to same date if multiple changelog commited in same day
         write_file(
             filepath=CHANGELOG_FILEPATH, mode="w", content=new_changelog + "\n\n"
         )
