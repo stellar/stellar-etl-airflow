@@ -1,9 +1,9 @@
+import json
 import os
 import sys
-import json
 from datetime import datetime
 
-OLD_SCHEMAS_DIR = os.environ.get(OLD_SCHEMAS_DIR)
+OLD_SCHEMAS_DIR = os.environ.get("OLD_SCHEMAS_DIR")
 NEW_SCHEMAS_DIR = "schemas"
 CHANGELOG_FILEPATH = "changelog/source_data.md"
 
