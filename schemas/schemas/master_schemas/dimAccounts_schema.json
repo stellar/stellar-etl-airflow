@@ -1,0 +1,12 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "account_id",
+    "type": "FLOAT"
+  }
+]

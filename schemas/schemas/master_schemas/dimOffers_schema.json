@@ -1,0 +1,42 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "price",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "action",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "counter_amount",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "maker_id",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "base_amount",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "dim_offer_id",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "market_id",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "horizon_offer_id",
+    "type": "INTEGER"
+  }
+]

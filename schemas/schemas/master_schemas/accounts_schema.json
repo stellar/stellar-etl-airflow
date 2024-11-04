@@ -1,0 +1,132 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "account_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "balance",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "buying_liabilities",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "selling_liabilities",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sequence_number",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "num_subentries",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "inflation_destination",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "flags",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "home_domain",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "master_weight",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "threshold_low",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "threshold_medium",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "threshold_high",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_modified_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_entry_change",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "deleted",
+    "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sponsor",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "num_sponsored",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "num_sponsoring",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sequence_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "sequence_time",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "closed_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
+  }
+]

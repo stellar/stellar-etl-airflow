@@ -1,0 +1,12 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "offer_instance_id",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_id",
+    "type": "INTEGER"
+  }
+]
