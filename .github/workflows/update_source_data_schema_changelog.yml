@@ -21,6 +21,10 @@ jobs:
         with:
           python-version: 3.12
 
+      - name: Check Current Branch
+        run: |
+          git checkout ${{ github.head_ref }}
+
       - name: Run Bash Script
         run: |
           set -x
@@ -41,5 +45,5 @@ jobs:
           git add changelog/source_data.md
           if git commit -m "Update changelog for Source data"; then
             echo "Changes committed."
-            git push
+            git push origin ${{ github.head_ref }}
           fi
