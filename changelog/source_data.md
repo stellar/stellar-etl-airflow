@@ -1,29 +1,23 @@
+## 2024-11-04:
+
+## Tables Added:
+- account_signers
+## Tables Deleted:
+- account_signers_schema1.json
+## Schema Changes:
+|       Table Name                | Operation     | Columns                  |
+|---------------------------------|---------------|--------------------------|
+| - dimOffers                       | column_added    | horizon_offer_id                                   |
+
+
 
 ## 2024-11-04:
 
 ## Tables Added:
-- new_schema.json
+- account_signers
 ## Tables Deleted:
-- history_trades_schema.json
+- account_signers_schema1.json
 ## Schema Changes:
 |       Table Name                | Operation     | Columns                  |
 |---------------------------------|---------------|--------------------------|
-| dimMarkets_schema.json            | column_added    | counter_issuers                                    |
-| dimMarkets_schema.json            | column_removed  | counter_issuer                                     |
-| euro_ohlc_schema.json             | type_changed    | open (FLOAT -> INTEGER)                            |
-| history_contract_events_schema.json | column_removed  | successful                                         |
-
-
-## 2024-01-01
-
-## Tables Added:
-['new_table']
-
-### Tables Removed:
-['old_table']
-
-### Schema Changes:
-|       Table Name                | Operation     | Columns                  |
-|---------------------------------|---------------|--------------------------|
-| euro_ohlc                         | type_changed  | high (TIMESTAMP -> FLOAT) |
-| account_signers                   | column_added  | ledger_sequences         |
+| - dimOffers                       | column_added    | horizon_offer_id                                   |
