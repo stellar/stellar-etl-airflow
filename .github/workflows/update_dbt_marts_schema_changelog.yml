@@ -39,6 +39,7 @@ jobs:
 
       - name: Run Bash Script
         run: |
+          set -x
           cd $GITHUB_WORKSPACE
           PROJECT=hubble-261722
           export PROJECT
