@@ -132,8 +132,8 @@ def get_print_schema_changes_string(label="", schema_changes={}) -> str:
 
     print_string += get_print_label_string(label)
 
-    markdown_table = "|       Table Name                | Operation     | Columns                  |\n"
-    markdown_table += "|---------------------------------|---------------|--------------------------|\n"
+    markdown_table = "|       Table Name                | Operation     | Columns                                            |\n"
+    markdown_table += "|---------------------------------|---------------|----------------------------------------------------|\n"
 
     for schema_name, operations in schema_changes.items():
         for operation, columns in operations.items():
