@@ -147,7 +147,7 @@ def get_print_schema_changes_string(label="", schema_changes={}) -> str:
                             for column in columns
                         ]
                     )
-                markdown_table += f"| {get_print_schemas_string(schemas=[schema_name]):<33} | {operation:<15} | {columns_str:<50} |\n"
+                markdown_table += f"| {get_print_schemas_string(schemas=[schema_name]):<31} | {operation:<13} | {columns_str:<48} |\n"
     print_string += markdown_table
     return print_string
 
