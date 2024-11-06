@@ -4,9 +4,9 @@ import sys
 from datetime import datetime
 
 OLD_SCHEMAS_DIR = os.environ.get("OLD_SCHEMAS_DIR")
+OLD_CHANGELOG_FILEPATH = os.environ.get("OLD_CHANGELOG_FILEPATH")
 NEW_SCHEMAS_DIR = "schemas"
 CHANGELOG_FILEPATH = "changelog/source_data.md"
-
 
 def read_json_file(filepath: str) -> {}:
     with open(filepath, "r") as rfp:
@@ -173,7 +173,7 @@ def generate_changelog(schemas_added=[], schemas_deleted=[], schemas_changes={})
 
 
 def main():
-    existing_changelog = read_file(filepath=CHANGELOG_FILEPATH)
+    existing_changelog = read_file(filepath=OLD_CHANGELOG_FILEPATH)
     old_schema_filepaths = list_files_in_dir(directory=OLD_SCHEMAS_DIR)
     new_schema_filepaths = list_files_in_dir(directory=NEW_SCHEMAS_DIR)
 
