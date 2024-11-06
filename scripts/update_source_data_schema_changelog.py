@@ -30,10 +30,9 @@ def sort_schema_changes(schema_changes: {}) -> {}:
     sorted_data = {}
 
     for table_name, op_types in sorted(schema_changes.items()):
-        sorted_operations = {
+        sorted_data[table_name] = {
             op_type: sorted(columns) for op_type, columns in sorted(op_types.items())
         }
-        sorted_data[table_name] = sorted_operations
     return sorted_data
 
 
