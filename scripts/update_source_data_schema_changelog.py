@@ -182,7 +182,7 @@ def main():
     )
     schema_changes = compare_schemas(common)
     new_changelog = generate_changelog(
-        schemas_changes=schema_changes, schemas_added=added, schemas_deleted=deleted
+        schemas_added=added, schemas_deleted=deleted, schemas_changes=schema_changes
     )
 
     if len(new_changelog):
