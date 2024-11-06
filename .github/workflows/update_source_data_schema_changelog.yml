@@ -1,0 +1,48 @@
+name: Update changelog for Source Data
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Run Bash Script
+        run: |
+          set -x
+          cd $GITHUB_WORKSPACE
+          OLD_SCHEMAS_DIR=original_schemas
+          git clone --branch master https://github.com/stellar/stellar-etl-airflow.git repo_master_copy
+          mkdir OLD_SCHEMAS_DIR
+          cp -r repo_master_copy/schemas/ $OLD_SCHEMAS_DIR/
+          export OLD_SCHEMAS_DIR
+          python3 scripts/update_source_data_schema_changelog.py
+          rm -rf $OLD_SCHEMAS_DIR
+          rm -rf repo_master_copy
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add changelog/source_data.md
+          if git commit -m "Update changelog for Source data"; then
+            echo "Changes committed."
+            git push
+          else
+            echo "No changes to commit."
+          fi
