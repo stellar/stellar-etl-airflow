@@ -8,6 +8,7 @@ OLD_CHANGELOG_FILEPATH = os.environ.get("OLD_CHANGELOG_FILEPATH")
 NEW_SCHEMAS_DIR = "schemas"
 CHANGELOG_FILEPATH = "changelog/source_data.md"
 
+
 def read_json_file(filepath: str) -> {}:
     with open(filepath, "r") as rfp:
         try:
@@ -191,6 +192,9 @@ def main():
             filepath=CHANGELOG_FILEPATH, mode="w", content=new_changelog + "\n\n"
         )
         write_file(filepath=CHANGELOG_FILEPATH, mode="a", content=existing_changelog)
+    else:
+        # Rewrite the changelog since intermediate commits may have overwritten changelog
+        write_file(filepath=CHANGELOG_FILEPATH, mode="w", content=existing_changelog)
 
 
 if __name__ == "__main__":
