@@ -16,11 +16,6 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "low",
-    "type": "FLOAT"
-  },
-  {
-    "mode": "NULLABLE",
     "name": "close",
     "type": "FLOAT"
   }

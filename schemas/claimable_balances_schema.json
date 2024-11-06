@@ -7,11 +7,6 @@
   {
     "fields": [
       {
-        "mode": "NULLABLE",
-        "name": "destination",
-        "type": "STRING"
-      },
-      {
         "fields": [
           {
             "mode": "NULLABLE",

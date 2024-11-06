@@ -7,7 +7,7 @@
   {
     "mode": "NULLABLE",
     "name": "contract_key_type",
-    "type": "STRING"
+    "type": "INTEGER"
   },
   {
     "mode": "NULLABLE",
