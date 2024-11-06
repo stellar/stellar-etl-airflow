@@ -11,6 +11,11 @@
   },
   {
     "mode": "NULLABLE",
+    "name": "last_modified_ledger",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
     "name": "ledger_entry_change",
     "type": "INTEGER"
   },
