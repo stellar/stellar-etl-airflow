@@ -310,7 +310,7 @@
       "requests": {
         "cpu": "1",
         "ephemeral-storage": "2Gi",
-        "memory": "8Gi"
+        "memory": "16Gi"
       }
     }
   },
