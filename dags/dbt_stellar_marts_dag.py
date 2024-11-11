@@ -33,19 +33,23 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
 )
 
 # DBT models to run
-ohlc_task = dbt_task(dag, tag="ohlc",  operator="+")
-liquidity_pool_trade_volume_task = dbt_task(dag, tag="liquidity_pool_trade_volume",  operator="+")
+ohlc_task = dbt_task(dag, tag="ohlc", operator="+")
+liquidity_pool_trade_volume_task = dbt_task(
+    dag, tag="liquidity_pool_trade_volume", operator="+"
+)
 
-liquidity_providers_task = dbt_task(dag, tag="liquidity_providers",  operator="+")
-liquidity_pools_values_task = dbt_task(dag, tag="liquidity_pools_value",  operator="+")
-liquidity_pools_value_history_task = dbt_task(dag, tag="liquidity_pools_value_history",  operator="+")
-trade_agg_task = dbt_task(dag, tag="trade_agg",  operator="+")
-fee_stats_agg_task = dbt_task(dag, tag="fee_stats",  operator="+")
-asset_stats_agg_task = dbt_task(dag, tag="asset_stats",  operator="+")
-network_stats_agg_task = dbt_task(dag, tag="network_stats",  operator="+")
-partnership_assets_task = dbt_task(dag, tag="partnership_assets",  operator="+")
-history_assets = dbt_task(dag, tag="history_assets",  operator="+")
-soroban = dbt_task(dag, tag="soroban",  operator="+")
+liquidity_providers_task = dbt_task(dag, tag="liquidity_providers", operator="+")
+liquidity_pools_values_task = dbt_task(dag, tag="liquidity_pools_value", operator="+")
+liquidity_pools_value_history_task = dbt_task(
+    dag, tag="liquidity_pools_value_history", operator="+"
+)
+trade_agg_task = dbt_task(dag, tag="trade_agg", operator="+")
+fee_stats_agg_task = dbt_task(dag, tag="fee_stats", operator="+")
+asset_stats_agg_task = dbt_task(dag, tag="asset_stats", operator="+")
+network_stats_agg_task = dbt_task(dag, tag="network_stats", operator="+")
+partnership_assets_task = dbt_task(dag, tag="partnership_assets", operator="+")
+history_assets = dbt_task(dag, tag="history_assets", operator="+")
+soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
 # snapshot_state = dbt_task(dag, tag="snapshot_state")
 # Disable releveant_asset_trades due to bugs in SCD tables

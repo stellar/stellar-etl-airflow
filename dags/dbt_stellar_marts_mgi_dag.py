@@ -34,7 +34,7 @@ wait_on_partner_pipeline_dag = build_cross_deps(
 
 # DBT models to run
 
-mgi_task = dbt_task(dag, tag="mgi",  operator="+")
+mgi_task = dbt_task(dag, tag="mgi", operator="+")
 
 wait_on_dbt_enriched_base_tables >> mgi_task
 wait_on_partner_pipeline_dag >> mgi_task
