@@ -124,7 +124,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt-dev:49ffb6d9d",
+  "dbt_image_name": "stellar/stellar-dbt:27a38d4bb",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
   "dbt_job_execution_timeout_seconds": 300,
@@ -346,7 +346,7 @@
     "current_state": 720,
     "default": 60,
     "elementary_dbt_data_quality": 1620,
-    "elementary_generate_report": 60,
+    "elementary_generate_report": 600,
     "enriched_history_operations": 780,
     "enriched_history_operations_with_exclude": 780,
     "fee_stats": 840,
