@@ -3,10 +3,7 @@ from datetime import datetime
 from airflow import DAG
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_elementary_slack_alert_task import elementary_task
-from stellar_etl_airflow.default import (
-    get_default_dag_args,
-    init_sentry,
-)
+from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
 
