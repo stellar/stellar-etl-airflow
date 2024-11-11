@@ -63,7 +63,7 @@ def dbt_task(
     model_name=None,
     tag=None,
     flag="select",
-    operator="+",
+    operator="",
     command_type="build",
     excluded=None,
     resource_cfg="default",
