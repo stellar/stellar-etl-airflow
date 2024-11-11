@@ -46,7 +46,8 @@ network_stats_agg_task = dbt_task(dag, tag="network_stats")
 partnership_assets_task = dbt_task(dag, tag="partnership_assets")
 history_assets = dbt_task(dag, tag="history_assets")
 soroban = dbt_task(dag, tag="soroban")
-snapshot_state = dbt_task(dag, tag="snapshot_state")
+# Disable snapshot state tables because they're broken
+# snapshot_state = dbt_task(dag, tag="snapshot_state")
 # Disable releveant_asset_trades due to bugs in SCD tables
 # relevant_asset_trades = dbt_task(dag, tag="relevant_asset_trades")
 
@@ -63,5 +64,5 @@ wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> soroban
-wait_on_dbt_enriched_base_tables >> snapshot_state
+# wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
