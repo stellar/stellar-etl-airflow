@@ -309,7 +309,7 @@
     "elementaryreport": {
       "requests": {
         "cpu": "1",
-        "ephemeral-storage": "500Mi",
+        "ephemeral-storage": "2Gi",
         "memory": "8Gi"
       }
     }
@@ -353,7 +353,7 @@
     "current_state": 720,
     "default": 60,
     "elementary_dbt_data_quality": 1620,
-    "elementary_generate_report": 600,
+    "elementary_generate_report": 1200,
     "enriched_history_operations": 780,
     "enriched_history_operations_with_exclude": 780,
     "fee_stats": 840,
