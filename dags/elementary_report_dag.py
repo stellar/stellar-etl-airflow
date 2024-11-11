@@ -32,7 +32,7 @@ with DAG(
         "generate_report",
         resource_cfg="elementaryreport",
         command="send-report",
-        cmd_args=["--days-back", "7"],
+        cmd_args=["--days-back", "7", "--profiles-dir", "."],
     )
 
     elementary_alerts
