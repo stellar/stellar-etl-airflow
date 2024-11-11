@@ -30,7 +30,7 @@ with DAG(
     elementary_alerts = elementary_task(
         dag,
         "generate_report",
-        resource_cfg="dbt",
+        resource_cfg="elementaryreport",
         command="send-report",
         cmd_args=["--select", "last_invocation", "--days-back", "1"],
     )

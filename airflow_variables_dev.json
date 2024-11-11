@@ -305,6 +305,13 @@
         "ephemeral-storage": "500Mi",
         "memory": "600Mi"
       }
+    },
+    "elementaryreport": {
+      "requests": {
+        "cpu": "1",
+        "ephemeral-storage": "500Mi",
+        "memory": "8Gi"
+      }
     }
   },
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
