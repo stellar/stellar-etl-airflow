@@ -299,18 +299,18 @@
         "memory": "600Mi"
       }
     },
-    "stellaretl": {
-      "requests": {
-        "cpu": "0.3",
-        "ephemeral-storage": "1Gi",
-        "memory": "600Mi"
-      }
-    },
     "elementaryreport": {
       "requests": {
         "cpu": "1",
         "ephemeral_storage": "2Gi",
         "memory": "4Gi"
+      }
+    },
+    "stellaretl": {
+      "requests": {
+        "cpu": "0.3",
+        "ephemeral-storage": "1Gi",
+        "memory": "600Mi"
       }
     }
   },

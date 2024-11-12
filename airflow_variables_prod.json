@@ -297,18 +297,18 @@
         "memory": "1Gi"
       }
     },
-    "stellaretl": {
-      "requests": {
-        "cpu": "0.5",
-        "ephemeral-storage": "1Gi",
-        "memory": "1Gi"
-      }
-    },
     "elementaryreport": {
       "requests": {
         "cpu": "1",
         "ephemeral_storage": "2Gi",
         "memory": "4Gi"
+      }
+    },
+    "stellaretl": {
+      "requests": {
+        "cpu": "0.5",
+        "ephemeral-storage": "1Gi",
+        "memory": "1Gi"
       }
     }
   },

@@ -32,7 +32,16 @@ with DAG(
         "generate_report",
         "send-report",
         resource_cfg="elementaryreport",
-        cmd_args=["--days-back", "7", "--profiles-dir", ".", "--executions-limit", "120", "--slack-file-name", f"elementary_report_{datetime.today().date()}.html"],
+        cmd_args=[
+            "--days-back",
+            "7",
+            "--profiles-dir",
+            ".",
+            "--executions-limit",
+            "120",
+            "--slack-file-name",
+            f"elementary_report_{datetime.today().date()}.html",
+        ],
     )
 
     elementary_alerts
