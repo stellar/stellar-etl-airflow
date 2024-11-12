@@ -29,13 +29,15 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
         config_file_location = None
         in_cluster = True
 
-    container_resources = k8s.V1ResourceRequirements(
-        requests={
-            "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
-            "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
-            "ephemeral-storage": f"{{{{ var.json.resources.{resource_cfg}.requests.ephemeral_storage }}}}",
-        }
-    )
+    requests = {
+        "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
+        "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
+    }
+    if resource_cfg == "elementaryreport":
+        requests["ephemeral-storage"] = (
+            f"{{{{ var.json.resources.{resource_cfg}.requests.ephemeral_storage }}}}"
+        )
+    container_resources = k8s.V1ResourceRequirements(requests=requests)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 

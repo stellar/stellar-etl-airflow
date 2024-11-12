@@ -18,7 +18,7 @@ with DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 11, 11, 0, 0),
     description="This DAG creates elementary report and send it to slack",
-    schedule="0 0 * * MON",  # Runs every Monday
+    schedule="0 3 * * MON",  # Runs every Monday
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
