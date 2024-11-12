@@ -19,11 +19,7 @@ def access_secret(secret_name, namespace):
     return secret
 
 
-def elementary_task(
-    dag,
-    task_name,
-    resource_cfg="default",
-):
+def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"):
     namespace = conf.get("kubernetes", "NAMESPACE")
 
     if namespace == "default":
@@ -33,24 +29,30 @@ def elementary_task(
         config_file_location = None
         in_cluster = True
 
-    container_resources = k8s.V1ResourceRequirements(
-        requests={
-            "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
-            "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
-        }
-    )
+    requests = {
+        "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
+        "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
+    }
+    if resource_cfg == "elementaryreport":
+        requests["ephemeral-storage"] = (
+            f"{{{{ var.json.resources.{resource_cfg}.requests.ephemeral_storage }}}}"
+        )
+    container_resources = k8s.V1ResourceRequirements(requests=requests)
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
     slack_secret_name = Variable.get("dbt_elementary_secret")
     secret = access_secret(slack_secret_name, "default")
     args = [
-        "monitor",
+        f"{command}",
         "--slack-token",
         f"{secret}",
         "--slack-channel-name",
         "{{ var.value.dbt_slack_elementary_channel }}",
     ]
+
+    if len(cmd_args):
+        args = [*args, *cmd_args]
 
     logging.info(f"sh commands to run in pod: {args}")
 

@@ -14,23 +14,34 @@ from stellar_etl_airflow.default import (
 init_sentry()
 
 with DAG(
-    "dbt_data_quality_alerts",
+    "elementary_report",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 6, 25, 0, 0),
-    description="This DAG runs dbt tests and Elementary alerts at a half-hourly cadence",
-    schedule="*/15 * * * *",  # Runs every 15 minutes
+    start_date=datetime(2024, 11, 11, 0, 0),
+    description="This DAG creates elementary report and send it to slack",
+    schedule="0 3 * * MON",  # Runs every Monday
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
     max_active_runs=1,
     catchup=False,
-    tags=["dbt-data-quality", "dbt-elementary-alerts"],
-    # sla_miss_callback=alert_sla_miss,
 ) as dag:
 
     # Trigger elementary
     elementary_alerts = elementary_task(
-        dag, "dbt_data_quality", "monitor", resource_cfg="dbt"
+        dag,
+        "generate_report",
+        "send-report",
+        resource_cfg="elementaryreport",
+        cmd_args=[
+            "--days-back",
+            "7",
+            "--profiles-dir",
+            ".",
+            "--executions-limit",
+            "120",
+            "--slack-file-name",
+            f"elementary_report_{datetime.today().date()}.html",
+        ],
     )
 
     elementary_alerts
