@@ -35,6 +35,7 @@ def elementary_task(
         requests={
             "cpu": f"{{{{ var.json.resources.{resource_cfg}.requests.cpu }}}}",
             "memory": f"{{{{ var.json.resources.{resource_cfg}.requests.memory }}}}",
+            "ephemeral-storage": f"{{{{ var.json.resources.{resource_cfg}.requests.ephemeral-storage }}}}",
         }
     )
 
