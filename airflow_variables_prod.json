@@ -303,6 +303,13 @@
         "ephemeral-storage": "1Gi",
         "memory": "1Gi"
       }
+    },
+    "elementaryreport": {
+      "requests": {
+        "cpu": "1",
+        "ephemeral_storage": "2Gi",
+        "memory": "4Gi"
+      }
     }
   },
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
@@ -344,6 +351,7 @@
     "current_state": 1200,
     "default": 60,
     "elementary_dbt_data_quality": 2100,
+    "elementary_generate_report": 1200,
     "enriched_history_operations": 1800,
     "enriched_history_operations_with_exclude": 1800,
     "fee_stats": 360,

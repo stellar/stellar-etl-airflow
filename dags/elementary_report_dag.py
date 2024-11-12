@@ -16,9 +16,9 @@ init_sentry()
 with DAG(
     "elementary_report",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 6, 25, 0, 0),
+    start_date=datetime(2024, 11, 11, 0, 0),
     description="This DAG creates elementary report and send it to slack",
-    schedule="*/60 * * * *",  # Runs every 60 minutes
+    schedule="0 0 * * MON",  # Runs every Monday
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
@@ -30,9 +30,9 @@ with DAG(
     elementary_alerts = elementary_task(
         dag,
         "generate_report",
+        "send-report",
         resource_cfg="elementaryreport",
-        command="send-report",
-        cmd_args=["--days-back", "7", "--profiles-dir", ".", "--executions-limit", "120"],
+        cmd_args=["--days-back", "7", "--profiles-dir", ".", "--executions-limit", "120", "--slack-file-name", f"elementary_report_{datetime.today().date()}.html"],
     )
 
     elementary_alerts

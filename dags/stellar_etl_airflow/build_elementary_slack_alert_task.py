@@ -20,7 +20,7 @@ def access_secret(secret_name, namespace):
 
 
 def elementary_task(
-    dag, task_name, cmd_args=[], resource_cfg="default", command="monitor"
+    dag, task_name, command, cmd_args=[], resource_cfg="default"
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
 

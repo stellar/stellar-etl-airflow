@@ -154,7 +154,7 @@ spec:
           name: gcs-syncd
           resources:
             limits:
-              memory: 2400Mi
+              memory: 600Mi
             requests:
               cpu: 10m
               memory: 50Mi

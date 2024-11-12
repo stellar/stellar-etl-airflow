@@ -288,21 +288,21 @@
     "dbt": {
       "requests": {
         "cpu": "1",
-        "ephemeral-storage": "500Mi",
+        "ephemeral-storage": "1Gi",
         "memory": "600Mi"
       }
     },
     "default": {
       "requests": {
         "cpu": "0.3",
-        "ephemeral-storage": "500Mi",
+        "ephemeral-storage": "1Gi",
         "memory": "600Mi"
       }
     },
     "stellaretl": {
       "requests": {
         "cpu": "0.3",
-        "ephemeral-storage": "500Mi",
+        "ephemeral-storage": "1Gi",
         "memory": "600Mi"
       }
     },
@@ -310,7 +310,7 @@
       "requests": {
         "cpu": "1",
         "ephemeral_storage": "2Gi",
-        "memory": "8Gi"
+        "memory": "4Gi"
       }
     }
   },
