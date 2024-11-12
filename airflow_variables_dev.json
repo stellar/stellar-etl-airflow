@@ -309,12 +309,7 @@
     "elementaryreport": {
       "requests": {
         "cpu": "1",
-        "ephemeral-storage": "2Gi",
-        "memory": "16Gi"
-      },
-      "limits": {
-        "cpu": "2500m",
-        "ephemeral-storage": "2Gi",
+        "ephemeral_storage": "2Gi",
         "memory": "16Gi"
       }
     }
