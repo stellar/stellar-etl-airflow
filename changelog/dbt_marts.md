@@ -2,12 +2,12 @@
 
 | Date       |       Table Name                | Operation     | Columns                  |
 |------------|---------------------------------|---------------|--------------------------|
-| 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_MEANINGFUL | type_changed | min_price_r, claimants, path, asset_balance_changes, parameters_decoded, parameters, max_price_r |
 | 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_MEANINGFUL | column_added | airflow_start_ts, details_json |
+| 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_MEANINGFUL | type_changed | min_price_r, claimants, path, asset_balance_changes, parameters_decoded, parameters, max_price_r |
 | 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_MGI | type_changed | claimants, asset_balance_changes, parameters_decoded, max_price_r, min_price_r, parameters, path |
 | 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_MGI | column_added | details_json, airflow_start_ts |
-| 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_XLM | column_added | details_json, airflow_start_ts |
 | 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_XLM | type_changed | parameters, max_price_r, min_price_r, path, asset_balance_changes, parameters_decoded, claimants |
+| 2024-10-29 | ENRICHED_HISTORY_OPERATIONS_XLM | column_added | details_json, airflow_start_ts |
 | 2024-09-12 | ASSET_STATS_AGG | column_added | airflow_start_ts |
 | 2024-09-12 | DIM_DATES | column_added | airflow_start_ts |
 | 2024-09-12 | DIM_MGI_WALLETS | column_added | airflow_start_ts |
