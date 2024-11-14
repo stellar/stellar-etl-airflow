@@ -118,6 +118,7 @@
   },
   "dbt_dataset_for_test": "test",
   "dbt_elementary_dataset": "test_elementary",
+  "dbt_elementary_report_execution_limit": 120,
   "dbt_elementary_secret": "slack-token-elementary",
   "dbt_elementary_target": "elementary",
   "dbt_full_refresh_models": {

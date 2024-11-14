@@ -38,7 +38,7 @@ with DAG(
             "--profiles-dir",
             ".",
             "--executions-limit",
-            "120",
+            "{{ var.value.dbt_elementary_report_execution_limit }}",
             "--slack-file-name",
             f"elementary_report_{datetime.today().date()}.html",
         ],
