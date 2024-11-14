@@ -24,7 +24,14 @@ with DAG(
 
     # Trigger elementary
     elementary_alerts = elementary_task(
-        dag, "dbt_data_quality", "monitor", resource_cfg="dbt"
+        dag,
+        "dbt_data_quality",
+        "monitor",
+        resource_cfg="dbt",
+        cmd_args=[
+            "--profiles-dir",
+            ".",
+        ],
     )
 
     elementary_alerts

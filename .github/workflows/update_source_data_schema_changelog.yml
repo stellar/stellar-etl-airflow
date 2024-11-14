@@ -35,14 +35,14 @@ jobs:
           rm -rf $OLD_SCHEMAS_DIR
           rm -rf repo_master_copy
 
-      - name: Commit and Push Changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add changelog/source_data.md
-          if git commit -m "Update changelog for Source data"; then
-            echo "Changes committed."
-            git push
-          else
-            echo "No changes to commit."
-          fi
+      # - name: Commit and Push Changes
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     git add changelog/source_data.md
+      #     if git commit -m "Update changelog for Source data"; then
+      #       echo "Changes committed."
+      #       git push
+      #     else
+      #       echo "No changes to commit."
+      #     fi
