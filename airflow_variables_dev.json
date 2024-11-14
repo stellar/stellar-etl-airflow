@@ -124,7 +124,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:4002076aa",
+  "dbt_image_name": "stellar/stellar-dbt:420c216df",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
   "dbt_job_execution_timeout_seconds": 300,
@@ -288,21 +288,25 @@
     "dbt": {
       "requests": {
         "cpu": "1",
-        "ephemeral-storage": "500Mi",
         "memory": "600Mi"
       }
     },
     "default": {
       "requests": {
         "cpu": "0.3",
-        "ephemeral-storage": "500Mi",
         "memory": "600Mi"
+      }
+    },
+    "elementaryreport": {
+      "requests": {
+        "cpu": "1",
+        "ephemeral_storage": "2Gi",
+        "memory": "4Gi"
       }
     },
     "stellaretl": {
       "requests": {
         "cpu": "0.3",
-        "ephemeral-storage": "500Mi",
         "memory": "600Mi"
       }
     }
@@ -346,6 +350,7 @@
     "current_state": 720,
     "default": 60,
     "elementary_dbt_data_quality": 1620,
+    "elementary_generate_report": 1200,
     "enriched_history_operations": 780,
     "enriched_history_operations_with_exclude": 780,
     "fee_stats": 840,
