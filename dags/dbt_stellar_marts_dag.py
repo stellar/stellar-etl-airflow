@@ -38,16 +38,29 @@ liquidity_pool_trade_volume_task = dbt_task(
     dag, tag="liquidity_pool_trade_volume", operator="+", excluded="stellar_dbt_public"
 )
 
-liquidity_providers_task = dbt_task(dag, tag="liquidity_providers", excluded="stellar_dbt_public")
-liquidity_pools_values_task = dbt_task(dag, tag="liquidity_pools_value", operator="+", excluded="stellar_dbt_public")
+liquidity_providers_task = dbt_task(
+    dag, tag="liquidity_providers", excluded="stellar_dbt_public"
+)
+liquidity_pools_values_task = dbt_task(
+    dag, tag="liquidity_pools_value", operator="+", excluded="stellar_dbt_public"
+)
 liquidity_pools_value_history_task = dbt_task(
-    dag, tag="liquidity_pools_value_history", operator="+", excluded="stellar_dbt_public"
+    dag,
+    tag="liquidity_pools_value_history",
+    operator="+",
+    excluded="stellar_dbt_public",
 )
 trade_agg_task = dbt_task(dag, tag="trade_agg", operator="+")
 fee_stats_agg_task = dbt_task(dag, tag="fee_stats")
-asset_stats_agg_task = dbt_task(dag, tag="asset_stats", operator="+", excluded="stellar_dbt_public")
-network_stats_agg_task = dbt_task(dag, tag="network_stats", excluded="stellar_dbt_public")
-partnership_assets_task = dbt_task(dag, tag="partnership_assets", operator="+", excluded="stellar_dbt_public")
+asset_stats_agg_task = dbt_task(
+    dag, tag="asset_stats", operator="+", excluded="stellar_dbt_public"
+)
+network_stats_agg_task = dbt_task(
+    dag, tag="network_stats", excluded="stellar_dbt_public"
+)
+partnership_assets_task = dbt_task(
+    dag, tag="partnership_assets", operator="+", excluded="stellar_dbt_public"
+)
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
