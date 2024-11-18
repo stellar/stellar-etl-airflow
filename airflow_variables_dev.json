@@ -124,7 +124,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt-dev:4b8a2ecc4",
+  "dbt_image_name": "stellar/stellar-dbt-dev:5eaf361ed",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
   "dbt_job_execution_timeout_seconds": 300,
@@ -355,8 +355,8 @@
     "fee_stats": 840,
     "history_assets": 720,
     "liquidity_pool_trade_volume": 1140,
-    "liquidity_pools_value_history": 600,
     "liquidity_pools_value": 840,
+    "liquidity_pools_value_history": 600,
     "liquidity_providers": 720,
     "mgi": 660,
     "network_stats": 720,
