@@ -104,7 +104,6 @@ def dbt_task(
     # --exclude selector added for necessary use cases
     # Argument should be string or list of strings
     if excluded:
-        task_name = f"{task_name}_with_exclude"
         args.append("--exclude")
         if isinstance(excluded, list):
             args.append(" ".join(excluded))
