@@ -69,7 +69,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install google-cloud-storage==2.1.0
+          pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to test-hubble GCP
         uses: google-github-actions/auth@v1
@@ -111,7 +111,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install google-cloud-storage==2.1.0
+          pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to hubble GCP
         uses: google-github-actions/auth@v1
