@@ -27,7 +27,7 @@ with DAG(
     "sandbox_create_dag",
     default_args=get_default_dag_args(),
     description="This DAG creates a sandbox",
-    schedule_interval=None,
+    schedule_interval="@once",
     params={"alias": "sandbox_dataset"},
     user_defined_filters={
         "fromjson": lambda s: loads(s),
