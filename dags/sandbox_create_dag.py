@@ -9,6 +9,7 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_bq_insert_job_task import (
     file_to_string,
     get_query_filepath,
@@ -26,12 +27,16 @@ with DAG(
     "sandbox_create_dag",
     default_args=get_default_dag_args(),
     description="This DAG creates a sandbox",
-    schedule_interval="@once",
+    schedule_interval=None,
     params={"alias": "sandbox_dataset"},
     user_defined_filters={
         "fromjson": lambda s: loads(s),
     },
     catchup=False,
+    user_defined_macros={
+        "subtract_data_interval": macros.subtract_data_interval,
+        "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
+    },
     sla_miss_callback=alert_sla_miss,
 ) as dag:
     PROJECT = Variable.get("public_project")
@@ -41,6 +46,8 @@ with DAG(
     DBT_DATASET = Variable.get("dbt_mart_dataset")
     TABLES_ID = Variable.get("table_ids", deserialize_json=True)
     DBT_TABLES = Variable.get("dbt_tables", deserialize_json=True)
+
+    batch_run_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
     start_tables_task = EmptyOperator(task_id="start_tables_task")
     start_views_task = EmptyOperator(task_id="start_views_task")
@@ -54,6 +61,7 @@ with DAG(
             "table_id": TABLES_ID[table_id],
             "target_project": SANDBOX_PROJECT,
             "target_dataset": SANDBOX_DATASET,
+            "batch_run_date": batch_run_date,
         }
         query = query.format(**sql_params)
         tables_create_task = BigQueryInsertJobOperator(
