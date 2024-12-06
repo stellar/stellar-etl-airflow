@@ -4,10 +4,11 @@ It is scheduled to export information to BigQuery at regular intervals.
 """
 
 from ast import literal_eval
-from datetime import datetime
+from datetime import datetime, timedelta
 from json import loads
 
 from airflow import DAG
+from airflow.configuration import conf
 from airflow.models.variable import Variable
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
@@ -56,8 +57,6 @@ def stellar_etl_internal_task(
 
     image = "{{ var.value.stellar_etl_internal_image_name }}"
 
-    logging.info(f"sh commands to run in pod: {args}")
-
     return KubernetesPodOperator(
         task_id=task_name,
         name=task_name,
@@ -80,7 +79,7 @@ def stellar_etl_internal_task(
         image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
-            seconds=Variable.get("task_sla", deserialize_json=True)[f"task_name"]
+            seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
         trigger_rule="all_done",
     )
