@@ -65,6 +65,7 @@ def stellar_etl_internal_task(
         env_vars={
             "EXECUTION_DATE": "{{ ds }}",
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
+            "RETOOL_API_KEY": "{{ var.value.retool_api_key }}",
         },
         image=image,
         cmds=[command],
@@ -94,6 +95,5 @@ retool_export_task = stellar_etl_internal_task(
         "2024-01-01T16:30:00+00:00",
         "--end-time",
         "2025-01-01T16:30:00+00:00",
-        "--testnet",
     ],
 )
