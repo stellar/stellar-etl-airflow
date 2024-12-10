@@ -95,5 +95,9 @@ retool_export_task = stellar_etl_internal_task(
         "2024-01-01T16:30:00+00:00",
         "--end-time",
         "2025-01-01T16:30:00+00:00",
+        "--cloud-storage-bucket",
+        Variable.get("gcs_exported_data_bucket_name"),
+        "--cloud-provider",
+        "gcp",
     ],
 )
