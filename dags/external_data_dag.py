@@ -3,6 +3,7 @@ The external_data_dag DAG exports data from external sources.
 It is scheduled to export information to BigQuery at regular intervals.
 """
 
+import os
 from ast import literal_eval
 from datetime import datetime, timedelta
 from json import loads
@@ -13,6 +14,13 @@ from airflow.models.variable import Variable
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
+from stellar_etl_airflow.build_del_ins_from_gcs_to_bq_task import (
+    build_del_ins_from_gcs_to_bq_task,
+)
+from stellar_etl_airflow.build_del_ins_operator import (
+    create_del_ins_task,
+    initialize_task_vars,
+)
 from stellar_etl_airflow.default import (
     alert_after_max_retries,
     get_default_dag_args,
@@ -28,6 +36,9 @@ dag = DAG(
     start_date=datetime(2024, 12, 5, 14, 30),
     description="This DAG exports data from external sources such as retool.",
     schedule_interval="*/10 * * * *",
+    params={
+        "alias": "external",
+    },
     render_template_as_native_obj=True,
     user_defined_filters={
         "fromjson": lambda s: loads(s),
@@ -86,6 +97,12 @@ def stellar_etl_internal_task(
     )
 
 
+run_id = "{{ run_id }}"
+filepath = os.path.join(
+    Variable.get("gcs_exported_object_prefix"), run_id, "retool-exported-entity.txt"
+)
+
+
 retool_export_task = stellar_etl_internal_task(
     dag,
     "export_retool_data",
@@ -99,5 +116,43 @@ retool_export_task = stellar_etl_internal_task(
         Variable.get("gcs_exported_data_bucket_name"),
         "--cloud-provider",
         "gcp",
+        "--output",
+        filepath,
     ],
 )
+
+table_name = "retool_entity_data"
+table_id = "test-hubble-319619.test_crypto_stellar_internal.retool_entity_data"
+public_project = "test-hubble-319619"
+public_dataset = "test_crypto_stellar_internal"
+batch_id = macros.get_batch_id()
+batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+export_task_id = "export_retool_data"
+source_object_suffix = "/*-retool-exported-entity.txt"
+source_objects = [
+    "{{ task_instance.xcom_pull(task_ids='"
+    + export_task_id
+    + '\')["output"] }}'
+    + source_object_suffix
+]
+
+task_vars = {
+    "task_id": f"del_ins_{table_name}_task",
+    "project": public_project,
+    "dataset": public_dataset,
+    "table_name": table_name,
+    "export_task_id": "export_retool_data",
+    "source_object_suffix": source_object_suffix,
+    "partition": False,
+    "cluster": False,
+    "batch_id": batch_id,
+    "batch_date": batch_date,
+    "source_objects": source_objects,
+    "table_id": table_id,
+}
+
+retool_insert_to_bq_task = create_del_ins_task(
+    dag, task_vars, build_del_ins_from_gcs_to_bq_task
+)
+
+retool_export_task >> retool_insert_to_bq_task

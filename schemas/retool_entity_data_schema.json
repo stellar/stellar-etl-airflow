@@ -1,0 +1,163 @@
+[
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "created_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "updated_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "account_sponsor",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "REPEATED",
+    "name": "app_geographies",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "custodial",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "description",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "fee_sponsor",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "home_domain",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "home_domains_id",
+    "type": "INTEGER"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "live",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "name",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "non_custodial",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "notes",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "REPEATED",
+    "name": "ramps",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "sdp_enabled",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "soroban_enabled",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "status",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "verified",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "website_url",
+    "type": "STRING"
+  }
+]
