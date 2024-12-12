@@ -41,6 +41,7 @@ dag = DAG(
     },
     render_template_as_native_obj=True,
     user_defined_macros={
+        "subtract_data_interval": macros.subtract_data_interval,
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
     },
     user_defined_filters={
