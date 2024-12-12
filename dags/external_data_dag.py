@@ -111,6 +111,23 @@ retool_filepath = os.path.join(
     "retool-exported-entity.txt",
 )
 
+retool_table_name = "retool_entity_data"
+retool_table_id = "test-hubble-319619.test_crypto_stellar_internal.retool_entity_data"
+retool_public_project = "test-hubble-319619"
+retool_public_dataset = "test_crypto_stellar_internal"
+retool_batch_id = macros.get_batch_id()
+retool_batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+retool_export_task_id = "export_retool_data"
+retool_source_object_suffix = ""
+retool_source_objects = [
+    "{{ task_instance.xcom_pull(task_ids='"
+    + retool_export_task_id
+    + '\')["output"] }}'
+    + retool_source_object_suffix
+]
+batch_insert_ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 retool_export_task = stellar_etl_internal_task(
     dag,
     "export_retool_data",
@@ -126,24 +143,11 @@ retool_export_task = stellar_etl_internal_task(
         "gcp",
         "--output",
         retool_filepath,
+        "-u",
+        f"'batch_id={retool_batch_id},batch_run_date={retool_batch_date},batch_insert_ts={batch_insert_ts}'",
     ],
     output_file=retool_filepath,
 )
-
-retool_table_name = "retool_entity_data"
-retool_table_id = "test-hubble-319619.test_crypto_stellar_internal.retool_entity_data"
-retool_public_project = "test-hubble-319619"
-retool_public_dataset = "test_crypto_stellar_internal"
-retool_batch_id = macros.get_batch_id()
-retool_batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
-retool_export_task_id = "export_retool_data"
-retool_source_object_suffix = ""
-retool_source_objects = [
-    "{{ task_instance.xcom_pull(task_ids='"
-    + retool_export_task_id
-    + '\')["output"] }}'
-    + retool_source_object_suffix
-]
 
 retool_task_vars = {
     "task_id": f"del_ins_{retool_table_name}_task",
