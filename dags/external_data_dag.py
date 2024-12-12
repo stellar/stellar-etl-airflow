@@ -35,7 +35,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 12, 5, 14, 30),
     description="This DAG exports data from external sources such as retool.",
-    schedule_interval="*/10 * * * *",
+    schedule_interval="0 22 * * *",
     params={
         "alias": "external",
     },
@@ -125,8 +125,10 @@ retool_source_objects = [
     + '\')["output"] }}'
     + retool_source_object_suffix
 ]
-batch_insert_ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+retool_batch_insert_ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
+retool_start_time = "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}"
+retool_end_time = "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}"
 
 retool_export_task = stellar_etl_internal_task(
     dag,
@@ -134,9 +136,9 @@ retool_export_task = stellar_etl_internal_task(
     "export-retool",
     cmd_args=[
         "--start-time",
-        "2024-01-01T16:30:00+00:00",
+        retool_start_time,
         "--end-time",
-        "2025-01-01T16:30:00+00:00",
+        retool_end_time,
         "--cloud-storage-bucket",
         Variable.get("gcs_exported_data_bucket_name"),
         "--cloud-provider",
@@ -144,7 +146,7 @@ retool_export_task = stellar_etl_internal_task(
         "--output",
         retool_filepath,
         "-u",
-        f"'batch_id={retool_batch_id},batch_run_date={retool_batch_date},batch_insert_ts={batch_insert_ts}'",
+        f"'batch_id={retool_batch_id},batch_run_date={retool_batch_date},batch_insert_ts={retool_batch_insert_ts}'",
     ],
     output_file=retool_filepath,
 )
