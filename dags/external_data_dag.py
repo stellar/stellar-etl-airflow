@@ -137,7 +137,7 @@ retool_public_dataset = "test_crypto_stellar_internal"
 retool_batch_id = macros.get_batch_id()
 retool_batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 retool_export_task_id = "export_retool_data"
-retool_source_object_suffix = "/*-retool-exported-entity.txt"
+retool_source_object_suffix = ""
 retool_source_objects = [
     "{{ task_instance.xcom_pull(task_ids='"
     + retool_export_task_id
