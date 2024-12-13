@@ -75,18 +75,19 @@ def build_export_task(
         ]
     etl_cmd_string = " ".join(cmd_args)
     arguments = f""" {command} {etl_cmd_string} 1>> stdout.out 2>> stderr.out && cat stdout.out && cat stderr.out && echo "{{\\"output\\": \\"{output_filepath}\\"}}" >> /airflow/xcom/return.json"""
+    env_vars.update(
+        {
+            "EXECUTION_DATE": "{{ ds }}",
+            "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
+        }
+    )
 
     return KubernetesPodOperator(
         task_id=task_name,
         name=task_name,
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
-        env_vars=env_vars.update(
-            {
-                "EXECUTION_DATE": "{{ ds }}",
-                "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
-            }
-        ),
+        env_vars=env_vars,
         image=image,
         cmds=["bash", "-c"],
         arguments=[arguments],
