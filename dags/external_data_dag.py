@@ -25,6 +25,12 @@ from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
 
+EXTERNAL_DATA_TABLE_NAMES = Variable.get("table_ids", deserialize_json=True)
+EXTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
+EXTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
+RETOOL_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
+RETOOL_EXPORT_TASK_ID = "export_retool_data"
+
 # Initialize the DAG
 dag = DAG(
     "external_data_dag",
@@ -50,7 +56,7 @@ dag = DAG(
 
 retool_export_task = build_export_task(
     dag,
-    "export_retool_data",
+    RETOOL_EXPORT_TASK_ID,
     command="export-retool",
     cmd_args=[
         "--start-time",
@@ -101,14 +107,14 @@ def get_insert_to_bq_task(
 
 
 retool_insert_to_bq_task = get_insert_to_bq_task(
-    table_name="retool_entity_data",
-    project="test-hubble-319619",
-    dataset="test_crypto_stellar_internal",
-    export_task_id="export_retool_data",
+    table_name=RETOOL_TABLE_NAME,
+    project=EXTERNAL_DATA_PROJECT_NAME,
+    dataset=EXTERNAL_DATA_DATASET_NAME,
+    export_task_id=RETOOL_EXPORT_TASK_ID,
     source_object_suffix="",
     partition=False,
     cluster=False,
-    table_id="test-hubble-319619.test_crypto_stellar_internal.retool_entity_data",
+    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{RETOOL_TABLE_NAME}",
 )
 
 retool_export_task >> retool_insert_to_bq_task

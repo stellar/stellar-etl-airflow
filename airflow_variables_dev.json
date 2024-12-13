@@ -316,7 +316,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
-  "stellar_etl_internal_image_name": "amishastellar/stellar-etl-internal:e3b9a2ea7",
+  "stellar_etl_internal_image_name": "amishastellar/stellar-etl-internal:cd53bcf70",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",
@@ -331,6 +331,7 @@
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
     "operations": "history_operations",
+    "retool_entity_data": "retool_entity_data",
     "signers": "account_signers",
     "trades": "history_trades",
     "transactions": "history_transactions",
