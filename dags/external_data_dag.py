@@ -22,6 +22,7 @@ from stellar_etl_airflow.build_internal_export_task import (
     get_airflow_metadata,
 )
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+from stellar_etl_airflow.utils import access_secret
 
 init_sentry()
 
@@ -65,7 +66,9 @@ retool_export_task = build_export_task(
         "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
-    env_vars={"RETOOL_API_KEY": "{{ var.value.retool_api_key }}"},
+    env_vars={
+        "RETOOL_API_KEY": access_secret("retool-api-key", "default"),
+    },
 )
 
 
