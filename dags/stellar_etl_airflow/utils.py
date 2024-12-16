@@ -1,3 +1,4 @@
+import base64
 import logging
 import re
 import time
@@ -5,6 +6,7 @@ import time
 from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.utils.state import TaskInstanceState
+from kubernetes import client, config
 
 base_log_folder = conf.get("logging", "base_log_folder")
 
@@ -100,3 +102,12 @@ def skip_retry_dbt_errors(context) -> None:
         return
     else:
         return
+
+
+def access_secret(secret_name, namespace):
+    config.load_kube_config()
+    v1 = client.CoreV1Api()
+    secret_data = v1.read_namespaced_secret(secret_name, namespace)
+    secret = secret_data.data
+    secret = base64.b64decode(secret["token"]).decode("utf-8")
+    return secret

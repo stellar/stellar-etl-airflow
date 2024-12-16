@@ -1,22 +1,12 @@
-import base64
 import logging
 from datetime import timedelta
 
 from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from kubernetes import client, config
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
-
-
-def access_secret(secret_name, namespace):
-    config.load_kube_config()
-    v1 = client.CoreV1Api()
-    secret_data = v1.read_namespaced_secret(secret_name, namespace)
-    secret = secret_data.data
-    secret = base64.b64decode(secret["token"]).decode("utf-8")
-    return secret
+from stellar_etl_airflow.utils import access_secret
 
 
 def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"):
