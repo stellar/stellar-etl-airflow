@@ -1,4 +1,8 @@
 from airflow.operators.python import PythonOperator
+from stellar_etl_airflow.build_del_ins_from_gcs_to_bq_task import (
+    build_del_ins_from_gcs_to_bq_task,
+)
+from stellar_etl_airflow.build_internal_export_task import get_airflow_metadata
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
@@ -74,3 +78,41 @@ def create_del_ins_task(dag, task_vars, del_ins_callable):
         on_failure_callback=alert_after_max_retries,
         dag=dag,
     )
+
+
+def create_export_del_insert_operator(
+    dag,
+    table_name: str,
+    project: str,
+    dataset: str,
+    export_task_id: str,
+    source_object_suffix: str,
+    partition: bool,
+    cluster: bool,
+    table_id: str,
+):
+    metadata = get_airflow_metadata()
+    source_objects = [
+        "{{ task_instance.xcom_pull(task_ids='"
+        + export_task_id
+        + '\')["output"] }}'
+        + source_object_suffix
+    ]
+    task_vars = {
+        "task_id": f"del_ins_{table_name}_task",
+        "project": project,
+        "dataset": dataset,
+        "table_name": table_name,
+        "export_task_id": export_task_id,
+        "source_object_suffix": source_object_suffix,
+        "partition": partition,
+        "cluster": cluster,
+        "batch_id": metadata["batch_id"],
+        "batch_date": metadata["batch_date"],
+        "source_objects": source_objects,
+        "table_id": table_id,
+    }
+    insert_to_bq_task = create_del_ins_task(
+        dag, task_vars, build_del_ins_from_gcs_to_bq_task
+    )
+    return insert_to_bq_task

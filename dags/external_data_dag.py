@@ -13,14 +13,8 @@ from airflow.models.variable import Variable
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
-from stellar_etl_airflow.build_del_ins_from_gcs_to_bq_task import (
-    build_del_ins_from_gcs_to_bq_task,
-)
-from stellar_etl_airflow.build_del_ins_operator import create_del_ins_task
-from stellar_etl_airflow.build_internal_export_task import (
-    build_export_task,
-    get_airflow_metadata,
-)
+from stellar_etl_airflow.build_del_ins_operator import create_export_del_insert_operator
+from stellar_etl_airflow.build_internal_export_task import build_export_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 from stellar_etl_airflow.utils import access_secret
 
@@ -36,7 +30,7 @@ RETOOL_EXPORT_TASK_ID = "export_retool_data"
 dag = DAG(
     "external_data_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 12, 5, 14, 30),
+    start_date=datetime(2024, 12, 16, 0, 0),
     description="This DAG exports data from external sources such as retool.",
     schedule_interval="0 22 * * *",
     params={
@@ -72,44 +66,8 @@ retool_export_task = build_export_task(
 )
 
 
-def get_insert_to_bq_task(
-    table_name: str,
-    project: str,
-    dataset: str,
-    export_task_id: str,
-    source_object_suffix: str,
-    partition: bool,
-    cluster: bool,
-    table_id: str,
-):
-    metadata = get_airflow_metadata()
-    source_objects = [
-        "{{ task_instance.xcom_pull(task_ids='"
-        + export_task_id
-        + '\')["output"] }}'
-        + source_object_suffix
-    ]
-    task_vars = {
-        "task_id": f"del_ins_{table_name}_task",
-        "project": project,
-        "dataset": dataset,
-        "table_name": table_name,
-        "export_task_id": export_task_id,
-        "source_object_suffix": source_object_suffix,
-        "partition": partition,
-        "cluster": cluster,
-        "batch_id": metadata["batch_id"],
-        "batch_date": metadata["batch_date"],
-        "source_objects": source_objects,
-        "table_id": table_id,
-    }
-    insert_to_bq_task = create_del_ins_task(
-        dag, task_vars, build_del_ins_from_gcs_to_bq_task
-    )
-    return insert_to_bq_task
-
-
-retool_insert_to_bq_task = get_insert_to_bq_task(
+retool_insert_to_bq_task = create_export_del_insert_operator(
+    dag,
     table_name=RETOOL_TABLE_NAME,
     project=EXTERNAL_DATA_PROJECT_NAME,
     dataset=EXTERNAL_DATA_DATASET_NAME,
