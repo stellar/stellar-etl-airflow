@@ -311,7 +311,6 @@
       }
     }
   },
-  "retool_api_key": "test-api-key",
   "sandbox_dataset": "crypto_stellar_internal_sandbox",
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
