@@ -45,7 +45,6 @@ with DAG(
     BQ_DATASET = Variable.get("public_dataset")
     SANDBOX_PROJECT = Variable.get("bq_project")
     SANDBOX_DATASET = Variable.get("sandbox_dataset")
-    INTERNAL_DATASET = Variable.get("bq_dataset")
 
     batch_run_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
@@ -60,6 +59,8 @@ with DAG(
     )
 
     for table_id in TABLES_ID:
+        if table_id == "retool_entity_data":
+            continue
         query_path = get_query_filepath("update_table")
         query = file_to_string(query_path)
         sql_params = {
@@ -70,11 +71,6 @@ with DAG(
             "target_dataset": SANDBOX_DATASET,
             "batch_run_date": batch_run_date,
         }
-
-        if table_id == "retool_entity_data":
-            sql_params["project_id"] = SANDBOX_PROJECT
-            sql_params["dataset_id"] = INTERNAL_DATASET
-
         query = query.format(**sql_params)
         tables_update_task = BigQueryInsertJobOperator(
             task_id=f"update_{table_id}",
