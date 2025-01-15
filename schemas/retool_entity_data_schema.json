@@ -163,8 +163,35 @@
   {
     "description": "",
     "fields": [],
-    "mode": "REPEATED",
-    "name": "addresses",
-    "type": "STRING"
+    "mode": "",
+    "name": "anchor",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "issuer",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "wallet",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "fields": [],
+    "mode": "",
+    "name": "exchange",
+    "type": "BOOLEAN"
+  },
+  {
+    "description": "",
+    "mode": "NULLABLE",
+    "name": "accounts",
+    "type": "JSON"
   }
 ]
