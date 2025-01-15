@@ -163,13 +163,6 @@
   {
     "description": "",
     "fields": [],
-    "mode": "REPEATED",
-    "name": "addresses",
-    "type": "STRING"
-  },
-  {
-    "description": "",
-    "fields": [],
     "mode": "",
     "name": "anchor",
     "type": "BOOLEAN"
