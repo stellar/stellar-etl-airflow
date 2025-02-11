@@ -244,6 +244,8 @@ Next, add the Airflow variables. Click the Admin tab, then Variables. Click the 
 
 The `airflow_variables_*.txt` files provide a set of default values for variables.
 
+### **Step 8\. :tada: You should have successful Airflow Setup**
+
 ---
 
 # Airflow Variables Explanation
