@@ -131,7 +131,21 @@ After the environment is created, select the environment and navigate to the env
 
 Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. At this point, DAGs should render successfully in the Airflow UI.
 
-#### **e. Add Service Account Key**
+#### **e. Add airflow Variables and connections in airflow UI**
+
+Click the Admin tab, then Connections. Click create, then:
+
+- Set the `Conn Id` field to `google_cloud_platform_connection`.
+- Set the `Conn Type` to `Google Cloud Platform`.
+- Set the `Project Id` to your project id
+- Set the `Keyfile Path` to `<api_key_path>`.
+- The `<api_key_path>` should be the same as the Airflow variable `api_key_path`.
+
+Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
+
+The `airflow_variables_*.txt` files provide a set of default values for variables.
+
+#### **f. Add Service Account Key**
 
 The Airflow DAGs require service account keys to perform their operations. Generate a [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) for a service account created in step 5.a . Then, save the generated [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) (a JSON file) in [GCP Secret Manager](https://cloud.google.com/secret-manager/docs).
 
@@ -230,21 +244,7 @@ To find the value of `<service_account_namespace>`, select your Cloud Composer e
 
 A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Look for the value of `Namespace`.
 
-### **Step 7\. Add airflow Variables and connections in airflow UI**
-
-Click the Admin tab, then Connections. Click create, then:
-
-- Set the `Conn Id` field to `google_cloud_platform_connection`.
-- Set the `Conn Type` to `Google Cloud Platform`.
-- Set the `Project Id` to your project id
-- Set the `Keyfile Path` to `<api_key_path>`.
-- The `<api_key_path>` should be the same as the Airflow variable `api_key_path`.
-
-Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
-
-The `airflow_variables_*.txt` files provide a set of default values for variables.
-
-### **Step 8\. :tada: You should have successful Airflow Setup**
+### **Step 7\. :tada: You should have successful Airflow Setup**
 
 ---
 
