@@ -129,8 +129,6 @@ After the environment is created, select the environment and navigate to the env
 - Labels
 - PYPI packages
 
-Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. At this point, DAGs should render successfully in the Airflow UI.
-
 #### **e. Add airflow Variables and connections in airflow UI**
 
 Click the Admin tab, then Connections. Click create, then:
@@ -144,6 +142,8 @@ Click the Admin tab, then Connections. Click create, then:
 Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
 
 The `airflow_variables_*.txt` files provide a set of default values for variables.
+
+Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. At this point, DAGs should render successfully in the Airflow UI. You may see issues related to secret not imported successfully. You will learn how to setup secrets in Step 6.a
 
 #### **f. Add Service Account Key**
 
@@ -161,7 +161,7 @@ gcloud container clusters get-credentials {your cluster name} --zone us-central1
 ## Above switches the context of the shell to your cluster
 ```
 
-#### **a. Create secrets**
+#### **a. Setup secrets**
 
 ##### Private docker registry auth secrets
 
@@ -190,6 +190,10 @@ kubectl create secret generic <secret name> \
 ##### Other secrets
 
 Similarly you can create other secrets required by your DAGs. Eg: `retool_api_key`
+
+```
+kubectl create secret generic retool_api_key --from-literal=token=xxada
+```
 
 #### **b. Create namespace and service accounts to authenticate tasks**
 
@@ -235,7 +239,7 @@ To find the value of {composer\_service\_account}
 
 ```
 kubectl create clusterrolebinding default-admin --clusterrole cluster-admin \
---serviceaccount={service_account_namespace} --namespace {composer_namespace_name}
+--serviceaccount={service_account_namespace} --namespace {example-namespace}
 
 example: kubectl create clusterrolebinding default-admin --clusterrole cluster-admin --serviceaccount=composer-2-11-1-airflow-2-10-2-066f2865:default --namespace hubble-composer
 ```
