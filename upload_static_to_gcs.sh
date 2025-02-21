@@ -12,4 +12,4 @@ fi
 
 gsutil -m cp -r dags/* gs://"${airflow_bucket}"/dags/
 gsutil -m cp -r schemas/* gs://"${airflow_bucket}"/dags/schemas/
-gsutil -m cp dags/stellar-etl-airflow/macros.py gs://"${airflow_bucket}"/plugins/
+gsutil cp dags/stellar_etl_airflow/macros.py gs://"${airflow_bucket}"/plugins/macros.py

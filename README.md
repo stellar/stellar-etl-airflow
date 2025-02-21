@@ -5,8 +5,6 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 ## **Table of Contents**
 
 - [Installation and Setup](#installation-and-setup)
-  - [Google Cloud Platform](#google-cloud-platform)
-  - [Cloud Composer](#cloud-composer)
   - [Airflow Variables Explanation](#airflow-variables-explanation)
     - [Normal Variables](#normal-variables)
     - [Kubernetes Specific Variables](#kubernetes-specific-variables)
@@ -52,12 +50,6 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 ---
 
 # Installation and Setup
-
-- [Google Cloud Platform](#google-cloud-platform)
-- [Cloud Composer](#cloud-composer)
-- [Airflow Variables Explanation](#airflow-variables-explanation)
-  - [Normal Variables](#normal-variables)
-  - [Kubernetes Specific Variables](#kubernetes-specific-variables)
 
 <br>
 
@@ -154,10 +146,6 @@ Next, add the Airflow variables. Click the Admin tab, then Variables. Click the 
 The `airflow_variables_*.txt` files provide a set of default values for variables.
 
 Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. At this point, DAGs should render successfully in the Airflow UI. You may see issues related to secret not imported successfully. You will learn how to setup secrets in Step 6.a
-
-#### **f. Add Service Account Key**
-
-The Airflow DAGs require service account keys to perform their operations. Generate a [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) for a service account created in step 5.a . Then, save the generated [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) (a JSON file) in [GCP Secret Manager](https://cloud.google.com/secret-manager/docs).
 
 ### **Step 6. Setup kubernetes**
 
