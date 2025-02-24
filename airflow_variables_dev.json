@@ -372,7 +372,8 @@
     "snapshot_state": 600,
     "soroban": 720,
     "trade_agg": 720,
-    "update_sandbox": 60
+    "update_sandbox": 60,
+    "wallet_metrics": 720
   },
   "task_timeout": {
     "build_batch_stats": 180,
