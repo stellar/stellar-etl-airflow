@@ -62,6 +62,10 @@ partnership_assets_task = dbt_task(
     dag, tag="partnership_assets", operator="+", excluded="stellar_dbt_public"
 )
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
+wallet_metrics_task = dbt_task(
+    dag, tag="wallet_metrics", operator="+", excluded="stellar_dbt_public"
+)
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
