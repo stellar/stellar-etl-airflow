@@ -110,7 +110,7 @@ Setting up a composer environment requires a service account. Generate a [servic
 
 Create a new Cloud Composer environment using the [UI](https://console.cloud.google.com/composer/environments/create) or by following the setup instructions in [Create Cloud Composer environments](https://cloud.google.com/composer/docs/how-to/managing/creating) Cloud Composer may take 20-25 mins to setup the environment. Once the process is finished, you can view the environment by going to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments).
 
-*Note:* Cloud Composer 1 is in the post-maintenance mode. Google does not release any further updates to Cloud Composer 1, including new versions of Airflow, bugfixes, and security updates. [Composer 1](https://cloud.google.com/composer/docs/concepts/overview)
+*Note:* Cloud Composer 1 is in the post-maintenance mode. We **do not** advise to use this version and ask to use either v2/3.
 
 *Note*: The python version must be 3, and the image must be `composer-2.7.1-airflow-2.6.3` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
 
@@ -142,6 +142,7 @@ Click the Admin tab, then Connections. Click create, then:
 - The `<api_key_path>` should be the same as the Airflow variable `api_key_path`.
 
 Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
+For production /stable environment, please use the deploy / CI mechanism instead of manual uploads.
 
 The `airflow_variables_*.txt` files provide a set of default values for variables.
 
