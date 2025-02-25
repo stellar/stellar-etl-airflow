@@ -5,8 +5,6 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 ## **Table of Contents**
 
 - [Installation and Setup](#installation-and-setup)
-  - [Google Cloud Platform](#google-cloud-platform)
-  - [Cloud Composer](#cloud-composer)
   - [Airflow Variables Explanation](#airflow-variables-explanation)
     - [Normal Variables](#normal-variables)
     - [Kubernetes Specific Variables](#kubernetes-specific-variables)
@@ -53,351 +51,87 @@ This repository contains the Airflow DAGs for the [Stellar ETL](https://github.c
 
 # Installation and Setup
 
-- [Google Cloud Platform](#google-cloud-platform)
-- [Cloud Composer](#cloud-composer)
-- [Airflow Variables Explanation](#airflow-variables-explanation)
-  - [Normal Variables](#normal-variables)
-  - [Kubernetes Specific Variables](#kubernetes-specific-variables)
-
 <br>
 
 ---
 
-## **Google Cloud Platform**
-
-Below are instructions to intialize the Google Cloud SDK and create the GCP project, dataset, and GCS bucket if needed.
-
-### **Setup the Cloud SDK**
+### **Step 1. Setup the Cloud SDK**
 
 - Download the [Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstart#installing_the_latest_version).
 - [Initialize the Cloud SDK](https://cloud.google.com/sdk/docs/quickstart#initializing_the) and login to your Google account
 
-### **Create Google Project**
+### **Step 2. Create Google Project**
 
 - Login to the [Google Cloud Console](https://console.cloud.google.com/cloud-resource-manager)
 - Create a new [Google Project](https://cloud.google.com/resource-manager/docs/creating-managing-projects#creating_a_project) or use an existing project
-  > **_NOTE:_** The project name you choose corresponds to the Airflow variable "bq_project".
 
-### **Create BigQuery Dataset**
+  ***NOTE:*** The project name you choose corresponds to the Airflow variable "bq_project".
+
+### **Step 3. Create BigQuery Dataset**
 
 - Log in to Google [BigQuery](https://cloud.google.com/bigquery)
 - [Create](https://cloud.google.com/bigquery/docs/datasets#create-dataset) a new dataset with the desired name or use an existing dataset
-  > **_NOTE:_** The dataset name you choose corresponds to the Airflow variable "bq_dataset".
 
-### **Create Google Cloud Storage bucket**
+  ***NOTE:*** The dataset name you choose corresponds to the Airflow variable "bq_dataset".
+
+### **Step 4. Create Google Cloud Storage bucket**
 
 - Open the [Cloud Storage browser](https://console.cloud.google.com/storage/browser)
-- [Create](https://cloud.google.com/storage/docs/creating-buckets) a new Google Storage bucket that will store exported files
 
-  > **_NOTE:_** Creating a new Cloud Composer environment will automatically create a new GCS bucket which corresponds to the Airflow variable "gcs_exported_data_bucket_name".
+- [Create](https://cloud.google.com/storage/docs/creating-buckets) a new Google Storage bucket that will store exported files or use a GCS bucket created automatically by the composer environment in step 5. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
 
-> **_WARNING:_** Make sure that you adhere to the [location requirements](https://cloud.google.com/bigquery/docs/batch-loading-data#data-locations) for Cloud Storage buckets and BigQuery datasets. Otherwise, it will not be possible to upload data to BigQuery.
+  ***NOTE:*** The bucket name corresponds to the Airflow variable "gcs_exported_data_bucket_name".
 
-<br>
+***WARNING:*** Make sure that you adhere to the [location requirements](https://cloud.google.com/bigquery/docs/batch-loading-data#data-locations) for Cloud Storage buckets and BigQuery datasets. Otherwise, it will not be possible to upload data to BigQuery.
 
 ---
 
-## **Cloud Composer**
+### **Step 5. Cloud Composer**
 
 Cloud Composer is the preferred method of deployment. [Cloud Composer](https://cloud.google.com/composer) is a managed service used for Airflow deployment that provides much of the infrastructure required to host an Airflow instance. The steps for setting up a Cloud Composer environment are detailed below.
 
-> _*Note:*_ more general instructions for setting up the environment can be found [here](https://cloud.google.com/composer/docs/composer-2/create-environments)
-
-<br>
+*Note:* more general instructions for setting up the environment can be found [here](https://cloud.google.com/composer/docs/composer-2/create-environments)
 
 ---
 
-### **Create Google Cloud Composer environment**
+#### **a. Create a service account**
 
-Create a new Cloud Composer environment using the [UI](https://console.cloud.google.com/composer/environments/create) or by following the setup instructions in [Create Cloud Composer environments](https://cloud.google.com/composer/docs/how-to/managing/creating)
-Cloud Composer may take a while to setup the environment. Once the process is finished, you can view the environment by going to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments).
+Setting up a composer environment requires a service account. Generate a [service account](https://cloud.google.com/iam/docs/service-accounts-create) that has following access:
 
-> _*Note:*_ Cloud Composer 1 is in the post-maintenance mode. Google does not release any further updates to Cloud Composer 1, including new versions of Airflow, bugfixes, and security updates. [Composer 1](https://cloud.google.com/composer/docs/concepts/overview)
+- Composer Worker
+- Editor
+- Secret Manager Secret Accessor
+- Storage Admin
+- Storage Insights Collector Service
+- Storage Object Admin
+- Cloud Composer v2 API Service Agent Extension
 
-> _*For Cloud Composer 2:*_ Be wary of the default "autopilot" mode for environment resource management. The ephemeral storage provided by autopilot-ed containers is [capped at 10GB](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests), which may not be enough for hefty tasks (such as `state_table_dag`'s `export_task`) run with `captive-core`. One workaround to provide captive-core with the storage it needs is to [mount a volume to the KubernetesPod](https://darsh7.medium.com/cloud-composer-gce-persistent-disk-volume-for-kubernetespodoperator-cbca3ea57e39) and have captive-core run from that mounted volume rather than the ephemeral storage supplied by default.
+#### **b. Create Google Cloud Composer environment**
 
-> _*Note*_: If no service account is provided, GCP will use the default GKE service account. For quick setup this is an easy option.
-> Remember to adjust the disk size, machine type, and node count to fit your needs. The python version must be 3, and the image must be `composer-2.7.1-airflow-2.6.3` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
+Create a new Cloud Composer environment using the [UI](https://console.cloud.google.com/composer/environments/create) or by following the setup instructions in [Create Cloud Composer environments](https://cloud.google.com/composer/docs/how-to/managing/creating) Cloud Composer may take 20-25 mins to setup the environment. Once the process is finished, you can view the environment by going to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments).
 
-> _*TROUBLESHOOTING:*_ If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with `Owner` permissions and use it to create the Composer environment.
+*Note:* Cloud Composer 1 is in the post-maintenance mode. We **do not** advise to use this version and ask to use either v2/3.
 
-> _*NOTE:*_ Creating an environment will also create a new Google Cloud Storage bucket. You can check this bucket's name by clicking on the DAGs folder link in the Composer section of the Cloud Console.
+*Note*: The python version must be 3, and the image must be `composer-2.7.1-airflow-2.6.3` or later. GCP deprecates support for older versions of composer and airflow. It is recommended that you select a stable, latest version to avoid an environment upgrade. See [the command reference page](https://cloud.google.com/sdk/gcloud/reference/composer/environments/create) for a detailed list of parameters.
 
-<br>
+*TROUBLESHOOTING:* If the environment creation fails because the "Composer Backend timed out" try disabling and enabling the Cloud Composer API. If the creation fails again, try creating a service account with `Owner` permissions and use it to create the Composer environment.
 
-### **Upload DAGs and Schemas to Cloud Composer**
+#### **c. Upload DAGs and Schemas to Cloud Composer**
 
-After the environment is created, select the environment and navigate to the environment configuration tab. Look for the value under **DAGs folder**. It will be of the form `gs://airflow_bucket/dags`. The `airflow_bucket` value will be used in this step and the next. Run the command below in order to upload the DAGs and schemas to your Airflow bucket.
+After the environment is created, select the environment and navigate to the environment configuration tab. Look for the value under the DAGs **folder**. It will be of the form `gs://airflow_bucket/dags`. The `airflow_bucket` value will be used in this step and the next. Run the command below in order to upload the DAGs and schemas to your Airflow bucket.
 
-```bash
+```
 > bash upload_static_to_gcs.sh <airflow_bucket>
 ```
 
-Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. Some DAGs may not show up due to errors that will be fixed as the following steps are completed.
+#### **d. Setup following in composer environment**
 
-<br>
+- Airflow configuration overrides
+- Environment Variables
+- Labels
+- PYPI packages
 
-### **Add Service Account Key**
-
-The Airflow DAGs require service account keys to perform their operations. Generate a [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) for a service account that has access to BigQuery and Google Cloud Storage. Then, add this key file to the data folder in your `airflow_bucket`.
-
-> **_NOTE:_** The name of the key file corresponds to the Airflow variable `api_key_path`. The data folder in Cloud Storage corresponds to the path `/home/airflow/gcs/data/`, but ensure that the variable has the correct filename.
-
-> **_NOTE:_** It is also possible to save the generated [service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys#creating_service_account_keys) in [GCP Secret Manager](https://cloud.google.com/secret-manager/docs).
-> There are extra steps to enable the workers to access the secrets. Instructions can be found [here](https://cloud.google.com/composer/docs/composer-2/configure-secret-manager)
-
-<br>
-
-### **Add private docker registry auth secrets**
-
-If you want to pull an image from a private docker registry to use in `KubernetesPodOperator` in airflow you will need to add auth json credentials to kubernetes and the service account. [Kubernetes docs](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials)
-
-- Create the kubernetes secret from auth json
-
-```
-kubectl create secret generic <secret name> \
-    --from-file=.dockerconfigjson=<path/to/.docker/config.json> \
-    --type=kubernetes.io/dockerconfigjson
-```
-
-- Add secret to service account that will create the kubernetes pod
-
-```
-kubectl patch serviceaccount <serviceaccount name> -p '{"imagePullSecrets": [{"name": "<secret-name>"}]}' --namespace=<namespace>
-```
-
-<br>
-
-### **Create Namespace for ETL Tasks (Optional)**
-
-Open the Google [Cloud Shell](https://cloud.google.com/shell). Run these commands:
-
-```bash
-gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
-
-kubectl create ns <namespace_name>
-
-kubectl create clusterrolebinding default-admin --clusterrole cluster-admin \
---serviceaccount=<service_account> --namespace <namespace_name>
-```
-
-The first command acquires credentials, allowing you to execute the next commands. The second command creates the new namespace, and the third allows the service account that executes tasks to act in the new namespace.
-
-To find the value of `<airflow_worker_namespace>`, select your Cloud Composer environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value of `GKE cluster`. Click on the link that says `view cluster workloads`.
-
-A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Look for the value of `Namespace`.
-
-> **_NOTE:_** The name of the newly created namespace corresponds to the Airflow variable `namespace`.
-
-<br>
-
-### **Authenticating Tasks in an Autopilot-Managed Environment**
-
-There are a few extra hoops to jump through to configure Workload Identity, so that `export` tasks have permissions to upload files to GCS.
-You will be creating a Kubernetes service account, and bind it to a Google service account that your task is authenticated as.
-Steps taken from this [doc](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#authenticating_to).
-
-- Create a namespace in the k8s cluster where the Composer env is running:
-
-  ```bash
-  kubectl create namespace <namespace_name>
-  ```
-
-- Create a k8s service account:
-
-  ```bash
-  kubectl create serviceaccount <service_account_name> \
-      --namespace <namespace_name>
-  ```
-
-- Create a Google service account, if one doesn't already exist:
-
-  ```bash
-  gcloud iam service-accounts create <service_account_name> \
-      --project=<project_id>
-  ```
-
-- Grant the Google service account that you're using `storage.objectAdmin` permissions, it doesn't already have it.
-
-  ```bash
-  gcloud projects add-iam-policy-binding hubble-261722 \
-    --member "<Google service account>" \
-    --role "roles/storage.objectAdmin"
-  ```
-
-- Associate the Google and k8s service accounts:
-
-  ```bash
-  gcloud iam service-accounts add-iam-policy-binding <Google service account email> \
-    --role roles/iam.workloadIdentityUser \
-    --member "<k8s service account>"
-  ```
-
-- Annotate the k8s service account with the Google service account:
-
-  ```bash
-  kubectl annotate serviceaccount <k8s service account> \
-      --namespace <namespace_name> \
-      iam.gke.io/gcp-service-account=<Google service account>
-  ```
-
-- Set the corresponding airflow variables (`k8s_namespace` and `k8s_service_account`) for tasks running on `KubernetesPodOperator`.
-
-<br>
-
-### **Modify Kubernetes Config for Airflow Workers**
-
-Find the Kubernetes cluster workloads that are used by your Cloud Composer environment. To do so, select the environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the `GKE cluster` section. Click on the link that says `view cluster workloads`.
-
-A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Click the `edit` button. This will take you to a tab with a Kubernetes configuration. In subsequent steps, you will edit this file. For an example of a finalized config file, see this [example file](example_airflow_worker_config.yaml).
-
-> **_WARNING:_** You shouldn't copy the example file directly because it has environment variables and config values that are set up for a different project.
-
-> **_NOTE:_** This deployment file contains two separate containers: airflow-worker and gcs-syncd. Only the airflow-worker container should be edited.
-
-<details>
-<summary>Mount Docker on Airflow Workers</summary>
-In this step, mount the Docker.sock and Docker. In addition, edit the security config so that the container runs as privileged, allowing it to access Docker. See [this commit](https://github.com/marc-chan/cloud_composer_examples/commit/f3e6a202ef0bfd2214385def7e36be33db191df6#diff-fc2e428a07c8d60059e54e5154f0c540) for an example of how to make these changes.
-</details>
-
-<details>
-<summary>Add Volume for Local Files to Airflow Workers</summary>
-In this step, add another volumeMount to airflow-workers. This local path will be used for temporary storage of exported files. In addition, make sure that you add the corresponding volume with the type DirectoryOrCreate.
-
-Here is an example of what your volumeMounts and volumes should look like at the end of this step:
-
-```
-...
-
-volumeMounts:
-- mountPath: /etc/airflow/airflow_cfg
-name: airflow-config
-
-- mountPath: /home/airflow/gcs
-name: gcsdir
-
-- mountPath: /var/run/docker.sock
-name: docker-host
-
-- mountPath: /bin/docker
-name: docker-app
-
-- mountPath: /home/airflow/etlData
-name: etl-data
-...
-
-volumes:
-- configMap:
-defaultMode: 420
-name: airflow-configmap
-
-name: airflow-config
-- emptyDir: {}
-name: gcsdir
-
-- hostPath:
-path: /var/run/docker.sock
-type: ""
-name: docker-host
-
-- hostPath:
-path: /usr/bin/docker
-type: ""
-name: docker-app
-
-- hostPath:
-path: /home/airflow/etlData
-type: DirectoryOrCreate
-name: etl-data
-
-```
-
-> **_NOTE:_** The mount path chosen corresponds to the Airflow variable `local_output_path`.
-
-</details>
-
-<details>
-<summary>Add Poststart Script to Airflow Workers</summary>
-Find the namespace name in the airflow-worker config file. It should be near the top of the file, and may look like `composer-2-6-4-airflow-2-6-3-14c4ca64`. This value will be used in later commands.
-
-Next, open the cloud shell. Keep your airflow-worker configuration file open, or save it. In the cloud shell, create a text file called `poststart.sh` by running the command: `nano poststart.sh`. Then, copy the text from the `poststart.sh` file in this repository into the newly opened file.
-
-- If you changed the path for the local folder in the previous step, make sure that you edit line 13:
-
-  ```
-  for file in /home/airflow/etlData/*
-  ```
-
-- It should reflect the path changes you made. Once the file is finalized, run these commands:
-
-  ```bash
-  gcloud container clusters get-credentials <cluster_name> --region=<composer_region>
-
-  kubectl create configmap start-config --from-file poststart.sh -n <namespace_name>
-  ```
-
-- Return to the airflow-worker config file. Add a new volumeMount to /etc/scripts.
-
-  ```
-  ...
-
-  volumeMounts:
-  ...
-  - mountPath: /etc/scripts
-  name: config-volume
-  ...
-
-  ```
-
-- Then, add a new Volume that links to the configMap you created.
-
-  ```
-  ...
-  volumes:
-  ...
-  - configMap:
-  	defaultMode: 511
-  	name: start-config
-  	name: config-volume
-  ...
-  ```
-
-- This will make the script available to the Airflow workers. In order for them to call it automatically, add a postStart hook to airflow-worker above the existing preStop hook.
-
-  ```
-  ...
-  lifecycle:
-  	postStart:
-  		exec:
-  			command:
-  				- /bin/bash
-  				- /etc/scripts/poststart.sh
-  preStop:
-  	exec:
-  		command:
-  			- bash
-  			- -c
-  			- pkill -f "MainProcess"
-  ...
-  ```
-
-<details>
-<summary>Click here if you are interested in knowing what the script does.</summary>
-
-The export tasks in the etl use Docker images with their own filesystems. Mounting a folder to the Docker image allows us to connect the airflow-worker filesystem to the Docker image filesystem. However, there are multiple airflow-worker instances, and tasks are distributed between them. This means that an export task may occur on one worker, and the subsequent task that needs that file could occur on a different worker instance. There needs to be some way to pool all the data from all the worker instances.
-
-Fortunately, Cloud Composer provides a folder at /home/airflow/gcs/data. This folder is described in detail [here](https://cloud.google.com/composer/docs/concepts/cloud-storage). Essentially, the folder is synchronized between all the workers, and it also is linked to the data folder in the environment's Cloud Storage bucket. This means that data stored here will be available to all workers, solving the problem. Unfortunately, since this folder is already connected to a Cloud Storage bucket, it cannot also connect to a Docker image.
-
-Instead, we connect a local folder defined in the previous step. The `poststart.sh` script runs constantly in the background. It moves files from the local folder to the gcs/data folder. The script is more complicated than a simple move command because it needs to ensure that no programs are writing to the files before they are moved.
-
-</details>
-</details>
-
-<br>
-
-### **Add Airflow Variables and Connections**
-
-In order to add the Airflow variables and connections, navigate to the Airflow web server. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow Webserver`.
+#### **e. Add airflow Variables and connections in airflow UI**
 
 Click the Admin tab, then Connections. Click create, then:
 
@@ -408,10 +142,112 @@ Click the Admin tab, then Connections. Click create, then:
 - The `<api_key_path>` should be the same as the Airflow variable `api_key_path`.
 
 Next, add the Airflow variables. Click the Admin tab, then Variables. Click the `Choose file` button, select your variables file, and click import variables.
+For production /stable environment, please use the deploy / CI mechanism instead of manual uploads.
 
 The `airflow_variables_*.txt` files provide a set of default values for variables.
 
-<br>
+Afterwards, you can navigate to the Airflow UI for your Cloud Composer environment. To do so, navigate to the [Composer section of the Cloud Console](https://console.cloud.google.com/composer/environments), and click the link under `Airflow webserver`. Then, pause the DAGs by clicking the on/off toggle to the left of their names. DAGs should remain paused until you have finished setting up the environment. At this point, DAGs should render successfully in the Airflow UI. You may see issues related to secret not imported successfully. You will learn how to setup secrets in Step 6.a
+
+### **Step 6. Setup kubernetes**
+
+Log into google cloud shell and run following command
+
+```
+gcloud container clusters list
+## above list set of active kubernetes clusters
+
+gcloud container clusters get-credentials {your cluster name} --zone us-central1
+## Above switches the context of the shell to your cluster
+```
+
+#### **a. Setup secrets**
+
+##### Private docker registry auth secrets
+
+If you want to pull an image from a private docker registry to use in `KubernetesPodOperator` in airflow you will need to add auth json credentials to kubernetes and the service account.
+
+- In the cloud shell, create a docker config file - `docker-config.json` . This will look like following:
+
+```
+{
+    "auths": {
+        "https://index.docker.io/v1/": {
+            "auth": "xxx.."
+        }
+    }
+}
+```
+
+- Create the kubernetes secret(eg secret name: google-docker-auth) from auth json
+
+```
+kubectl create secret generic <secret name> \
+    --from-file=.dockerconfigjson=<path/to/.docker-config.json> \
+    --type=kubernetes.io/dockerconfigjson
+```
+
+##### Other secrets
+
+Similarly you can create other secrets required by your DAGs. Eg: `retool_api_key`
+
+```
+kubectl create secret generic retool_api_key --from-literal=token=xxada
+```
+
+#### **b. Create namespace and service accounts to authenticate tasks**
+
+There are a few extra hoops to jump through to configure Workload Identity, so that `export` tasks have permissions to upload files to GCS.
+
+You will require two kinds of service accounts: k8s service account and a google service account. Any permission to access GCP will be given to google service account and then we will bind google service account with k8s service account. Kubernetes access k8s service account directly and google service account indirectly. Steps taken from this [doc](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#authenticating_to).
+
+```
+# Create a namespace
+kubectl create ns {example-namespace} # eg: hubble-composer, this corresponds to k8s_namespace airflow variable
+
+# Create k8s service account
+kubectl create serviceaccount {example-k8-service-account} --namespace {example-namespace} # eg: hubble-composer-service-account , this corresponds to k8s_service_account airflow variable
+
+# Create google service account
+gcloud iam service-accounts create {example-google-service-account} --project={gcp project name} # eg: hubble-composer-sa
+
+# Give GCP bucket permissions to google service account. Also, you may want to do it for all projects, hubble , test-hubble to access all buckets
+
+gcloud projects add-iam-policy-binding {gcp project name} --member="serviceAccount:{example-google-service-account}@{gcp project name}.iam.gserviceaccount.com" --role="roles/storage.admin"
+
+# Attach docker secret created in step 6.a to k8s service account
+
+kubectl patch serviceaccount {example-k8-service-account} -p '{"imagePullSecrets": [{"name": "google-docker-auth"}]}' --namespace={example-namespace}
+
+# Associate the Google and k8s service accounts
+
+gcloud iam service-accounts add-iam-policy-binding {example-google-service-account}@{gcp project name}.iam.gserviceaccount.com --role="roles/iam.workloadIdentityUser" --member="serviceAccount:{gcp project name}.svc.id.goog[{example-namespace}/{example-k8-service-account}]"
+
+# Annotate the k8s service account with the Google service account
+
+kubectl annotate serviceaccount {example-k8-service-account} --namespace {example-namespace} iam.gke.io/gcp-service-account={example-google-service-account}@{gcp project name}.iam.gserviceaccount.com
+```
+
+#### **c. Create clusterrolebinding**
+
+There is a service account created automatically when we create a composer environment. We will be performing clusterrole binding on that service account.
+
+To find the value of {composer_worker_namespace}, select your Cloud Composer environment, navigate to the ENVIRONMENT CONFIGURATION tab, and look for the value of GKE cluster. Click on the link that says view cluster workloads.
+A new page will open with a list of Kubernetes workflows. Click on airflow-worker in order to go to the details page for that Deployment. Look for the value of Namespace.
+
+To find the value of {composer_service_account}
+
+```
+kubectl create clusterrolebinding default-admin --clusterrole cluster-admin \
+--serviceaccount={service_account_namespace} --namespace {example-namespace}
+
+example: kubectl create clusterrolebinding default-admin --clusterrole cluster-admin --serviceaccount=composer-2-11-1-airflow-2-10-2-066f2865:default --namespace hubble-composer
+```
+
+To find the value of `<service_account_namespace>`, select your Cloud Composer environment, navigate to the `ENVIRONMENT CONFIGURATION` tab, and look for the value of `GKE cluster`. Click on the link that says `view cluster workloads`.
+
+A new page will open with a list of Kubernetes workflows. Click on `airflow-worker` in order to go to the details page for that Deployment. Look for the value of `Namespace`.
+
+### **Step 7. :tada: You should have successful Airflow Setup**
 
 ---
 
