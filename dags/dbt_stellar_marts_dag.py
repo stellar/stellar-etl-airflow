@@ -62,6 +62,10 @@ partnership_assets_task = dbt_task(
     dag, tag="partnership_assets", operator="+", excluded="stellar_dbt_public"
 )
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
+wallet_metrics_task = dbt_task(
+    dag, tag="wallet_metrics", operator="+", excluded="stellar_dbt_public"
+)
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -81,6 +85,7 @@ wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
+wait_on_dbt_enriched_base_tables >> wallet_metrics_task
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
