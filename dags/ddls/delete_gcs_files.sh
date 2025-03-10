@@ -21,7 +21,7 @@ MONTH=$3
 START_DAY=$4
 END_DAY=$5
 
-GCS_BUCKET=gs://us-central1-hubble-2-d948d67b-bucket/dag-exported/scheduled__
+GCS_BUCKET=gs://us-central1-hubble-14c4ca64-bucket/dag-exported/scheduled__
 
 # make state tables
 for day in $(seq $START_DAY $END_DAY); do
