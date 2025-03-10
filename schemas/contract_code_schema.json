@@ -103,5 +103,20 @@
     "mode": "NULLABLE",
     "name": "n_data_segment_bytes",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_type",
+    "type": "INTEGER"
   }
 ]
