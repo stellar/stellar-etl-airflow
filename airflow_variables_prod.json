@@ -155,13 +155,13 @@
       "due to concurrent update"
     ]
   },
-  "gcs_exported_data_bucket_name": "us-central1-hubble-14c4ca64-bucket",
+  "gcs_exported_data_bucket_name": "us-central1-stellar-etl-1d74a235-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:204d343fa",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
-  "k8s_namespace": "hubble-composer",
-  "k8s_service_account": "hubble-composer-service-account",
+  "k8s_namespace": "stellar-etl-composer",
+  "k8s_service_account": "stellar-etl-composer-service-account",
   "kube_config_location": "",
   "kubernetes_sidecar_image": "alpine",
   "local_output_path": "/home/airflow/etlData/",
