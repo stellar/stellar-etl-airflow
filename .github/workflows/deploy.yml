@@ -122,14 +122,14 @@ jobs:
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
         env:
           GOOGLE_CLOUD_PROJECT: hubble-261722
-          BUCKET: us-central1-hubble-14c4ca64-bucket
+          BUCKET: us-central1-stellar-etl-1d74a235-bucket
 
       - name: Update Airflow variables
         uses: actions-hub/gcloud@master
         env:
           PROJECT_ID: hubble-261722
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_PROD_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: hubble
+          COMPOSER_ENVIRONMENT: stellar-etl
           LOCATION: us-central1
         with:
           args: >
