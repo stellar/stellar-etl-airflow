@@ -7,9 +7,12 @@ from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 
 init_sentry()
 
+dag_args = get_default_dag_args()
+dag_args["retries"] = 0  # Override retries for this DAG
+
 with DAG(
     "dbt_singular_tests",
-    default_args=get_default_dag_args(),
+    default_args=dag_args,
     start_date=datetime(2024, 6, 25, 0, 0),
     description="This DAG runs non-model dbt tests half-hourly cadence",
     schedule="*/30 * * * *",  # Runs every 30 minutes
@@ -17,7 +20,6 @@ with DAG(
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
     max_active_runs=1,
-    retries=0,  # DAG is an alerting mechanism for data quality issues, so no retries
     catchup=False,
     tags=["dbt-data-quality"],
     # sla_miss_callback=alert_sla_miss,
