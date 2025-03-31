@@ -8,7 +8,7 @@ from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 init_sentry()
 
 dag_args = get_default_dag_args()
-dag_args["retries"] = 0  # Override retries for this DAG
+dag_args["retries"] = 1  # Override retries for this DAG
 
 with DAG(
     "dbt_singular_tests",
