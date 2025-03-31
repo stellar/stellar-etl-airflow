@@ -371,8 +371,8 @@
     "singular_test": 600,
     "snapshot_state": 600,
     "soroban": 720,
-    "trade_agg": 720,
     "token_transfer": 1200,
+    "trade_agg": 720,
     "update_sandbox": 60,
     "wallet_metrics": 720
   },
