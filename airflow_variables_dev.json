@@ -372,6 +372,7 @@
     "snapshot_state": 600,
     "soroban": 720,
     "trade_agg": 720,
+    "token_transfer": 1200,
     "update_sandbox": 60,
     "wallet_metrics": 720
   },
