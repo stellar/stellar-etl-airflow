@@ -17,6 +17,7 @@ with DAG(
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
     max_active_runs=1,
+    retries=0,  # DAG is an alerting mechanism for data quality issues, so no retries
     catchup=False,
     tags=["dbt-data-quality"],
     # sla_miss_callback=alert_sla_miss,
