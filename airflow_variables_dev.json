@@ -124,7 +124,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:b655e9f6c",
+  "dbt_image_name": "stellar/stellar-dbt:06649b8f0",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
   "dbt_job_execution_timeout_seconds": 300,
@@ -371,6 +371,7 @@
     "singular_test": 600,
     "snapshot_state": 600,
     "soroban": 720,
+    "token_transfer": 1200,
     "trade_agg": 720,
     "update_sandbox": 60,
     "wallet_metrics": 720
