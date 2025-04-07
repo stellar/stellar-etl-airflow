@@ -26,8 +26,8 @@ dag = DAG(
     catchup=True,
     tags=["custom_snapshot"],
     params={
-        "backfill_start_date": Param(type="date"),
-        "backfill_end_date": Param(type="date"),
+        "backfill_start_date": Param(default="2025-01-01", type="string"),
+        "backfill_end_date": Param(default="2025-01-02", type="string"),
     },
     # sla_miss_callback=alert_sla_miss,
 )

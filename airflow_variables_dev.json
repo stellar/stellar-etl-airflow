@@ -350,6 +350,7 @@
     "cleanup_metadata": 60,
     "create_sandbox": 2400,
     "current_state": 720,
+    "custom_snapshot": 720,
     "default": 60,
     "del_ins_retool_entity_data_task": 720,
     "elementary_dbt_data_quality": 1620,
