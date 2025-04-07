@@ -114,7 +114,7 @@ def dbt_task(
 
     logging.info(f"sh commands to run in pod: {args}")
 
-    env_vars = env_vars.update(
+    env_vars.update(
         {
             "DBT_USE_COLORS": "0",
             "DBT_DATASET": "{{ var.value.dbt_dataset_for_test }}",
