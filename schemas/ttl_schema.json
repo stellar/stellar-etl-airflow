@@ -48,5 +48,20 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "transaction_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_type",
+    "type": "INTEGER"
   }
 ]
