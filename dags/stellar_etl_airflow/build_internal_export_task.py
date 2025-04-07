@@ -74,7 +74,7 @@ def build_export_task(
             f"'batch_id={batch_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'",
         ]
     etl_cmd_string = " ".join(cmd_args)
-    arguments = f""" {command} {etl_cmd_string} 1>> stdout.out 2>> stderr.out && cat stdout.out && cat stderr.out && echo "{{\\"output\\": \\"{output_filepath}\\"}}" >> /airflow/xcom/return.json"""
+    arguments = f""" {command} {etl_cmd_string} && echo "{{\\"output\\": \\"{output_filepath}\\"}}" >> /airflow/xcom/return.json"""
     env_vars.update(
         {
             "EXECUTION_DATE": "{{ ds }}",
