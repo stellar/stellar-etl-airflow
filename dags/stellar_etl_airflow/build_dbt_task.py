@@ -67,6 +67,7 @@ def dbt_task(
     resource_cfg="default",
     run_singular_test="false",
     run_recency_test="false",
+    env_vars={},
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
@@ -113,12 +114,8 @@ def dbt_task(
 
     logging.info(f"sh commands to run in pod: {args}")
 
-    return KubernetesPodOperator(
-        task_id=f"dbt_{command_type}_{task_name}",
-        name=f"dbt_{command_type}_{task_name}",
-        namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
-        env_vars={
+    env_vars = env_vars.update(
+        {
             "DBT_USE_COLORS": "0",
             "DBT_DATASET": "{{ var.value.dbt_dataset_for_test }}",
             "DBT_TARGET": "{{ var.value.dbt_target }}",
@@ -135,9 +132,15 @@ def dbt_task(
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
             "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
-            "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-            "BACKFILL_END_DATE": "{{ macros.ds_add(ds, 1) if run_id.startswith('scheduled_') else params.backfill_end_date }}",
-        },
+        }
+    )
+
+    return KubernetesPodOperator(
+        task_id=f"dbt_{command_type}_{task_name}",
+        name=f"dbt_{command_type}_{task_name}",
+        namespace=Variable.get("k8s_namespace"),
+        service_account_name=Variable.get("k8s_service_account"),
+        env_vars=env_vars,
         image=dbt_image,
         arguments=args,
         dag=dag,

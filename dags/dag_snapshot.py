@@ -26,13 +26,23 @@ dag = DAG(
     catchup=True,
     tags=["custom_snapshot"],
     params={
-        "backfill_start_date": Param(default="2025-01-01", type="string"),
-        "backfill_end_date": Param(default="2025-01-02", type="string"),
+        "backfill_start_date": Param(
+            default="2025-01-01", type="string"
+        ),  # only used for manual runs
+        "backfill_end_date": Param(
+            default="2025-01-02", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
 
 trustline_snapshot_task = dbt_task(
-    dag, tag="custom_snapshot", excluded="stellar_dbt_public"
+    dag,
+    tag="custom_snapshot",
+    excluded="stellar_dbt_public",
+    env_vars={
+        "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
+        "BACKFILL_END_DATE": "{{ macros.ds_add(ds, 1) if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+    },
 )
 trustline_snapshot_task
