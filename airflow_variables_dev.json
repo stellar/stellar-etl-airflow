@@ -124,10 +124,10 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:bbc457323",
+  "dbt_image_name": "stellar/stellar-dbt-dev:51e82d2dd",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
-  "dbt_job_execution_timeout_seconds": 300,
+  "dbt_job_execution_timeout_seconds": 600,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "test_crypto_stellar_dbt",
   "dbt_maximum_bytes_billed": 250000000000,
