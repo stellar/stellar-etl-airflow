@@ -135,6 +135,8 @@ def dbt_task(
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
             "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
+            "BACKFILL_START_DATE": "{{ params.backfill_start_date or ds }}",
+            "BACKFILL_END_DATE": "{{ params.backfill_end_date or macros.ds_add(ds, 1) }}",
         },
         image=dbt_image,
         arguments=args,
