@@ -3,9 +3,7 @@ from datetime import timedelta
 
 from airflow.configuration import conf
 from airflow.models import Variable
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (
-    KubernetesPodOperator,
-)
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 from stellar_etl_airflow.utils import skip_retry_dbt_errors
