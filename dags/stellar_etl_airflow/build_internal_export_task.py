@@ -105,4 +105,5 @@ def build_export_task(
             seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
         trigger_rule="all_done",
+        reattach_on_restart=False,
     )
