@@ -241,4 +241,5 @@ def build_export_task(
                 build_export_task.__name__
             ]
         ),
+        reattach_on_restart=False,
     )

@@ -90,4 +90,5 @@ def build_time_task(
                 build_time_task.__name__
             ]
         ),
+        reattach_on_restart=False,
     )

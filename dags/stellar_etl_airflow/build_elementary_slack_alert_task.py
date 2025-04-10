@@ -85,4 +85,5 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
             ]
         ),
         trigger_rule="all_done",
+        reattach_on_restart=False,
     )

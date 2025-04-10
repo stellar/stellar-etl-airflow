@@ -151,6 +151,7 @@ def dbt_task(
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
+        reattach_on_restart=False,
     )
 
 
@@ -233,4 +234,5 @@ def build_dbt_task(
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[model_name]
         ),
+        reattach_on_restart=False,
     )
