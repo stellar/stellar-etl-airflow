@@ -15,14 +15,14 @@ init_sentry()
 
 dag = DAG(
     "dbt_snapshot",
-    default_args=get_default_dag_args(),
+    default_args={**get_default_dag_args(), **{"depends_on_past": True}},
     start_date=datetime(2025, 3, 20, 0, 1),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 1 * * *",  # Runs at 01:00 UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
-    max_active_runs=3,
+    max_active_runs=1,
     catchup=True,
     tags=["custom_snapshot"],
     params={
@@ -42,7 +42,7 @@ trustline_snapshot_task = dbt_task(
     excluded="stellar_dbt_public",
     env_vars={
         "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-        "BACKFILL_END_DATE": "{{ macros.ds_add(ds, 1) if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
     },
 )
 
@@ -52,7 +52,7 @@ accounts_snapshot_task = dbt_task(
     excluded="stellar_dbt_public",
     env_vars={
         "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-        "BACKFILL_END_DATE": "{{ macros.ds_add(ds, 1) if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
     },
 )
 
@@ -62,7 +62,7 @@ claimable_balances_snapshot_task = dbt_task(
     excluded="stellar_dbt_public",
     env_vars={
         "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-        "BACKFILL_END_DATE": "{{ macros.ds_add(ds, 1) if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
     },
 )
 
