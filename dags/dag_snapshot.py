@@ -56,5 +56,16 @@ accounts_snapshot_task = dbt_task(
     },
 )
 
+claimable_balances_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_claimable_balances",
+    excluded="stellar_dbt_public",
+    env_vars={
+        "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
+        "BACKFILL_END_DATE": "{{ macros.ds_add(ds, 1) if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+    },
+)
+
 trustline_snapshot_task
 accounts_snapshot_task
+claimable_balances_snapshot_task
