@@ -59,7 +59,7 @@ network_stats_agg_task = dbt_task(
     dag, tag="network_stats", excluded="stellar_dbt_public"
 )
 partnership_assets_task = dbt_task(
-    dag, tag="partnership_assets", operator="+", excluded="stellar_dbt_public"
+    dag, tag="partnership_assets", operator="+", excluded="stellar_dbt_public", date_macro="ds"
 )
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
 wallet_metrics_task = dbt_task(

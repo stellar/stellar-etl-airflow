@@ -67,7 +67,28 @@ def dbt_task(
     resource_cfg="default",
     run_singular_test="false",
     run_recency_test="false",
+    date_macro="ts",
 ):
+    """Create a task to run a collection of dbt models. Models are orchestrated by tag.
+    If no tag is provided, the model_name will be used. If both are provided, the tag will
+    be used to select the models to run.
+    If multiple models are selected, the task name will be 'multiple_models'.
+
+    args:
+        dag: parent dag for this task
+        model_name: dbt model_name to run, optional
+        tag: dbt tag to run, optional
+        flag: dbt node selection syntax, defaults to "select"
+        command_type: dbt command name, defaults to "build"
+        excluded: dbt node selection syntax for excluded models, stellar-dbt and stellar-dbt-public models should not execute in one node
+        resource_cfg: the resource config name defined in the airflow 'resources' variable for k8s
+        run_singular_test: if true, the task will run singular tests, defaults to "false"
+        run_recency_test: if true, the task will run recency tests, defaults to "false"
+        date_macro: which airflow execution date macro should be passed to the dbt task, defaults to "ts", sets the env var, execution_date
+
+    returns:
+        k8s pod task
+    """
     namespace = conf.get("kubernetes", "NAMESPACE")
     if namespace == "default":
         config_file_location = Variable.get("kube_config_location")
@@ -108,6 +129,11 @@ def dbt_task(
         else:
             args.append(excluded)
 
+    if date_macro == "ts":
+        execution_date = "{{ ts }}"
+    else:
+        execution_date = "{{ ds }}"
+
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
 
@@ -131,7 +157,7 @@ def dbt_task(
             "INTERNAL_SOURCE_SCHEMA": "{{ var.value.dbt_internal_source_schema }}",
             "PUBLIC_SOURCE_DB": "{{ var.value.dbt_public_source_db }}",
             "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
-            "EXECUTION_DATE": "{{ ts }}",
+            "EXECUTION_DATE": execution_date,
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
             "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
