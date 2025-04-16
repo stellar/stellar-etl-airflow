@@ -13,8 +13,9 @@ VALID_DATE_MACROS = {
     "ts": "{{ ts }}",
     "ds": "{{ ds }}",
     "data_interval_start": "{{ data_interval_start }}",
-    "data_interval_end": "{{ data_interval_end }}"
+    "data_interval_end": "{{ data_interval_end }}",
 }
+
 
 def create_dbt_profile(project="prod"):
     dbt_target = "{{ var.value.dbt_target }}"
@@ -139,7 +140,9 @@ def dbt_task(
     try:
         execution_date = VALID_DATE_MACROS[date_macro]
     except KeyError:
-        raise ValueError(f"Invalid date_macro: {date_macro}. Must be one of: {', '.join(VALID_DATE_MACROS.keys())}")
+        raise ValueError(
+            f"Invalid date_macro: {date_macro}. Must be one of: {', '.join(VALID_DATE_MACROS.keys())}"
+        )
 
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
