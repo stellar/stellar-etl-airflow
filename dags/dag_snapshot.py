@@ -32,6 +32,9 @@ dag = DAG(
         "backfill_end_date": Param(
             default="2025-01-02", type="string"
         ),  # only used for manual runs
+        "snapshot_full_refresh": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
@@ -43,6 +46,7 @@ trustline_snapshot_task = dbt_task(
     env_vars={
         "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
         "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
     },
 )
 
@@ -53,6 +57,7 @@ accounts_snapshot_task = dbt_task(
     env_vars={
         "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
         "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
     },
 )
 
@@ -63,6 +68,7 @@ claimable_balances_snapshot_task = dbt_task(
     env_vars={
         "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
         "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
     },
 )
 
