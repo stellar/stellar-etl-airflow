@@ -8,6 +8,13 @@ from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 from stellar_etl_airflow.utils import skip_retry_dbt_errors
 
+# Define valid Airflow date macros
+VALID_DATE_MACROS = {
+    "ts": "{{ ts }}",
+    "ds": "{{ ds }}",
+    "prev_ds": "{{ prev_ds }}",
+    "next_ds": "{{ next_ds }}"
+}
 
 def create_dbt_profile(project="prod"):
     dbt_target = "{{ var.value.dbt_target }}"
@@ -129,10 +136,10 @@ def dbt_task(
         else:
             args.append(excluded)
 
-    if date_macro == "ts":
-        execution_date = "{{ ts }}"
-    else:
-        execution_date = "{{ ds }}"
+    try:
+        execution_date = VALID_DATE_MACROS[date_macro]
+    except KeyError:
+        raise ValueError(f"Invalid date_macro: {date_macro}. Must be one of: {', '.join(VALID_DATE_MACROS.keys())}")
 
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
