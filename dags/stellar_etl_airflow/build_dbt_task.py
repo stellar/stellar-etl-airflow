@@ -12,8 +12,8 @@ from stellar_etl_airflow.utils import skip_retry_dbt_errors
 VALID_DATE_MACROS = {
     "ts": "{{ ts }}",
     "ds": "{{ ds }}",
-    "prev_ds": "{{ prev_ds }}",
-    "next_ds": "{{ next_ds }}"
+    "data_interval_start": "{{ data_interval_start }}",
+    "data_interval_end": "{{ data_interval_end }}"
 }
 
 def create_dbt_profile(project="prod"):
