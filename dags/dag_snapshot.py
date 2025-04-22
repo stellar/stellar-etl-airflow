@@ -26,10 +26,10 @@ dag = DAG(
     catchup=True,
     tags=["custom_snapshot"],
     params={
-        "backfill_start_date": Param(
+        "snapshot_start_date": Param(
             default="2025-01-01", type="string"
         ),  # only used for manual runs
-        "backfill_end_date": Param(
+        "snapshot_end_date": Param(
             default="2025-01-02", type="string"
         ),  # only used for manual runs
         "snapshot_full_refresh": Param(
@@ -44,8 +44,8 @@ trustline_snapshot_task = dbt_task(
     tag="custom_snapshot_trustline",
     excluded="stellar_dbt_public",
     env_vars={
-        "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-        "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
         "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
     },
 )
@@ -55,8 +55,8 @@ accounts_snapshot_task = dbt_task(
     tag="custom_snapshot_accounts",
     excluded="stellar_dbt_public",
     env_vars={
-        "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-        "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
         "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
     },
 )
@@ -66,8 +66,8 @@ claimable_balances_snapshot_task = dbt_task(
     tag="custom_snapshot_claimable_balances",
     excluded="stellar_dbt_public",
     env_vars={
-        "BACKFILL_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.backfill_start_date }}",
-        "BACKFILL_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.backfill_end_date }}",
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
         "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
     },
 )
