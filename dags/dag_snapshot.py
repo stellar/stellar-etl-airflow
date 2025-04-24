@@ -40,7 +40,7 @@ dag = DAG(
 )
 
 wait_on_dbt_enriched_base_tables = build_cross_deps(
-    dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
+    dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=90
 )
 
 trustline_snapshot_task = dbt_task(
