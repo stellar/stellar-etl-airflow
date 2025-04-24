@@ -16,7 +16,7 @@ init_sentry()
 dag = DAG(
     "dbt_snapshot",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2025, 3, 20, 0, 1),
+    start_date=datetime(2025, 5, 1, 0, 1),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 1 * * *",  # Runs at 01:00 UTC
     user_defined_filters={
@@ -37,6 +37,10 @@ dag = DAG(
         ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
+)
+
+wait_on_dbt_enriched_base_tables = build_cross_deps(
+    dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=90
 )
 
 trustline_snapshot_task = dbt_task(
@@ -72,6 +76,6 @@ claimable_balances_snapshot_task = dbt_task(
     },
 )
 
-trustline_snapshot_task
-accounts_snapshot_task
-claimable_balances_snapshot_task
+wait_on_dbt_enriched_base_tables >> trustline_snapshot_task
+wait_on_dbt_enriched_base_tables >> accounts_snapshot_task
+wait_on_dbt_enriched_base_tables >> claimable_balances_snapshot_task
