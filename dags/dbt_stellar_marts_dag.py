@@ -2,6 +2,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
@@ -78,6 +79,7 @@ tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
+gcs_uri = "{% raw %}gs://defillama-stellar-tvl/stellar-tvl.json{% endraw %}"
 
 export_tvl_to_gcs = BigQueryInsertJobOperator(
     task_id="export_tvl_to_gcs",
@@ -88,7 +90,7 @@ export_tvl_to_gcs = BigQueryInsertJobOperator(
                 "datasetId": dataset,
                 "tableId": "tvl_agg",
             },
-            "destinationUris": ["gs://defillama-stellar-tvl/stellar-tvl.json"],
+            "destinationUris": [gcs_uri],
             "compression": "NONE",
             "destinationFormat": "NEWLINE_DELIMITED_JSON",
             "printHeader": False,
