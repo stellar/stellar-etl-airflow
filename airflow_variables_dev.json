@@ -377,6 +377,7 @@
     "soroban": 720,
     "token_transfer": 1200,
     "trade_agg": 720,
+    "tvl": 900,
     "update_sandbox": 60,
     "wallet_metrics": 720
   },
