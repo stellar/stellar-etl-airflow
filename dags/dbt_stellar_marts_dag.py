@@ -73,6 +73,31 @@ token_transfer_task = dbt_task(
     dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
 )
 
+tvl_task = dbt_task(
+    dag, tag="tvl", operator="+", excluded="stellar_dbt_public"
+)
+
+project = "{{ var.value.bq_project }}"
+dataset = "{{ var.value.dbt_internal_marts_dataset }}"
+
+export_tvl_to_gcs = BigQueryInsertJobOperator(
+    task_id="export_query_to_gcs",
+    configuration={
+        "extract": {
+            "sourceTable": {
+                "projectId": project,
+                "datasetId": dataset,
+                "tableId": "tvl_agg"
+            },
+            "destinationUris": ["gs://defillama-stellar-tvl/stellar-tvl.json"],
+            "compression": "NONE",
+            "destinationFormat": "NEWLINE_DELIMITED_JSON",
+            "printHeader": False
+        }
+    },
+    location="US"
+)
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -94,6 +119,7 @@ wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> token_transfer_task
+wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
