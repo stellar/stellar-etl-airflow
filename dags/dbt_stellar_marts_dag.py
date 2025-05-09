@@ -80,7 +80,7 @@ project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
 
 export_tvl_to_gcs = BigQueryInsertJobOperator(
-    task_id="export_query_to_gcs",
+    task_id="export_tvl_to_gcs",
     configuration={
         "extract": {
             "sourceTable": {
