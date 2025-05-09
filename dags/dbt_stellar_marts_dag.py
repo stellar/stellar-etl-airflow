@@ -73,9 +73,7 @@ token_transfer_task = dbt_task(
     dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
 )
 
-tvl_task = dbt_task(
-    dag, tag="tvl", operator="+", excluded="stellar_dbt_public"
-)
+tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
@@ -87,15 +85,15 @@ export_tvl_to_gcs = BigQueryInsertJobOperator(
             "sourceTable": {
                 "projectId": project,
                 "datasetId": dataset,
-                "tableId": "tvl_agg"
+                "tableId": "tvl_agg",
             },
             "destinationUris": ["gs://defillama-stellar-tvl/stellar-tvl.json"],
             "compression": "NONE",
             "destinationFormat": "NEWLINE_DELIMITED_JSON",
-            "printHeader": False
+            "printHeader": False,
         }
     },
-    location="US"
+    location="US",
 )
 
 # Disable soroban tables because they're broken
