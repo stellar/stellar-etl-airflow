@@ -10,6 +10,7 @@ from stellar_etl_airflow.default import (
     get_default_dag_args,
     init_sentry,
 )
+from airflow.operators.python import ShortCircuitOperator
 
 init_sentry()
 
@@ -35,12 +36,26 @@ dag = DAG(
         "snapshot_full_refresh": Param(
             default="false", type="string"
         ),  # only used for manual runs
+        "skip_trustline": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
 
+def should_run_task(**kwargs):
+    return kwargs['params'].get('skip_trustline', 'false') != 'true'
+
+
 wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=90
+)
+
+check_should_run_trustline = ShortCircuitOperator(
+    task_id='check_should_run_trustline',
+    python_callable=should_run_task,
+    provide_context=True,
+    dag=dag,
 )
 
 trustline_snapshot_task = dbt_task(
@@ -76,6 +91,6 @@ claimable_balances_snapshot_task = dbt_task(
     },
 )
 
-wait_on_dbt_enriched_base_tables >> trustline_snapshot_task
+wait_on_dbt_enriched_base_tables >> check_should_run_trustline >> trustline_snapshot_task
 wait_on_dbt_enriched_base_tables >> accounts_snapshot_task
 wait_on_dbt_enriched_base_tables >> claimable_balances_snapshot_task
