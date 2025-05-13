@@ -2,6 +2,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.models.param import Param
+from airflow.operators.python import ShortCircuitOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
@@ -10,7 +11,6 @@ from stellar_etl_airflow.default import (
     get_default_dag_args,
     init_sentry,
 )
-from airflow.operators.python import ShortCircuitOperator
 
 init_sentry()
 
@@ -43,8 +43,9 @@ dag = DAG(
     # sla_miss_callback=alert_sla_miss,
 )
 
+
 def should_run_task(**kwargs):
-    return kwargs['params'].get('skip_trustline', 'false') != 'true'
+    return kwargs["params"].get("skip_trustline", "false") != "true"
 
 
 wait_on_dbt_enriched_base_tables = build_cross_deps(
@@ -52,7 +53,7 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
 )
 
 check_should_run_trustline = ShortCircuitOperator(
-    task_id='check_should_run_trustline',
+    task_id="check_should_run_trustline",
     python_callable=should_run_task,
     provide_context=True,
     dag=dag,
@@ -91,6 +92,10 @@ claimable_balances_snapshot_task = dbt_task(
     },
 )
 
-wait_on_dbt_enriched_base_tables >> check_should_run_trustline >> trustline_snapshot_task
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_trustline
+    >> trustline_snapshot_task
+)
 wait_on_dbt_enriched_base_tables >> accounts_snapshot_task
 wait_on_dbt_enriched_base_tables >> claimable_balances_snapshot_task
