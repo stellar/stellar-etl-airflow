@@ -155,7 +155,7 @@
       "due to concurrent update"
     ]
   },
-  "defillama_tvl_bucket_name": "defillama-stellar-tvl_test",
+  "defillama_tvl_bucket_name": "defillama-stellar-tvl-test",
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-43c3e190-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:204d343fa",
