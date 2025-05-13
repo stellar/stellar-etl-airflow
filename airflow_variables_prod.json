@@ -125,7 +125,8 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:caf146d53",
+  "dbt_image_name": "stellar/stellar-dbt:4469825b7",
+  "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
   "dbt_job_execution_timeout_seconds": 2400,
@@ -155,6 +156,7 @@
       "due to concurrent update"
     ]
   },
+  "defillama_tvl_bucket_name": "defillama-stellar-tvl",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-1d74a235-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:204d343fa",
@@ -374,6 +376,7 @@
     "soroban": 420,
     "token_transfer": 1200,
     "trade_agg": 1020,
+    "tvl": 900,
     "update_sandbox": 5460,
     "wallet_metrics": 720
   },
