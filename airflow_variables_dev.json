@@ -124,7 +124,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "chowbao/stellar-dbt:tvl1",
+  "dbt_image_name": "stellar/stellar-dbt:4469825b7",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -155,6 +155,7 @@
       "due to concurrent update"
     ]
   },
+  "defillama_tvl_bucket_name": "defillama-stellar-tvl_test",
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-43c3e190-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "stellar/stellar-etl:204d343fa",
