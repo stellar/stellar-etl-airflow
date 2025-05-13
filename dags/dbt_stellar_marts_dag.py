@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from airflow import DAG
+from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
 from kubernetes.client import models as k8s
@@ -79,8 +80,8 @@ tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
-defillama_tvl_bucket_name = "{{ var.value.defillama_tvl_bucket_name }}"
-gcs_uri = "{% raw %}gs://" + defillama_tvl_bucket_name + "/stellar-tvl.json{% endraw %}"
+defillama_tvl_bucket_name = Variable.get("defillama_tvl_bucket_name")
+gcs_uri = "{% raw %}gs://{% endraw %}" + f"{defillama_tvl_bucket_name}" + "{% raw %}/stellar-tvl.json{% endraw %}"
 
 export_tvl_to_gcs = BigQueryInsertJobOperator(
     task_id="export_tvl_to_gcs",
