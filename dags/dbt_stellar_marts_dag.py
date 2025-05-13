@@ -81,7 +81,11 @@ tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
 defillama_tvl_bucket_name = Variable.get("defillama_tvl_bucket_name")
-gcs_uri = "{% raw %}gs://{% endraw %}" + f"{defillama_tvl_bucket_name}" + "{% raw %}/stellar-tvl.json{% endraw %}"
+gcs_uri = (
+    "{% raw %}gs://{% endraw %}"
+    + f"{defillama_tvl_bucket_name}"
+    + "{% raw %}/stellar-tvl.json{% endraw %}"
+)
 
 export_tvl_to_gcs = BigQueryInsertJobOperator(
     task_id="export_tvl_to_gcs",
