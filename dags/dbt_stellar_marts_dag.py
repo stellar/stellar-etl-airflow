@@ -1,6 +1,9 @@
 from datetime import datetime
 
 from airflow import DAG
+from airflow.models import Variable
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
@@ -73,6 +76,35 @@ token_transfer_task = dbt_task(
     dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
 )
 
+tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
+
+project = "{{ var.value.bq_project }}"
+dataset = "{{ var.value.dbt_internal_marts_dataset }}"
+defillama_tvl_bucket_name = Variable.get("defillama_tvl_bucket_name")
+gcs_uri = (
+    "{% raw %}gs://{% endraw %}"
+    + f"{defillama_tvl_bucket_name}"
+    + "{% raw %}/stellar-tvl.json{% endraw %}"
+)
+
+export_tvl_to_gcs = BigQueryInsertJobOperator(
+    task_id="export_tvl_to_gcs",
+    configuration={
+        "extract": {
+            "sourceTable": {
+                "projectId": project,
+                "datasetId": dataset,
+                "tableId": "tvl_agg",
+            },
+            "destinationUris": [gcs_uri],
+            "compression": "NONE",
+            "destinationFormat": "NEWLINE_DELIMITED_JSON",
+            "printHeader": False,
+        }
+    },
+    location="US",
+)
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -94,6 +126,7 @@ wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> token_transfer_task
+wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
