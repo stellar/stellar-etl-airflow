@@ -142,7 +142,11 @@ liquidity_pools_snapshot_task = dbt_task(
     >> check_should_run_trustline
     >> trustline_snapshot_task
 )
-wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapshot_task
+(
+     wait_on_dbt_enriched_base_tables
+     >> check_should_run_accounts 
+     >> accounts_snapshot_task
+)
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_claimable_balance
