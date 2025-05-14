@@ -39,13 +39,22 @@ dag = DAG(
         "skip_trustline": Param(
             default="false", type="string"
         ),  # only used for manual runs
+        "skip_accounts": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
+        "skip_claimable_balance": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
+        "skip_liquidity_pools": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
 
 
-def should_run_task(**kwargs):
-    return kwargs["params"].get("skip_trustline", "false") != "true"
+def should_run_task(snapshot_name, **kwargs):
+    return kwargs["params"].get(snapshot_name, "false") != "true"
 
 
 wait_on_dbt_enriched_base_tables = build_cross_deps(
@@ -55,6 +64,31 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
 check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
     python_callable=should_run_task,
+    op_args=["skip_trustline"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_claimable_balance = ShortCircuitOperator(
+    task_id="check_should_run_claimable_balance",
+    python_callable=should_run_task,
+    op_args=["skip_claimable_balance"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_accounts = ShortCircuitOperator(
+    task_id="check_should_run_accounts",
+    python_callable=should_run_task,
+    op_args=["skip_accounts"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_liquidity_pools = ShortCircuitOperator(
+    task_id="check_should_run_liquidity_pools",
+    python_callable=should_run_task,
+    op_args=["skip_liquidity_pools"],
     provide_context=True,
     dag=dag,
 )
@@ -92,10 +126,30 @@ claimable_balances_snapshot_task = dbt_task(
     },
 )
 
+liquidity_pools_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_liquidity_pools",
+    excluded="stellar_dbt_public",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_trustline
     >> trustline_snapshot_task
 )
-wait_on_dbt_enriched_base_tables >> accounts_snapshot_task
-wait_on_dbt_enriched_base_tables >> claimable_balances_snapshot_task
+wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapshot_task
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_claimable_balance
+    >> claimable_balances_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_liquidity_pools
+    >> liquidity_pools_snapshot_task
+)
