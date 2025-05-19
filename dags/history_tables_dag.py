@@ -271,17 +271,8 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> insert_enrich_op_pub_task
 )
 
-(
-   time_task
-   >> trade_export_task
-   >> del_ins_tasks["trades"]
-)
-
-(
-    time_task
-    >> effects_export_task
-    >> del_ins_tasks["effects"]
-)
+(time_task >> trade_export_task >> del_ins_tasks["trades"])
+(time_task >> effects_export_task >> del_ins_tasks["effects"])
 
 (
     time_task
@@ -297,21 +288,6 @@ dedup_assets_pub_task = build_bq_insert_job(
     >> delete_enrich_op_pub_task
 )
 
-(
-    time_task
-    >> asset_export_task
-    >> del_ins_tasks["assets"]
-    >> dedup_assets_pub_task
-)
-
-(
-    time_task
-    >> contract_events_export_task
-    >> del_ins_tasks["contract_events"]
-)
-
-(
-    time_task
-    >> token_transfer_export_task
-    >> del_ins_tasks["token_transfers_raw"]
-)
+(time_task >> asset_export_task >> del_ins_tasks["assets"] >> dedup_assets_pub_task)
+(time_task >> contract_events_export_task >> del_ins_tasks["contract_events"])
+(time_task >> token_transfer_export_task >> del_ins_tasks["token_transfers_raw"])
