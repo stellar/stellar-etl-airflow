@@ -84,6 +84,10 @@
       "buying_asset_id",
       "last_modified_ledger"
     ],
+    ,
+    "token_transfers_raw": [
+      "contract_id"
+    ],
     "trust_lines": [
       "account_id",
       "asset_id",
@@ -187,6 +191,7 @@
     "operations": "operations.txt",
     "orderbooks": "orderbook_folder",
     "signers": "account_signers.txt",
+    "token_transfers_raw": "token_transfers_raw.txt",
     "trades": "trades.txt",
     "transactions": "transactions.txt",
     "trustlines": "trustlines.txt",
@@ -267,6 +272,10 @@
       "field": "batch_run_date",
       "type": "MONTH"
     },
+    "token_transfers_raw": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
     "trust_lines": {
       "field": "batch_run_date",
       "type": "MONTH"
@@ -334,6 +343,7 @@
     "operations": "history_operations",
     "retool_entity_data": "retool_entity_data",
     "signers": "account_signers",
+    "token_transfers_raw": "token_transfers_raw",
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",

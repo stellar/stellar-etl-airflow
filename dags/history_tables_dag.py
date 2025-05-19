@@ -13,7 +13,6 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
-from stellar_etl_airflow.build_batch_stats import build_batch_stats
 from stellar_etl_airflow.build_bq_insert_job_task import build_bq_insert_job
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_del_ins_from_gcs_to_bq_task import (
@@ -77,19 +76,6 @@ The time task reads in the execution time of the current run, as well as the nex
 execution time. It converts these two times into ledger ranges.
 """
 time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
-
-"""
-The build batch stats task will take a snapshot of the DAG run_id, execution date,
-start and end ledgers so that reconciliation and data validation are easier. The
-record is written to an internal dataset for data eng use only.
-"""
-write_op_stats = build_batch_stats(dag, table_names["operations"])
-write_trade_stats = build_batch_stats(dag, table_names["trades"])
-write_effects_stats = build_batch_stats(dag, table_names["effects"])
-write_tx_stats = build_batch_stats(dag, table_names["transactions"])
-write_ledger_stats = build_batch_stats(dag, table_names["ledgers"])
-write_asset_stats = build_batch_stats(dag, table_names["assets"])
-write_contract_events_stats = build_batch_stats(dag, "contract_events")
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -192,6 +178,19 @@ contract_events_export_task = build_export_task(
     resource_cfg="stellaretl",
 )
 
+token_transfer_export_task = build_export_task(
+    dag,
+    "archive",
+    "export_token_transfer",
+    "{{ var.json.output_file_names.token_transfers_raw }}",
+    use_testnet=use_testnet,
+    use_futurenet=use_futurenet,
+    use_gcs=True,
+    use_captive_core=use_captive_core,
+    txmeta_datastore_path=txmeta_datastore_path,
+    resource_cfg="stellaretl",
+)
+
 """
 The delete part of the task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
@@ -210,6 +209,7 @@ export_tasks = {
     "ledgers": ledger_export_task,
     "assets": asset_export_task,
     "contract_events": contract_events_export_task,
+    "token_transfers_raw": token_transfer_export_task,
 }
 
 
@@ -265,39 +265,53 @@ dedup_assets_pub_task = build_bq_insert_job(
 
 (
     time_task
-    >> write_op_stats
     >> op_export_task
     >> del_ins_tasks["operations"]
     >> delete_enrich_op_pub_task
     >> insert_enrich_op_pub_task
 )
 
-(time_task >> write_trade_stats >> trade_export_task >> del_ins_tasks["trades"])
-(time_task >> write_effects_stats >> effects_export_task >> del_ins_tasks["effects"])
+(
+   time_task
+   >> trade_export_task
+   >> del_ins_tasks["trades"]
+)
+
 (
     time_task
-    >> write_tx_stats
+    >> effects_export_task
+    >> del_ins_tasks["effects"]
+)
+
+(
+    time_task
     >> tx_export_task
     >> del_ins_tasks["transactions"]
     >> delete_enrich_op_pub_task
 )
+
 (
     time_task
-    >> write_ledger_stats
     >> ledger_export_task
     >> del_ins_tasks["ledgers"]
     >> delete_enrich_op_pub_task
 )
+
 (
     time_task
-    >> write_asset_stats
     >> asset_export_task
     >> del_ins_tasks["assets"]
     >> dedup_assets_pub_task
 )
+
 (
     time_task
-    >> write_contract_events_stats
     >> contract_events_export_task
     >> del_ins_tasks["contract_events"]
+)
+
+(
+    time_task
+    >> token_transfer_export_task
+    >> del_ins_tasks["token_transfers_raw"]
 )
