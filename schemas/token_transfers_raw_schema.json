@@ -1,11 +1,11 @@
 [
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "transaction_hash",
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "transaction_id",
     "type": "INTEGER"
   },
@@ -15,7 +15,7 @@
     "type": "INTEGER"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "event_topic",
     "type": "STRING"
   },
@@ -30,12 +30,12 @@
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "asset",
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "asset_type",
     "type": "STRING"
   },
@@ -50,27 +50,27 @@
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "amount",
     "type": "FLOAT"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "amount_raw",
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "contract_id",
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "ledger_sequence",
     "type": "INTEGER"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "closed_at",
     "type": "TIMESTAMP"
   },
@@ -85,17 +85,17 @@
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "batch_id",
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "batch_run_date",
     "type": "DATETIME"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REQUIRED",
     "name": "batch_insert_ts",
     "type": "TIMESTAMP"
   }

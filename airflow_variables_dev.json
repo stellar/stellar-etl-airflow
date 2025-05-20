@@ -85,7 +85,8 @@
       "last_modified_ledger"
     ],
     "token_transfers_raw": [
-      "contract_id"
+      "contract_id",
+      "asset"
     ],
     "trust_lines": [
       "account_id",
@@ -273,7 +274,7 @@
     },
     "token_transfers_raw": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "trust_lines": {
       "field": "batch_run_date",
