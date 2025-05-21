@@ -1,0 +1,102 @@
+[
+  {
+    "mode": "REQUIRED",
+    "name": "transaction_hash",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "transaction_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "operation_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "event_topic",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "from",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "to",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "asset",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "asset_type",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "asset_code",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "asset_issuer",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "amount",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "amount_raw",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "contract_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "ledger_sequence",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "closed_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "to_muxed",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "to_muxed_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  }
+]
