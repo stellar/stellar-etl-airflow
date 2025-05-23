@@ -129,11 +129,11 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:c6631c29a",
+  "dbt_image_name": "stellar/stellar-dbt:b81035933",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
-  "dbt_job_execution_timeout_seconds": 2400,
+  "dbt_job_execution_timeout_seconds": 3000,
   "dbt_job_retries": 1,
   "dbt_mart_dataset": "crypto_stellar_dbt",
   "dbt_maximum_bytes_billed": 100000000000000,
