@@ -35,7 +35,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 7, 10, 14, 30),
     description="This DAG runs a bounded stellar-core instance, which allows it to export accounts, offers, liquidity pools, and trustlines to BigQuery.",
-    schedule_interval="*/10 * * * *",
+    schedule_interval="*/3 * * * *",
     params={
         "alias": "state",
     },

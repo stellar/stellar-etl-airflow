@@ -41,7 +41,7 @@ dag = DAG(
     start_date=datetime(2024, 7, 10, 14, 30),
     catchup=True,
     description="This DAG exports information for the trades, assets, ledgers, operations, transactions, effects and contract events history tables.",
-    schedule_interval="*/10 * * * *",
+    schedule_interval="*/3 * * * *",
     params={
         "alias": "cc",
     },
