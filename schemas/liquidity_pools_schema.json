@@ -113,5 +113,10 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "liquidity_pool_id_strkey",
+    "type": "STRING"
   }
 ]

@@ -108,5 +108,10 @@
     "mode": "NULLABLE",
     "name": "contract_data_xdr",
     "type": "STRING"
+  },
+  {
+    "mode": "REQUIRED",
+    "name": "ledger_key_hash_base_64",
+    "type": "STRING"
   }
 ]
