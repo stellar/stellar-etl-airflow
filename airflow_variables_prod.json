@@ -163,7 +163,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-1d74a235-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:bb74ccdc4",
+  "image_name": "stellar/stellar-etl:531218409",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "stellar-etl-composer",

@@ -103,5 +103,10 @@
     "mode": "NULLABLE",
     "name": "n_data_segment_bytes",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_key_hash_base_64",
+    "type": "STRING"
   }
 ]

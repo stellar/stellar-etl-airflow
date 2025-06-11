@@ -495,5 +495,10 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "balance_id_strkey",
+    "type": "STRING"
   }
 ]

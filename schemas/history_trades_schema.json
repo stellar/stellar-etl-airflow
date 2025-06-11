@@ -133,5 +133,10 @@
     "mode": "NULLABLE",
     "name": "seller_is_exact",
     "type": "BOOLEAN"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "selling_liquidity_pool_id_strkey",
+    "type": "STRING"
   }
 ]
