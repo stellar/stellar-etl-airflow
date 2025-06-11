@@ -115,7 +115,7 @@
     "type": "INTEGER"
   },
   {
-    "mode": "REQUIRED",
+    "mode": "NULLABLE",
     "name": "liquidity_pool_id_strkey",
     "type": "STRING"
   }
