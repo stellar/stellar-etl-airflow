@@ -361,7 +361,6 @@
     "create_sandbox": 1020,
     "current_state": 1200,
     "custom_snapshot_accounts": 3600,
-    "custom_snapshot_claimable_balances": 3600,
     "custom_snapshot_liquidity_pools": 3600,
     "custom_snapshot_trustline": 3600,
     "default": 60,

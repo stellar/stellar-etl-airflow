@@ -42,9 +42,6 @@ dag = DAG(
         "skip_accounts": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_claimable_balance": Param(
-            default="false", type="string"
-        ),  # only used for manual runs
         "skip_liquidity_pools": Param(
             default="false", type="string"
         ),  # only used for manual runs
@@ -65,14 +62,6 @@ check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
     python_callable=should_run_task,
     op_args=["skip_trustline"],
-    provide_context=True,
-    dag=dag,
-)
-
-check_should_run_claimable_balance = ShortCircuitOperator(
-    task_id="check_should_run_claimable_balance",
-    python_callable=should_run_task,
-    op_args=["skip_claimable_balance"],
     provide_context=True,
     dag=dag,
 )
