@@ -42,9 +42,6 @@ dag = DAG(
         "skip_accounts": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_claimable_balance": Param(
-            default="false", type="string"
-        ),  # only used for manual runs
         "skip_liquidity_pools": Param(
             default="false", type="string"
         ),  # only used for manual runs
@@ -65,14 +62,6 @@ check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
     python_callable=should_run_task,
     op_args=["skip_trustline"],
-    provide_context=True,
-    dag=dag,
-)
-
-check_should_run_claimable_balance = ShortCircuitOperator(
-    task_id="check_should_run_claimable_balance",
-    python_callable=should_run_task,
-    op_args=["skip_claimable_balance"],
     provide_context=True,
     dag=dag,
 )
@@ -115,17 +104,6 @@ accounts_snapshot_task = dbt_task(
     },
 )
 
-claimable_balances_snapshot_task = dbt_task(
-    dag,
-    tag="custom_snapshot_claimable_balances",
-    excluded="stellar_dbt_public",
-    env_vars={
-        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
-        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
-        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
-    },
-)
-
 liquidity_pools_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_liquidity_pools",
@@ -143,11 +121,6 @@ liquidity_pools_snapshot_task = dbt_task(
     >> trustline_snapshot_task
 )
 wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapshot_task
-(
-    wait_on_dbt_enriched_base_tables
-    >> check_should_run_claimable_balance
-    >> claimable_balances_snapshot_task
-)
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_liquidity_pools
