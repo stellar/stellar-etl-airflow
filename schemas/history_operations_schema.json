@@ -63,6 +63,11 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "balance_id_strkey",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "buying_asset_code",
         "type": "STRING"
       },
@@ -84,6 +89,11 @@
       {
         "mode": "NULLABLE",
         "name": "claimable_balance_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "claimable_balance_id_strkey",
         "type": "STRING"
       },
       {
@@ -860,6 +870,11 @@
       {
         "mode": "NULLABLE",
         "name": "liquidity_pool_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "liquidity_pool_id_strkey",
         "type": "STRING"
       },
       {
