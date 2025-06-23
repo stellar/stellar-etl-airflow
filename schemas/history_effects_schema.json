@@ -40,6 +40,11 @@
           },
           {
             "mode": "NULLABLE",
+            "name": "id_strkey",
+            "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
             "name": "total_shares",
             "type": "NUMERIC"
           },
@@ -125,6 +130,11 @@
             "mode": "NULLABLE",
             "name": "claimable_balance_id",
             "type": "STRING"
+          },
+          {
+            "mode": "NULLABLE",
+            "name": "claimable_balance_id_strkey",
+            "type": "STRING"
           }
         ],
         "mode": "REPEATED",
@@ -187,7 +197,17 @@
       },
       {
         "mode": "NULLABLE",
+        "name": "liquidity_pool_id_strkey",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
         "name": "balance_id",
+        "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "balance_id_strkey",
         "type": "STRING"
       },
       {
