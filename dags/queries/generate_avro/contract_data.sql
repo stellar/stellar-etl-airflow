@@ -6,8 +6,25 @@ options (
 )
 as (
     select
-        *
-        except (batch_id, batch_insert_ts, batch_run_date, asset_code)
+          contract_id
+        , contract_key_type
+        , contract_durability
+        , asset_issuer
+        , asset_type
+        , balance_holder
+        , balance
+        , last_modified_ledger
+        , ledger_entry_change
+        , deleted
+        , closed_at
+        , ledger_sequence
+        , ledger_key_hash
+        , key
+        , key_decoded
+        , val
+        , val_decoded
+        , contract_data_xdr
+        , ledger_key_hash_base_64
         , replace(asset_code, '\u0000', '') as asset_code
     from {project_id}.{dataset_id}.contract_data
     where

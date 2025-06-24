@@ -6,8 +6,16 @@ options (
 )
 as (
     select
-        *
-        except (batch_id, batch_insert_ts, batch_run_date)
+          key_hash
+        , live_until_ledger_seq
+        , last_modified_ledger
+        , ledger_entry_change
+        , deleted
+        , batch_id
+        , batch_run_date
+        , batch_insert_ts
+        , closed_at
+        , ledger_sequence
     from {project_id}.{dataset_id}.ttl
     where
         true
