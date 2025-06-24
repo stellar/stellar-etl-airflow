@@ -6,8 +6,20 @@ options (
 )
 as (
     select
-        *
-        except (batch_id, batch_insert_ts, batch_run_date)
+        transaction_hash
+        , transaction_id
+        , successful
+        , in_successful_contract_call
+        , contract_id
+        , type
+        , type_string
+        , topics
+        , topics_decoded
+        , data
+        , data_decoded
+        , contract_event_xdr
+        , closed_at
+        , ledger_sequence
     from {project_id}.{dataset_id}.history_contract_events
     where
         true
