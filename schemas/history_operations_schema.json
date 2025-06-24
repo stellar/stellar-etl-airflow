@@ -1121,6 +1121,16 @@
         "mode": "REPEATED",
         "name": "ledger_key_hash",
         "type": "STRING"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "parameters_json",
+        "type": "JSON"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "parameters_json_decoded",
+        "type": "JSON"
       }
     ],
     "mode": "NULLABLE",
