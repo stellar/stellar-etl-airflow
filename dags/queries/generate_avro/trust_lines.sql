@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          ledger_key
+        ledger_key
         , account_id
         , asset_type
         , asset_issuer

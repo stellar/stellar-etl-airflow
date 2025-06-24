@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          seller_id
+        seller_id
         , offer_id
         , selling_asset_type
         , selling_asset_code

@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          id
+        id
         , source_account
         , source_account_muxed
         , transaction_id

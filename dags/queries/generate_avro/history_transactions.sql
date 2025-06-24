@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          id
+        id
         , transaction_hash
         , ledger_sequence
         , account

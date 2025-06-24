@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          history_operation_id
+        history_operation_id
         , `order`
         , selling_account_address
         , selling_asset_code

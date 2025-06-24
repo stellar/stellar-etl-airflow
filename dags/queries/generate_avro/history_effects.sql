@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          address
+        address
         , address_muxed
         , operation_id
         , `type`

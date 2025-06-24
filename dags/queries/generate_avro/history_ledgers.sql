@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          sequence
+        sequence
         , ledger_hash
         , previous_ledger_hash
         , transaction_count

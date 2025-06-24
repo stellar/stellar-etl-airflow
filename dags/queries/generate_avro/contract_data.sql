@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          contract_id
+        contract_id
         , contract_key_type
         , contract_durability
         , asset_issuer

@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          liquidity_pool_id
+        liquidity_pool_id
         , `type`
         , fee
         , trustline_count

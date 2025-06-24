@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          account_id
+        account_id
         , balance
         , buying_liabilities
         , selling_liabilities

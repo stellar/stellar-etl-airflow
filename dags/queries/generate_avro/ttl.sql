@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-          key_hash
+        key_hash
         , live_until_ledger_seq
         , last_modified_ledger
         , ledger_entry_change
