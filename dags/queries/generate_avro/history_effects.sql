@@ -11,7 +11,6 @@ as (
         , operation_id
         , `type`
         , type_string
-        , details
         , closed_at
         , ledger_sequence
         , `index`
