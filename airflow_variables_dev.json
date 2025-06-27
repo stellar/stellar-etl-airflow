@@ -201,88 +201,88 @@
   "owner": "SDF",
   "partition_fields": {
     "account_signers": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "accounts": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "claimable_balances": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "config_settings": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "contract_code": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "contract_data": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "enriched_history_operations": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "enriched_meaningful_history_operations": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "history_assets": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "history_contract_events": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "history_effects": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "history_ledgers": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "history_operations": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "history_trades": {
       "field": "ledger_closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "history_transactions": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "liquidity_pools": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "mgi": {
       "field": "tran_evnt_date",
-      "type": "MONTH"
+      "type": "DAY"
     },
     "offers": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "token_transfers_raw": {
       "field": "closed_at",
       "type": "DAY"
     },
     "trust_lines": {
-      "field": "batch_run_date",
-      "type": "MONTH"
+      "field": "closed_at",
+      "type": "DAY"
     },
     "ttl": {
       "field": "closed_at",
-      "type": "MONTH"
+      "type": "DAY"
     }
   },
   "partners_bucket": "ext-partner-sftp",
