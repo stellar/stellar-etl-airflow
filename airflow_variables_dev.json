@@ -350,6 +350,7 @@
     "ttl": "ttl"
   },
   "task_sla": {
+    "asset_balance_agg": 720,
     "asset_stats": 720,
     "build_batch_stats": 840,
     "build_bq_generate_avro_job": 600,
@@ -390,8 +391,7 @@
     "trade_agg": 720,
     "tvl": 900,
     "update_sandbox": 60,
-    "wallet_metrics": 720,
-    "asset_balance_agg": 720
+    "wallet_metrics": 720
   },
   "task_timeout": {
     "build_batch_stats": 180,
