@@ -35,6 +35,11 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
 )
 
+# Wait on Snapshot DAGs
+wait_on_dbt_snapshot_tables = build_cross_deps(
+    dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot"
+)
+
 # DBT models to run
 ohlc_task = dbt_task(dag, tag="ohlc", operator="+", excluded="stellar_dbt_public")
 liquidity_pool_trade_volume_task = dbt_task(
@@ -105,6 +110,10 @@ export_tvl_to_gcs = BigQueryInsertJobOperator(
     location="US",
 )
 
+asset_balance_agg_task = dbt_task(
+    dag, tag="asset_balance_agg", operator="+", excluded="+snapshots"
+)
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -127,6 +136,7 @@ wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> token_transfer_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
+wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
