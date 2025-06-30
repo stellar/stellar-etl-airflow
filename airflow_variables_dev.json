@@ -390,7 +390,8 @@
     "trade_agg": 720,
     "tvl": 900,
     "update_sandbox": 60,
-    "wallet_metrics": 720
+    "wallet_metrics": 720,
+    "asset_balance_agg": 720
   },
   "task_timeout": {
     "build_batch_stats": 180,
