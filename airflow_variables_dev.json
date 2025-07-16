@@ -97,6 +97,10 @@
     "ttl": [
       "last_modified_ledger",
       "key_hash"
+    ],
+    "restored_key": [
+      "last_modified_ledger",
+      "ledger_key_hash"
     ]
   },
   "currency_bucket": "currencies_ohlc",
@@ -281,6 +285,10 @@
       "type": "MONTH"
     },
     "ttl": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
+    "restored_key": {
       "field": "closed_at",
       "type": "MONTH"
     }
