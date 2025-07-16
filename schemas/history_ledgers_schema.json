@@ -125,12 +125,12 @@
     "type": "INTEGER"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REPEATED",
     "name": "evicted_ledger_keys_type",
     "type": "STRING"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REPEATED",
     "name": "evicted_ledger_keys_hash",
     "type": "STRING"
   }

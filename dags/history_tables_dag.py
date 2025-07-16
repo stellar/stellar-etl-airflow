@@ -38,7 +38,7 @@ init_sentry()
 dag = DAG(
     "history_table_export",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 7, 10, 14, 30),
+    start_date=datetime(2025, 7, 16, 20, 0),
     catchup=True,
     description="This DAG exports information for the trades, assets, ledgers, operations, transactions, effects and contract events history tables.",
     schedule_interval="*/10 * * * *",

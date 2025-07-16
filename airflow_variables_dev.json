@@ -347,7 +347,8 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "ttl": "ttl"
+    "ttl": "ttl",
+    "restored_key": "restored_key"
   },
   "task_sla": {
     "asset_balance_agg": 720,
