@@ -129,7 +129,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:77973aff7",
+  "dbt_image_name": "stellar/stellar-dbt:d793f887e",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -369,6 +369,7 @@
     "elementary_dbt_data_quality": 2100,
     "elementary_generate_report": 1200,
     "enriched_history_operations": 1800,
+    "entity_attribution": 1800,
     "export_retool_data": 720,
     "fee_stats": 360,
     "history_assets": 360,

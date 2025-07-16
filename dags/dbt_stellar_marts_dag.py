@@ -80,6 +80,9 @@ wallet_metrics_task = dbt_task(
 token_transfer_task = dbt_task(
     dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
 )
+entity_attribution_task = dbt_task(
+    dag, tag="entity_attribution", operator="+", excluded="stellar_dbt_public"
+)
 
 tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 
@@ -135,6 +138,7 @@ wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> token_transfer_task
+wait_on_dbt_enriched_base_tables >> entity_attribution_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 # wait_on_dbt_enriched_base_tables >> soroban
