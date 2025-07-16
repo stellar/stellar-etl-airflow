@@ -84,6 +84,10 @@
       "buying_asset_id",
       "last_modified_ledger"
     ],
+    "restored_key": [
+      "last_modified_ledger",
+      "ledger_key_hash"
+    ],
     "token_transfers_raw": [
       "contract_id",
       "asset"
@@ -97,10 +101,6 @@
     "ttl": [
       "last_modified_ledger",
       "key_hash"
-    ],
-    "restored_key": [
-      "last_modified_ledger",
-      "ledger_key_hash"
     ]
   },
   "currency_bucket": "currencies_ohlc",
@@ -276,6 +276,10 @@
       "field": "batch_run_date",
       "type": "MONTH"
     },
+    "restored_key": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
     "token_transfers_raw": {
       "field": "closed_at",
       "type": "DAY"
@@ -285,10 +289,6 @@
       "type": "MONTH"
     },
     "ttl": {
-      "field": "closed_at",
-      "type": "MONTH"
-    },
-    "restored_key": {
       "field": "closed_at",
       "type": "MONTH"
     }
@@ -349,14 +349,14 @@
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
     "operations": "history_operations",
+    "restored_key": "restored_key",
     "retool_entity_data": "retool_entity_data",
     "signers": "account_signers",
     "token_transfers_raw": "token_transfers_raw",
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "ttl": "ttl",
-    "restored_key": "restored_key"
+    "ttl": "ttl"
   },
   "task_sla": {
     "asset_balance_agg": 720,

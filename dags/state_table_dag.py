@@ -80,7 +80,7 @@ required_keys = [
     "contract_code",
     "config_settings",
     "ttl",
-    "restored_key"
+    "restored_key",
 ]
 
 missing_keys = [key for key in required_keys if key not in table_names]
@@ -190,4 +190,9 @@ for table_id, source_object_suffix in source_object_suffix_mapping.items():
     >> del_ins_tasks["config_settings"]
 )
 (date_task >> changes_task >> write_ttl_stats >> del_ins_tasks["ttl"])
-(date_task >> changes_task >> write_restored_keys_stats >> del_ins_tasks["restored_key"])
+(
+    date_task
+    >> changes_task
+    >> write_restored_keys_stats
+    >> del_ins_tasks["restored_key"]
+)
