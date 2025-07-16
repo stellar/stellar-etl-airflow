@@ -1,0 +1,27 @@
+[
+    {
+      "mode": "NULLABLE",
+      "name": "ledger_key_hash",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "ledger_entry_type",
+      "type": "STRING"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "last_modified_ledger",
+      "type": "INTEGER"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "closed_at",
+      "type": "TIMESTAMP"
+    },
+    {
+      "mode": "NULLABLE",
+      "name": "ledger_sequence",
+      "type": "INTEGER"
+    }
+]
