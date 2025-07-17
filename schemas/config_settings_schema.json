@@ -359,7 +359,7 @@
     "type": "INTEGER"
   },
   {
-    "mode": "NULLABLE",
+    "mode": "REPEATED",
     "name": "live_soroban_state_size_window",
     "type": "INTEGER"
   }
