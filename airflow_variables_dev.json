@@ -350,6 +350,7 @@
     "ttl": "ttl"
   },
   "task_sla": {
+    "account_activity": 1800,
     "asset_balance_agg": 720,
     "asset_stats": 720,
     "build_batch_stats": 840,
