@@ -310,11 +310,6 @@
   },
   {
     "mode": "NULLABLE",
-    "name": "tx_max_in_memory_read_entries",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
     "name": "fee_disk_read_ledger_entry",
     "type": "INTEGER"
   },
