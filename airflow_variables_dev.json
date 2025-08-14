@@ -84,6 +84,10 @@
       "buying_asset_id",
       "last_modified_ledger"
     ],
+    "restored_key": [
+      "last_modified_ledger",
+      "ledger_key_hash"
+    ],
     "token_transfers_raw": [
       "contract_id",
       "asset"
@@ -162,7 +166,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl-test",
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-43c3e190-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:c957897c6",
+  "image_name": "stellar/stellar-etl-dev:28a86b285",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -272,6 +276,10 @@
       "field": "batch_run_date",
       "type": "MONTH"
     },
+    "restored_key": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
     "token_transfers_raw": {
       "field": "closed_at",
       "type": "DAY"
@@ -341,6 +349,7 @@
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
     "operations": "history_operations",
+    "restored_key": "restored_key",
     "retool_entity_data": "retool_entity_data",
     "signers": "account_signers",
     "token_transfers_raw": "token_transfers_raw",
