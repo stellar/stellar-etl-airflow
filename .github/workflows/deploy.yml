@@ -41,12 +41,12 @@ jobs:
         run: airflow variables import airflow_variables_ci.json
 
       - name: Authenticate to test-hubble GCP
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2.1.12
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
       - id: "get-credentials"
-        uses: "google-github-actions/get-gke-credentials@v2"
+        uses: "google-github-actions/get-gke-credentials@v2.3.4"
         with:
           cluster_name: "us-central1-test-hubble-43c3e190-gke"
           location: "us-central1"
@@ -72,7 +72,7 @@ jobs:
           pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to test-hubble GCP
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2.1.12
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
@@ -83,7 +83,7 @@ jobs:
           BUCKET: us-central1-test-hubble-43c3e190-bucket
 
       - name: Update Airflow variables
-        uses: actions-hub/gcloud@master
+        uses: actions-hub/gcloud@534.0.0
         env:
           PROJECT_ID: test-hubble-319619
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
@@ -114,7 +114,7 @@ jobs:
           pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to hubble GCP
-        uses: google-github-actions/auth@v1
+        uses: google-github-actions/auth@v2.1.12
         with:
           credentials_json: "${{ secrets.CREDS_PROD_HUBBLE }}"
 
