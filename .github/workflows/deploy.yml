@@ -46,7 +46,7 @@ jobs:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
       - id: "get-credentials"
-        uses: google-github-actions/get-gke-credentials@8e574c49425fa7efed1e74650a449bfa6a2 # v2.3.4
+        uses: google-github-actions/get-gke-credentials@8e574c49425fa7efed1e74650a449bfa6a23308a # v2.3.4
         with:
           cluster_name: "us-central1-test-hubble-43c3e190-gke"
           location: "us-central1"
