@@ -213,5 +213,15 @@
     "mode": "REPEATED",
     "name": "tx_signers",
     "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_resources_disk_read_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "soroban_resources_archived_entries",
+    "type": "INTEGER"
   }
 ]

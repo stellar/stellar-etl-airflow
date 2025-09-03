@@ -287,5 +287,75 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_max_disk_read_entries",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ledger_max_disk_read_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_max_disk_read_entries",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "tx_max_disk_read_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fee_disk_read_ledger_entry",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fee_write_1kb",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "fee_disk_read_1kb",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_state_target_size_bytes",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "rent_fee_1kb_soroban_state_size_low",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "rent_fee_1kb_soroban_state_size_high",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "soroban_state_rent_fee_growth_factor",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "live_soroban_state_size_window_sample_size",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "live_soroban_state_size_window_sample_period",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "REPEATED",
+    "name": "live_soroban_state_size_window",
+    "type": "INTEGER"
   }
 ]

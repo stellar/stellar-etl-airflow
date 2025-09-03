@@ -129,7 +129,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:30bf15085",
+  "dbt_image_name": "stellar/stellar-dbt:46cedad28",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -163,7 +163,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-1d74a235-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:c957897c6",
+  "image_name": "stellar/stellar-etl:2c9ee7cd9",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "stellar-etl-composer",
@@ -270,6 +270,10 @@
       "field": "batch_run_date",
       "type": "MONTH"
     },
+    "restored_key": {
+      "field": "closed_at",
+      "type": "MONTH"
+    },
     "token_transfers_raw": {
       "field": "closed_at",
       "type": "DAY"
@@ -339,6 +343,7 @@
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
     "operations": "history_operations",
+    "restored_key": "restored_key",
     "retool_entity_data": "retool_entity_data",
     "signers": "account_signers",
     "token_transfers_raw": "token_transfers_raw",
@@ -405,7 +410,7 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 360
   },
-  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
+  "txmeta_datastore_path": "sdf-ledger-close-meta/v1/ledgers",
   "use_captive_core": "False",
   "use_futurenet": "False",
   "use_testnet": "False",
