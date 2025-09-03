@@ -382,6 +382,7 @@
     "elementary_generate_report": 1200,
     "enriched_history_operations": 780,
     "entity_attribution": 1800,
+    "evicted_keys": 720,
     "export_retool_data": 720,
     "fee_stats": 840,
     "history_assets": 720,
@@ -402,8 +403,7 @@
     "trade_agg": 720,
     "tvl": 900,
     "update_sandbox": 60,
-    "wallet_metrics": 720,
-    "evicted_keys": 720
+    "wallet_metrics": 720
   },
   "task_timeout": {
     "build_batch_stats": 180,
