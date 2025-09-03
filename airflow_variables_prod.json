@@ -410,7 +410,7 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 360
   },
-  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
+  "txmeta_datastore_path": "sdf-ledger-close-meta/v1/ledgers",
   "use_captive_core": "False",
   "use_futurenet": "False",
   "use_testnet": "False",
