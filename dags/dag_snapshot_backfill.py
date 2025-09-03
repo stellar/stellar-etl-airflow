@@ -14,8 +14,10 @@ from stellar_etl_airflow.default import (
 
 init_sentry()
 
+
 def should_run_task(snapshot_name, **kwargs):
     return kwargs["params"].get(snapshot_name, "false") != "true"
+
 
 dag = DAG(
     "dbt_snapshot_backfill",
