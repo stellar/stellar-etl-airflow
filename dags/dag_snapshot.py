@@ -45,9 +45,6 @@ dag = DAG(
         "skip_liquidity_pools": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_evicted_keys": Param(
-            default="false", type="string"
-        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
@@ -60,11 +57,6 @@ def should_run_task(snapshot_name, **kwargs):
 wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=90
 )
-
-wait_on_dbt_stellar_marts = build_cross_deps(
-    dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts", time_delta=0
-)
-
 
 check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
@@ -86,14 +78,6 @@ check_should_run_liquidity_pools = ShortCircuitOperator(
     task_id="check_should_run_liquidity_pools",
     python_callable=should_run_task,
     op_args=["skip_liquidity_pools"],
-    provide_context=True,
-    dag=dag,
-)
-
-check_should_run_evicted_keys = ShortCircuitOperator(
-    task_id="check_should_run_evicted_keys",
-    python_callable=should_run_task,
-    op_args=["skip_evicted_keys"],
     provide_context=True,
     dag=dag,
 )
@@ -131,17 +115,6 @@ liquidity_pools_snapshot_task = dbt_task(
     },
 )
 
-evicted_keys_snapshot_task = dbt_task(
-    dag,
-    tag="custom_snapshot_evicted_keys",
-    excluded="stellar_dbt_public",
-    env_vars={
-        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
-        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
-        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
-    },
-)
-
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_trustline
@@ -153,4 +126,3 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
     >> check_should_run_liquidity_pools
     >> liquidity_pools_snapshot_task
 )
-wait_on_dbt_stellar_marts >> check_should_run_evicted_keys >> evicted_keys_snapshot_task
