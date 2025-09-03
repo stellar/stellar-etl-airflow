@@ -359,6 +359,7 @@
     "ttl": "ttl"
   },
   "task_sla": {
+    "account_activity": 1800,
     "asset_balance_agg": 720,
     "asset_stats": 720,
     "build_batch_stats": 840,
@@ -380,6 +381,7 @@
     "elementary_dbt_data_quality": 1620,
     "elementary_generate_report": 1200,
     "enriched_history_operations": 780,
+    "entity_attribution": 1800,
     "export_retool_data": 720,
     "fee_stats": 840,
     "history_assets": 720,
