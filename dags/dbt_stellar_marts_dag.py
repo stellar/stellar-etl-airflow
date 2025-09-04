@@ -88,7 +88,7 @@ account_activity_task = dbt_task(
 )
 
 tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
-evicted_keys_task = dbt_task(dag, tag="evicted_keys", operator="+")
+evicted_keys_task = dbt_task(dag, tag="evicted_keys")
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
