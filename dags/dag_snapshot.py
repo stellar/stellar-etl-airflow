@@ -61,10 +61,6 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=90
 )
 
-wait_on_dbt_stellar_marts = build_cross_deps(
-    dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts", time_delta=0
-)
-
 
 check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
@@ -153,4 +149,4 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
     >> check_should_run_liquidity_pools
     >> liquidity_pools_snapshot_task
 )
-wait_on_dbt_stellar_marts >> check_should_run_evicted_keys >> evicted_keys_snapshot_task
+wait_on_dbt_enriched_base_tables >> check_should_run_evicted_keys >> evicted_keys_snapshot_task
