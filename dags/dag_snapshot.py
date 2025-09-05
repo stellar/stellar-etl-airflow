@@ -149,4 +149,8 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
     >> check_should_run_liquidity_pools
     >> liquidity_pools_snapshot_task
 )
-wait_on_dbt_enriched_base_tables >> check_should_run_evicted_keys >> evicted_keys_snapshot_task
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_evicted_keys
+    >> evicted_keys_snapshot_task
+)
