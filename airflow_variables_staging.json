@@ -5,12 +5,30 @@
   "bq_dataset_audit_log": "audit_log",
   "bq_project": "staging-hubble",
   "cluster_fields": {
-    "account_signers": ["account_id", "signer", "last_modified_ledger"],
-    "accounts": ["account_id", "last_modified_ledger"],
-    "claimable_balances": ["asset_id", "last_modified_ledger"],
-    "config_settings": ["last_modified_ledger"],
-    "contract_code": ["last_modified_ledger", "contract_code_hash"],
-    "contract_data": ["last_modified_ledger", "contract_id"],
+    "account_signers": [
+      "account_id",
+      "signer",
+      "last_modified_ledger"
+    ],
+    "accounts": [
+      "account_id",
+      "last_modified_ledger"
+    ],
+    "claimable_balances": [
+      "asset_id",
+      "last_modified_ledger"
+    ],
+    "config_settings": [
+      "last_modified_ledger"
+    ],
+    "contract_code": [
+      "last_modified_ledger",
+      "contract_code_hash"
+    ],
+    "contract_data": [
+      "last_modified_ledger",
+      "contract_id"
+    ],
     "enriched_history_operations": [
       "ledger_sequence",
       "transaction_id",
@@ -23,33 +41,77 @@
       "account",
       "type"
     ],
-    "history_assets": ["asset_code", "asset_issuer", "asset_type"],
-    "history_contract_events": ["contract_id"],
-    "history_effects": ["address", "operation_id", "type"],
-    "history_ledgers": ["sequence", "closed_at"],
-    "history_operations": ["transaction_id", "source_account", "type"],
-    "history_trades": ["selling_asset_id", "buying_asset_id", "trade_type"],
-    "history_transactions": ["account", "ledger_sequence", "successful"],
+    "history_assets": [
+      "asset_code",
+      "asset_issuer",
+      "asset_type"
+    ],
+    "history_contract_events": [
+      "contract_id"
+    ],
+    "history_effects": [
+      "address",
+      "operation_id",
+      "type"
+    ],
+    "history_ledgers": [
+      "sequence",
+      "closed_at"
+    ],
+    "history_operations": [
+      "transaction_id",
+      "source_account",
+      "type"
+    ],
+    "history_trades": [
+      "selling_asset_id",
+      "buying_asset_id",
+      "trade_type"
+    ],
+    "history_transactions": [
+      "account",
+      "ledger_sequence",
+      "successful"
+    ],
     "liquidity_pools": [
       "liquidity_pool_id",
       "asset_a_id",
       "asset_b_id",
       "last_modified_ledger"
     ],
-    "offers": ["selling_asset_id", "buying_asset_id", "last_modified_ledger"],
-    "restored_key": ["last_modified_ledger", "ledger_key_hash"],
-    "token_transfers_raw": ["contract_id", "asset"],
+    "offers": [
+      "selling_asset_id",
+      "buying_asset_id",
+      "last_modified_ledger"
+    ],
+    "restored_key": [
+      "last_modified_ledger",
+      "ledger_key_hash"
+    ],
+    "token_transfers_raw": [
+      "contract_id",
+      "asset"
+    ],
     "trust_lines": [
       "account_id",
       "asset_id",
       "liquidity_pool_id",
       "last_modified_ledger"
     ],
-    "ttl": ["last_modified_ledger", "key_hash"]
+    "ttl": [
+      "last_modified_ledger",
+      "key_hash"
+    ]
   },
   "currency_bucket": "staging-ext-asset-pricing",
   "currency_ohlc": {
-    "columns_ohlc_currency": ["time", "open", "high", "low", "close"],
+    "columns_ohlc_currency": [
+      "time",
+      "open",
+      "high",
+      "low",
+      "close"
+    ],
     "currency": "euro_ohlc",
     "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
     "table_name": "euro_usd_ohlc"
