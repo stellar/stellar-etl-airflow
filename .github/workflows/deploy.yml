@@ -120,7 +120,7 @@ jobs:
           credentials_json: "${{ secrets.CREDS_PROD_HUBBLE }}"
 
       - name: Upload files to prod GCS bucket
-        run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
+        run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env staging
         env:
           GOOGLE_CLOUD_PROJECT: staging-hubble
           BUCKET: us-central1-staging-stellar-6a6fca20-bucket
