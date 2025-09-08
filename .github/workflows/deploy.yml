@@ -96,8 +96,8 @@ jobs:
             $COMPOSER_ENVIRONMENT --location $LOCATION variables import
             -- gcsfuse/actual_mount_path/variables.json
 
-  deploy-to-stagin:
-    if: ${{ github.event.inputs.envName == 'stagin' && github.ref == 'refs/heads/master' }}
+  deploy-to-staging:
+    if: ${{ github.event.inputs.envName == 'staging' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs: [tests]
 
