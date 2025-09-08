@@ -371,6 +371,7 @@
     "cleanup_metadata": 60,
     "create_sandbox": 1020,
     "current_state": 1200,
+    "evicted_keys": 1200,
     "custom_snapshot_accounts": 3600,
     "custom_snapshot_evicted_keys": 3600,
     "custom_snapshot_liquidity_pools": 3600,
