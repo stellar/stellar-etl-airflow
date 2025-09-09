@@ -100,7 +100,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--env",
         default="dev",
-        choices=["prod", "dev"],
+        choices=["prod", "staging", "dev"],
         help="Name of the Composer environment. Default value is 'dev'",
     )
 
