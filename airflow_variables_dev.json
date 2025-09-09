@@ -383,7 +383,7 @@
     "elementary_generate_report": 1200,
     "enriched_history_operations": 780,
     "entity_attribution": 1800,
-    "evicted_keys": 720,
+    "evicted_keys": 1200,
     "export_retool_data": 720,
     "fee_stats": 840,
     "history_assets": 720,
