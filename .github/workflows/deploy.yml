@@ -117,7 +117,7 @@ jobs:
       - name: Authenticate to hubble GCP
         uses: google-github-actions/auth@v2.1.12
         with:
-          credentials_json: "${{ secrets.CREDS_PROD_HUBBLE }}"
+          credentials_json: "${{ secrets.CREDS_STAGING_HUBBLE }}"
 
       - name: Upload files to prod GCS bucket
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env staging
