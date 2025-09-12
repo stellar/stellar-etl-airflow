@@ -132,7 +132,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:291ea5a02",
+  "dbt_image_name": "stellar/stellar-dbt-dev:cfca3ec98",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
