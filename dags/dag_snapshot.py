@@ -97,7 +97,6 @@ check_should_run_evicted_keys = ShortCircuitOperator(
 trustline_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_trustline",
-    excluded="stellar_dbt_public",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -118,7 +117,6 @@ accounts_snapshot_task = dbt_task(
 liquidity_pools_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_liquidity_pools",
-    excluded="stellar_dbt_public",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -129,7 +127,6 @@ liquidity_pools_snapshot_task = dbt_task(
 evicted_keys_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_evicted_keys",
-    excluded="stellar_dbt_public",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
