@@ -14,3 +14,4 @@ pendulum==3.0.0
 python-dateutil==2.9.0.post0
 requests==2.31.0
 SQLAlchemy==1.4.52
+Flask-Limiter==3.12
