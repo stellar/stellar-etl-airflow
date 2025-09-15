@@ -116,8 +116,8 @@
     "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
     "table_name": "euro_usd_ohlc"
   },
-  "dbt_dataset": "randomval2",
-  "dbt_dataset_for_test": "placeholder_value",
+  "dbt_dataset": "staging",
+  "dbt_dataset_for_test": "staging",
   "dbt_elementary_dataset": "staging_elementary",
   "dbt_elementary_secret": "slack-token-elementary",
   "dbt_elementary_target": "elementary",
@@ -134,7 +134,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:291ea5a02",
+  "dbt_image_name": "stellar/stellar-dbt:a94ff5568",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
