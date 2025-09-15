@@ -2,6 +2,7 @@ alembic==1.13.1
 apache-airflow==2.9.1
 apache-airflow-providers-cncf-kubernetes==10.4.1
 docker==7.0.0
+Flask-AppBuilder==4.8.1
 Flask-Limiter==3.12
 google-auth-oauthlib==1.2.0
 google-cloud-bigquery==3.22.0
