@@ -228,28 +228,6 @@ for table_id, export_task in export_tasks.items():
         dag, task_vars, build_del_ins_from_gcs_to_bq_task
     )
 
-"""
-Delete and Insert operations for the Enriched History Operations table
-"""
-
-delete_enrich_op_pub_task = build_delete_data_task(
-    dag,
-    public_project,
-    public_dataset,
-    "enriched_history_operations",
-    "pub",
-)
-
-insert_enrich_op_pub_task = build_bq_insert_job(
-    dag,
-    public_project,
-    public_dataset,
-    "enriched_history_operations",
-    partition=True,
-    cluster=True,
-    dataset_type="pub",
-)
-
 dedup_assets_pub_task = build_bq_insert_job(
     dag,
     public_project,
@@ -263,31 +241,11 @@ dedup_assets_pub_task = build_bq_insert_job(
 
 # Set Task dependencies
 
-(
-    time_task
-    >> op_export_task
-    >> del_ins_tasks["operations"]
-    >> delete_enrich_op_pub_task
-    >> insert_enrich_op_pub_task
-)
-
+(time_task >> op_export_task >> del_ins_tasks["operations"])
 (time_task >> trade_export_task >> del_ins_tasks["trades"])
 (time_task >> effects_export_task >> del_ins_tasks["effects"])
-
-(
-    time_task
-    >> tx_export_task
-    >> del_ins_tasks["transactions"]
-    >> delete_enrich_op_pub_task
-)
-
-(
-    time_task
-    >> ledger_export_task
-    >> del_ins_tasks["ledgers"]
-    >> delete_enrich_op_pub_task
-)
-
+(time_task >> tx_export_task >> del_ins_tasks["transactions"])
+(time_task >> ledger_export_task >> del_ins_tasks["ledgers"])
 (time_task >> asset_export_task >> del_ins_tasks["assets"] >> dedup_assets_pub_task)
 (time_task >> contract_events_export_task >> del_ins_tasks["contract_events"])
 (time_task >> token_transfer_export_task >> del_ins_tasks["token_transfers_raw"])

@@ -29,18 +29,6 @@
       "last_modified_ledger",
       "contract_id"
     ],
-    "enriched_history_operations": [
-      "ledger_sequence",
-      "transaction_id",
-      "account",
-      "type"
-    ],
-    "enriched_meaningful_history_operations": [
-      "ledger_sequence",
-      "transaction_id",
-      "account",
-      "type"
-    ],
     "history_assets": [
       "asset_code",
       "asset_issuer",
@@ -230,14 +218,6 @@
       "field": "closed_at",
       "type": "MONTH"
     },
-    "enriched_history_operations": {
-      "field": "closed_at",
-      "type": "MONTH"
-    },
-    "enriched_meaningful_history_operations": {
-      "field": "closed_at",
-      "type": "MONTH"
-    },
     "history_assets": {
       "field": "batch_run_date",
       "type": "MONTH"
@@ -342,7 +322,6 @@
     "contract_data": "contract_data",
     "contract_events": "history_contract_events",
     "effects": "history_effects",
-    "enriched_history_operations": "enriched_history_operations",
     "ledgers": "history_ledgers",
     "liquidity_pools": "liquidity_pools",
     "offers": "offers",
