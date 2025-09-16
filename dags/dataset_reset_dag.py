@@ -146,22 +146,6 @@ delete_internal_trustlines = build_delete_data_task(
     "internal",
 )
 
-delete_internal_enriched = build_delete_data_task(
-    dag,
-    internal_project,
-    internal_dataset,
-    "enriched_history_operations",
-    "internal",
-)
-
-delete_internal_enriched_meaningful = build_delete_data_task(
-    dag,
-    internal_project,
-    internal_dataset,
-    "enriched_meaningful_history_operations",
-    "internal",
-)
-
 delete_public_accounts = build_delete_data_task(
     dag,
     public_project,
@@ -258,15 +242,6 @@ delete_public_trustlines = build_delete_data_task(
     "public",
 )
 
-delete_public_enriched = build_delete_data_task(
-    dag,
-    public_project,
-    public_dataset,
-    "enriched_history_operations",
-    "public",
-)
-
-
 check_run_date >> [start_reset, end_of_execution]
 
 start_reset >> [
@@ -282,8 +257,6 @@ start_reset >> [
     delete_internal_trades,
     delete_internal_transactions,
     delete_internal_trustlines,
-    delete_internal_enriched,
-    delete_internal_enriched_meaningful,
     delete_public_accounts,
     delete_public_assets,
     delete_public_claimable_balances,
@@ -296,5 +269,4 @@ start_reset >> [
     delete_public_trades,
     delete_public_transactions,
     delete_public_trustlines,
-    delete_public_enriched,
 ]
