@@ -20,6 +20,7 @@ as (
         , contract_event_xdr
         , closed_at
         , ledger_sequence
+        , operation_id
     from {project_id}.{dataset_id}.history_contract_events
     where
         true
