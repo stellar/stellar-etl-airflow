@@ -37,7 +37,7 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
 
 # Wait on Snapshot DAGs
 wait_on_dbt_snapshot_tables = build_cross_deps(
-    dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot"
+    dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot", time_delta=60
 )
 
 # DBT models to run
