@@ -27,12 +27,16 @@ jobs:
           set -x
           cd $GITHUB_WORKSPACE
           OLD_SCHEMAS_DIR=original_schemas
+          OLD_CHANGELOG_FILEPATH=original_changelog.md
           git clone --branch master https://github.com/stellar/stellar-etl-airflow.git repo_master_copy
           mkdir OLD_SCHEMAS_DIR
           cp -r repo_master_copy/schemas/ $OLD_SCHEMAS_DIR/
+          cp repo_master_copy/changelog/source_data.md $OLD_CHANGELOG_FILEPATH
           export OLD_SCHEMAS_DIR
+          export OLD_CHANGELOG_FILEPATH
           python3 scripts/update_source_data_schema_changelog.py
           rm -rf $OLD_SCHEMAS_DIR
+          rm $OLD_CHANGELOG_FILEPATH
           rm -rf repo_master_copy
 
       # - name: Commit and Push Changes
