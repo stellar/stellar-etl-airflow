@@ -333,7 +333,8 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "ttl": "ttl"
+    "ttl": "ttl",
+    "wisdom_tree_asset_prices_data": "wisdom_tree_asset_prices_data"
   },
   "task_sla": {
     "account_activity": 1800,
@@ -357,12 +358,14 @@
     "custom_snapshot_trustline": 3600,
     "default": 60,
     "del_ins_retool_entity_data_task": 720,
+    "del_ins_wisdom_tree_asset_prices_entity_data_task": 720,
     "elementary_dbt_data_quality": 2100,
     "elementary_generate_report": 1200,
     "enriched_history_operations": 1800,
     "entity_attribution": 1800,
     "evicted_keys": 1200,
     "export_retool_data": 720,
+    "export_wisdom_tree_asset_prices_data": 720,
     "fee_stats": 360,
     "history_assets": 360,
     "liquidity_pool_trade_volume": 1200,
