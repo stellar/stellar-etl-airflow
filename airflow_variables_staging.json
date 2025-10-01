@@ -341,7 +341,7 @@
   "sentry_dsn": "https://ca1f33b9d1392e675ff50e66c0736ba2@o14203.ingest.us.sentry.io/4509985659551744",
   "sentry_environment": "staging",
   "slack_elementary_channel": "alerts-hubble-data-quality-staging",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:0142623ec",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:a7dae20fe",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",

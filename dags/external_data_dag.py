@@ -36,7 +36,7 @@ WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID = "export_wisdom_tree_asset_prices_data"
 dag = DAG(
     "external_data_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2025, 1, 1, 0, 0),
+    start_date=datetime(2024, 12, 16, 0, 0),
     description="This DAG exports data from external sources such as retool.",
     schedule_interval="0 22 * * *",
     params={
