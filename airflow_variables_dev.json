@@ -357,6 +357,7 @@
     "custom_snapshot_evicted_keys": 3600,
     "custom_snapshot_liquidity_pools": 3600,
     "custom_snapshot_trustline": 3600,
+    "dbt_seed_all": 600,
     "default": 60,
     "del_ins_retool_entity_data_task": 720,
     "elementary_dbt_data_quality": 1620,
