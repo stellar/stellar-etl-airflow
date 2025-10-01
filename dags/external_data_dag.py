@@ -23,8 +23,14 @@ init_sentry()
 EXTERNAL_DATA_TABLE_NAMES = Variable.get("table_ids", deserialize_json=True)
 EXTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
 EXTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
+
 RETOOL_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
 RETOOL_EXPORT_TASK_ID = "export_retool_data"
+
+WISDOM_TREE_ASSET_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES[
+    "wisdom_tree_asset_prices_data"
+]
+WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID = "export_wisdom_tree_asset_prices_data"
 
 # Initialize the DAG
 dag = DAG(
@@ -46,6 +52,7 @@ dag = DAG(
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
         "literal_eval": lambda e: literal_eval(e),
     },
+    catchup=True,
 )
 
 
@@ -79,3 +86,35 @@ retool_insert_to_bq_task = create_export_del_insert_operator(
 )
 
 retool_export_task >> retool_insert_to_bq_task
+
+
+wisdom_tree_asset_prices_export_task = build_export_task(
+    dag,
+    WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID,
+    command="export-wisdom-tree-asset-prices",
+    cmd_args=[
+        "--start-time",
+        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "--end-time",
+        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+    ],
+    use_gcs=True,
+    env_vars={
+        "RWA_API_KEY": access_secret("rwa-api-key", "default"),
+    },
+)
+
+
+wisdom_tree_asset_prices_insert_to_bq_task = create_export_del_insert_operator(
+    dag,
+    table_name=WISDOM_TREE_ASSET_PRICES_TABLE_NAME,
+    project=EXTERNAL_DATA_PROJECT_NAME,
+    dataset=EXTERNAL_DATA_DATASET_NAME,
+    export_task_id=WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID,
+    source_object_suffix="",
+    partition=False,
+    cluster=False,
+    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{WISDOM_TREE_ASSET_PRICES_TABLE_NAME}",
+)
+
+wisdom_tree_asset_prices_export_task >> wisdom_tree_asset_prices_insert_to_bq_task
