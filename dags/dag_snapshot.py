@@ -213,7 +213,7 @@ contract_data_snapshot_task = dbt_task(
 asset_prices_usd_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_asset_prices_usd",
-    operator = "+",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -224,7 +224,7 @@ asset_prices_usd_snapshot_task = dbt_task(
 asset_prices_xlm_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_asset_prices_xlm",
-    operator = "+",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -235,7 +235,7 @@ asset_prices_xlm_snapshot_task = dbt_task(
 euro_usd_ohlc_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_euro_usd_ohlc",
-    operator = "+",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -246,7 +246,7 @@ euro_usd_ohlc_snapshot_task = dbt_task(
 partner_asset_prices_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_partnership_asset_prices",
-    operator = "+",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -257,7 +257,7 @@ partner_asset_prices_snapshot_task = dbt_task(
 xlm_to_usd_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_xlm_to_usd",
-    operator = "+",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
