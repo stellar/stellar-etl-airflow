@@ -28,11 +28,9 @@ dag = DAG(
     }
 )
 
-# DBT seed task - use a dummy tag since dbt_task requires either model_name or tag
-# The seed command will ignore the tag selection and seed all seed files
 seed_task = dbt_task(
     dag, 
-    tag="all",  # This will be ignored for seed command, but required by dbt_task function
+    tag="seed",
     command_type="seed",
-    resource_cfg="default"
+    resource_cfg="dbt"
 )
