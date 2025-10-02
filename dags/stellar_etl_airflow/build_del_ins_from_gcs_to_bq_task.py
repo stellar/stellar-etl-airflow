@@ -67,11 +67,14 @@ def build_del_ins_from_gcs_to_bq_task(
     **context,
 ):
     dag = context["dag"]
+    staging_table_suffix = ""
+    if table_name == "history_assets":
+        staging_table_suffix = "_staging"
 
     # Delete operation
 
     DELETE_ROWS_QUERY = (
-        f"DELETE FROM {dataset}.{table_name} "
+        f"DELETE FROM {dataset}.{table_name}{staging_table_suffix} "
         f"WHERE batch_run_date = '{batch_date}'"
         f"AND batch_id = '{batch_id}';"
     )
@@ -130,10 +133,6 @@ def build_del_ins_from_gcs_to_bq_task(
         )
         time_partition["type"] = partition_fields["type"]
         time_partition["field"] = partition_fields["field"]
-
-    staging_table_suffix = ""
-    if table_name == "history_assets":
-        staging_table_suffix = "_staging"
 
     schema_fields = read_local_schema(f"{table_name}")
 

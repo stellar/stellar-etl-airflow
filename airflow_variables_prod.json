@@ -121,7 +121,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:df2d0f837",
+  "dbt_image_name": "stellar/stellar-dbt:779dae3ca",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -312,7 +312,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://94027cdcc4c9470f9dafa2c0b456c2c9@o14203.ingest.us.sentry.io/5806618",
   "sentry_environment": "production",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:0142623ec",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:a7dae20fe",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",
@@ -333,7 +333,8 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "ttl": "ttl"
+    "ttl": "ttl",
+    "wisdom_tree_asset_prices_data": "wisdom_tree_asset_prices_data"
   },
   "task_sla": {
     "account_activity": 1800,
@@ -357,12 +358,14 @@
     "custom_snapshot_trustline": 3600,
     "default": 60,
     "del_ins_retool_entity_data_task": 720,
+    "del_ins_wisdom_tree_asset_prices_entity_data_task": 720,
     "elementary_dbt_data_quality": 2100,
     "elementary_generate_report": 1200,
     "enriched_history_operations": 1800,
     "entity_attribution": 1800,
     "evicted_keys": 1200,
     "export_retool_data": 720,
+    "export_wisdom_tree_asset_prices_data": 720,
     "fee_stats": 360,
     "history_assets": 360,
     "liquidity_pool_trade_volume": 1200,
