@@ -37,6 +37,6 @@
   {
     "description": "",
     "name": "day",
-    "type": "STRING"
+    "type": "DATETIME"
   }
 ]
