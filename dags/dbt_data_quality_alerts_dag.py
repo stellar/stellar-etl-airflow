@@ -29,6 +29,8 @@ with DAG(
         "monitor",
         resource_cfg="dbt",
         cmd_args=[
+            "--filters",
+            "statuses:fail,error",
             "--profiles-dir",
             ".",
         ],

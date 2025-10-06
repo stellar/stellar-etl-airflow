@@ -38,7 +38,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 12, 16, 0, 0),
     description="This DAG exports data from external sources such as retool.",
-    schedule_interval="0 22 * * *",
+    schedule_interval="30 0 * * *",
     params={
         "alias": "external",
     },
@@ -94,7 +94,7 @@ wisdom_tree_asset_prices_export_task = build_export_task(
     command="export-wisdom-tree-asset-prices",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}",
         "--end-time",
         "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
