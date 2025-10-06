@@ -118,7 +118,7 @@ def dbt_task(
     # Handle seed command - doesn't use model selection
     if command_type == "seed":
         args = [command_type]
-        task_name = "seed"
+        task_name = command_type  # Use command_type as task_name to avoid duplication
     else:
         args = [command_type, f"--{flag}"]
         models = []
@@ -175,9 +175,15 @@ def dbt_task(
         }
     )
 
+    # Construct task ID - avoid duplication for seed operations
+    if command_type == "seed":
+        task_id = f"dbt_{command_type}"
+    else:
+        task_id = f"dbt_{command_type}_{task_name}"
+    
     return KubernetesPodOperator(
-        task_id=f"dbt_{command_type}_{task_name}",
-        name=f"dbt_{command_type}_{task_name}",
+        task_id=task_id,
+        name=task_id,
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
         env_vars=env_vars,
