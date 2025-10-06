@@ -22,7 +22,7 @@ with DAG(
     tags=["dbt-seed", "manual-trigger"],
     params={
         "full_refresh": Param(
-            default=False, 
+            default=False,
             type="boolean",
             description="Run seed with --full-refresh flag"
         )

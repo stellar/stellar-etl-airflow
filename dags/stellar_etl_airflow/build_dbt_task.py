@@ -179,7 +179,7 @@ def dbt_task(
         task_id = f"dbt_{command_type}"
     else:
         task_id = f"dbt_{command_type}_{task_name}"
-    
+
     return KubernetesPodOperator(
         task_id=task_id,
         name=task_id,
