@@ -175,7 +175,6 @@ def dbt_task(
         }
     )
 
-    # Construct task ID - avoid duplication for seed operations
     if command_type == "seed":
         task_id = f"dbt_{command_type}"
     else:
