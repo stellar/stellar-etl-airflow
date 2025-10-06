@@ -115,20 +115,24 @@ def dbt_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    args = [command_type, f"--{flag}"]
-
-    models = []
-    if tag:
-        task_name = tag
-        models.append(f"{operator}tag:{tag}")
-    if model_name:
-        task_name = model_name
-        models.append(f"{operator}{model_name}")
-    if len(models) > 1:
-        task_name = "multiple_models"
-        args.append(",".join(models))
+    # Handle seed command - doesn't use model selection
+    if command_type == "seed":
+        args = [command_type]
+        task_name = "seed"
     else:
-        args.append(models[0])
+        args = [command_type, f"--{flag}"]
+        models = []
+        if tag:
+            task_name = tag
+            models.append(f"{operator}tag:{tag}")
+        if model_name:
+            task_name = model_name
+            models.append(f"{operator}{model_name}")
+        if len(models) > 1:
+            task_name = "multiple_models"
+            args.append(",".join(models))
+        else:
+            args.append(models[0])
     # --exclude selector added for necessary use cases
     # Argument should be string or list of strings
     if excluded:
