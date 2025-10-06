@@ -24,9 +24,9 @@ with DAG(
         "full_refresh": Param(
             default=False,
             type="boolean",
-            description="Run seed with --full-refresh flag"
+            description="Run seed with --full-refresh flag",
         )
-    }
+    },
 ) as dag:
 
     seed_task = dbt_task(
