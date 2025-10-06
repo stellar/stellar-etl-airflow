@@ -25,11 +25,32 @@ def dbt_seed_task(dag):
     args = [" ".join([create_dbt_profile(), "dbt"] + command_parts)]
     task_sla_seconds = Variable.get("task_sla", deserialize_json=True).get("seed", 600)
 
+    # Environment variables that dbt models expect
+    env_vars = {
+        "DBT_USE_COLORS": "0",
+        "DBT_DATASET": "{{ var.value.dbt_dataset_for_test }}",
+        "DBT_TARGET": "{{ var.value.dbt_target }}",
+        "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
+        "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
+        "DBT_THREADS": "{{ var.value.dbt_threads }}",
+        "DBT_JOB_RETRIES": "{{ var.value.dbt_job_retries }}",
+        "DBT_PROJECT": "{{ var.value.dbt_project }}",
+        "INTERNAL_SOURCE_DB": "{{ var.value.dbt_internal_source_db }}",
+        "INTERNAL_SOURCE_SCHEMA": "{{ var.value.dbt_internal_source_schema }}",
+        "PUBLIC_SOURCE_DB": "{{ var.value.dbt_public_source_db }}",
+        "PUBLIC_SOURCE_SCHEMA": "{{ var.value.dbt_public_source_schema }}",
+        "EXECUTION_DATE": "{{ ts }}",
+        "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
+        "IS_SINGULAR_AIRFLOW_TASK": "false",
+        "IS_RECENCY_AIRFLOW_TASK": "false",
+    }
+
     return KubernetesPodOperator(
         task_id="dbt_seed",
         name="dbt_seed",
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
+        env_vars=env_vars,
         image="{{ var.value.dbt_image_name }}",
         cmds=["sh", "-c"],
         arguments=args,
