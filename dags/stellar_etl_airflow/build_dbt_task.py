@@ -115,20 +115,24 @@ def dbt_task(
 
     dbt_image = "{{ var.value.dbt_image_name }}"
 
-    args = [command_type, f"--{flag}"]
-
-    models = []
-    if tag:
-        task_name = tag
-        models.append(f"{operator}tag:{tag}")
-    if model_name:
-        task_name = model_name
-        models.append(f"{operator}{model_name}")
-    if len(models) > 1:
-        task_name = "multiple_models"
-        args.append(",".join(models))
+    # Handle seed command - doesn't use model selection
+    if command_type == "seed":
+        args = [command_type]
+        task_name = command_type  # Use command_type as task_name to avoid duplication
     else:
-        args.append(models[0])
+        args = [command_type, f"--{flag}"]
+        models = []
+        if tag:
+            task_name = tag
+            models.append(f"{operator}tag:{tag}")
+        if model_name:
+            task_name = model_name
+            models.append(f"{operator}{model_name}")
+        if len(models) > 1:
+            task_name = "multiple_models"
+            args.append(",".join(models))
+        else:
+            args.append(models[0])
     # --exclude selector added for necessary use cases
     # Argument should be string or list of strings
     if excluded:
@@ -171,9 +175,14 @@ def dbt_task(
         }
     )
 
+    if command_type == "seed":
+        task_id = f"dbt_{command_type}"
+    else:
+        task_id = f"dbt_{command_type}_{task_name}"
+
     return KubernetesPodOperator(
-        task_id=f"dbt_{command_type}_{task_name}",
-        name=f"dbt_{command_type}_{task_name}",
+        task_id=task_id,
+        name=task_id,
         namespace=Variable.get("k8s_namespace"),
         service_account_name=Variable.get("k8s_service_account"),
         env_vars=env_vars,
