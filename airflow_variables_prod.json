@@ -84,10 +84,6 @@
       "buying_asset_id",
       "last_modified_ledger"
     ],
-    "restored_key": [
-      "last_modified_ledger",
-      "ledger_key_hash"
-    ],
     "token_transfers_raw": [
       "contract_id",
       "asset"
