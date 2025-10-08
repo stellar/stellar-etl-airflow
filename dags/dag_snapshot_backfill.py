@@ -267,7 +267,10 @@ check_should_run_liquidity_pools >> liquidity_pools_snapshot_task
 check_should_run_evicted_keys >> evicted_keys_snapshot_task
 check_should_run_contract_data >> contract_data_snapshot_task
 check_should_run_asset_prices_usd >> asset_prices_usd_snapshot_task
-check_should_run_wisdom_tree_asset_prices_data >> wisdom_tree_asset_prices_data_snapshot_task
+(
+    check_should_run_wisdom_tree_asset_prices_data
+    >> wisdom_tree_asset_prices_data_snapshot_task
+)
 check_should_run_euro_usd_ohlc >> euro_usd_ohlc_snapshot_task
 check_should_run_partnership_asset_prices >> partnership_asset_prices_snapshot_task
 check_should_run_xlm_to_usd >> xlm_to_usd_snapshot_task
