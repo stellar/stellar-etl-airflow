@@ -118,20 +118,5 @@
     "mode": "NULLABLE",
     "name": "total_byte_size_of_bucket_list",
     "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "total_byte_size_of_live_soroban_state",
-    "type": "INTEGER"
-  },
-  {
-    "mode": "REPEATED",
-    "name": "evicted_ledger_keys_type",
-    "type": "STRING"
-  },
-  {
-    "mode": "REPEATED",
-    "name": "evicted_ledger_keys_hash",
-    "type": "STRING"
   }
 ]

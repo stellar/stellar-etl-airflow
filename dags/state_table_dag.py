@@ -80,7 +80,6 @@ required_keys = [
     "contract_code",
     "config_settings",
     "ttl",
-    "restored_key",
 ]
 
 missing_keys = [key for key in required_keys if key not in table_names]
@@ -121,7 +120,6 @@ write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
 write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
 write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
 write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
-write_restored_keys_stats = build_batch_stats(dag, table_names["restored_key"])
 
 """
 The delete part of the task checks to see if the given partition/batch id exists in
@@ -145,7 +143,6 @@ source_object_suffix_mapping = {
     "contract_code": "/*-contract_code.txt",
     "config_settings": "/*-config_settings.txt",
     "ttl": "/*-ttl.txt",
-    "restored_key": "/*-restored_key.txt",
 }
 
 for table_id, source_object_suffix in source_object_suffix_mapping.items():
@@ -190,9 +187,3 @@ for table_id, source_object_suffix in source_object_suffix_mapping.items():
     >> del_ins_tasks["config_settings"]
 )
 (date_task >> changes_task >> write_ttl_stats >> del_ins_tasks["ttl"])
-(
-    date_task
-    >> changes_task
-    >> write_restored_keys_stats
-    >> del_ins_tasks["restored_key"]
-)

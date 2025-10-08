@@ -83,10 +83,5 @@
     "mode": "NULLABLE",
     "name": "ledger_sequence",
     "type": "INTEGER"
-  },
-  {
-    "mode": "NULLABLE",
-    "name": "operation_id",
-    "type": "INTEGER"
   }
 ]
