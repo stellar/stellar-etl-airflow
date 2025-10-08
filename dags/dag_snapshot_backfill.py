@@ -59,7 +59,7 @@ dag = DAG(
         "skip_asset_prices_usd": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_asset_prices_xlm": Param(
+        "skip_wisdom_tree_asset_prices_data": Param(
             default="false", type="string"
         ),  # only used for manual runs
         "skip_euro_usd_ohlc": Param(
@@ -123,10 +123,10 @@ check_should_run_asset_prices_usd = ShortCircuitOperator(
     dag=dag,
 )
 
-check_should_run_asset_prices_xlm = ShortCircuitOperator(
-    task_id="check_should_run_asset_prices_xlm",
+check_should_run_wisdom_tree_asset_prices_data = ShortCircuitOperator(
+    task_id="check_should_run_wisdom_tree_asset_prices_data",
     python_callable=should_run_task,
-    op_args=["skip_asset_prices_xlm"],
+    op_args=["skip_wisdom_tree_asset_prices_data"],
     provide_context=True,
     dag=dag,
 )
@@ -217,9 +217,9 @@ asset_prices_usd_snapshot_task = dbt_task(
     },
 )
 
-asset_prices_xlm_snapshot_task = dbt_task(
+wisdom_tree_asset_prices_data_snapshot_task = dbt_task(
     dag,
-    tag="custom_snapshot_asset_prices_xlm",
+    tag="custom_snapshot_wisdom_tree_asset_prices_data",
     operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
@@ -267,7 +267,7 @@ check_should_run_liquidity_pools >> liquidity_pools_snapshot_task
 check_should_run_evicted_keys >> evicted_keys_snapshot_task
 check_should_run_contract_data >> contract_data_snapshot_task
 check_should_run_asset_prices_usd >> asset_prices_usd_snapshot_task
-check_should_run_asset_prices_xlm >> asset_prices_xlm_snapshot_task
+check_should_run_wisdom_tree_asset_prices_data >> wisdom_tree_asset_prices_data_snapshot_task
 check_should_run_euro_usd_ohlc >> euro_usd_ohlc_snapshot_task
 check_should_run_partnership_asset_prices >> partnership_asset_prices_snapshot_task
 check_should_run_xlm_to_usd >> xlm_to_usd_snapshot_task
