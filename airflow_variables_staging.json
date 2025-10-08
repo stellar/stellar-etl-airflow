@@ -341,7 +341,7 @@
   "sentry_dsn": "https://ca1f33b9d1392e675ff50e66c0736ba2@o14203.ingest.us.sentry.io/4509985659551744",
   "sentry_environment": "staging",
   "slack_elementary_channel": "alerts-hubble-data-quality-staging",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:0142623ec",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:a7dae20fe",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",
@@ -362,7 +362,8 @@
     "trades": "history_trades",
     "transactions": "history_transactions",
     "trustlines": "trust_lines",
-    "ttl": "ttl"
+    "ttl": "ttl",
+    "wisdom_tree_asset_prices_data": "wisdom_tree_asset_prices_data"
   },
   "task_sla": {
     "account_activity": 1800,
@@ -386,12 +387,14 @@
     "custom_snapshot_trustline": 3600,
     "default": 60,
     "del_ins_retool_entity_data_task": 720,
+    "del_ins_wisdom_tree_asset_prices_entity_data_task": 720,
     "elementary_dbt_data_quality": 2100,
     "elementary_generate_report": 1200,
     "enriched_history_operations": 1800,
     "entity_attribution": 1800,
     "evicted_keys": 720,
     "export_retool_data": 720,
+    "export_wisdom_tree_asset_prices_data": 720,
     "fee_stats": 360,
     "history_assets": 360,
     "liquidity_pool_trade_volume": 1200,
@@ -404,6 +407,7 @@
     "partnership_assets": 1380,
     "recency": 840,
     "relevant_asset_trades": 1800,
+    "seed": 600,
     "singular_test": 840,
     "snapshot_state": 840,
     "soroban": 420,
