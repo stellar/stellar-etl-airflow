@@ -144,7 +144,7 @@
   "dbt_maximum_bytes_billed": 100000000000000,
   "dbt_project": "staging-hubble",
   "dbt_public_source_db": "staging-hubble",
-  "dbt_public_source_schema": "staging_crypto_stellar",
+  "dbt_public_source_schema": "staging_crypto_stellar_temp",
   "dbt_slack_elementary_channel": "alerts-hubble-data-quality-staging",
   "dbt_tables": {
     "accounts_current": "accounts_current",
@@ -169,7 +169,7 @@
   "elementary_secret": "slack-token-elementary",
   "gcs_exported_data_bucket_name": "us-central1-staging-stellar-6a6fca20-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:2c9ee7cd9",
+  "image_name": "stellar/stellar-etl:c957897c6",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "internal_source_db": "staging-hubble",
@@ -325,10 +325,10 @@
       "table": "raw_mgi_stellar_transactions"
     }
   },
-  "public_dataset": "staging_crypto_stellar",
+  "public_dataset": "staging_crypto_stellar_temp",
   "public_project": "staging-hubble",
   "public_source_db": "staging-hubble",
-  "public_source_schema": "staging_crypto_stellar",
+  "public_source_schema": "staging_crypto_stellar_temp",
   "resources": {
     "dbt": {
       "requests": {
