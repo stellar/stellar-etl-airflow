@@ -51,6 +51,21 @@ dag = DAG(
         "skip_contract_data": Param(
             default="false", type="string"
         ),  # only used for manual runs
+        "skip_asset_prices_usd": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
+        "skip_wisdom_tree_asset_prices_data": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
+        "skip_euro_usd_ohlc": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
+        "skip_partnership_asset_prices": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
+        "skip_xlm_to_usd": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
@@ -105,6 +120,46 @@ check_should_run_evicted_keys = ShortCircuitOperator(
     dag=dag,
 )
 
+check_should_run_asset_prices_usd = ShortCircuitOperator(
+    task_id="check_should_run_asset_prices_usd",
+    python_callable=should_run_task,
+    op_args=["skip_asset_prices_usd"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_wisdom_tree_asset_prices_data = ShortCircuitOperator(
+    task_id="check_should_run_wisdom_tree_asset_prices_data",
+    python_callable=should_run_task,
+    op_args=["skip_wisdom_tree_asset_prices_data"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_euro_usd_ohlc = ShortCircuitOperator(
+    task_id="check_should_run_euro_usd_ohlc",
+    python_callable=should_run_task,
+    op_args=["skip_euro_usd_ohlc"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_partnership_asset_prices = ShortCircuitOperator(
+    task_id="check_should_run_partnership_asset_prices",
+    python_callable=should_run_task,
+    op_args=["skip_partnership_asset_prices"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_xlm_to_usd = ShortCircuitOperator(
+    task_id="check_should_run_xlm_to_usd",
+    python_callable=should_run_task,
+    op_args=["skip_xlm_to_usd"],
+    provide_context=True,
+    dag=dag,
+)
+
 trustline_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_trustline",
@@ -155,6 +210,61 @@ contract_data_snapshot_task = dbt_task(
     },
 )
 
+asset_prices_usd_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_asset_prices_usd",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
+wisdom_tree_asset_prices_data_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_wisdom_tree_asset_prices_data",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
+euro_usd_ohlc_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_euro_usd_ohlc",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
+partner_asset_prices_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_partnership_asset_prices",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
+xlm_to_usd_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_xlm_to_usd",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_trustline
@@ -175,4 +285,29 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
     wait_on_dbt_enriched_base_tables
     >> check_should_run_contract_data
     >> contract_data_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_asset_prices_usd
+    >> asset_prices_usd_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_wisdom_tree_asset_prices_data
+    >> wisdom_tree_asset_prices_data_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_euro_usd_ohlc
+    >> euro_usd_ohlc_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_partnership_asset_prices
+    >> partner_asset_prices_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_xlm_to_usd
+    >> xlm_to_usd_snapshot_task
 )
