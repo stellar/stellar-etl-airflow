@@ -157,7 +157,7 @@
   "elementary_secret": "slack-token-elementary",
   "gcs_exported_data_bucket_name": "us-central1-staging-stellar-6a6fca20-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:2c9ee7cd9",
+  "image_name": "stellar/stellar-etl-dev:27e244cf4",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "internal_source_db": "staging-hubble",
@@ -429,7 +429,7 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 360
   },
-  "txmeta_datastore_path": "sdf-ledger-close-meta/v1/ledgers",
+  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
   "use_captive_core": "False",
   "use_futurenet": "False",
   "use_testnet": "False",
