@@ -120,9 +120,7 @@ asset_balance_agg_task = dbt_task(
     dag, tag="asset_balance_agg", operator="+", excluded="+snapshots"
 )
 
-asset_prices_task = dbt_task(
-    dag, tag="asset_prices"
-)
+asset_prices_task = dbt_task(dag, tag="asset_prices")
 
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
