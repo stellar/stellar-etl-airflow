@@ -19,7 +19,7 @@ dag = DAG(
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
     start_date=datetime(2025, 10, 16, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 15 * * *",  # Runs at 15:00 UTC
+    schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
@@ -65,7 +65,6 @@ wait_on_external_data_dag_wisdom_tree_data = build_cross_deps(
     "wait_on_external_data_dag_wisdom_tree_data",
     "external_data_dag",
     "del_ins_wisdom_tree_asset_prices_data_task",
-    time_delta=120,
 )
 
 
