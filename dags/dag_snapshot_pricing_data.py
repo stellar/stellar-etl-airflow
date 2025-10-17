@@ -15,11 +15,11 @@ from stellar_etl_airflow.default import (
 init_sentry()
 
 dag = DAG(
-    "dbt_snapshot",
+    "dbt_snapshot_pricing_data",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2025, 9, 7, 0, 0),
+    start_date=datetime(2025, 10, 16, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 1 * * *",  # Runs at 01:00 UTC
+    schedule_interval="0 15 * * *",  # Runs at 15:00 UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
@@ -36,19 +36,19 @@ dag = DAG(
         "snapshot_full_refresh": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_trustline": Param(
+        "skip_asset_prices_usd": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_accounts": Param(
+        "skip_wisdom_tree_asset_prices_data": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_liquidity_pools": Param(
+        "skip_euro_usd_ohlc": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_evicted_keys": Param(
+        "skip_partnership_asset_prices": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_contract_data": Param(
+        "skip_xlm_to_usd": Param(
             default="false", type="string"
         ),  # only used for manual runs
     },
@@ -60,54 +60,57 @@ def should_run_task(snapshot_name, **kwargs):
     return kwargs["params"].get(snapshot_name, "false") != "true"
 
 
-wait_on_dbt_enriched_base_tables = build_cross_deps(
-    dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=90
+
+wait_on_external_data_dag_wisdom_tree_data = build_cross_deps(
+    dag, "wait_on_external_data_dag_wisdom_tree_data", "external_data_dag", "del_ins_wisdom_tree_asset_prices_data_task", time_delta=-720, timeout=43200
+    # External data dag runs after snapshot
 )
 
 
-check_should_run_trustline = ShortCircuitOperator(
-    task_id="check_should_run_trustline",
+check_should_run_asset_prices_usd = ShortCircuitOperator(
+    task_id="check_should_run_asset_prices_usd",
     python_callable=should_run_task,
-    op_args=["skip_trustline"],
+    op_args=["skip_asset_prices_usd"],
     provide_context=True,
     dag=dag,
 )
 
-check_should_run_accounts = ShortCircuitOperator(
-    task_id="check_should_run_accounts",
+check_should_run_wisdom_tree_asset_prices_data = ShortCircuitOperator(
+    task_id="check_should_run_wisdom_tree_asset_prices_data",
     python_callable=should_run_task,
-    op_args=["skip_accounts"],
+    op_args=["skip_wisdom_tree_asset_prices_data"],
     provide_context=True,
     dag=dag,
 )
 
-check_should_run_contract_data = ShortCircuitOperator(
-    task_id="check_should_run_contract_data",
+check_should_run_euro_usd_ohlc = ShortCircuitOperator(
+    task_id="check_should_run_euro_usd_ohlc",
     python_callable=should_run_task,
-    op_args=["skip_contract_data"],
+    op_args=["skip_euro_usd_ohlc"],
     provide_context=True,
     dag=dag,
 )
 
-check_should_run_liquidity_pools = ShortCircuitOperator(
-    task_id="check_should_run_liquidity_pools",
+check_should_run_partnership_asset_prices = ShortCircuitOperator(
+    task_id="check_should_run_partnership_asset_prices",
     python_callable=should_run_task,
-    op_args=["skip_liquidity_pools"],
+    op_args=["skip_partnership_asset_prices"],
     provide_context=True,
     dag=dag,
 )
 
-check_should_run_evicted_keys = ShortCircuitOperator(
-    task_id="check_should_run_evicted_keys",
+check_should_run_xlm_to_usd = ShortCircuitOperator(
+    task_id="check_should_run_xlm_to_usd",
     python_callable=should_run_task,
-    op_args=["skip_evicted_keys"],
+    op_args=["skip_xlm_to_usd"],
     provide_context=True,
     dag=dag,
 )
 
-trustline_snapshot_task = dbt_task(
+asset_prices_usd_snapshot_task = dbt_task(
     dag,
-    tag="custom_snapshot_trustline",
+    tag="custom_snapshot_asset_prices_usd",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -115,9 +118,10 @@ trustline_snapshot_task = dbt_task(
     },
 )
 
-accounts_snapshot_task = dbt_task(
+wisdom_tree_asset_prices_data_snapshot_task = dbt_task(
     dag,
-    tag="custom_snapshot_accounts",
+    tag="custom_snapshot_wisdom_tree_asset_prices_data",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -125,9 +129,10 @@ accounts_snapshot_task = dbt_task(
     },
 )
 
-liquidity_pools_snapshot_task = dbt_task(
+euro_usd_ohlc_snapshot_task = dbt_task(
     dag,
-    tag="custom_snapshot_liquidity_pools",
+    tag="custom_snapshot_euro_usd_ohlc",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -135,9 +140,10 @@ liquidity_pools_snapshot_task = dbt_task(
     },
 )
 
-evicted_keys_snapshot_task = dbt_task(
+partner_asset_prices_snapshot_task = dbt_task(
     dag,
-    tag="custom_snapshot_evicted_keys",
+    tag="custom_snapshot_partnership_asset_prices",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -145,9 +151,10 @@ evicted_keys_snapshot_task = dbt_task(
     },
 )
 
-contract_data_snapshot_task = dbt_task(
+xlm_to_usd_snapshot_task = dbt_task(
     dag,
-    tag="custom_snapshot_contract_data",
+    tag="custom_snapshot_xlm_to_usd",
+    operator="+",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -156,23 +163,27 @@ contract_data_snapshot_task = dbt_task(
 )
 
 (
-    wait_on_dbt_enriched_base_tables
-    >> check_should_run_trustline
-    >> trustline_snapshot_task
-)
-wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapshot_task
-(
-    wait_on_dbt_enriched_base_tables
-    >> check_should_run_liquidity_pools
-    >> liquidity_pools_snapshot_task
+    wait_on_external_data_dag_wisdom_tree_data
+    >> check_should_run_asset_prices_usd
+    >> asset_prices_usd_snapshot_task
 )
 (
     wait_on_dbt_enriched_base_tables
-    >> check_should_run_evicted_keys
-    >> evicted_keys_snapshot_task
+    >> check_should_run_wisdom_tree_asset_prices_data
+    >> wisdom_tree_asset_prices_data_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
-    >> check_should_run_contract_data
-    >> contract_data_snapshot_task
+    wait_on_external_data_dag_wisdom_tree_data
+    >> check_should_run_euro_usd_ohlc
+    >> euro_usd_ohlc_snapshot_task
+)
+(
+    wait_on_external_data_dag_wisdom_tree_data
+    >> check_should_run_partnership_asset_prices
+    >> partner_asset_prices_snapshot_task
+)
+(
+    wait_on_external_data_dag_wisdom_tree_data
+    >> check_should_run_xlm_to_usd
+    >> xlm_to_usd_snapshot_task
 )
