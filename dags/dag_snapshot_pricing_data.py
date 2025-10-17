@@ -170,7 +170,7 @@ xlm_to_usd_snapshot_task = dbt_task(
     >> asset_prices_usd_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_wisdom_tree_asset_prices_data
     >> wisdom_tree_asset_prices_data_snapshot_task
 )
