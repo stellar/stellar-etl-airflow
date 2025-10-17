@@ -40,6 +40,14 @@ wait_on_dbt_snapshot_tables = build_cross_deps(
     dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot", time_delta=60
 )
 
+# Wait on Snapshot DAGs
+wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
+    dag,
+    "wait_on_dbt_snapshot_pricing_tables",
+    "dbt_snapshot_pricing_data",
+    time_delta=-780,
+)
+
 # DBT models to run
 ohlc_task = dbt_task(dag, tag="ohlc", operator="+", excluded="stellar_dbt_public")
 liquidity_pool_trade_volume_task = dbt_task(
@@ -147,7 +155,7 @@ wait_on_dbt_enriched_base_tables >> entity_attribution_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 wait_on_dbt_snapshot_tables >> account_activity_task
-wait_on_dbt_snapshot_tables >> asset_prices_task
+wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
