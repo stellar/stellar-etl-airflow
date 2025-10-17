@@ -122,7 +122,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:fb3395639",
+  "dbt_image_name": "stellar/stellar-dbt:6567a8108",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
@@ -368,6 +368,7 @@
   "task_sla": {
     "account_activity": 1800,
     "asset_balance_agg": 720,
+    "asset_prices": 720,
     "asset_stats": 420,
     "build_batch_stats": 600,
     "build_bq_generate_avro_job": 600,
