@@ -60,10 +60,12 @@ def should_run_task(snapshot_name, **kwargs):
     return kwargs["params"].get(snapshot_name, "false") != "true"
 
 
-
 wait_on_external_data_dag_wisdom_tree_data = build_cross_deps(
-    dag, "wait_on_external_data_dag_wisdom_tree_data", "external_data_dag", "del_ins_wisdom_tree_asset_prices_data_task", time_delta=-720, timeout=43200
-    # External data dag runs after snapshot
+    dag,
+    "wait_on_external_data_dag_wisdom_tree_data",
+    "external_data_dag",
+    "del_ins_wisdom_tree_asset_prices_data_task",
+    time_delta=120,
 )
 
 
