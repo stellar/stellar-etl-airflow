@@ -158,8 +158,13 @@ wait_on_dbt_enriched_base_tables >> token_transfer_task
 wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
-wait_on_dbt_snapshot_tables >> asset_prices_task >> account_activity_task
 wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
+
+asset_prices_task >> account_activity_task
+token_transfer_task >> account_activity_task
+partnership_assets_task >> account_activity_task
+wallet_metrics_task >> account_activity_task
+
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
