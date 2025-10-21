@@ -56,7 +56,10 @@ trade_agg_task = dbt_task(dag, tag="trade_agg", operator="+")
 fee_stats_agg_task = dbt_task(dag, tag="fee_stats")
 
 asset_stats_agg_task = dbt_task(
-    dag, tag="asset_stats", operator="+", excluded=["stellar_dbt_public", "+tag:enriched_history_operations"]
+    dag,
+    tag="asset_stats",
+    operator="+",
+    excluded=["stellar_dbt_public", "+tag:enriched_history_operations"],
 )
 
 network_stats_agg_task = dbt_task(
@@ -74,7 +77,10 @@ partnership_assets_task = dbt_task(
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
 
 wallet_metrics_task = dbt_task(
-        dag, tag="wallet_metrics", operator="+", excluded=["stellar_dbt_public", "+tag:entity_attribution"]
+    dag,
+    tag="wallet_metrics",
+    operator="+",
+    excluded=["stellar_dbt_public", "+tag:entity_attribution"],
 )
 
 token_transfer_task = dbt_task(
@@ -86,7 +92,17 @@ entity_attribution_task = dbt_task(
 )
 
 account_activity_task = dbt_task(
-        dag, tag="account_activity", operator="+", excluded=["stellar_dbt_public", "+tag:partnership_assets", "+tag:token_transfer", "+tag:entity_attribution", "+tag:wallet_metrics", "+tag:asset_prices"]
+    dag,
+    tag="account_activity",
+    operator="+",
+    excluded=[
+        "stellar_dbt_public",
+        "+tag:partnership_assets",
+        "+tag:token_transfer",
+        "+tag:entity_attribution",
+        "+tag:wallet_metrics",
+        "+tag:asset_prices",
+    ],
 )
 
 tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
@@ -123,7 +139,6 @@ asset_balance_agg_task = dbt_task(
 )
 
 asset_prices_task = dbt_task(dag, tag="asset_prices")
-
 
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
