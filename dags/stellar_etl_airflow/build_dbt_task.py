@@ -138,7 +138,7 @@ def dbt_task(
     if excluded:
         args.append("--exclude")
         if isinstance(excluded, list):
-            args.append(" ".join(excluded))
+            args.extend(excluded)
         else:
             args.append(excluded)
 

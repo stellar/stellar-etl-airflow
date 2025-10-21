@@ -20,7 +20,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2025, 9, 7, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 2 * * *",  # Runs at 01:00 UTC
+    schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
@@ -35,37 +35,37 @@ wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
 )
 
-# Wait on Snapshot DAGs
+# Wait on Snapshot DAGs which runs at 1:00 UTC (12 hours earlier)
 wait_on_dbt_snapshot_tables = build_cross_deps(
-    dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot", time_delta=60
+    dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot", time_delta=720
+)
+
+# Wait on Snapshot DAGs
+wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
+    dag,
+    "wait_on_dbt_snapshot_pricing_tables",
+    "dbt_snapshot_pricing_data",
 )
 
 # DBT models to run
 ohlc_task = dbt_task(dag, tag="ohlc", operator="+", excluded="stellar_dbt_public")
-liquidity_pool_trade_volume_task = dbt_task(
-    dag, tag="liquidity_pool_trade_volume", operator="+", excluded="stellar_dbt_public"
+
+# This also creates the stg_history_trades view
+trade_agg_task = dbt_task(dag, tag="trade_agg", operator="+")
+
+fee_stats_agg_task = dbt_task(dag, tag="fee_stats")
+
+asset_stats_agg_task = dbt_task(
+    dag,
+    tag="asset_stats",
+    operator="+",
+    excluded=["stellar_dbt_public", "+tag:enriched_history_operations"],
 )
 
-liquidity_providers_task = dbt_task(
-    dag, tag="liquidity_providers", excluded="stellar_dbt_public"
-)
-liquidity_pools_values_task = dbt_task(
-    dag, tag="liquidity_pools_value", operator="+", excluded="stellar_dbt_public"
-)
-liquidity_pools_value_history_task = dbt_task(
-    dag,
-    tag="liquidity_pools_value_history",
-    operator="+",
-    excluded="stellar_dbt_public",
-)
-trade_agg_task = dbt_task(dag, tag="trade_agg", operator="+")
-fee_stats_agg_task = dbt_task(dag, tag="fee_stats")
-asset_stats_agg_task = dbt_task(
-    dag, tag="asset_stats", operator="+", excluded="stellar_dbt_public"
-)
 network_stats_agg_task = dbt_task(
     dag, tag="network_stats", excluded="stellar_dbt_public"
 )
+
 partnership_assets_task = dbt_task(
     dag,
     tag="partnership_assets",
@@ -73,18 +73,36 @@ partnership_assets_task = dbt_task(
     excluded="stellar_dbt_public",
     date_macro="ds",
 )
+
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
+
 wallet_metrics_task = dbt_task(
-    dag, tag="wallet_metrics", operator="+", excluded="stellar_dbt_public"
+    dag,
+    tag="wallet_metrics",
+    operator="+",
+    excluded=["stellar_dbt_public", "+tag:entity_attribution"],
 )
+
 token_transfer_task = dbt_task(
     dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
 )
+
 entity_attribution_task = dbt_task(
     dag, tag="entity_attribution", operator="+", excluded="stellar_dbt_public"
 )
+
 account_activity_task = dbt_task(
-    dag, tag="account_activity", operator="+", excluded="stellar_dbt_public"
+    dag,
+    tag="account_activity",
+    operator="+",
+    excluded=[
+        "stellar_dbt_public",
+        "+tag:partnership_assets",
+        "+tag:token_transfer",
+        "+tag:entity_attribution",
+        "+tag:wallet_metrics",
+        "+tag:asset_prices",
+    ],
 )
 
 tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
@@ -120,6 +138,8 @@ asset_balance_agg_task = dbt_task(
     dag, tag="asset_balance_agg", operator="+", excluded="+snapshots"
 )
 
+asset_prices_task = dbt_task(dag, tag="asset_prices")
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -128,23 +148,23 @@ asset_balance_agg_task = dbt_task(
 # relevant_asset_trades = dbt_task(dag, tag="relevant_asset_trades")
 
 # DAG task graph
-wait_on_dbt_enriched_base_tables >> ohlc_task >> liquidity_pool_trade_volume_task
-
-wait_on_dbt_enriched_base_tables >> liquidity_providers_task
-wait_on_dbt_enriched_base_tables >> liquidity_pools_values_task
-wait_on_dbt_enriched_base_tables >> liquidity_pools_value_history_task
 wait_on_dbt_enriched_base_tables >> trade_agg_task
 wait_on_dbt_enriched_base_tables >> fee_stats_agg_task
 wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
-wait_on_dbt_enriched_base_tables >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> token_transfer_task
-wait_on_dbt_enriched_base_tables >> entity_attribution_task
+wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
-wait_on_dbt_snapshot_tables >> account_activity_task
+wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
+
+asset_prices_task >> account_activity_task
+token_transfer_task >> account_activity_task
+partnership_assets_task >> account_activity_task
+wallet_metrics_task >> account_activity_task
+
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
