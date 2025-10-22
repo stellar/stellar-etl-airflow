@@ -164,7 +164,7 @@ def dbt_task(
         args.extend(
             [
                 "--vars",
-                json.dumps(dbt_vars).replace('"', '\\"')
+                json.dumps(dbt_vars).replace('"', '\"')
             ]
         )
 
