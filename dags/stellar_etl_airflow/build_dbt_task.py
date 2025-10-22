@@ -154,6 +154,19 @@ def dbt_task(
 
     logging.info(f"sh commands to run in pod: {args}")
 
+    dbt_vars = {}
+
+    # Add recency or singular test vars
+    if run_recency_test == "true":
+        dbt_vars["is_recency_airflow_task"] = "true"
+    if dbt_vars:
+        args.extend(
+            [
+                "--vars",
+                json.dumps(dbt_vars).replace('"', '\\"')
+            ]
+        )
+
     env_vars.update(
         {
             "DBT_USE_COLORS": "0",
