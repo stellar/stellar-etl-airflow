@@ -341,6 +341,7 @@
     "asset_balance_agg": 720,
     "asset_prices": 720,
     "asset_stats": 420,
+    "assets": 720,
     "build_batch_stats": 600,
     "build_bq_generate_avro_job": 600,
     "build_bq_insert_job": 840,
