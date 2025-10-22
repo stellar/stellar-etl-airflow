@@ -140,6 +140,8 @@ asset_balance_agg_task = dbt_task(
 
 asset_prices_task = dbt_task(dag, tag="asset_prices")
 
+assets_task = dbt_task(dag, tag="assets")
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -164,6 +166,9 @@ asset_prices_task >> account_activity_task
 token_transfer_task >> account_activity_task
 partnership_assets_task >> account_activity_task
 wallet_metrics_task >> account_activity_task
+
+token_transfer_task >> assets_task
+entity_attribution >> assets_task
 
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
