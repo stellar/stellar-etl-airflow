@@ -122,7 +122,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:new",
+  "dbt_image_name": "stellar/stellar-dbt:fe79e6b27",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
