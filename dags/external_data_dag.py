@@ -94,7 +94,7 @@ wisdom_tree_asset_prices_export_task = build_export_task(
     command="export-wisdom-tree-asset-prices",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}",
+        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
         "--end-time",
         "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
