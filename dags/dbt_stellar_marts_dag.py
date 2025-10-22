@@ -88,8 +88,10 @@ token_transfer_task = dbt_task(
 )
 
 entity_attribution_task = dbt_task(
-    dag, tag="entity_attribution", operator="+", excluded=["stellar_dbt_public", "entity_ops_agg"]
-)
+    dag,
+    tag="entity_attribution",
+    operator="+",
+    excluded=["stellar_dbt_public", "entity_ops_agg"],)
 
 account_activity_task = dbt_task(
     dag,
