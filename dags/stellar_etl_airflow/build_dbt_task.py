@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 from datetime import timedelta
 
 from airflow.configuration import conf
@@ -161,12 +161,7 @@ def dbt_task(
     if run_recency_test == "true":
         dbt_vars["is_recency_airflow_task"] = "true"
     if dbt_vars:
-        args.extend(
-            [
-                "--vars",
-                json.dumps(dbt_vars).replace('"', '\"')
-            ]
-        )
+        args.extend(["--vars", json.dumps(dbt_vars)])
 
     env_vars.update(
         {
