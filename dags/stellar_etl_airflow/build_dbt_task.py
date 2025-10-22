@@ -171,7 +171,6 @@ def dbt_task(
             "EXECUTION_DATE": execution_date,
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
-            "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
         }
     )
 
