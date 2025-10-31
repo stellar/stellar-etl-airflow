@@ -37,7 +37,11 @@ entity_attribution_task = dbt_task(
     dag,
     tag="entity_attribution",
     operator="+",
-    excluded=["stellar_dbt_public"],
+    excluded=["stellar_dbt_public", "+tag:token_transfer", "+tag:custom_snapshot_asset_prices_usd"
+              "+tag:custom_snapshot_euro_usd_ohlc",
+              "+tag:custom_snapshot_partnership_asset_prices",
+              "+tag:custom_snapshot_xlm_to_usd",
+              "+tag:custom_snapshot_wisdom_tree_asset_prices_data"],
     batch_start_date=batch_start_date,
     batch_end_date=batch_end_date,
 )
