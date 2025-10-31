@@ -41,7 +41,8 @@ entity_attribution_task = dbt_task(
               "+tag:custom_snapshot_euro_usd_ohlc",
               "+tag:custom_snapshot_partnership_asset_prices",
               "+tag:custom_snapshot_xlm_to_usd",
-              "+tag:custom_snapshot_wisdom_tree_asset_prices_data"],
+              "+tag:custom_snapshot_wisdom_tree_asset_prices_data",
+              "+tag:asset_prices"],
     batch_start_date=batch_start_date,
     batch_end_date=batch_end_date,
 )
