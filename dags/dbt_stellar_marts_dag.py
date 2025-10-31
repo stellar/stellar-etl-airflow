@@ -24,14 +24,14 @@ dag = DAG(
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
-    max_active_runs=3,
+    max_active_runs=1,
     catchup=True,
     tags=["dbt-stellar-marts"],
     # sla_miss_callback=alert_sla_miss,
 )
 
-batch_start_date = "{{ dag_run.conf['batch_start_date'] if dag_run else 'data_interval_start' }}"
-batch_end_date = "{{ dag_run.conf['batch_end_date'] if dag_run else 'data_interval_end' }}"
+batch_start_date = "{{ dag_run.conf.get('batch_start_date', data_interval_start) }}"
+batch_end_date = "{{ dag_run.conf.get('batch_end_date', data_interval_end) }}"
 
 # Wait on ingestion DAGs
 wait_on_dbt_enriched_base_tables = build_cross_deps(
