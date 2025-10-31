@@ -30,6 +30,9 @@ dag = DAG(
     # sla_miss_callback=alert_sla_miss,
 )
 
+batch_start_date = "{{ dag_run.conf['batch_start_date'] if dag_run else 'data_interval_start' }}"
+batch_end_date = "{{ dag_run.conf['batch_end_date'] if dag_run else 'data_interval_end' }}"
+
 # Wait on ingestion DAGs
 wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
@@ -92,21 +95,25 @@ entity_attribution_task = dbt_task(
     tag="entity_attribution",
     operator="+",
     excluded=["stellar_dbt_public", "entity_ops_agg"],
+    batch_start_date=batch_start_date,
+    batch_end_date=batch_end_date,
 )
 
-account_activity_task = dbt_task(
-    dag,
-    tag="account_activity",
-    operator="+",
-    excluded=[
-        "stellar_dbt_public",
-        "+tag:partnership_assets",
-        "+tag:token_transfer",
-        "+tag:entity_attribution",
-        "+tag:wallet_metrics",
-        "+tag:asset_prices",
-    ],
-)
+# account_activity is built as part of the entity_attribution while we refactor
+# model dependencies and execution
+# account_activity_task = dbt_task(
+#     dag,
+#     tag="account_activity",
+#     operator="+",
+#     excluded=[
+#         "stellar_dbt_public",
+#         "+tag:partnership_assets",
+#         "+tag:token_transfer",
+#         "+tag:entity_attribution",
+#         "+tag:wallet_metrics",
+#         "+tag:asset_prices",
+#     ],
+# )
 
 tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 
@@ -165,10 +172,12 @@ wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
-asset_prices_task >> account_activity_task
-token_transfer_task >> account_activity_task
-partnership_assets_task >> account_activity_task
-wallet_metrics_task >> account_activity_task
+# account_activity is built as part of the entity_attribution while we refactor
+# model dependencies and execution
+# asset_prices_task >> account_activity_task
+# token_transfer_task >> account_activity_task
+# partnership_assets_task >> account_activity_task
+# wallet_metrics_task >> account_activity_task
 
 token_transfer_task >> assets_task
 entity_attribution_task >> assets_task

@@ -220,6 +220,7 @@ def dbt_task(
         reattach_on_restart=False,
     )
 
+
 # build_dbt_task function is deprecated and should be removed.
 # All dbt builds should use dbt_task instead.
 def build_dbt_task(
