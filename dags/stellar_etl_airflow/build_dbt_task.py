@@ -77,6 +77,8 @@ def dbt_task(
     run_recency_test="false",
     env_vars={},
     date_macro="ts",
+    batch_start_date="data_interval_start",
+    batch_end_date="data_interval_end",
 ):
     """Create a task to run a collection of dbt models. Models are orchestrated by tag.
     If no tag is provided, the model_name will be used. If both are provided, the tag will
@@ -142,12 +144,20 @@ def dbt_task(
         else:
             args.append(excluded)
 
+    # TODO: we can deprecate and remove execution date whenever all dbt dags have migrated to using
+    # batch_start_date and batch_end_date
     try:
         execution_date = VALID_DATE_MACROS[date_macro]
     except KeyError:
         raise ValueError(
             f"Invalid date_macro: {date_macro}. Must be one of: {', '.join(VALID_DATE_MACROS.keys())}"
         )
+    
+    if batch_start_date == "data_interval_start":
+        batch_start_date = VALID_DATE_MACROS["data_interval_start"]
+    
+    if batch_end_date == "data_interval_end":
+        batch_end_date = VALID_DATE_MACROS["data_interval_end"]
 
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
@@ -172,6 +182,8 @@ def dbt_task(
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
             "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
+            "BATCH_START_DATE": batch_start_date,
+            "BATCH_END_DATE": batch_end_date,
         }
     )
 
@@ -204,7 +216,8 @@ def dbt_task(
         reattach_on_restart=False,
     )
 
-
+# build_dbt_task function is deprecated and should be removed.
+# All dbt builds should use dbt_task instead.
 def build_dbt_task(
     dag, model_name, command_type="run", resource_cfg="default", project="prod"
 ):
