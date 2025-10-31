@@ -96,6 +96,8 @@ def dbt_task(
         run_singular_test: if true, the task will run singular tests, defaults to "false"
         run_recency_test: if true, the task will run recency tests, defaults to "false"
         date_macro: which airflow execution date macro should be passed to the dbt task, defaults to "ts", sets the env var, execution_date
+        batch_start_date: start date to use for the dbt task which can be a simple date string ("2025-10-14") or timestamp string ("2025-10-314 10:00:00+00:00"), defaults to "data_interval_start" airflow variable
+        batch_end_date: end date to use for the dbt task which can be a simple date string ("2025-10-14") or timestamp string ("2025-10-314 10:00:00+00:00"), defaults to "data_interval_end" airflow variable
 
     returns:
         k8s pod task
@@ -152,10 +154,12 @@ def dbt_task(
         raise ValueError(
             f"Invalid date_macro: {date_macro}. Must be one of: {', '.join(VALID_DATE_MACROS.keys())}"
         )
-    
+
+    # Don't need to do try/except here. Users don't define the VALID_DATE_MACROS and improper date strings will
+    # fail within dbt itself
     if batch_start_date == "data_interval_start":
         batch_start_date = VALID_DATE_MACROS["data_interval_start"]
-    
+
     if batch_end_date == "data_interval_end":
         batch_end_date = VALID_DATE_MACROS["data_interval_end"]
 
