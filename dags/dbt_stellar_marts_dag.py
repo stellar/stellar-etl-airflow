@@ -91,7 +91,13 @@ entity_attribution_task = dbt_task(
     dag,
     tag="entity_attribution",
     operator="+",
-    excluded=["stellar_dbt_public", "+tag:token_transfer", "+tag:asset_prices"],
+    excluded=[
+        "stellar_dbt_public",
+        "+tag:token_transfer",
+        "+tag:asset_prices",
+        "+tag:partnership_assets",
+        "+tag:wallet_metrics",
+    ],
 )
 
 # TODO: account_activity currently runs as part of entity_attribution
