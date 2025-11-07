@@ -36,6 +36,21 @@
   },
   {
     "description": "",
+    "name": "open_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "high_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "low_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
     "name": "close_usd",
     "type": "FLOAT"
   },
