@@ -94,28 +94,6 @@ entity_attribution_task = dbt_task(
     dag,
     tag="entity_attribution",
     operator="+",
-<<<<<<< HEAD
-    excluded=["stellar_dbt_public", "entity_ops_agg"],
-    batch_start_date=batch_start_date,
-    batch_end_date=batch_end_date,
-)
-
-# account_activity is built as part of the entity_attribution while we refactor
-# model dependencies and execution
-# account_activity_task = dbt_task(
-#     dag,
-#     tag="account_activity",
-#     operator="+",
-#     excluded=[
-#         "stellar_dbt_public",
-#         "+tag:partnership_assets",
-#         "+tag:token_transfer",
-#         "+tag:entity_attribution",
-#         "+tag:wallet_metrics",
-#         "+tag:asset_prices",
-#     ],
-# )
-=======
     excluded=[
         "stellar_dbt_public",
         "+tag:token_transfer",
@@ -123,8 +101,9 @@ entity_attribution_task = dbt_task(
         "+tag:partnership_assets",
         "+tag:wallet_metrics",
     ],
+    batch_start_date=batch_start_date,
+    batch_end_date=batch_end_date,
 )
->>>>>>> master
 
 # TODO: account_activity currently runs as part of entity_attribution
 # account_activity_task = dbt_task(
@@ -198,11 +177,8 @@ wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
-<<<<<<< HEAD
 # account_activity is built as part of the entity_attribution while we refactor
 # model dependencies and execution
-=======
->>>>>>> master
 # asset_prices_task >> account_activity_task
 # token_transfer_task >> account_activity_task
 # partnership_assets_task >> account_activity_task
