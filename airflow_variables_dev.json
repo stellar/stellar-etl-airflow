@@ -120,7 +120,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt-dev:c080a6ebd",
+  "dbt_image_name": "stellar/stellar-dbt:f309be65d",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -154,7 +154,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl-test",
   "gcs_exported_data_bucket_name": "us-central1-test-hubble-43c3e190-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:2c9ee7cd9",
+  "image_name": "stellar/stellar-etl:cb2e7485f",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",

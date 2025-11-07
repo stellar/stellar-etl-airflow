@@ -121,7 +121,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:fe79e6b27",
+  "dbt_image_name": "stellar/stellar-dbt:f309be65d",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -155,7 +155,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-1d74a235-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:2c9ee7cd9",
+  "image_name": "stellar/stellar-etl:cb2e7485f",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "stellar-etl-composer",
@@ -312,7 +312,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://94027cdcc4c9470f9dafa2c0b456c2c9@o14203.ingest.us.sentry.io/5806618",
   "sentry_environment": "production",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:f90f18a5e",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:1a4e6071f",
   "table_ids": {
     "accounts": "accounts",
     "assets": "history_assets",

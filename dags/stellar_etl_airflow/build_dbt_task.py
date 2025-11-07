@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import timedelta
 
@@ -77,6 +78,8 @@ def dbt_task(
     run_recency_test="false",
     env_vars={},
     date_macro="ts",
+    batch_start_date="data_interval_start",
+    batch_end_date="data_interval_end",
 ):
     """Create a task to run a collection of dbt models. Models are orchestrated by tag.
     If no tag is provided, the model_name will be used. If both are provided, the tag will
@@ -94,6 +97,8 @@ def dbt_task(
         run_singular_test: if true, the task will run singular tests, defaults to "false"
         run_recency_test: if true, the task will run recency tests, defaults to "false"
         date_macro: which airflow execution date macro should be passed to the dbt task, defaults to "ts", sets the env var, execution_date
+        batch_start_date: start date to use for the dbt task which can be a simple date string ("2025-10-14") or timestamp string ("2025-10-314 10:00:00+00:00"), defaults to "data_interval_start" airflow variable
+        batch_end_date: end date to use for the dbt task which can be a simple date string ("2025-10-14") or timestamp string ("2025-10-314 10:00:00+00:00"), defaults to "data_interval_end" airflow variable
 
     returns:
         k8s pod task
@@ -142,6 +147,8 @@ def dbt_task(
         else:
             args.append(excluded)
 
+    # TODO: we can deprecate and remove execution date whenever all dbt dags have migrated to using
+    # batch_start_date and batch_end_date
     try:
         execution_date = VALID_DATE_MACROS[date_macro]
     except KeyError:
@@ -149,10 +156,26 @@ def dbt_task(
             f"Invalid date_macro: {date_macro}. Must be one of: {', '.join(VALID_DATE_MACROS.keys())}"
         )
 
+    # Don't need to do try/except here. Users don't define the VALID_DATE_MACROS and improper date strings will
+    # fail within dbt itself
+    if batch_start_date == "data_interval_start":
+        batch_start_date = VALID_DATE_MACROS["data_interval_start"]
+
+    if batch_end_date == "data_interval_end":
+        batch_end_date = VALID_DATE_MACROS["data_interval_end"]
+
     if Variable.get("dbt_full_refresh_models", deserialize_json=True).get(task_name):
         args.append("--full-refresh")
 
     logging.info(f"sh commands to run in pod: {args}")
+
+    dbt_vars = {}
+
+    # Add recency or singular test vars
+    if run_recency_test == "true":
+        dbt_vars["is_recency_airflow_task"] = "true"
+    if dbt_vars:
+        args.extend(["--vars", json.dumps(dbt_vars)])
 
     env_vars.update(
         {
@@ -171,7 +194,8 @@ def dbt_task(
             "EXECUTION_DATE": execution_date,
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
-            "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
+            "BATCH_START_DATE": batch_start_date,
+            "BATCH_END_DATE": batch_end_date,
         }
     )
 
@@ -205,6 +229,8 @@ def dbt_task(
     )
 
 
+# build_dbt_task function is deprecated and should be removed.
+# All dbt builds should use dbt_task instead.
 def build_dbt_task(
     dag, model_name, command_type="run", resource_cfg="default", project="prod"
 ):
