@@ -32,6 +32,10 @@ WISDOM_TREE_ASSET_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES[
 ]
 WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID = "export_wisdom_tree_asset_prices_data"
 
+COINGECKO_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["asset_prices__coingecko"]
+COINGECKO_PRICES_EXPORT_TASK_ID = "export_coingecko_prices_data"
+
+
 # Initialize the DAG
 dag = DAG(
     "external_data_dag",
@@ -118,3 +122,34 @@ wisdom_tree_asset_prices_insert_to_bq_task = create_export_del_insert_operator(
 )
 
 wisdom_tree_asset_prices_export_task >> wisdom_tree_asset_prices_insert_to_bq_task
+
+
+coingecko_prices_export_task = build_export_task(
+    dag,
+    COINGECKO_PRICES_EXPORT_TASK_ID,
+    command="export-coingecko-prices",
+    cmd_args=[
+        "--start-time",
+        "{{ data_interval_start.isoformat() }}",
+        "--end-time",
+        "{{ data_interval_end.isoformat() }}",
+        "--days",
+        "7",
+    ],
+    use_gcs=True,
+)
+
+
+coingecko_prices_insert_to_bq_task = create_export_del_insert_operator(
+    dag,
+    table_name=COINGECKO_PRICES_TABLE_NAME,
+    project=EXTERNAL_DATA_PROJECT_NAME,
+    dataset=EXTERNAL_DATA_DATASET_NAME,
+    export_task_id=COINGECKO_PRICES_EXPORT_TASK_ID,
+    source_object_suffix="",
+    partition=False,
+    cluster=False,
+    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{COINGECKO_PRICES_TABLE_NAME}",
+)
+
+coingecko_prices_export_task >> coingecko_prices_insert_to_bq_task

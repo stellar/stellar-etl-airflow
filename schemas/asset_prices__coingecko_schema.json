@@ -1,0 +1,62 @@
+[
+  {
+    "description": "",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "description": "",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "",
+    "name": "asset_code",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "asset_issuer",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "asset_type",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "asset_contract_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "open_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "high_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "low_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "close_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "updated_at",
+    "type": "DATETIME"
+  }
+]
