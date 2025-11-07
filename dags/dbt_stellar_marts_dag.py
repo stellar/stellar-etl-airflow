@@ -97,9 +97,6 @@ entity_attribution_task = dbt_task(
     excluded=[
         "stellar_dbt_public",
         "+tag:token_transfer",
-        "+tag:asset_prices",
-        "+tag:partnership_assets",
-        "+tag:wallet_metrics",
     ],
     batch_start_date=batch_start_date,
     batch_end_date=batch_end_date,
@@ -178,7 +175,10 @@ wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
 # account_activity is built as part of the entity_attribution while we refactor
-# model dependencies and execution
+# model dependencies and execution.
+# Because of this we need token_transfers to run before entity_attribution
+# so that account_activity will work as intended until we refactor
+token_transfer_task >> entity_attribution_task
 # asset_prices_task >> account_activity_task
 # token_transfer_task >> account_activity_task
 # partnership_assets_task >> account_activity_task
