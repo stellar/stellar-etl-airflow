@@ -31,6 +31,11 @@
   },
   {
     "description": "",
+    "name": "asset_contract_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
     "name": "close_usd",
     "type": "FLOAT"
   },
