@@ -91,22 +91,29 @@ entity_attribution_task = dbt_task(
     dag,
     tag="entity_attribution",
     operator="+",
-    excluded=["stellar_dbt_public", "entity_ops_agg"],
-)
-
-account_activity_task = dbt_task(
-    dag,
-    tag="account_activity",
-    operator="+",
     excluded=[
         "stellar_dbt_public",
-        "+tag:partnership_assets",
         "+tag:token_transfer",
-        "+tag:entity_attribution",
-        "+tag:wallet_metrics",
         "+tag:asset_prices",
+        "+tag:partnership_assets",
+        "+tag:wallet_metrics",
     ],
 )
+
+# TODO: account_activity currently runs as part of entity_attribution
+# account_activity_task = dbt_task(
+#     dag,
+#     tag="account_activity",
+#     operator="+",
+#     excluded=[
+#         "stellar_dbt_public",
+#         "+tag:partnership_assets",
+#         "+tag:token_transfer",
+#         "+tag:entity_attribution",
+#         "+tag:wallet_metrics",
+#         "+tag:asset_prices",
+#     ],
+# )
 
 tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
 
@@ -165,10 +172,10 @@ wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
-asset_prices_task >> account_activity_task
-token_transfer_task >> account_activity_task
-partnership_assets_task >> account_activity_task
-wallet_metrics_task >> account_activity_task
+# asset_prices_task >> account_activity_task
+# token_transfer_task >> account_activity_task
+# partnership_assets_task >> account_activity_task
+# wallet_metrics_task >> account_activity_task
 
 token_transfer_task >> assets_task
 entity_attribution_task >> assets_task
