@@ -130,9 +130,9 @@ coingecko_prices_export_task = build_export_task(
     command="export-coingecko-prices",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ data_interval_start }}",
         "--end-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ data_interval_end }}",
     ],
     use_gcs=True,
 )
