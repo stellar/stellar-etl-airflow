@@ -56,7 +56,7 @@
   },
   {
     "description": "",
-    "name": "day",
+    "name": "updated_at",
     "type": "DATETIME"
   }
 ]
