@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import timedelta
 
@@ -168,6 +169,14 @@ def dbt_task(
 
     logging.info(f"sh commands to run in pod: {args}")
 
+    dbt_vars = {}
+
+    # Add recency or singular test vars
+    if run_recency_test == "true":
+        dbt_vars["is_recency_airflow_task"] = "true"
+    if dbt_vars:
+        args.extend(["--vars", json.dumps(dbt_vars)])
+
     env_vars.update(
         {
             "DBT_USE_COLORS": "0",
@@ -185,7 +194,6 @@ def dbt_task(
             "EXECUTION_DATE": execution_date,
             "AIRFLOW_START_TIMESTAMP": "{{ ti.start_date.strftime('%Y-%m-%dT%H:%M:%SZ') }}",
             "IS_SINGULAR_AIRFLOW_TASK": run_singular_test,
-            "IS_RECENCY_AIRFLOW_TASK": run_recency_test,
             "BATCH_START_DATE": batch_start_date,
             "BATCH_END_DATE": batch_end_date,
         }
