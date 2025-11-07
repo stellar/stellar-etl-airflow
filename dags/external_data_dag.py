@@ -133,6 +133,8 @@ coingecko_prices_export_task = build_export_task(
         "{{ data_interval_start }}",
         "--end-time",
         "{{ data_interval_end }}",
+        "--days",
+        "7",
     ],
     use_gcs=True,
 )
