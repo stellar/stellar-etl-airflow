@@ -145,6 +145,7 @@ partner_asset_prices_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_partnership_asset_prices",
     operator="+",
+    excluded=["seeds"],
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
