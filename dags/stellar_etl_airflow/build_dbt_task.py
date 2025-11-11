@@ -140,12 +140,15 @@ def dbt_task(
             args.append(models[0])
     # --exclude selector added for necessary use cases
     # Argument should be string or list of strings
-    if excluded:
+    # We do not want to load seed file as part of model runs
+    if command_type != "seed":
         args.append("--exclude")
-        if isinstance(excluded, list):
-            args.extend(excluded)
-        else:
-            args.append(excluded)
+        args.append("seeds")
+        if excluded:
+            if isinstance(excluded, list):
+                args.extend(excluded)
+            else:
+                args.append(excluded)
 
     # TODO: we can deprecate and remove execution date whenever all dbt dags have migrated to using
     # batch_start_date and batch_end_date
