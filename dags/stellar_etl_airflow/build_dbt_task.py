@@ -143,7 +143,7 @@ def dbt_task(
     # We do not want to load seed file as part of model runs
     if command_type != "seed":
         args.append("--exclude")
-        args.append("seeds")
+        args.append("seeds/")
         if excluded:
             if isinstance(excluded, list):
                 args.extend(excluded)
