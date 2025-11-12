@@ -18,7 +18,7 @@ init_sentry()
 dag = DAG(
     "dbt_stellar_marts",
     default_args=get_default_dag_args(),
-    start_date=datetime(2025, 9, 7, 0, 0),
+    start_date=datetime(2025, 11, 10, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
     user_defined_filters={
@@ -147,7 +147,16 @@ export_tvl_to_gcs = BigQueryInsertJobOperator(
 )
 
 asset_balance_agg_task = dbt_task(
-    dag, tag="asset_balance_agg", operator="+", excluded="+snapshots"
+    dag,
+    tag="asset_balance_agg",
+    operator="+",
+    excluded=[
+        "stellar_dbt_public",
+        "+snapshots",
+        "+tag:token_transfer",
+        "+tag:entity_attribution",
+        "+tag:wallet_metrics",
+    ],
 )
 
 asset_prices_task = dbt_task(dag, tag="asset_prices")
