@@ -151,8 +151,8 @@ asset_balance_agg_task = dbt_task(
     tag="asset_balance_agg",
     operator="+",
     excluded=[
-        "stellar_dbt_public",
         "+snapshots",
+        "assets",
         "+tag:token_transfer",
         "+tag:entity_attribution",
         "+tag:wallet_metrics",
