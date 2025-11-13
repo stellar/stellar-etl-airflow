@@ -51,6 +51,9 @@ dag = DAG(
         "skip_contract_data": Param(
             default="false", type="string"
         ),  # only used for manual runs
+        "skip_reflector_prices_data": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
@@ -105,6 +108,14 @@ check_should_run_evicted_keys = ShortCircuitOperator(
     dag=dag,
 )
 
+check_should_run_reflector_prices_data = ShortCircuitOperator(
+    task_id="check_should_run_reflector_prices_data",
+    python_callable=should_run_task,
+    op_args=["skip_reflector_prices_data"],
+    provide_context=True,
+    dag=dag,
+)
+
 trustline_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_trustline",
@@ -155,6 +166,17 @@ contract_data_snapshot_task = dbt_task(
     },
 )
 
+reflector_prices_data_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_reflector_prices_data",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_trustline
@@ -175,4 +197,9 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
     wait_on_dbt_enriched_base_tables
     >> check_should_run_contract_data
     >> contract_data_snapshot_task
+)
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_reflector_prices_data
+    >> reflector_prices_data_snapshot_task
 )
