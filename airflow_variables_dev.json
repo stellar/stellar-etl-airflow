@@ -363,6 +363,7 @@
     "custom_snapshot_evicted_keys": 3600,
     "custom_snapshot_liquidity_pools": 3600,
     "custom_snapshot_partnership_asset_prices": 3600,
+    "custom_snapshot_reflector_prices_data": 3600,
     "custom_snapshot_trustline": 3600,
     "custom_snapshot_wisdom_tree_asset_prices_data": 3600,
     "custom_snapshot_xlm_to_usd": 3600,
