@@ -385,6 +385,7 @@
     "create_sandbox": 1020,
     "current_state": 1200,
     "custom_snapshot_accounts": 3600,
+    "custom_snapshot_asset_prices_coingecko": 3600,
     "custom_snapshot_asset_prices_usd": 3600,
     "custom_snapshot_contract_data": 3600,
     "custom_snapshot_euro_usd_ohlc": 3600,
