@@ -51,6 +51,9 @@ dag = DAG(
         "skip_xlm_to_usd": Param(
             default="false", type="string"
         ),  # only used for manual runs
+        "skip_coingecko": Param(
+            default="false", type="string"
+        ),  # only used for manual runs
     },
     # sla_miss_callback=alert_sla_miss,
 )
@@ -104,6 +107,14 @@ check_should_run_xlm_to_usd = ShortCircuitOperator(
     task_id="check_should_run_xlm_to_usd",
     python_callable=should_run_task,
     op_args=["skip_xlm_to_usd"],
+    provide_context=True,
+    dag=dag,
+)
+
+check_should_run_coingecko = ShortCircuitOperator(
+    task_id="check_should_run_coingecko",
+    python_callable=should_run_task,
+    op_args=["skip_coingecko"],
     provide_context=True,
     dag=dag,
 )
@@ -163,6 +174,17 @@ xlm_to_usd_snapshot_task = dbt_task(
     },
 )
 
+coingecko_snapshot_task = dbt_task(
+    dag,
+    tag="custom_snapshot_asset_prices_coingecko",
+    operator="+",
+    env_vars={
+        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
+        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
+        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
+    },
+)
+
 (
     wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_asset_prices_usd
@@ -187,4 +209,9 @@ xlm_to_usd_snapshot_task = dbt_task(
     wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_xlm_to_usd
     >> xlm_to_usd_snapshot_task
+)
+(
+    wait_on_external_data_dag_wisdom_tree_data
+    >> check_should_run_coingecko
+    >> coingecko_snapshot_task
 )
