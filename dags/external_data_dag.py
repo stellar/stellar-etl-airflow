@@ -42,7 +42,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2024, 11, 16, 0, 0),
     description="This DAG exports data from external sources such as retool.",
-    schedule_interval="0 0 16 11,1,3,5,7,9 *"
+    schedule_interval="0 0 16 11,1,3,5,7,9 *",
     params={
         "alias": "external",
     },
