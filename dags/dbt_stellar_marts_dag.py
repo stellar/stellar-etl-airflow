@@ -69,13 +69,13 @@ network_stats_agg_task = dbt_task(
     dag, tag="network_stats", excluded="stellar_dbt_public"
 )
 
-partnership_assets_task = dbt_task(
-    dag,
-    tag="partnership_assets",
-    operator="+",
-    excluded="stellar_dbt_public",
-    date_macro="ds",
-)
+# partnership_assets_task = dbt_task(
+#     dag,
+#     tag="partnership_assets",
+#     operator="+",
+#     excluded="stellar_dbt_public",
+#     date_macro="ds",
+# )
 
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
 
@@ -175,7 +175,7 @@ wait_on_dbt_enriched_base_tables >> trade_agg_task
 wait_on_dbt_enriched_base_tables >> fee_stats_agg_task
 wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
-wait_on_dbt_enriched_base_tables >> partnership_assets_task
+# wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> token_transfer_task
 wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
