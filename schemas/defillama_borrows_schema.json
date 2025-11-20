@@ -1,0 +1,42 @@
+[
+  {
+    "description": "",
+    "name": "day",
+    "type": "DATE"
+  },
+  {
+    "description": "",
+    "name": "pool_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "token_symbol",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "project",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "total_borrow_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "description": "",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  }
+]
