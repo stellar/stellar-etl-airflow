@@ -376,6 +376,7 @@
     "entity_attribution": 1800,
     "evicted_keys": 1200,
     "export_coingecko_prices_data": 720,
+    "export_defillama_borrows": 720,
     "export_retool_data": 720,
     "export_wisdom_tree_asset_prices_data": 720,
     "fee_stats": 360,
