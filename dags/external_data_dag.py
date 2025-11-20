@@ -159,6 +159,9 @@ defillama_borrows_export_task = build_export_task(
     DEFILLAMA_BORROWS_EXPORT_TASK_ID,
     command="export-defillama-borrows",
     use_gcs=True,
+    env_vars={
+        "DEFILLAMA_API_KEY": access_secret("defillama_api_key", "default"),
+    },
 )
 
 
