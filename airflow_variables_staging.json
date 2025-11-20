@@ -351,6 +351,7 @@
     "contract_code": "contract_code",
     "contract_data": "contract_data",
     "contract_events": "history_contract_events",
+    "defillama_borrows": "defillama_borrows",
     "effects": "history_effects",
     "ledgers": "history_ledgers",
     "liquidity_pools": "liquidity_pools",

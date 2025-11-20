@@ -14,27 +14,30 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_del_ins_operator import create_export_del_insert_operator
+from stellar_etl_airflow.build_bq_merge_task import create_bq_merge_task
 from stellar_etl_airflow.build_internal_export_task import build_export_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 from stellar_etl_airflow.utils import access_secret
 
 init_sentry()
 
-EXTERNAL_DATA_TABLE_NAMES = Variable.get("table_ids", deserialize_json=True)
-EXTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
-EXTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
+TABLE_NAMES = Variable.get("table_ids", deserialize_json=True)
+INTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
+INTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
 
-RETOOL_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
+RETOOL_TABLE_NAME =TABLE_NAMES["retool_entity_data"]
 RETOOL_EXPORT_TASK_ID = "export_retool_data"
 
-WISDOM_TREE_ASSET_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES[
+WISDOM_TREE_ASSET_PRICES_TABLE_NAME = TABLE_NAMES[
     "wisdom_tree_asset_prices_data"
 ]
 WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID = "export_wisdom_tree_asset_prices_data"
 
-COINGECKO_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["asset_prices__coingecko"]
+COINGECKO_PRICES_TABLE_NAME = TABLE_NAMES["asset_prices__coingecko"]
 COINGECKO_PRICES_EXPORT_TASK_ID = "export_coingecko_prices_data"
 
+DEFILLAMA_BORROWS_TABLE_NAME = TABLE_NAMES["defillama_borrows"]
+DEFILLAMA_BORROWS_EXPORT_TASK_ID = "export_defillama_borrows"
 
 # Initialize the DAG
 dag = DAG(
@@ -80,13 +83,13 @@ retool_export_task = build_export_task(
 retool_insert_to_bq_task = create_export_del_insert_operator(
     dag,
     table_name=RETOOL_TABLE_NAME,
-    project=EXTERNAL_DATA_PROJECT_NAME,
-    dataset=EXTERNAL_DATA_DATASET_NAME,
+    project=INTERNAL_DATA_PROJECT_NAME,
+    dataset=INTERNAL_DATA_DATASET_NAME,
     export_task_id=RETOOL_EXPORT_TASK_ID,
     source_object_suffix="",
     partition=False,
     cluster=False,
-    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{RETOOL_TABLE_NAME}",
+    table_id=f"{INTERNAL_DATA_PROJECT_NAME}.{INTERNAL_DATA_DATASET_NAME}.{RETOOL_TABLE_NAME}",
 )
 
 retool_export_task >> retool_insert_to_bq_task
@@ -112,13 +115,13 @@ wisdom_tree_asset_prices_export_task = build_export_task(
 wisdom_tree_asset_prices_insert_to_bq_task = create_export_del_insert_operator(
     dag,
     table_name=WISDOM_TREE_ASSET_PRICES_TABLE_NAME,
-    project=EXTERNAL_DATA_PROJECT_NAME,
-    dataset=EXTERNAL_DATA_DATASET_NAME,
+    project=INTERNAL_DATA_PROJECT_NAME,
+    dataset=INTERNAL_DATA_DATASET_NAME,
     export_task_id=WISDOM_TREE_ASSET_PRICES_EXPORT_TASK_ID,
     source_object_suffix="",
     partition=False,
     cluster=False,
-    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{WISDOM_TREE_ASSET_PRICES_TABLE_NAME}",
+    table_id=f"{INTERNAL_DATA_PROJECT_NAME}.{INTERNAL_DATA_DATASET_NAME}.{WISDOM_TREE_ASSET_PRICES_TABLE_NAME}",
 )
 
 wisdom_tree_asset_prices_export_task >> wisdom_tree_asset_prices_insert_to_bq_task
@@ -141,13 +144,35 @@ coingecko_prices_export_task = build_export_task(
 coingecko_prices_insert_to_bq_task = create_export_del_insert_operator(
     dag,
     table_name=COINGECKO_PRICES_TABLE_NAME,
-    project=EXTERNAL_DATA_PROJECT_NAME,
-    dataset=EXTERNAL_DATA_DATASET_NAME,
+    project=INTERNAL_DATA_PROJECT_NAME,
+    dataset=INTERNAL_DATA_DATASET_NAME,
     export_task_id=COINGECKO_PRICES_EXPORT_TASK_ID,
     source_object_suffix="",
     partition=False,
     cluster=False,
-    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{COINGECKO_PRICES_TABLE_NAME}",
+    table_id=f"{INTERNAL_DATA_PROJECT_NAME}.{INTERNAL_DATA_DATASET_NAME}.{COINGECKO_PRICES_TABLE_NAME}",
 )
 
 coingecko_prices_export_task >> coingecko_prices_insert_to_bq_task
+
+defillama_borrows_export_task = build_export_task(
+    dag,
+    DEFILLAMA_BORROWS_EXPORT_TASK_ID,
+    command="export-defillama-borrows",
+    use_gcs=True,
+)
+
+
+defillama_borrows_insert_to_bq_task = create_bq_merge_task(
+    dag,
+    table_name=DEFILLAMA_BORROWS_TABLE_NAME,
+    project=INTERNAL_DATA_PROJECT_NAME,
+    dataset=INTERNAL_DATA_DATASET_NAME,
+    export_task_id=DEFILLAMA_BORROWS_EXPORT_TASK_ID,
+    source_object_suffix="",
+    partition=False,
+    cluster=False,
+    table_id=f"{INTERNAL_DATA_PROJECT_NAME}.{INTERNAL_DATA_DATASET_NAME}.{DEFILLAMA_BORROWS_TABLE_NAME}",
+)
+
+defillama_borrows_export_task >> defillama_borrows_insert_to_bq_task
