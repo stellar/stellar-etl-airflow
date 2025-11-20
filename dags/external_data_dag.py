@@ -24,7 +24,7 @@ EXTERNAL_DATA_TABLE_NAMES = Variable.get("table_ids", deserialize_json=True)
 EXTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
 EXTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
 
-RETOOL_TABLE_NAME =EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
+RETOOL_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
 RETOOL_EXPORT_TASK_ID = "export_retool_data"
 
 WISDOM_TREE_ASSET_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES[
