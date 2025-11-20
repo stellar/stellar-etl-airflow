@@ -162,7 +162,7 @@ defillama_borrows_export_task = build_export_task(
 )
 
 
-defillama_borrows_insert_to_bq_task = create_bq_merge_task(
+defillama_borrows_insert_to_bq_task = create_export_del_insert_operator(
     dag,
     table_name=DEFILLAMA_BORROWS_TABLE_NAME,
     project=INTERNAL_DATA_PROJECT_NAME,
