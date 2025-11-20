@@ -2,7 +2,7 @@
   {
     "description": "",
     "name": "day",
-    "type": "DATE"
+    "type": "TIMESTAMP"
   },
   {
     "description": "",
