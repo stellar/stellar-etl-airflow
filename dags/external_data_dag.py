@@ -14,7 +14,6 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from kubernetes.client import models as k8s
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_del_ins_operator import create_export_del_insert_operator
-from stellar_etl_airflow.build_bq_merge_task import create_bq_merge_task
 from stellar_etl_airflow.build_internal_export_task import build_export_task
 from stellar_etl_airflow.default import get_default_dag_args, init_sentry
 from stellar_etl_airflow.utils import access_secret
