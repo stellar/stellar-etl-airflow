@@ -97,7 +97,7 @@ jobs:
             -- gcsfuse/actual_mount_path/variables.json
 
   deploy-to-staging:
-    if: ${{ github.event.inputs.envName == 'staging' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event.inputs.envName == 'staging' && github.ref == 'refs/heads/staging' }}
     runs-on: ubuntu-latest
     needs: [tests]
 
