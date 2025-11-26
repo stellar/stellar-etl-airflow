@@ -104,7 +104,7 @@ def dbt_task(
         k8s pod task
     """
     namespace = conf.get("kubernetes", "NAMESPACE")
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
@@ -211,7 +211,6 @@ def dbt_task(
         task_id=task_id,
         name=task_id,
         namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
         env_vars=env_vars,
         image=dbt_image,
         arguments=args,
@@ -224,11 +223,11 @@ def dbt_task(
         on_failure_callback=alert_after_max_retries,
         on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )
 
 
@@ -275,7 +274,7 @@ def build_dbt_task(
     logging.info(f"sh commands to run in pod: {args}")
 
     namespace = conf.get("kubernetes", "NAMESPACE")
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
@@ -296,7 +295,6 @@ def build_dbt_task(
             ]
         ),
         namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
         image=dbt_image,
         cmds=command,
         arguments=args,
@@ -309,9 +307,9 @@ def build_dbt_task(
         on_failure_callback=alert_after_max_retries,
         on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[model_name]
         ),
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )

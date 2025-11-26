@@ -198,7 +198,7 @@ def build_export_task(
     )
     etl_cmd_string = " ".join(etl_cmd)
     namespace = conf.get("kubernetes", "NAMESPACE")
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
@@ -215,7 +215,6 @@ def build_export_task(
                     {etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json
                     """
     return KubernetesPodOperator(
-        service_account_name=Variable.get("k8s_service_account"),
         namespace=Variable.get("k8s_namespace"),
         task_id=command + "_task",
         execution_timeout=timedelta(
@@ -242,4 +241,5 @@ def build_export_task(
             ]
         ),
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )

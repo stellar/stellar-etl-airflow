@@ -25,7 +25,7 @@ dag = DAG(
     "testnet_data_reset",
     default_args=get_default_dag_args(),
     description="This DAG runs after the Testnet data reset that occurs periodically.",
-    start_date=datetime(2023, 1, 1, 0, 0),
+    start_date=datetime(2025, 11, 26, 0, 0),
     schedule_interval="10 9 * * *",
     is_paused_upon_creation=literal_eval(Variable.get("use_testnet")),
     params={

@@ -34,7 +34,7 @@ def build_export_task(
 ):
     namespace = conf.get("kubernetes", "NAMESPACE")
 
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
@@ -86,7 +86,6 @@ def build_export_task(
         task_id=task_name,
         name=task_name,
         namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
         env_vars=env_vars,
         image=image,
         cmds=["bash", "-c"],
@@ -100,10 +99,10 @@ def build_export_task(
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
         trigger_rule="all_done",
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )

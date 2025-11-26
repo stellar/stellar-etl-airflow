@@ -16,7 +16,7 @@ init_sentry()
 with DAG(
     "elementary_report",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 11, 11, 0, 0),
+    start_date=datetime(2025, 11, 26, 0, 0),
     description="This DAG creates elementary report and send it to slack",
     schedule="0 3 * * MON",  # Runs every Monday
     user_defined_filters={

@@ -18,7 +18,7 @@ init_sentry()
 dag = DAG(
     "generate_avro",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 10, 1, 1, 0),
+    start_date=datetime(2025, 11, 26, 1, 0),
     catchup=True,
     description="This DAG generates AVRO files from BQ tables",
     schedule_interval="0 * * * *",
