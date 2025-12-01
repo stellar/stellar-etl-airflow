@@ -122,7 +122,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt-dev:adf1ccaf7",
+  "dbt_image_name": "stellar/stellar-dbt-dev:c6aa8be33",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
@@ -341,7 +341,7 @@
   "sentry_dsn": "https://ca1f33b9d1392e675ff50e66c0736ba2@o14203.ingest.us.sentry.io/4509985659551744",
   "sentry_environment": "staging",
   "slack_elementary_channel": "alerts-hubble-data-quality-staging",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:53c574e8e",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:a0149d550",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
