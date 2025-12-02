@@ -199,7 +199,7 @@ def build_export_task(
         config_file_location = None
         in_cluster = True
     resources_requests = (
-        f"{{{{ var.json.resources.{resource_cfg} | container_resources }}}}"
+        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
 
     return KubernetesPodOperator(

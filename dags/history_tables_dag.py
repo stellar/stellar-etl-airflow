@@ -204,7 +204,6 @@ export_tasks = {
     "token_transfers_raw": token_transfer_export_task,
 }
 
-
 for table_id, export_task in export_tasks.items():
     table_name = table_names[table_id]
     task_vars = initialize_task_vars(
@@ -215,6 +214,7 @@ for table_id, export_task in export_tasks.items():
         batch_date,
         public_project,
         public_dataset,
+        source_object_suffix=f"/*-{table_id}.txt"
     )
     del_ins_tasks[table_id] = create_del_ins_task(
         dag, task_vars, build_del_ins_from_gcs_to_bq_task

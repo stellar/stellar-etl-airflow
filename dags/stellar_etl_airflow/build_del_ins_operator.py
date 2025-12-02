@@ -79,7 +79,6 @@ def create_del_ins_task(dag, task_vars, del_ins_callable):
     )
 
 
-# TODO: This function is not used. Delete it.
 def create_export_del_insert_operator(
     dag,
     table_name: str,
