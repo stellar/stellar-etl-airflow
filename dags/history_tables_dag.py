@@ -24,7 +24,6 @@ from stellar_etl_airflow.build_del_ins_operator import (
 from stellar_etl_airflow.build_delete_data_task import build_delete_data_task
 from stellar_etl_airflow.build_export_task import build_export_task
 from stellar_etl_airflow.build_gcs_to_bq_task import build_gcs_to_bq_task
-from stellar_etl_airflow.build_time_task import build_time_task
 from stellar_etl_airflow.default import (
     alert_sla_miss,
     get_default_dag_args,
@@ -69,12 +68,6 @@ use_testnet = literal_eval(Variable.get("use_testnet"))
 use_futurenet = literal_eval(Variable.get("use_futurenet"))
 use_captive_core = literal_eval(Variable.get("use_captive_core"))
 txmeta_datastore_path = "{{ var.value.txmeta_datastore_path }}"
-
-"""
-The time task reads in the execution time of the current run, as well as the next
-execution time. It converts these two times into ledger ranges.
-"""
-time_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
 
 """
 The export tasks call export commands on the Stellar ETL using the ledger range from the time task.
@@ -229,11 +222,11 @@ for table_id, export_task in export_tasks.items():
 
 # Set Task dependencies
 
-(time_task >> op_export_task >> del_ins_tasks["operations"])
-(time_task >> trade_export_task >> del_ins_tasks["trades"])
-(time_task >> effects_export_task >> del_ins_tasks["effects"])
-(time_task >> tx_export_task >> del_ins_tasks["transactions"])
-(time_task >> ledger_export_task >> del_ins_tasks["ledgers"])
-(time_task >> asset_export_task >> del_ins_tasks["assets"])
-(time_task >> contract_events_export_task >> del_ins_tasks["contract_events"])
-(time_task >> token_transfer_export_task >> del_ins_tasks["token_transfers_raw"])
+(op_export_task >> del_ins_tasks["operations"])
+(trade_export_task >> del_ins_tasks["trades"])
+(effects_export_task >> del_ins_tasks["effects"])
+(tx_export_task >> del_ins_tasks["transactions"])
+(ledger_export_task >> del_ins_tasks["ledgers"])
+(asset_export_task >> del_ins_tasks["assets"])
+(contract_events_export_task >> del_ins_tasks["contract_events"])
+(token_transfer_export_task >> del_ins_tasks["token_transfers_raw"])

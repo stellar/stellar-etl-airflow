@@ -87,12 +87,6 @@ missing_keys = [key for key in required_keys if key not in table_names]
 if missing_keys:
     raise KeyError(f"Missing Id in the table_ids Airflow Variable: {missing_keys}")
 
-"""
-The date task reads in the execution time of the current run, as well as the next
-execution time. It converts these two times into ledger ranges.
-"""
-date_task = build_time_task(dag, use_testnet=use_testnet, use_futurenet=use_futurenet)
-
 changes_task = build_export_task(
     dag,
     "bounded-core",
@@ -135,17 +129,17 @@ del_ins_tasks = {}
 
 # Define the suffixes for the DAG related tables
 source_object_suffix_mapping = {
-    "accounts": "/*-accounts.txt",
-    "claimable_balances": "/*-claimable_balances.txt",
-    "offers": "/*-offers.txt",
-    "liquidity_pools": "/*-liquidity_pools.txt",
-    "signers": "/*-signers.txt",
-    "trustlines": "/*-trustlines.txt",
-    "contract_data": "/*-contract_data.txt",
-    "contract_code": "/*-contract_code.txt",
-    "config_settings": "/*-config_settings.txt",
-    "ttl": "/*-ttl.txt",
-    "restored_key": "/*-restored_key.txt",
+    "accounts": "/changes_folder/*-accounts.txt",
+    "claimable_balances": "/changes_folder/*-claimable_balances.txt",
+    "offers": "/changes_folder/*-offers.txt",
+    "liquidity_pools": "/changes_folder/*-liquidity_pools.txt",
+    "signers": "/changes_folder/*-signers.txt",
+    "trustlines": "/changes_folder/*-trustlines.txt",
+    "contract_data": "/changes_folder/*-contract_data.txt",
+    "contract_code": "/changes_folder/*-contract_code.txt",
+    "config_settings": "/changes_folder/*-config_settings.txt",
+    "ttl": "/changes_folder/*-ttl.txt",
+    "restored_key": "/changes_folder/*-restored_key.txt",
 }
 
 for table_id, source_object_suffix in source_object_suffix_mapping.items():
@@ -165,34 +159,30 @@ for table_id, source_object_suffix in source_object_suffix_mapping.items():
     )
 
 # Set task dependencies
-(date_task >> changes_task >> write_acc_stats >> del_ins_tasks["accounts"])
-(date_task >> changes_task >> write_bal_stats >> del_ins_tasks["claimable_balances"])
-(date_task >> changes_task >> write_off_stats >> del_ins_tasks["offers"])
-(date_task >> changes_task >> write_pool_stats >> del_ins_tasks["liquidity_pools"])
-(date_task >> changes_task >> write_sign_stats >> del_ins_tasks["signers"])
-(date_task >> changes_task >> write_trust_stats >> del_ins_tasks["trustlines"])
+(changes_task >> write_acc_stats >> del_ins_tasks["accounts"])
+(changes_task >> write_bal_stats >> del_ins_tasks["claimable_balances"])
+(changes_task >> write_off_stats >> del_ins_tasks["offers"])
+(changes_task >> write_pool_stats >> del_ins_tasks["liquidity_pools"])
+(changes_task >> write_sign_stats >> del_ins_tasks["signers"])
+(changes_task >> write_trust_stats >> del_ins_tasks["trustlines"])
 (
-    date_task
-    >> changes_task
+    changes_task
     >> write_contract_data_stats
     >> del_ins_tasks["contract_data"]
 )
 (
-    date_task
-    >> changes_task
+    changes_task
     >> write_contract_code_stats
     >> del_ins_tasks["contract_code"]
 )
 (
-    date_task
-    >> changes_task
+    changes_task
     >> write_config_settings_stats
     >> del_ins_tasks["config_settings"]
 )
-(date_task >> changes_task >> write_ttl_stats >> del_ins_tasks["ttl"])
+(changes_task >> write_ttl_stats >> del_ins_tasks["ttl"])
 (
-    date_task
-    >> changes_task
+    changes_task
     >> write_restored_keys_stats
     >> del_ins_tasks["restored_key"]
 )

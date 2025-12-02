@@ -66,22 +66,16 @@ def generate_etl_cmd(
     Returns:
         the generated etl command; name of the file that contains the exported data
     """
-    # These are JINJA templates, which are filled by airflow at runtime. The json from get_ledger_range_from_times is pulled from XCOM.
+    # These are JINJA templates, which are filled by airflow at runtime.
     logging.info("Pulling ledger start and end times.....")
-    start_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"] }}'
-    end_ledger = '{{ ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]}}'
-
-    """
-    For history archives, the start time of the next 5 minute interval is the same as the end time of the current interval, leading to a 1 ledger overlap.
-    We need to subtract 1 ledger from the end so that there is no overlap. However, sometimes the start ledger equals the end ledger.
-    By setting the end=max(start, end-1), we ensure every range is valid.
-    """
+    start_time = "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}"
+    
     if cmd_type in ("archive", "bounded-core"):
-        end_ledger = '{{ [ti.xcom_pull(task_ids="get_ledger_range_from_times")["end"]-1, ti.xcom_pull(task_ids="get_ledger_range_from_times")["start"]] | max}}'
+        end_time = "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}"
 
     core_exec, core_cfg = get_path_variables(use_testnet, use_futurenet)
 
-    batch_filename = "-".join([start_ledger, end_ledger, base_filename])
+    batch_filename = "-".join([start_time, end_time, base_filename])
     run_id = "{{ run_id }}"
     filepath = ""
     if use_gcs:
@@ -95,21 +89,21 @@ def generate_etl_cmd(
         "archive": [
             "stellar-etl",
             command,
-            "-s",
-            start_ledger,
-            "-e",
-            end_ledger,
+            "--start-timestamp",
+            start_time,
+            "--end-timestamp",
+            end_time,
             "-o",
             batched_path,
         ],
-        "bucket": ["stellar-etl", command, "-e", end_ledger, "-o", batched_path],
+        "bucket": ["stellar-etl", command, "--end-timestamp", end_time, "-o", batched_path],
         "bounded-core": [
             "stellar-etl",
             command,
-            "-s",
-            start_ledger,
-            "-e",
-            end_ledger,
+            "--start-timestamp",
+            start_time,
+            "--end-timestamp",
+            end_time,
             "-x",
             core_exec,
             "-c",
@@ -120,8 +114,8 @@ def generate_etl_cmd(
         "unbounded-core": [
             "stellar-etl",
             command,
-            "-s",
-            start_ledger,
+            "--start-timestamp",
+            start_time,
             "-x",
             core_exec,
             "-c",
@@ -198,24 +192,17 @@ def build_export_task(
     )
     etl_cmd_string = " ".join(etl_cmd)
     namespace = conf.get("kubernetes", "NAMESPACE")
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
         config_file_location = None
         in_cluster = True
     resources_requests = (
-        f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
+        f"{{{{ var.json.resources.{resource_cfg} | container_resources }}}}"
     )
 
-    if command == "export_ledger_entry_changes" or command == "export_all_history":
-        arguments = f"""{etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json"""
-    else:
-        arguments = f"""
-                    {etl_cmd_string} && echo "{{\\"output\\": \\"{output_file}\\"}}" >> /airflow/xcom/return.json
-                    """
     return KubernetesPodOperator(
-        service_account_name=Variable.get("k8s_service_account"),
         namespace=Variable.get("k8s_namespace"),
         task_id=command + "_task",
         execution_timeout=timedelta(
@@ -226,10 +213,10 @@ def build_export_task(
         name=command + "_task",
         image="{{ var.value.image_name }}",
         cmds=["bash", "-c"],
-        arguments=[arguments],
+        arguments=[etl_cmd_string],
         dag=dag,
-        do_xcom_push=True,
-        is_delete_operator_pod=True,
+        #do_xcom_push=True,
+        on_finish_action='delete_pod',
         startup_timeout_seconds=720,
         container_resources=resources_requests,
         in_cluster=in_cluster,
@@ -242,4 +229,5 @@ def build_export_task(
             ]
         ),
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )

@@ -4,6 +4,8 @@ from stellar_etl_airflow.build_del_ins_from_gcs_to_bq_task import (
 )
 from stellar_etl_airflow.build_internal_export_task import get_airflow_metadata
 from stellar_etl_airflow.default import alert_after_max_retries
+from airflow.models import Variable
+import os
 
 
 def initialize_task_vars(
@@ -35,12 +37,9 @@ def initialize_task_vars(
         dict: Task variables.
     """
     if source_objects is None:
-        source_objects = [
-            "{{ task_instance.xcom_pull(task_ids='"
-            + export_task_id
-            + '\')["output"] }}'
-            + source_object_suffix
-        ]
+        run_id = "{{ run_id }}"
+        filepath = os.path.join(Variable.get("gcs_exported_object_prefix"), run_id)
+        source_objects = [filepath + source_object_suffix]
     task_id = f"del_ins_{table_name}_task"
     return {
         "task_id": task_id,
@@ -80,6 +79,7 @@ def create_del_ins_task(dag, task_vars, del_ins_callable):
     )
 
 
+# TODO: This function is not used. Delete it.
 def create_export_del_insert_operator(
     dag,
     table_name: str,
@@ -92,12 +92,9 @@ def create_export_del_insert_operator(
     table_id: str,
 ):
     metadata = get_airflow_metadata()
-    source_objects = [
-        "{{ task_instance.xcom_pull(task_ids='"
-        + export_task_id
-        + '\')["output"] }}'
-        + source_object_suffix
-    ]
+    run_id = "{{ run_id }}"
+    filepath = os.path.join(Variable.get("gcs_exported_object_prefix"), run_id)
+    source_objects = [filepath + source_object_suffix]
     task_vars = {
         "task_id": f"del_ins_{table_name}_task",
         "project": project,

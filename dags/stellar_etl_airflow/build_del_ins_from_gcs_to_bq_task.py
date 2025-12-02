@@ -158,9 +158,9 @@ def build_del_ins_from_gcs_to_bq_task(
             time_partitioning=time_partition,
             cluster_fields=cluster_fields,
             export_task_id=export_task_id,
-            failed_transforms="{{ task_instance.xcom_pull(task_ids='"
-            + export_task_id
-            + '\')["failed_transforms"] }}',
+            # TODO: failed_transforms can be set to 0 because the task will fail upstream if there are any failed transforms.
+            # Refactor this logic later to clean up unused code.
+            failed_transforms="0",
             max_failed_transforms=0,
             sla=timedelta(
                 seconds=Variable.get("task_sla", deserialize_json=True)[
