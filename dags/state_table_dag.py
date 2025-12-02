@@ -101,23 +101,6 @@ changes_task = build_export_task(
 )
 
 """
-The write batch stats task will take a snapshot of the DAG run_id, execution date,
-start and end ledgers so that reconciliation and data validation are easier. The
-record is written to an internal dataset for data eng use only.
-"""
-write_acc_stats = build_batch_stats(dag, table_names["accounts"])
-write_bal_stats = build_batch_stats(dag, table_names["claimable_balances"])
-write_off_stats = build_batch_stats(dag, table_names["offers"])
-write_pool_stats = build_batch_stats(dag, table_names["liquidity_pools"])
-write_sign_stats = build_batch_stats(dag, table_names["signers"])
-write_trust_stats = build_batch_stats(dag, table_names["trustlines"])
-write_contract_data_stats = build_batch_stats(dag, table_names["contract_data"])
-write_contract_code_stats = build_batch_stats(dag, table_names["contract_code"])
-write_config_settings_stats = build_batch_stats(dag, table_names["config_settings"])
-write_ttl_stats = build_batch_stats(dag, table_names["ttl"])
-write_restored_keys_stats = build_batch_stats(dag, table_names["restored_key"])
-
-"""
 The delete part of the task checks to see if the given partition/batch id exists in
 Bigquery. If it does, the records are deleted prior to reinserting the batch.
 
@@ -159,30 +142,26 @@ for table_id, source_object_suffix in source_object_suffix_mapping.items():
     )
 
 # Set task dependencies
-(changes_task >> write_acc_stats >> del_ins_tasks["accounts"])
-(changes_task >> write_bal_stats >> del_ins_tasks["claimable_balances"])
-(changes_task >> write_off_stats >> del_ins_tasks["offers"])
-(changes_task >> write_pool_stats >> del_ins_tasks["liquidity_pools"])
-(changes_task >> write_sign_stats >> del_ins_tasks["signers"])
-(changes_task >> write_trust_stats >> del_ins_tasks["trustlines"])
+(changes_task >> del_ins_tasks["accounts"])
+(changes_task >> del_ins_tasks["claimable_balances"])
+(changes_task >> del_ins_tasks["offers"])
+(changes_task >> del_ins_tasks["liquidity_pools"])
+(changes_task >> del_ins_tasks["signers"])
+(changes_task >> del_ins_tasks["trustlines"])
 (
     changes_task
-    >> write_contract_data_stats
     >> del_ins_tasks["contract_data"]
 )
 (
     changes_task
-    >> write_contract_code_stats
     >> del_ins_tasks["contract_code"]
 )
 (
     changes_task
-    >> write_config_settings_stats
     >> del_ins_tasks["config_settings"]
 )
-(changes_task >> write_ttl_stats >> del_ins_tasks["ttl"])
+(changes_task >> del_ins_tasks["ttl"])
 (
     changes_task
-    >> write_restored_keys_stats
     >> del_ins_tasks["restored_key"]
 )
