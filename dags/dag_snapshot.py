@@ -17,7 +17,7 @@ init_sentry()
 dag = DAG(
     "dbt_snapshot",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2025, 9, 7, 0, 0),
+    start_date=datetime(2025, 11, 26, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 1 * * *",  # Runs at 01:00 UTC
     user_defined_filters={

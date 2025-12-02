@@ -53,7 +53,7 @@ def build_time_task(
     elif use_futurenet:
         args.append("--futurenet")
     namespace = conf.get("kubernetes", "NAMESPACE")
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
@@ -72,7 +72,6 @@ def build_time_task(
             ]
         ),
         namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
         image="{{ var.value.image_name }}",
         cmds=command,
         arguments=args,
@@ -91,4 +90,5 @@ def build_time_task(
             ]
         ),
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )

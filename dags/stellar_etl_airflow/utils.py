@@ -7,6 +7,7 @@ from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.utils.state import TaskInstanceState
 from kubernetes import client, config
+from google.cloud import secretmanager
 
 base_log_folder = conf.get("logging", "base_log_folder")
 
@@ -104,10 +105,19 @@ def skip_retry_dbt_errors(context) -> None:
         return
 
 
-def access_secret(secret_name, namespace):
-    config.load_kube_config()
-    v1 = client.CoreV1Api()
-    secret_data = v1.read_namespaced_secret(secret_name, namespace)
-    secret = secret_data.data
-    secret = base64.b64decode(secret["token"]).decode("utf-8")
-    return secret
+def access_secret(secret_name, project_id):
+    """
+    Access a secret from Google Secret Manager.
+    
+    Args:
+        secret_name (str): Name of the secret in GSM (without prefixes)
+        project_id (str): GCP project ID
+        
+    Returns:
+        str: secret value
+    """
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/803774498738/secrets/{secret_name}/versions/latest"
+    response = client.access_secret_version(name=name)
+    secret_value = response.payload.data.decode("UTF-8")
+    return secret_value

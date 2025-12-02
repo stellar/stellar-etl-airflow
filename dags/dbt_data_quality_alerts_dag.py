@@ -10,7 +10,7 @@ init_sentry()
 with DAG(
     "dbt_data_quality_alerts",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 6, 25, 0, 0),
+    start_date=datetime(2025, 11, 26, 0, 0),
     description="This DAG runs dbt tests and Elementary alerts at a half-hourly cadence",
     schedule="*/15 * * * *",  # Runs every 15 minutes
     user_defined_filters={

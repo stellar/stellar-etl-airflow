@@ -27,7 +27,7 @@ init_sentry()
 with DAG(
     "sandbox_update_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 4, 30),
+    start_date=datetime(2025, 11, 26),
     description="This DAG updates a sandbox",
     schedule_interval="0 1 * * *",
     params={"alias": "sandbox_dataset"},

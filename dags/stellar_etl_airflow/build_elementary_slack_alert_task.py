@@ -12,7 +12,7 @@ from stellar_etl_airflow.utils import access_secret
 def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"):
     namespace = conf.get("kubernetes", "NAMESPACE")
 
-    if namespace == "default":
+    if namespace == "composer-user-workloads":
         config_file_location = Variable.get("kube_config_location")
         in_cluster = False
     else:
@@ -50,7 +50,6 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
         task_id=f"elementary_slack_alert_{task_name}",
         name=f"elementary_slack_alert_{task_name}",
         namespace=Variable.get("k8s_namespace"),
-        service_account_name=Variable.get("k8s_service_account"),
         env_vars={
             "DBT_USE_COLORS": "0",
             "DBT_DATASET": "{{ var.value.dbt_elementary_dataset }}",
@@ -78,7 +77,6 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
         container_resources=container_resources,
         on_failure_callback=alert_after_max_retries,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[
                 f"elementary_{task_name}"
@@ -86,4 +84,5 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
         ),
         trigger_rule="all_done",
         reattach_on_restart=False,
+        kubernetes_conn_id="kubernetes_default",
     )

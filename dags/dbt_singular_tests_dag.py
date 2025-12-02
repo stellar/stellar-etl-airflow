@@ -13,7 +13,7 @@ dag_args["retries"] = 1  # Override retries for this DAG
 with DAG(
     "dbt_singular_tests",
     default_args=dag_args,
-    start_date=datetime(2024, 6, 25, 0, 0),
+    start_date=datetime(2025, 11, 26, 0, 0),
     description="This DAG runs non-model dbt tests half-hourly cadence",
     schedule="*/30 * * * *",  # Runs every 30 minutes
     user_defined_filters={

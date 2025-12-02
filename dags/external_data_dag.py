@@ -42,7 +42,7 @@ DEFILLAMA_BORROWS_EXPORT_TASK_ID = "export_defillama_borrows"
 dag = DAG(
     "external_data_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 12, 16, 0, 0),
+    start_date=datetime(2025, 11, 26, 0, 0),
     description="This DAG exports data from external sources such as retool.",
     schedule_interval="0 13 * * *",
     params={
