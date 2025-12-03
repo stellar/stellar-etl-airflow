@@ -391,6 +391,7 @@
     "mgi": 660,
     "network_stats": 720,
     "ohlc": 720,
+    "omni_pdts": 720,
     "partnership_assets": 660,
     "recency": 600,
     "relevant_asset_trades": 1200,
