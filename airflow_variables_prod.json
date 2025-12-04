@@ -121,7 +121,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt-dev:c6aa8be33",
+  "dbt_image_name": "stellar/stellar-dbt-dev:1ecda361e",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -312,7 +312,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://94027cdcc4c9470f9dafa2c0b456c2c9@o14203.ingest.us.sentry.io/5806618",
   "sentry_environment": "production",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:a0149d550",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:6fc70a477",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -389,6 +389,7 @@
     "mgi": 1020,
     "network_stats": 360,
     "ohlc": 960,
+    "omni_pdts": 720,
     "partnership_assets": 1380,
     "recency": 840,
     "relevant_asset_trades": 1800,

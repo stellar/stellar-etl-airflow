@@ -163,6 +163,11 @@ asset_prices_task = dbt_task(dag, tag="asset_prices")
 
 assets_task = dbt_task(dag, tag="assets")
 
+omni_pdt_agg_task = dbt_task(
+    dag,
+    tag="omni_pdts"
+)
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -195,6 +200,7 @@ token_transfer_task >> entity_attribution_task
 
 token_transfer_task >> assets_task
 entity_attribution_task >> assets_task
+entity_attribution_task >> omni_pdt_agg_task
 
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
