@@ -1,0 +1,52 @@
+[
+  {
+    "description": "",
+    "name": "day",
+    "type": "TIMESTAMP"
+  },
+  {
+    "description": "",
+    "name": "protocol_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "protocol_slug",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "protocol_name",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "data_type",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "token",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "total_liquidity_usd",
+    "type": "FLOAT"
+  },
+  {
+    "description": "",
+    "name": "batch_id",
+    "type": "STRING"
+  },
+  {
+    "description": "",
+    "name": "batch_run_date",
+    "type": "DATETIME"
+  },
+  {
+    "description": "",
+    "name": "batch_insert_ts",
+    "type": "TIMESTAMP"
+  }
+]
