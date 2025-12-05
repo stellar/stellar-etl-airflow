@@ -1,4 +1,3 @@
-import base64
 import logging
 import re
 import time
@@ -107,11 +106,11 @@ def skip_retry_dbt_errors(context) -> None:
 def access_secret(secret_name):
     """
     Access a secret from Google Secret Manager.
-    
+
     Args:
         secret_name (str): Name of the secret in GSM (without prefixes)
         project_id (str): GCP project ID
-        
+
     Returns:
         str: secret value
     """
