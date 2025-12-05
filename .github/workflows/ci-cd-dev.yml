@@ -67,11 +67,5 @@ jobs:
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
-      - id: "get-credentials"
-        uses: "google-github-actions/get-gke-credentials@v2.3.4"
-        with:
-          cluster_name: "us-central1-stellar-etl-tes-58aaf371-gke"
-          location: "us-central1"
-
       - name: Pytest
         run: pytest dags/
