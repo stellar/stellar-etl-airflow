@@ -9,6 +9,7 @@ on:
       - closed
     branches:
       - master
+      - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
@@ -60,17 +61,6 @@ jobs:
 
       - name: Import Airflow variables
         run: airflow variables import airflow_variables_ci.json
-
-      - name: Authenticate to test-hubble GCP
-        uses: google-github-actions/auth@v2.1.12
-        with:
-          credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
-
-      - id: "get-credentials"
-        uses: "google-github-actions/get-gke-credentials@v2.3.4"
-        with:
-          cluster_name: "us-central1-test-hubble-43c3e190-gke"
-          location: "us-central1"
 
       - name: Pytest
         run: pytest dags/
