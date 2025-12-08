@@ -91,19 +91,6 @@
       "key_hash"
     ]
   },
-  "currency_bucket": "staging-ext-asset-pricing",
-  "currency_ohlc": {
-    "columns_ohlc_currency": [
-      "time",
-      "open",
-      "high",
-      "low",
-      "close"
-    ],
-    "currency": "euro_ohlc",
-    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
-    "table_name": "euro_usd_ohlc"
-  },
   "dbt_dataset": "staging",
   "dbt_dataset_for_test": "staging",
   "dbt_elementary_dataset": "staging_elementary",
