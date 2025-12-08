@@ -219,7 +219,7 @@ defillama_tvls_export_task = build_export_task(
     command="export-defillama-protocol-tvls",
     use_gcs=True,
     env_vars={
-        "DEFILLAMA_API_KEY": access_secret("defillama-api-key", "default"),
+        "DEFILLAMA_API_KEY": access_secret("defillama-api-key"),
     },
 )
 
