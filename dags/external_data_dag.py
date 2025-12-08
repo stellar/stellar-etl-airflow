@@ -38,6 +38,9 @@ COINGECKO_PRICES_EXPORT_TASK_ID = "export_coingecko_prices_data"
 DEFILLAMA_BORROWS_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["defillama_borrows"]
 DEFILLAMA_BORROWS_EXPORT_TASK_ID = "export_defillama_borrows"
 
+DEFILLAMA_TVLS_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["defillama_tvls"]
+DEFILLAMA_TVLS_EXPORT_TASK_ID = "export_defillama_tvls"
+
 # Initialize the DAG
 dag = DAG(
     "external_data_dag",
@@ -178,3 +181,28 @@ defillama_borrows_insert_to_bq_task = create_export_del_insert_operator(
 )
 
 defillama_borrows_export_task >> defillama_borrows_insert_to_bq_task
+
+defillama_tvls_export_task = build_export_task(
+    dag,
+    DEFILLAMA_TVLS_EXPORT_TASK_ID,
+    command="export-defillama-protocol-tvls",
+    use_gcs=True,
+    env_vars={
+        "DEFILLAMA_API_KEY": access_secret("defillama-api-key", "default"),
+    },
+)
+
+
+defillama_tvls_insert_to_bq_task = create_export_del_insert_operator(
+    dag,
+    table_name=DEFILLAMA_TVLS_TABLE_NAME,
+    project=EXTERNAL_DATA_PROJECT_NAME,
+    dataset=EXTERNAL_DATA_DATASET_NAME,
+    export_task_id=DEFILLAMA_TVLS_EXPORT_TASK_ID,
+    source_object_suffix="",
+    partition=False,
+    cluster=False,
+    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{DEFILLAMA_TVLS_TABLE_NAME}",
+)
+
+defillama_tvls_export_task >> defillama_tvls_insert_to_bq_task
