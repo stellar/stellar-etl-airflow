@@ -46,18 +46,13 @@ jobs:
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
-      - id: "get-credentials"
-        uses: "google-github-actions/get-gke-credentials@v2.3.4"
-        with:
-          cluster_name: "us-central1-test-hubble-43c3e190-gke"
-          location: "us-central1"
-
       - name: Pytest
         run: pytest dags/
 
   deploy-to-dev:
     if: ${{ github.event.inputs.envName == 'dev' }}
     runs-on: ubuntu-latest
+    needs: [tests]
     steps:
       - uses: actions/checkout@v3
 
@@ -80,14 +75,14 @@ jobs:
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET
         env:
           GOOGLE_CLOUD_PROJECT: test-hubble-319619
-          BUCKET: us-central1-test-hubble-43c3e190-bucket
+          BUCKET: us-central1-stellar-etl-tes-58aaf371-bucket
 
       - name: Update Airflow variables
         uses: actions-hub/gcloud@534.0.0
         env:
           PROJECT_ID: test-hubble-319619
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: test-hubble
+          COMPOSER_ENVIRONMENT: stellar-etl-test-composer-2
           LOCATION: us-central1
         with:
           args: >
@@ -98,6 +93,7 @@ jobs:
   deploy-to-staging:
     if: ${{ github.event.inputs.envName == 'staging' && github.ref == 'refs/heads/staging' }}
     runs-on: ubuntu-latest
+    needs: [tests]
 
     steps:
       - uses: actions/checkout@v3
@@ -139,6 +135,7 @@ jobs:
   deploy-to-prod:
     if: ${{ github.event.inputs.envName == 'prod' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
+    needs: [tests]
 
     steps:
       - uses: actions/checkout@v3

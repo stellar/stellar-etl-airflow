@@ -163,10 +163,7 @@ asset_prices_task = dbt_task(dag, tag="asset_prices")
 
 assets_task = dbt_task(dag, tag="assets")
 
-omni_pdt_agg_task = dbt_task(
-    dag,
-    tag="omni_pdts"
-)
+omni_pdt_agg_task = dbt_task(dag, tag="omni_pdts")
 
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")

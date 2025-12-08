@@ -32,7 +32,7 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
     dbt_image = "{{ var.value.dbt_image_name }}"
 
     slack_secret_name = Variable.get("dbt_elementary_secret")
-    secret = access_secret(slack_secret_name, "default")
+    secret = access_secret(slack_secret_name)
     args = [
         f"{command}",
         "--slack-token",

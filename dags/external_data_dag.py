@@ -77,7 +77,7 @@ retool_export_task = build_export_task(
     ],
     use_gcs=True,
     env_vars={
-        "RETOOL_API_KEY": access_secret("retool-api-key", "default"),
+        "RETOOL_API_KEY": access_secret("retool-api-key"),
     },
 )
 
@@ -109,7 +109,7 @@ wisdom_tree_asset_prices_export_task = build_export_task(
     ],
     use_gcs=True,
     env_vars={
-        "RWA_API_KEY": access_secret("rwa-api-key", "default"),
+        "RWA_API_KEY": access_secret("rwa-api-key"),
     },
 )
 
@@ -163,7 +163,7 @@ defillama_borrows_export_task = build_export_task(
     command="export-defillama-borrows",
     use_gcs=True,
     env_vars={
-        "DEFILLAMA_API_KEY": access_secret("defillama-api-key", "default"),
+        "DEFILLAMA_API_KEY": access_secret("defillama-api-key"),
     },
 )
 
