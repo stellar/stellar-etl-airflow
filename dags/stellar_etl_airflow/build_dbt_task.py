@@ -5,9 +5,26 @@ from datetime import timedelta
 from airflow.configuration import conf
 from airflow.models import Variable
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from google.cloud import secretmanager
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.default import alert_after_max_retries
 from stellar_etl_airflow.utils import skip_retry_dbt_errors
+
+# Initialize Secret Manager client once at module level
+_secret_client = secretmanager.SecretManagerServiceClient()
+_image_pull_secret_cache = None
+
+
+def _get_image_pull_secret():
+    """Get image pull secret name from Secret Manager with caching."""
+    global _image_pull_secret_cache
+    if _image_pull_secret_cache is None:
+        project_id = Variable.get("bq_project")
+        secret_path = f"projects/{project_id}/secrets/airflow-variables-private_docker_auth/versions/latest"
+        response = _secret_client.access_secret_version(name=secret_path)
+        _image_pull_secret_cache = response.payload.data.decode("UTF-8")
+    return _image_pull_secret_cache
+
 
 # Define valid Airflow date macros
 VALID_DATE_MACROS = {
@@ -224,7 +241,7 @@ def dbt_task(
         on_failure_callback=alert_after_max_retries,
         on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+        image_pull_secrets=[k8s.V1LocalObjectReference(_get_image_pull_secret())],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
@@ -309,7 +326,7 @@ def build_dbt_task(
         on_failure_callback=alert_after_max_retries,
         on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
+        image_pull_secrets=[k8s.V1LocalObjectReference(_get_image_pull_secret())],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[model_name]
         ),
