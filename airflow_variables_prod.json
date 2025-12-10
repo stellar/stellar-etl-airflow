@@ -91,19 +91,6 @@
       "key_hash"
     ]
   },
-  "currency_bucket": "ext-asset-pricing",
-  "currency_ohlc": {
-    "columns_ohlc_currency": [
-      "time",
-      "open",
-      "high",
-      "low",
-      "close"
-    ],
-    "currency": "euro_ohlc",
-    "endpoint": "https://api.coingecko.com/api/v3/coins/tether-eurt/ohlc?vs_currency=usd&days=1",
-    "table_name": "euro_usd_ohlc"
-  },
   "dbt_dataset_for_test": "placeholder_value",
   "dbt_elementary_dataset": "elementary",
   "dbt_elementary_secret": "slack-token-elementary",
@@ -121,7 +108,7 @@
     "partnership_assets__asset_activity_fact": false,
     "trade_agg": false
   },
-  "dbt_image_name": "stellar/stellar-dbt-dev:1ecda361e",
+  "dbt_image_name": "stellar/stellar-dbt:46317c2de",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -312,7 +299,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://94027cdcc4c9470f9dafa2c0b456c2c9@o14203.ingest.us.sentry.io/5806618",
   "sentry_environment": "production",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:6fc70a477",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:119e28fdc",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -323,6 +310,7 @@
     "contract_data": "contract_data",
     "contract_events": "history_contract_events",
     "defillama_borrows": "defillama_borrows",
+    "defillama_tvls": "defillama_tvls",
     "effects": "history_effects",
     "ledgers": "history_ledgers",
     "liquidity_pools": "liquidity_pools",
@@ -378,6 +366,7 @@
     "evicted_keys": 1200,
     "export_coingecko_prices_data": 720,
     "export_defillama_borrows": 720,
+    "export_defillama_tvls": 720,
     "export_retool_data": 720,
     "export_wisdom_tree_asset_prices_data": 720,
     "fee_stats": 360,

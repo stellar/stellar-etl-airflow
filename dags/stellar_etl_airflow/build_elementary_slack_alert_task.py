@@ -1,4 +1,3 @@
-import logging
 from datetime import timedelta
 
 from airflow.configuration import conf
@@ -32,7 +31,7 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
     dbt_image = "{{ var.value.dbt_image_name }}"
 
     slack_secret_name = Variable.get("dbt_elementary_secret")
-    secret = access_secret(slack_secret_name, "default")
+    secret = access_secret(slack_secret_name)
     args = [
         f"{command}",
         "--slack-token",
@@ -43,8 +42,6 @@ def elementary_task(dag, task_name, command, cmd_args=[], resource_cfg="default"
 
     if len(cmd_args):
         args = [*args, *cmd_args]
-
-    logging.info(f"sh commands to run in pod: {args}")
 
     return KubernetesPodOperator(
         task_id=f"elementary_slack_alert_{task_name}",
