@@ -15,4 +15,4 @@ pydantic<2.10.0
 pytest==8.2.0
 sentry-sdk==2.1.1
 SQLAlchemy==1.4.52
-werkzeug==3.0.3
+werkzeug
