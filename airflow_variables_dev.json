@@ -141,7 +141,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl-test",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-tes-58aaf371-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:ef7feae11",
+  "image_name": "stellar/stellar-etl-dev:c56d2b8ca",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -301,7 +301,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:e928084a2",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:5cf54b047",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
