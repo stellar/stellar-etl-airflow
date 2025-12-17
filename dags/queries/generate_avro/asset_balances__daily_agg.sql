@@ -24,6 +24,6 @@ as (
     where
         true
         and day >= date_trunc(date('{batch_run_date}'), day)
-        and day < date_trunc(date('{next_batch_run_date}', day)
+        and day < date_trunc(date('{next_batch_run_date}'), day)
     order by day asc
 )
