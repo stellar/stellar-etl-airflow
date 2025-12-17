@@ -6,7 +6,7 @@ options (
 )
 as (
     select
-        transaction_hash
+      transaction_hash
       , transaction_id
       , operation_id
       , contract_id
