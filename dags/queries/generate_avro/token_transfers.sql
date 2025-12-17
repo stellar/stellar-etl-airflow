@@ -6,26 +6,26 @@ options (
 )
 as (
     select
-      transaction_hash
-      , transaction_id
-      , operation_id
-      , contract_id
-      , closed_at
-      , ledger_sequence
-      , `to`
-      , `from`
-      , asset
-      , asset_type
-      , asset_code
-      , asset_issuer
-      , amount_raw
-      , amount
-      , event_topic
-      , event_type
-      , is_soroban
-      , unique_key
-      , to_muxed
-      , to_muxed_id
+        transaction_hash
+        , transaction_id
+        , operation_id
+        , contract_id
+        , closed_at
+        , ledger_sequence
+        , `to`
+        , `from`
+        , asset
+        , asset_type
+        , asset_code
+        , asset_issuer
+        , amount_raw
+        , amount
+        , event_topic
+        , event_type
+        , is_soroban
+        , unique_key
+        , to_muxed
+        , to_muxed_id
     from {project_id}.{dataset_id}.token_transfers
     where
         true
