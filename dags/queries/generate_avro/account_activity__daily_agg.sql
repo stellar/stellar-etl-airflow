@@ -7,21 +7,21 @@ options (
 as (
     select
         day
-      , address
-      , asset_code
-      , asset_issuer
-      , asset_type
-      , contract_id
-      , direct_payment_volume
-      , path_payment_volume
-      , payment_arbitrage_volume
-      , payment_volume
-      , orderbook_trade_volume
-      , amm_trade_volume
-      , total_dex_trade_volume
-      , liquidity_pool_deposit_volume
-      , liquidity_pool_withdraw_volume
-      , smart_contract_volume
+        , address
+        , asset_code
+        , asset_issuer
+        , asset_type
+        , contract_id
+        , direct_payment_volume
+        , path_payment_volume
+        , payment_arbitrage_volume
+        , payment_volume
+        , orderbook_trade_volume
+        , amm_trade_volume
+        , total_dex_trade_volume
+        , liquidity_pool_deposit_volume
+        , liquidity_pool_withdraw_volume
+        , smart_contract_volume
     from {project_id}.{dataset_id}.account_activity__daily_agg
     where
         true
