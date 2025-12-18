@@ -201,5 +201,6 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_reflector_prices_data
+    >> contract_data_snapshot_task
     >> reflector_prices_data_snapshot_task
 )
