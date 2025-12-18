@@ -29,7 +29,7 @@ as (
     from {project_id}.{dataset_id}.token_transfers
     where
         true
-        and closed_at >= '{batch_run_date}'
-        and closed_at < '{next_batch_run_date}'
+        and closed_at >= timestamp('{batch_run_date}')
+        and closed_at < timestamp('{next_batch_run_date}')
     order by closed_at asc
 )
