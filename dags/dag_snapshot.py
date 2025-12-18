@@ -170,6 +170,7 @@ reflector_prices_data_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_reflector_prices_data",
     operator="+",
+    excluded="+tag:custom_snapshot_contract_data",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
