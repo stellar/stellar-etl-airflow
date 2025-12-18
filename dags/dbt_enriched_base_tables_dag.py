@@ -40,9 +40,15 @@ enriched_history_operations_task = dbt_task(
 current_state_task = dbt_task(dag, tag="current_state", operator="+")
 evicted_keys_task = dbt_task(dag, tag="evicted_keys")
 
+token_transfer_task = dbt_task(
+    dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
+)
+
 # DAG task graph
 wait_on_history_table >> enriched_history_operations_task
 
 wait_on_state_table >> current_state_task
 wait_on_history_table >> evicted_keys_task
 wait_on_state_table >> evicted_keys_task
+
+enriched_history_operations_task >> token_transfer_task

@@ -16,9 +16,9 @@ from stellar_etl_airflow.default import (
 init_sentry()
 
 dag = DAG(
-    "generate_avro",
+    "generate_avro_hourly",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 10, 1, 1, 0),
+    start_date=datetime(2024, 12, 17, 0, 0),
     catchup=True,
     description="This DAG generates AVRO files from BQ tables",
     schedule_interval="0 * * * *",
@@ -33,14 +33,22 @@ dag = DAG(
 
 public_project = "{{ var.value.public_project }}"
 public_dataset = "{{ var.value.public_dataset }}"
-gcs_bucket = "{{ var.value.avro_gcs_bucket }}"
 
+internal_project = "{{ var.value.bq_project }}"
+dbt_internal_marts_dataset = "{{ var.value.dbt_internal_marts_dataset }}"
+
+gcs_bucket = "{{ var.value.avro_gcs_bucket }}"
 
 # Wait on ingestion DAGs
 wait_on_history_table = build_cross_deps(
     dag, "wait_on_ledgers_txs", "history_table_export"
 )
 wait_on_state_table = build_cross_deps(dag, "wait_on_state_table", "state_table_export")
+
+# Wait on dbt DAGs
+wait_on_dbt_enriched_base_tables = build_cross_deps(
+    dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables"
+)
 
 # Add dummy_task so DAG generates the avro_tables loop and dependency graph correctly
 dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
@@ -73,3 +81,15 @@ for table in avro_tables:
     dummy_task >> avro_task
     wait_on_history_table >> avro_task
     wait_on_state_table >> avro_task
+
+
+token_transfers_avro_task = build_bq_generate_avro_job(
+    dag=dag,
+    project=internal_project,
+    dataset=dbt_internal_marts_dataset,
+    table="token_transfers",
+    gcs_bucket=gcs_bucket,
+)
+
+dummy_task >> token_transfers_avro_task
+wait_on_dbt_enriched_base_tables >> token_transfers_avro_task
