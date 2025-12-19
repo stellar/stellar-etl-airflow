@@ -299,7 +299,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://94027cdcc4c9470f9dafa2c0b456c2c9@o14203.ingest.us.sentry.io/5806618",
   "sentry_environment": "production",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:dfc1bdef9",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:3a6f9fdf5",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
