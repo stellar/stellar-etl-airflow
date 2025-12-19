@@ -107,7 +107,7 @@
     "partnership_assets__account_holders_activity_fact": false,
     "partnership_assets__asset_activity_fact": false
   },
-  "dbt_image_name": "stellar/stellar-dbt:dafa7590c",
+  "dbt_image_name": "stellar/stellar-dbt:fa64f5f60",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -141,7 +141,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl-test",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-tes-58aaf371-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:85d42682a",
+  "image_name": "stellar/stellar-etl:f8475c8b1",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -301,7 +301,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:e73897b1d",
+  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:dfc1bdef9",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
