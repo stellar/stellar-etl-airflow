@@ -73,9 +73,9 @@ retool_export_task = build_export_task(
     command="export-retool",
     cmd_args=[
         "--start-time",
-        "{{ params.manual_start_date if params.manual_start_date not in [None, ''] else subtract_data_interval(dag, data_interval_start).isoformat() }}",
+        "{{ params.get('manual_start_date') or subtract_data_interval(dag, data_interval_start).isoformat() }}",
         "--end-time",
-        "{{ params.manual_end_date if params.manual_end_date not in [None, ''] else subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
     env_vars={
@@ -105,9 +105,9 @@ wisdom_tree_asset_prices_export_task = build_export_task(
     command="export-wisdom-tree-asset-prices",
     cmd_args=[
         "--start-time",
-        "{{ params.manual_end_date if params.manual_end_date not in [None, ''] else subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
         "--end-time",
-        "{{ params.manual_end_date if params.manual_end_date not in [None, ''] else subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
     env_vars={
@@ -137,9 +137,9 @@ coingecko_prices_export_task = build_export_task(
     command="export-coingecko-prices",
     cmd_args=[
         "--start-time",
-        "{{ params.manual_start_date if params.manual_start_date not in [None, ''] else data_interval_start.isoformat() }}",
+        "{{ params.get('manual_start_date') or data_interval_start.isoformat() }}",
         "--end-time",
-        "{{ params.manual_end_date if params.manual_end_date not in [None, ''] else data_interval_end.isoformat() }}",
+        "{{ params.get('manual_end_date') or data_interval_end.isoformat() }}",
     ],
     use_gcs=True,
 )

@@ -57,7 +57,7 @@ dag = DAG(
 
 # Initialize batch metadata variables
 batch_id = macros.get_batch_id()
-batch_date = "{{ params.manual_start_date if params.manual_start_date not in [None, ''] else batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+batch_date = "{{ params.get('manual_start_date') or batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
 # Fetch necessary variables
 table_names = Variable.get("table_ids", deserialize_json=True)
