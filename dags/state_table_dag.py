@@ -38,6 +38,8 @@ dag = DAG(
     schedule_interval="*/10 * * * *",
     params={
         "alias": "state",
+        "manual_start_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
+        "manual_end_date": "",    # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
     },
     render_template_as_native_obj=True,
     user_defined_filters={
@@ -55,7 +57,7 @@ dag = DAG(
 
 # Initialize batch metadata variables
 batch_id = macros.get_batch_id()
-batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+batch_date = "{{ params.manual_start_date if params.manual_start_date else batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
 # Fetch necessary variables
 table_names = Variable.get("table_ids", deserialize_json=True)

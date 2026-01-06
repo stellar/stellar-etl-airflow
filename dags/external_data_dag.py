@@ -50,6 +50,8 @@ dag = DAG(
     schedule_interval="0 13 * * *",
     params={
         "alias": "external",
+        "manual_start_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
+        "manual_end_date": "",    # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
     },
     render_template_as_native_obj=True,
     user_defined_macros={
@@ -71,9 +73,9 @@ retool_export_task = build_export_task(
     command="export-retool",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}",
+        "{{ params.manual_start_date if params.manual_start_date else subtract_data_interval(dag, data_interval_start).isoformat() }}",
         "--end-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.manual_end_date if params.manual_end_date else subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
     env_vars={
@@ -103,9 +105,9 @@ wisdom_tree_asset_prices_export_task = build_export_task(
     command="export-wisdom-tree-asset-prices",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.manual_end_date if params.manual_end_date else subtract_data_interval(dag, data_interval_end).isoformat() }}",
         "--end-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.manual_end_date if params.manual_end_date else subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
     env_vars={
@@ -135,9 +137,9 @@ coingecko_prices_export_task = build_export_task(
     command="export-coingecko-prices",
     cmd_args=[
         "--start-time",
-        "{{ data_interval_start.isoformat() }}",
+        "{{ params.manual_start_date if params.manual_start_date else data_interval_start.isoformat() }}",
         "--end-time",
-        "{{ data_interval_end.isoformat() }}",
+        "{{ params.manual_end_date if params.manual_end_date else data_interval_end.isoformat() }}",
     ],
     use_gcs=True,
 )
