@@ -175,12 +175,14 @@ omni_pdt_agg_task = dbt_task(dag, tag="omni_pdts")
 wait_on_dbt_enriched_base_tables >> trade_agg_task
 wait_on_dbt_enriched_base_tables >> fee_stats_agg_task
 wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
+asset_prices_task >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 # wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_dbt_enriched_base_tables >> token_transfer_task
 wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
+asset_prices_task >> tvl_task
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
 wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
