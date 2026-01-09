@@ -61,7 +61,6 @@ fee_stats_agg_task = dbt_task(dag, tag="fee_stats")
 asset_stats_agg_task = dbt_task(
     dag,
     tag="asset_stats",
-    operator="+",
     excluded=["stellar_dbt_public", "+tag:enriched_history_operations"],
 )
 
@@ -117,7 +116,7 @@ entity_attribution_task = dbt_task(
 #     ],
 # )
 
-tvl_task = dbt_task(dag, tag="tvl", operator="+", excluded="stellar_dbt_public")
+tvl_task = dbt_task(dag, tag="tvl", excluded="stellar_dbt_public")
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
