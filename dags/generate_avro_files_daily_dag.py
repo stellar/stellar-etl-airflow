@@ -52,7 +52,7 @@ account_activity__daily_agg_avro_task = build_bq_generate_avro_job(
     dag=dag,
     project=internal_project,
     dataset=dbt_gold_dataset,
-    table="account_activity__daily_agg",
+    table="account_token_activity",
     gcs_bucket=gcs_bucket,
 )
 
@@ -60,7 +60,7 @@ account_balances__daily_agg_agg_avro_task = build_bq_generate_avro_job(
     dag=dag,
     project=public_project,
     dataset=dbt_mart_dataset,
-    table="account_balances__daily_agg",
+    table="account_balances",
     gcs_bucket=gcs_bucket,
 )
 
@@ -68,7 +68,7 @@ asset_balances__daily_agg_avro_task = build_bq_generate_avro_job(
     dag=dag,
     project=public_project,
     dataset=dbt_mart_dataset,
-    table="asset_balances__daily_agg",
+    table="token_balances",
     gcs_bucket=gcs_bucket,
 )
 
