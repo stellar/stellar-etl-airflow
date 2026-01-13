@@ -41,8 +41,6 @@ dbt_gold_dataset = "{{ var.value.dbt_gold_dataset }}"
 
 gcs_bucket = "{{ var.value.avro_gcs_bucket }}"
 
-
-
 # Add dummy_task so ci/cd tests pass
 dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
 
