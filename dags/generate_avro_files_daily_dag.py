@@ -15,6 +15,8 @@ from stellar_etl_airflow.default import (
 
 init_sentry()
 
+# This DAG should be disabled until upstream tables are corrected
+
 dag = DAG(
     "generate_avro_daily",
     default_args=get_default_dag_args(),

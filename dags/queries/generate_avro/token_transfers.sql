@@ -19,7 +19,8 @@ as (
         , asset_code
         , asset_issuer
         , amount_raw
-        , amount
+        -- Removing amount because certain assets don't use the 10e-7 precision
+        -- , amount
         , event_topic
         , event_type
         , is_soroban
