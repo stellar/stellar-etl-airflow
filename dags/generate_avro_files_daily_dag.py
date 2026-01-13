@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from airflow import DAG
-from airflow.operators.dummy import DummyOperator
 from stellar_etl_airflow import macros
 from stellar_etl_airflow.build_bq_generate_avro_job_task import (
     build_bq_generate_avro_job,
@@ -47,9 +46,6 @@ wait_on_dbt_stellar_marts = build_cross_deps(
     dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts"
 )
 
-# Add dummy_task so DAG generates the avro_tables loop and dependency graph correctly
-dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
-
 account_activity__daily_agg_avro_task = build_bq_generate_avro_job(
     dag=dag,
     project=internal_project,
@@ -74,11 +70,8 @@ asset_balances__daily_agg_avro_task = build_bq_generate_avro_job(
     gcs_bucket=gcs_bucket,
 )
 
-dummy_task >> account_activity__daily_agg_avro_task
 wait_on_dbt_stellar_marts >> account_activity__daily_agg_avro_task
 
-dummy_task >> account_balances__daily_agg_agg_avro_task
 wait_on_dbt_stellar_marts >> account_balances__daily_agg_agg_avro_task
 
-dummy_task >> asset_balances__daily_agg_avro_task
 wait_on_dbt_stellar_marts >> asset_balances__daily_agg_avro_task
