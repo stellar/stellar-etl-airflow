@@ -51,7 +51,7 @@ dag = DAG(
     params={
         "alias": "external",
         "manual_start_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
-        "manual_end_date": "",    # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
+        "manual_end_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
     },
     render_template_as_native_obj=True,
     user_defined_macros={
@@ -70,16 +70,18 @@ dag = DAG(
 def extract_date_from_datetime(datetime_str):
     """Extracts the date (YYYY-MM-DD) from a UTC datetime string."""
     # Check if the input is an Airflow template string
-    if '{{' in datetime_str and '}}' in datetime_str:
+    if "{{" in datetime_str and "}}" in datetime_str:
         return datetime_str  # Return the template string as-is for Airflow to resolve
 
-    dt = datetime.fromisoformat(datetime_str.replace('Z', '+00:00'))
-    return dt.strftime('%Y-%m-%d')
+    dt = datetime.fromisoformat(datetime_str.replace("Z", "+00:00"))
+    return dt.strftime("%Y-%m-%d")
 
 
 # Ensure manual_start_date and manual_end_date are provided in ISO 8601 format (e.g., '2026-01-13T00:00:00Z').
 # If not provided, defaults to data_interval_start and data_interval_end.
-manual_start_date = "{{ params.get('manual_start_date', data_interval_start.isoformat()) }}"
+manual_start_date = (
+    "{{ params.get('manual_start_date', data_interval_start.isoformat()) }}"
+)
 manual_end_date = "{{ params.get('manual_end_date', data_interval_end.isoformat()) }}"
 
 # Convert datetime to date (YYYY-MM-DD) for further processing.

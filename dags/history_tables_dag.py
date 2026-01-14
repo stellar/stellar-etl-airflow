@@ -44,7 +44,7 @@ dag = DAG(
     params={
         "alias": "cc",
         "manual_start_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
-        "manual_end_date": "",    # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
+        "manual_end_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
     },
     render_template_as_native_obj=True,
     user_defined_filters={
