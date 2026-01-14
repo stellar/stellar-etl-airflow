@@ -22,7 +22,7 @@ def should_run_task(snapshot_name, **kwargs):
 dag = DAG(
     "dbt_snapshot_backfill",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2025, 4, 22, 0, 1),
+    start_date=datetime(2026, 1, 13, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval=None,  # Runs at 01:00 UTC
     user_defined_filters={
