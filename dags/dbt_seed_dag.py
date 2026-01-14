@@ -11,7 +11,7 @@ init_sentry()
 with DAG(
     "dbt_seed",
     default_args=get_default_dag_args(),
-    start_date=datetime(2025, 10, 6, 0, 0),
+    start_date=datetime(2026, 1, 13, 0, 0),
     description="This DAG runs dbt seed to materialize seed tables - manual trigger only",
     schedule_interval=None,  # Manual trigger only
     user_defined_filters={

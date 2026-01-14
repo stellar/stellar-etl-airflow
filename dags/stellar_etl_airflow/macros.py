@@ -1,5 +1,9 @@
 def subtract_data_interval(dag, time):
-    interval = dag.get_run_data_interval(dag.get_last_dagrun())
+    last_dagrun = dag.get_last_dagrun()
+    if last_dagrun is None:
+        # Fallback: Use the provided time directly if no previous DAG runs exist
+        return time
+    interval = dag.get_run_data_interval(last_dagrun)
     return time - (interval.end - interval.start)
 
 

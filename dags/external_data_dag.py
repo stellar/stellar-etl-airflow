@@ -45,11 +45,13 @@ DEFILLAMA_TVLS_EXPORT_TASK_ID = "export_defillama_tvls"
 dag = DAG(
     "external_data_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2024, 12, 16, 0, 0),
+    start_date=datetime(2026, 1, 13, 0, 0),
     description="This DAG exports data from external sources such as retool.",
     schedule_interval="0 13 * * *",
     params={
         "alias": "external",
+        "manual_start_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
+        "manual_end_date": "",  # Format: YYYY-MM-DD HH:MM:SS or empty for scheduled
     },
     render_template_as_native_obj=True,
     user_defined_macros={
@@ -65,15 +67,40 @@ dag = DAG(
 )
 
 
+def extract_date_from_datetime(datetime_str):
+    """Extracts the date (YYYY-MM-DD) from a UTC datetime string."""
+    # Check if the input is an Airflow template string
+    if "{{" in datetime_str and "}}" in datetime_str:
+        return datetime_str  # Return the template string as-is for Airflow to resolve
+
+    dt = datetime.fromisoformat(datetime_str.replace("Z", "+00:00"))
+    return dt.strftime("%Y-%m-%d")
+
+
+# Ensure manual_start_date and manual_end_date are provided in ISO 8601 format (e.g., '2026-01-13T00:00:00Z').
+# If not provided, defaults to data_interval_start and data_interval_end.
+manual_start_date = (
+    "{{ params.get('manual_start_date', data_interval_start.isoformat()) }}"
+)
+manual_end_date = "{{ params.get('manual_end_date', data_interval_end.isoformat()) }}"
+
+# Convert datetime to date (YYYY-MM-DD) for further processing.
+# This ensures compatibility with downstream tasks that may require only the date part.
+start_date = extract_date_from_datetime(manual_start_date)
+end_date = extract_date_from_datetime(manual_end_date)
+
+
+# Build the export task for retool data.
+# The --start-time and --end-time arguments must be in ISO 8601 format.
 retool_export_task = build_export_task(
     dag,
     RETOOL_EXPORT_TASK_ID,
     command="export-retool",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}",
+        "{{ params.get('manual_start_date') or subtract_data_interval(dag, data_interval_start).isoformat() }}",
         "--end-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
     env_vars={
@@ -103,9 +130,9 @@ wisdom_tree_asset_prices_export_task = build_export_task(
     command="export-wisdom-tree-asset-prices",
     cmd_args=[
         "--start-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
         "--end-time",
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
     env_vars={
@@ -129,17 +156,21 @@ wisdom_tree_asset_prices_insert_to_bq_task = create_export_del_insert_operator(
 wisdom_tree_asset_prices_export_task >> wisdom_tree_asset_prices_insert_to_bq_task
 
 
-coingecko_prices_export_task = build_export_task(
+# Build the export task for Coingecko prices data.
+# The --start-time and --end-time arguments must be in ISO 8601 format (e.g., '2026-01-13T00:00:00Z').
+# If not provided, defaults to data_interval_start and data_interval_end.
+coingecko_export_task = build_export_task(
     dag,
     COINGECKO_PRICES_EXPORT_TASK_ID,
     command="export-coingecko-prices",
     cmd_args=[
         "--start-time",
-        "{{ data_interval_start.isoformat() }}",
+        "{{ params.get('manual_start_date') or subtract_data_interval(dag, data_interval_start).isoformat() }}",
         "--end-time",
-        "{{ data_interval_end.isoformat() }}",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
+    env_vars={},
 )
 
 
@@ -155,7 +186,7 @@ coingecko_prices_insert_to_bq_task = create_export_del_insert_operator(
     table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{COINGECKO_PRICES_TABLE_NAME}",
 )
 
-coingecko_prices_export_task >> coingecko_prices_insert_to_bq_task
+coingecko_export_task >> coingecko_prices_insert_to_bq_task
 
 defillama_borrows_export_task = build_export_task(
     dag,

@@ -108,7 +108,6 @@
     "partnership_assets__asset_activity_fact": false
   },
   "dbt_gold_dataset": "test_gold",
-  "dbt_image_name": "stellar/stellar-dbt:fa64f5f60",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -142,7 +141,7 @@
   "defillama_tvl_bucket_name": "defillama-stellar-tvl-test",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-tes-58aaf371-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "stellar/stellar-etl:f8475c8b1",
+  "image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl/stellar-etl-dev:2bc72dfb5",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "k8s_namespace": "hubble-composer",
@@ -302,7 +301,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal:3a6f9fdf5",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:3a6f9fdf5",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -407,7 +406,7 @@
     "build_gcs_to_bq_task": 300,
     "build_time_task": 480
   },
-  "txmeta_datastore_path": "sdf-ledger-close-meta/ledgers",
+  "txmeta_datastore_path": "sdf-ledger-close-meta/v1/ledgers",
   "use_captive_core": "False",
   "use_futurenet": "False",
   "use_testnet": "True",

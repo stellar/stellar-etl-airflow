@@ -31,9 +31,9 @@ def build_time_task(
     Returns:
         the newly created task
     """
-    start_time = "{{ subtract_data_interval(dag, data_interval_start).isoformat() }}"
+    start_time = "{{ params.get('manual_start_date') or subtract_data_interval(dag, data_interval_start).isoformat() }}"
     end_time = (
-        "{{ subtract_data_interval(dag, data_interval_end).isoformat() }}"
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}"
         if use_next_exec_time
         else "{{ ts }}"
     )

@@ -73,9 +73,12 @@ def build_del_ins_from_gcs_to_bq_task(
 
     # Delete operation
 
+    # Ensure batch_date is converted to DATETIME format without timezone
+    batch_date_as_datetime = batch_date.split("+")[0]  # Remove timezone information
+
     DELETE_ROWS_QUERY = (
         f"DELETE FROM {dataset}.{table_name}{staging_table_suffix} "
-        f"WHERE batch_run_date = '{batch_date}'"
+        f"WHERE batch_run_date = DATETIME('{batch_date_as_datetime}') "
         f"AND batch_id = '{batch_id}';"
     )
     delete_task = BigQueryInsertJobOperator(
