@@ -17,7 +17,7 @@ init_sentry()
 dag = DAG(
     "dbt_snapshot",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2026, 1, 13, 0, 0),
+    start_date=datetime(2026, 1, 13, 13, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 1 * * *",  # Runs at 01:00 UTC
     user_defined_filters={
@@ -66,7 +66,6 @@ def should_run_task(snapshot_name, **kwargs):
 wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=60
 )
-
 
 check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
@@ -183,7 +182,11 @@ reflector_prices_data_snapshot_task = dbt_task(
     >> check_should_run_trustline
     >> trustline_snapshot_task
 )
-wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapshot_task
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_accounts
+    >> accounts_snapshot_task
+)
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_liquidity_pools

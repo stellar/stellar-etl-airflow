@@ -11,7 +11,7 @@ init_sentry()
 dag = DAG(
     "mgi_dbt_stellar_marts",
     default_args=get_default_dag_args(),
-    start_date=datetime(2025, 9, 7, 0, 0),
+    start_date=datetime(2026, 1, 14, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 16 * * *",  # Runs at 04:00 PM UTC / 10:00 AM CST as MGI files are received around ~10:00 AM CST
     user_defined_filters={
