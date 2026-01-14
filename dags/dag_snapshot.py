@@ -17,7 +17,7 @@ init_sentry()
 dag = DAG(
     "dbt_snapshot",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2025, 9, 7, 0, 0),
+    start_date=datetime(2026, 1, 13, 13, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 1 * * *",  # Runs at 01:00 UTC
     user_defined_filters={
@@ -28,10 +28,10 @@ dag = DAG(
     tags=["custom_snapshot"],
     params={
         "snapshot_start_date": Param(
-            default="2025-01-01", type="string"
+            default="2026-01-01", type="string"
         ),  # only used for manual runs
         "snapshot_end_date": Param(
-            default="2025-01-02", type="string"
+            default="2026-01-13", type="string"
         ),  # only used for manual runs
         "snapshot_full_refresh": Param(
             default="false", type="string"
@@ -66,7 +66,6 @@ def should_run_task(snapshot_name, **kwargs):
 wait_on_dbt_enriched_base_tables = build_cross_deps(
     dag, "wait_on_dbt_enriched_base_tables", "dbt_enriched_base_tables", time_delta=60
 )
-
 
 check_should_run_trustline = ShortCircuitOperator(
     task_id="check_should_run_trustline",
@@ -170,6 +169,7 @@ reflector_prices_data_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_reflector_prices_data",
     operator="+",
+    excluded="+tag:custom_snapshot_contract_data",
     env_vars={
         "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
         "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
@@ -182,7 +182,11 @@ reflector_prices_data_snapshot_task = dbt_task(
     >> check_should_run_trustline
     >> trustline_snapshot_task
 )
-wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapshot_task
+(
+    wait_on_dbt_enriched_base_tables
+    >> check_should_run_accounts
+    >> accounts_snapshot_task
+)
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_liquidity_pools
@@ -201,5 +205,6 @@ wait_on_dbt_enriched_base_tables >> check_should_run_accounts >> accounts_snapsh
 (
     wait_on_dbt_enriched_base_tables
     >> check_should_run_reflector_prices_data
+    >> contract_data_snapshot_task
     >> reflector_prices_data_snapshot_task
 )

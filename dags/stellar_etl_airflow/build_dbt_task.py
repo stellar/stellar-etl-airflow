@@ -224,7 +224,6 @@ def dbt_task(
         on_failure_callback=alert_after_max_retries,
         on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[task_name]
         ),
@@ -309,7 +308,6 @@ def build_dbt_task(
         on_failure_callback=alert_after_max_retries,
         on_retry_callback=skip_retry_dbt_errors,
         image_pull_policy="IfNotPresent",
-        image_pull_secrets=[k8s.V1LocalObjectReference("private-docker-auth")],
         sla=timedelta(
             seconds=Variable.get("task_sla", deserialize_json=True)[model_name]
         ),
