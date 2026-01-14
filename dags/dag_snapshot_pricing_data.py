@@ -3,7 +3,6 @@ from datetime import datetime
 from airflow import DAG
 from airflow.models.param import Param
 from airflow.operators.python import ShortCircuitOperator
-from airflow.sensors.external_task import ExternalTaskSensor
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
@@ -71,19 +70,6 @@ wait_on_external_data_dag_wisdom_tree_data = build_cross_deps(
     "del_ins_wisdom_tree_asset_prices_data_task",
 )
 
-# Add ExternalTaskSensor to wait for dbt_enriched_base_tables DAG
-wait_on_dbt_enriched_base_tables = ExternalTaskSensor(
-    task_id="wait_on_dbt_enriched_base_tables",
-    external_dag_id="dbt_enriched_base_tables",
-    external_task_id=None,  # Wait for the entire DAG to complete
-    execution_delta=None,  # Adjust if needed
-    execution_date_fn=lambda dt: dt.replace(
-        hour=14, minute=30
-    ),  # Align with dbt_enriched_base_tables execution time
-    mode="poke",
-    timeout=3600,  # Timeout after 1 hour
-    dag=dag,
-)
 
 check_should_run_asset_prices_usd = ShortCircuitOperator(
     task_id="check_should_run_asset_prices_usd",
@@ -200,38 +186,32 @@ coingecko_snapshot_task = dbt_task(
 )
 
 (
-    wait_on_dbt_enriched_base_tables
-    >> wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_asset_prices_usd
     >> asset_prices_usd_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
-    >> wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_wisdom_tree_asset_prices_data
     >> wisdom_tree_asset_prices_data_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
-    >> wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_euro_usd_ohlc
     >> euro_usd_ohlc_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
-    >> wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_partnership_asset_prices
     >> partner_asset_prices_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
-    >> wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_xlm_to_usd
     >> xlm_to_usd_snapshot_task
 )
 (
-    wait_on_dbt_enriched_base_tables
-    >> wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_coingecko
     >> coingecko_snapshot_task
 )
