@@ -77,7 +77,9 @@ wait_on_dbt_enriched_base_tables = ExternalTaskSensor(
     external_dag_id="dbt_enriched_base_tables",
     external_task_id=None,  # Wait for the entire DAG to complete
     execution_delta=None,  # Adjust if needed
-    execution_date_fn=lambda dt: dt.replace(hour=14, minute=30),  # Align with dbt_enriched_base_tables execution time
+    execution_date_fn=lambda dt: dt.replace(
+        hour=14, minute=30
+    ),  # Align with dbt_enriched_base_tables execution time
     mode="poke",
     timeout=3600,  # Timeout after 1 hour
     dag=dag,
