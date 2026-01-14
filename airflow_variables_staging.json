@@ -328,7 +328,7 @@
   "sentry_dsn": "https://ca1f33b9d1392e675ff50e66c0736ba2@o14203.ingest.us.sentry.io/4509985659551744",
   "sentry_environment": "staging",
   "slack_elementary_channel": "alerts-hubble-data-quality-staging",
-  "stellar_etl_internal_image_name": "stellar/stellar-etl-internal-staging:9bf48093e",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal-staging:9bf48093e",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
