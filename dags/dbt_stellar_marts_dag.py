@@ -85,10 +85,6 @@ wallet_metrics_task = dbt_task(
     excluded=["stellar_dbt_public", "+tag:entity_attribution"],
 )
 
-token_transfer_task = dbt_task(
-    dag, tag="token_transfer", operator="+", excluded="stellar_dbt_public"
-)
-
 entity_attribution_task = dbt_task(
     dag,
     tag="entity_attribution",
@@ -179,7 +175,6 @@ asset_prices_task >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 # wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
-wait_on_dbt_enriched_base_tables >> token_transfer_task
 wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 asset_prices_task >> tvl_task
@@ -190,13 +185,10 @@ wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 # model dependencies and execution.
 # Because of this we need token_transfers to run before entity_attribution
 # so that account_activity will work as intended until we refactor
-token_transfer_task >> entity_attribution_task
 # asset_prices_task >> account_activity_task
-# token_transfer_task >> account_activity_task
 # partnership_assets_task >> account_activity_task
 # wallet_metrics_task >> account_activity_task
 
-token_transfer_task >> assets_task
 entity_attribution_task >> assets_task
 entity_attribution_task >> omni_pdt_agg_task
 
