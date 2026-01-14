@@ -17,7 +17,7 @@ init_sentry()
 dag = DAG(
     "dbt_snapshot_pricing_data",
     default_args={**get_default_dag_args(), **{"depends_on_past": True}},
-    start_date=datetime(2025, 10, 16, 0, 0),
+    start_date=datetime(2026, 1, 13, 13, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
     user_defined_filters={
