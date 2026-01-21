@@ -23,6 +23,7 @@ init_sentry()
 EXTERNAL_DATA_TABLE_NAMES = Variable.get("table_ids", deserialize_json=True)
 EXTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
 EXTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
+DBT_TARGET_ENV = Variable.get("dbt_target")
 
 RETOOL_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
 RETOOL_EXPORT_TASK_ID = "export_retool_data"
@@ -237,3 +238,20 @@ defillama_tvls_insert_to_bq_task = create_export_del_insert_operator(
 )
 
 defillama_tvls_export_task >> defillama_tvls_insert_to_bq_task
+
+stellar_expert_prices_export_task = build_export_task(
+    dag,
+    "export_stellar_expert_prices",
+    command="export-stellar-expert-prices",
+    cmd_args=[
+        "--start-time",
+        "{{ params.get('manual_start_date') or subtract_data_interval(dag, data_interval_start).isoformat() }}",
+        "--end-time",
+        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
+        "--env",
+        DBT_TARGET_ENV,
+    ],
+    env_vars={
+        "STELLAR_EXPERT_SECRET_NAME": access_secret("stellar_expert_api_keys"),
+    },
+)
