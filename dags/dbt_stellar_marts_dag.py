@@ -160,6 +160,8 @@ assets_task = dbt_task(dag, tag="assets")
 
 omni_pdt_agg_task = dbt_task(dag, tag="omni_pdts")
 
+stellarbeat_task = dbt_task(dag, tag="stellarbeat")
+
 # Disable soroban tables because they're broken
 # soroban = dbt_task(dag, tag="soroban", operator="+")
 # Disable snapshot state tables because they're broken
@@ -195,3 +197,5 @@ entity_attribution_task >> omni_pdt_agg_task
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
 # wait_on_dbt_enriched_base_tables >> relevant_asset_trades
+
+stellarbeat_task
