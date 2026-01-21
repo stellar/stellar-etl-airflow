@@ -239,7 +239,6 @@ defillama_tvls_insert_to_bq_task = create_export_del_insert_operator(
 
 defillama_tvls_export_task >> defillama_tvls_insert_to_bq_task
 
-# Use the `DBT_TARGET_ENV` variable for the environment
 stellar_expert_prices_export_task = build_export_task(
     dag,
     "export_stellar_expert_prices",
