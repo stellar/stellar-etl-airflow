@@ -255,9 +255,9 @@ stellar_expert_prices_export_task = build_export_task(
         "--issuer",
         "{{ params.get('stellar_asset_issuer', '') }}",
         "--tier",
-        "{{ params.get('stellar_asset_tier', '') }}",
+        "{{ params.get('stellar_asset_tier', 0) }}",
         "--truncate-table",
-        "{{ params.get('stellar_truncate', 'false') }}",
+        "{{ params.get('stellar_truncate', false) | lower }}",
     ],
     env_vars={
         "STELLAR_EXPERT_SECRET_NAME": access_secret("stellar_expert_api_keys"),

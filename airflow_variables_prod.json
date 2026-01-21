@@ -370,6 +370,7 @@
     "export_defillama_tvls": 720,
     "export_retool_data": 720,
     "export_wisdom_tree_asset_prices_data": 720,
+    "export_stellar_expert_prices": 720,
     "fee_stats": 360,
     "history_assets": 360,
     "liquidity_pool_trade_volume": 1200,
