@@ -50,6 +50,19 @@ wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
     "dbt_snapshot_pricing_data",
 )
 
+# Wait on partner pipeline DAG
+# Hardcoding timeout for this wait task to 30 mins. Secure file transfer
+# of partner files should happen well within this 30 mins boundary.
+# In most cases the partner files are available at 13:10 UTC.
+# If the partner files don't arrive within this time frame we should
+# manually mark this task as "success" and let the entity attribution
+# task run. We would then need to manually rerun the task to ingest
+# the partner files whenever they are available for whichever day that
+# was skipped.
+wait_on_partner_pipeline = build_cross_deps(
+    dag, "wait_on_partner_pipeline", "partner_pipeline_dag", timeout=1800
+)
+
 # DBT models to run
 ohlc_task = dbt_task(dag, tag="ohlc", operator="+", excluded="stellar_dbt_public")
 
@@ -177,6 +190,7 @@ asset_prices_task >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 # wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
+wait_on_partner_pipeline >> entity_attribution_task
 wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 asset_prices_task >> tvl_task

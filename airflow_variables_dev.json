@@ -108,7 +108,7 @@
     "partnership_assets__asset_activity_fact": false
   },
   "dbt_gold_dataset": "test_gold",
-  "dbt_image_name": "stellar/stellar-dbt:4da7a35d0",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt-dev:cd9a1aff0",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -336,7 +336,7 @@
     "asset_stats": 720,
     "assets": 720,
     "build_batch_stats": 840,
-    "build_bq_generate_avro_job": 600,
+    "build_bq_generate_avro_job": 3600,
     "build_bq_insert_job": 1080,
     "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 1020,
