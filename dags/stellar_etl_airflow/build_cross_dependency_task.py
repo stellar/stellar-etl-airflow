@@ -4,7 +4,9 @@ from airflow.sensors.external_task import ExternalTaskSensor
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
-def build_cross_deps(dag, task, parent_dag, parent_task=None, time_delta=0, timeout=3600):
+def build_cross_deps(
+    dag, task, parent_dag, parent_task=None, time_delta=0, timeout=3600
+):
     return ExternalTaskSensor(
         task_id=f"check_{task}_finish",
         external_dag_id=parent_dag,
