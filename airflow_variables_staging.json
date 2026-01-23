@@ -110,7 +110,7 @@
     "trade_agg": false
   },
   "dbt_gold_dataset": "staging_gold",
-  "dbt_image_name": "stellar/stellar-dbt:e349405a8",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:f5a938fef",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
