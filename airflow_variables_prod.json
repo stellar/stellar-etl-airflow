@@ -334,7 +334,7 @@
     "asset_stats": 420,
     "assets": 720,
     "build_batch_stats": 600,
-    "build_bq_generate_avro_job": 600,
+    "build_bq_generate_avro_job": 3600,
     "build_bq_insert_job": 840,
     "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 780,
