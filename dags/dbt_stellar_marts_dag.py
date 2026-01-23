@@ -60,10 +60,7 @@ wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
 # the partner files whenever they are available for whichever day that
 # was skipped.
 wait_on_partner_pipeline = build_cross_deps(
-    dag,
-    "wait_on_partner_pipeline",
-    "partner_pipeline_dag",
-    timeout=1800
+    dag, "wait_on_partner_pipeline", "partner_pipeline_dag", timeout=1800
 )
 
 # DBT models to run
