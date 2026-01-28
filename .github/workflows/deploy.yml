@@ -159,7 +159,7 @@ jobs:
         run: python dags/stellar_etl_airflow/add_files_to_composer.py --bucket $BUCKET --env prod
         env:
           GOOGLE_CLOUD_PROJECT: hubble-261722
-          BUCKET: us-central1-stellar-etl-1d74a235-bucket
+          BUCKET: us-central1-stellar-etl-com-7f6b70e1-bucket
 
       - name: Update Airflow variables
         uses: actions-hub/gcloud@master
