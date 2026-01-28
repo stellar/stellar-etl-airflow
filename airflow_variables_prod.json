@@ -109,7 +109,7 @@
     "trade_agg": false
   },
   "dbt_gold_dataset": "gold",
-  "dbt_image_name": "stellar/stellar-dbt:4da7a35d0",
+  "dbt_image_name": "stellar/stellar-dbt:f5a938fef",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -334,7 +334,7 @@
     "asset_stats": 420,
     "assets": 720,
     "build_batch_stats": 600,
-    "build_bq_generate_avro_job": 600,
+    "build_bq_generate_avro_job": 3600,
     "build_bq_insert_job": 840,
     "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 780,
