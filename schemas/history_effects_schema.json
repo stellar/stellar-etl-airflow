@@ -373,7 +373,7 @@
       {
         "mode": "NULLABLE",
         "name": "seller_muxed_id",
-        "type": "NUMERIC"
+        "type": "STRING"
       },
       {
         "mode": "NULLABLE",
