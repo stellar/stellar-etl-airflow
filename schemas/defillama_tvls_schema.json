@@ -48,5 +48,10 @@
     "description": "",
     "name": "batch_insert_ts",
     "type": "TIMESTAMP"
+  },
+  {
+    "description": "",
+    "name": "category",
+    "type": "STRING"
   }
 ]
