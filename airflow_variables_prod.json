@@ -141,7 +141,7 @@
     ]
   },
   "defillama_tvl_bucket_name": "defillama-stellar-tvl",
-  "gcs_exported_data_bucket_name": "us-central1-stellar-etl-1d74a235-bucket",
+  "gcs_exported_data_bucket_name": "us-central1-stellar-etl-com-7f6b70e1-bucket",
   "gcs_exported_object_prefix": "dag-exported",
   "image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl/stellar-etl:f8475c8b1",
   "image_output_path": "/etl/exported_data/",
