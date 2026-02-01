@@ -51,16 +51,10 @@ wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
 )
 
 # Wait on partner pipeline DAG
-# Hardcoding timeout for this wait task to 30 mins. Secure file transfer
-# of partner files should happen well within this 30 mins boundary.
-# In most cases the partner files are available at 13:10 UTC.
-# If the partner files don't arrive within this time frame we should
-# manually mark this task as "success" and let the entity attribution
-# task run. We would then need to manually rerun the task to ingest
-# the partner files whenever they are available for whichever day that
-# was skipped.
+# Hardcoding timeout for this wait task to 2.5 hours to tolerate
+# occasional lag in partner file delivery around 15:10 UTC.
 wait_on_partner_pipeline = build_cross_deps(
-    dag, "wait_on_partner_pipeline", "partner_pipeline_dag", timeout=1800
+    dag, "wait_on_partner_pipeline", "partner_pipeline_dag", timeout=9000
 )
 
 # DBT models to run
