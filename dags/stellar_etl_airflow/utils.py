@@ -4,6 +4,7 @@ import time
 
 from airflow.configuration import conf
 from airflow.models import Variable
+from airflow.utils.log.secrets_masker import mask_secret
 from airflow.utils.state import TaskInstanceState
 from google.cloud import secretmanager
 
@@ -119,4 +120,5 @@ def access_secret(secret_name):
     name = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
     response = client.access_secret_version(name=name)
     secret_value = response.payload.data.decode("UTF-8")
+    mask_secret(secret_value)
     return secret_value
