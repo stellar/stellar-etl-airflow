@@ -120,5 +120,5 @@ def access_secret(secret_name):
     name = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
     response = client.access_secret_version(name=name)
     secret_value = response.payload.data.decode("UTF-8")
-    mask_secret(retool_api_key)
+    mask_secret(secret_value)
     return secret_value
