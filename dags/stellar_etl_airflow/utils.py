@@ -4,9 +4,9 @@ import time
 
 from airflow.configuration import conf
 from airflow.models import Variable
+from airflow.utils.log.secrets_masker import mask_secret
 from airflow.utils.state import TaskInstanceState
 from google.cloud import secretmanager
-from airflow.utils.log.secrets_masker import mask_secret
 
 base_log_folder = conf.get("logging", "base_log_folder")
 
