@@ -60,7 +60,7 @@ as (
         , details.starting_balance
         , details.seller
         , details.seller_muxed
-        , details.seller_muxed_id
+        , safe_cast(details.seller_muxed_id as integer) as seller_muxed_id
         , details.offer_id
         , details.sold_amount
         , details.sold_asset_type
