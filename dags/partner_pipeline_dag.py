@@ -50,7 +50,7 @@ with DAG(
             prefix=OBJECT_PREFIX,
             dag=dag,
             poke_interval=60,
-            timeout=60 * 60 * 24,
+            timeout=3600,
             on_failure_callback=alert_after_max_retries,
         )
 
