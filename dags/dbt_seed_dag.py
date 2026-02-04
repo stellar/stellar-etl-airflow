@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pendulum
-
 from airflow import DAG
 from airflow.models import Param
 from kubernetes.client import models as k8s
