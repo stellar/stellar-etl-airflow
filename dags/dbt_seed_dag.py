@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from airflow import DAG
 from airflow.models import Param
 from kubernetes.client import models as k8s
@@ -18,7 +19,7 @@ with DAG(
     },
     max_active_runs=1,
     catchup=False,
-    tags=["dbt-seed", "daily"],
+    tags=["dbt-seed"],
     params={
         "full_refresh": Param(
             default=False,
