@@ -46,7 +46,7 @@ dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
 
 # Wait on dbt DAGs
 wait_on_dbt_stellar_marts = build_cross_deps(
-    dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts"
+    dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts", timeout=21600
 )
 
 account_activity__daily_agg_avro_task = build_bq_generate_avro_job(
