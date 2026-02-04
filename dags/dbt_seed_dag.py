@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import pendulum
+
 from airflow import DAG
 from airflow.models import Param
 from kubernetes.client import models as k8s
@@ -12,14 +14,15 @@ with DAG(
     "dbt_seed",
     default_args=get_default_dag_args(),
     start_date=datetime(2026, 1, 13, 0, 0),
-    description="This DAG runs dbt seed to materialize seed tables - manual trigger only",
-    schedule_interval=None,  # Manual trigger only
+    description="This DAG runs dbt seed to materialize seed tables daily at 02:00 ET",
+    schedule_interval="0 2 * * *",
+    timezone=pendulum.timezone("America/New_York"),
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
     max_active_runs=1,
     catchup=False,
-    tags=["dbt-seed", "manual-trigger"],
+    tags=["dbt-seed", "daily"],
     params={
         "full_refresh": Param(
             default=False,
