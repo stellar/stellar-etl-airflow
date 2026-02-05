@@ -301,6 +301,14 @@
       "table": "raw_mgi_stellar_transactions"
     }
   },
+  "partner_addresses_bucket": "ext-stellar-partner-data",
+  "partner_addresses_data": {
+    "bitcoincom_addresses": {
+      "prefix_folder": "wallet-bitcoincom",
+      "prefix_id": "bitcoincom_addresses",
+      "table": "addresses_bitcoinwallet"
+    }
+  },
   "public_dataset": "staging_crypto_stellar",
   "public_project": "staging-hubble",
   "public_source_db": "staging-hubble",
