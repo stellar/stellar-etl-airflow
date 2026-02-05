@@ -201,6 +201,8 @@ wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
 entity_attribution_task >> assets_task
 entity_attribution_task >> omni_pdt_agg_task
+asset_balance_agg_task >> omni_pdt_agg_task
+asset_prices_task >> omni_pdt_agg_task
 
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
