@@ -20,7 +20,7 @@ dag = DAG(
     default_args=get_default_dag_args(),
     start_date=datetime(2021, 1, 1, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
+    schedule_interval="0 0 1 1 *",  # Runs at 00:00 on January 1st every year
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
@@ -32,11 +32,6 @@ dag = DAG(
 
 batch_start_date = "{{ dag_run.conf.get('batch_start_date', data_interval_start) }}"
 batch_end_date = "{{ dag_run.conf.get('batch_end_date', data_interval_end) }}"
-
-# Wait on Snapshot DAGs which runs at 1:00 UTC (12 hours earlier)
-wait_on_dbt_snapshot_tables = build_cross_deps(
-    dag, "wait_on_dbt_snapshot_tables", "dbt_snapshot", time_delta=720
-)
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
@@ -62,4 +57,4 @@ asset_balance_agg_task = dbt_task(
 # relevant_asset_trades = dbt_task(dag, tag="relevant_asset_trades")
 
 # DAG task graph
-wait_on_dbt_snapshot_tables >> asset_balance_agg_task
+asset_balance_agg_task
