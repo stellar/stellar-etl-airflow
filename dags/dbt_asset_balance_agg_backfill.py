@@ -18,9 +18,9 @@ init_sentry()
 dag = DAG(
     "dbt_stellar_marts_backfill",
     default_args=get_default_dag_args(),
-    start_date=datetime(2021, 1, 1, 0, 0),
+    start_date=datetime(2026, 1, 1, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
-    schedule_interval="0 0 1 1 *",  # Runs at 00:00 on January 1st every year
+    schedule_interval="@weekly",  # Runs weekly
     user_defined_filters={
         "container_resources": lambda s: k8s.V1ResourceRequirements(requests=s),
     },
