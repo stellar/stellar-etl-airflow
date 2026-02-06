@@ -30,8 +30,10 @@ dag = DAG(
     # sla_miss_callback=alert_sla_miss,
 )
 
-batch_start_date = "{{ dag_run.conf.get('batch_start_date', data_interval_start) }}"
-batch_end_date = "{{ dag_run.conf.get('batch_end_date', data_interval_end) }}"
+# batch_start_date = "{{ dag_run.conf.get('batch_start_date', data_interval_start) }}"
+batch_start_date = "2026-01-01"
+# batch_end_date = "{{ dag_run.conf.get('batch_end_date', data_interval_end) }}"
+batch_end_date = "2026-02-05"
 
 project = "{{ var.value.bq_project }}"
 dataset = "{{ var.value.dbt_internal_marts_dataset }}"
