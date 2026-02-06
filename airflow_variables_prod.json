@@ -329,6 +329,7 @@
   },
   "task_sla": {
     "account_activity": 1800,
+    "airtable_entities_dlt_task": 600,
     "asset_balance_agg": 720,
     "asset_prices": 720,
     "asset_stats": 420,
