@@ -5,7 +5,10 @@ from airflow.models import Variable
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
 from kubernetes.client import models as k8s
-from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
+from stellar_etl_airflow.build_cross_dependency_task import (
+    LatestDagRunSensor,
+    build_cross_deps,
+)
 from stellar_etl_airflow.build_dbt_task import dbt_task
 from stellar_etl_airflow.default import (
     alert_sla_miss,
@@ -53,8 +56,12 @@ wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
 # Wait on partner pipeline DAG
 # Hardcoding timeout for this wait task to 2.5 hours to tolerate
 # occasional lag in partner file delivery around 15:10 UTC.
-wait_on_partner_pipeline = build_cross_deps(
-    dag, "wait_on_partner_pipeline", "partner_pipeline_dag", timeout=9000
+wait_on_partner_pipeline = LatestDagRunSensor(
+    task_id="check_wait_on_partner_pipeline_finish",
+    external_dag_id="partner_pipeline_dag",
+    min_execution_date_fn=lambda context: context["data_interval_start"],
+    timeout=9000,
+    dag=dag,
 )
 
 # DBT models to run
@@ -201,6 +208,8 @@ wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
 
 entity_attribution_task >> assets_task
 entity_attribution_task >> omni_pdt_agg_task
+asset_balance_agg_task >> omni_pdt_agg_task
+asset_prices_task >> omni_pdt_agg_task
 
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state

@@ -124,7 +124,7 @@ jobs:
         env:
           PROJECT_ID: staging-hubble
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_STAGING_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: staging-stellar-etl
+          COMPOSER_ENVIRONMENT: stellar-etl-staging-composer-2
           LOCATION: us-central1
         with:
           args: >
@@ -166,7 +166,7 @@ jobs:
         env:
           PROJECT_ID: hubble-261722
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_PROD_HUBBLE }}"
-          COMPOSER_ENVIRONMENT: stellar-etl
+          COMPOSER_ENVIRONMENT: stellar-etl-composer-2
           LOCATION: us-central1
         with:
           args: >
