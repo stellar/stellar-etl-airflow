@@ -7,14 +7,11 @@ from airflow.utils.state import State
 from stellar_etl_airflow.default import alert_after_max_retries
 
 
-def latest_successful_execution_date_fn(
-    external_dag_id, min_execution_date_fn=None
-):
+def latest_successful_execution_date_fn(external_dag_id, min_execution_date_fn=None):
     @provide_session
     def _fn(context, session=None):
-        query = (
-            session.query(DagRun)
-            .filter(DagRun.dag_id == external_dag_id, DagRun.state == State.SUCCESS)
+        query = session.query(DagRun).filter(
+            DagRun.dag_id == external_dag_id, DagRun.state == State.SUCCESS
         )
 
         if min_execution_date_fn:
@@ -37,9 +34,7 @@ def build_cross_deps(
     timeout=3600,
     execution_date_fn=None,
 ):
-    execution_delta = (
-        None if execution_date_fn else timedelta(minutes=time_delta)
-    )
+    execution_delta = None if execution_date_fn else timedelta(minutes=time_delta)
 
     return ExternalTaskSensor(
         task_id=f"check_{task}_finish",
