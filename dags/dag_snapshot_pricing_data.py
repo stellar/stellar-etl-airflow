@@ -67,23 +67,16 @@ wait_on_external_data_dag_wisdom_tree_data = build_cross_deps(
     "del_ins_wisdom_tree_asset_prices_data_task",
 )
 
-wait_on_external_data_dag_retool_data = build_cross_deps(
-    dag,
-    "wait_on_external_data_dag_retool_data",
-    "external_data_dag",
-    "del_ins_retool_entity_data_task",
-)
-
 wait_on_external_data_dag_coingecko_data = build_cross_deps(
     dag,
     "wait_on_external_data_dag_coingecko_data",
     "external_data_dag",
-    "del_ins_coingecko_prices_data_task",
+    "del_ins_asset_prices__coingecko_task",
 )
 
-wait_on_external_data_dag_steller_expert_data = build_cross_deps(
+wait_on_external_data_dag_stellar_expert_data = build_cross_deps(
     dag,
-    "wait_on_external_data_dag_steller_expert_data",
+    "wait_on_external_data_dag_stellar_expert_data",
     "external_data_dag",
     "export_stellar_expert_prices",
 )
@@ -197,7 +190,7 @@ coingecko_snapshot_task = dbt_task(
     >> wisdom_tree_asset_prices_data_snapshot_task
 )
 (
-    wait_on_external_data_dag_steller_expert_data
+    wait_on_external_data_dag_stellar_expert_data
     >> check_should_run_partnership_asset_prices
     >> partner_asset_prices_snapshot_task
 )
@@ -205,7 +198,7 @@ coingecko_snapshot_task = dbt_task(
     # This doesn't really need to wait for this specific stellar expert task.
     # It actually gets data from the cloud run function that gets data from stellar expert.
     # Using this wait as a generic proxy to stellar expert data.
-    wait_on_external_data_dag_steller_expert_data
+    wait_on_external_data_dag_stellar_expert_data
     >> check_should_run_xlm_to_usd
     >> xlm_to_usd_snapshot_task
 )
