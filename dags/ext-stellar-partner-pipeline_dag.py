@@ -21,11 +21,12 @@ from stellar_etl_airflow.default import (
 init_sentry()
 
 with DAG(
-    "ext-stellar-partner-pipeline_dag",
+    "ext_stellar_partner_pipeline_dag",
     default_args=get_default_dag_args(),
     start_date=datetime(2023, 1, 1, 0, 0),
-    description="This DAG automates monthly updates from partner address dumps in GCS to partner stg_addresses_____ tables in BigQuery.",
-    schedule_interval='@monthly',
+    description="This DAG automates monthly updates from partner address dumps in GCS to partner stg_addresses_{wallet name} tables in BigQuery.",
+    # TODO: Confirm that this schedule works for monthly updates
+    schedule_interval='0 0 1 * *',
     params={
         "alias": "partner-addresses",
     },
@@ -40,8 +41,8 @@ with DAG(
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:
-        OBJECT_PREFIX = "{}/{}_".format(
-            PARTNERS[partner]["prefix_folder"], PARTNERS[partner]["prefix_id"]
+        OBJECT_PREFIX = "{}/{}_{}".format(
+            PARTNERS[partner]["prefix_folder"], PARTNERS[partner]["prefix_id"], PARTNERS[partner]["date_format"]
         )
         check_gcs_file = GCSObjectsWithPrefixExistenceSensor(
             task_id=f"check_gcs_file_{partner}_addresses",
