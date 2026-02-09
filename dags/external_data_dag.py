@@ -171,7 +171,9 @@ coingecko_export_task = build_export_task(
         "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
     ],
     use_gcs=True,
-    env_vars={},
+    env_vars={
+        "COINGECKO_DEMO_API_KEY": access_secret("coingecko_demo_api_key"),
+    },
 )
 
 

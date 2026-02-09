@@ -42,9 +42,6 @@ dag = DAG(
         "skip_wisdom_tree_asset_prices_data": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_euro_usd_ohlc": Param(
-            default="false", type="string"
-        ),  # only used for manual runs
         "skip_partnership_asset_prices": Param(
             default="false", type="string"
         ),  # only used for manual runs
@@ -70,6 +67,26 @@ wait_on_external_data_dag_wisdom_tree_data = build_cross_deps(
     "del_ins_wisdom_tree_asset_prices_data_task",
 )
 
+wait_on_external_data_dag_retool_data = build_cross_deps(
+    dag,
+    "wait_on_external_data_dag_retool_data",
+    "external_data_dag",
+    "del_ins_retool_entity_data_task",
+)
+
+wait_on_external_data_dag_coingecko_data = build_cross_deps(
+    dag,
+    "wait_on_external_data_dag_coingecko_data",
+    "external_data_dag",
+    "del_ins_coingecko_prices_data_task",
+)
+
+wait_on_external_data_dag_steller_expert_data = build_cross_deps(
+    dag,
+    "wait_on_external_data_dag_steller_expert_data",
+    "external_data_dag",
+    "export_stellar_expert_prices",
+)
 
 check_should_run_asset_prices_usd = ShortCircuitOperator(
     task_id="check_should_run_asset_prices_usd",
@@ -83,14 +100,6 @@ check_should_run_wisdom_tree_asset_prices_data = ShortCircuitOperator(
     task_id="check_should_run_wisdom_tree_asset_prices_data",
     python_callable=should_run_task,
     op_args=["skip_wisdom_tree_asset_prices_data"],
-    provide_context=True,
-    dag=dag,
-)
-
-check_should_run_euro_usd_ohlc = ShortCircuitOperator(
-    task_id="check_should_run_euro_usd_ohlc",
-    python_callable=should_run_task,
-    op_args=["skip_euro_usd_ohlc"],
     provide_context=True,
     dag=dag,
 )
@@ -141,17 +150,6 @@ wisdom_tree_asset_prices_data_snapshot_task = dbt_task(
     },
 )
 
-euro_usd_ohlc_snapshot_task = dbt_task(
-    dag,
-    tag="custom_snapshot_euro_usd_ohlc",
-    operator="+",
-    env_vars={
-        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
-        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
-        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
-    },
-)
-
 partner_asset_prices_snapshot_task = dbt_task(
     dag,
     tag="custom_snapshot_partnership_asset_prices",
@@ -186,7 +184,10 @@ coingecko_snapshot_task = dbt_task(
 )
 
 (
-    wait_on_external_data_dag_wisdom_tree_data
+    # This doesn't really need to wait for this specific coingecko task.
+    # It actually gets data from the cloud run function that gets data from coingecko.
+    # Using this wait as a generic proxy to coingecko data.
+    wait_on_external_data_dag_coingecko_data
     >> check_should_run_asset_prices_usd
     >> asset_prices_usd_snapshot_task
 )
@@ -196,22 +197,20 @@ coingecko_snapshot_task = dbt_task(
     >> wisdom_tree_asset_prices_data_snapshot_task
 )
 (
-    wait_on_external_data_dag_wisdom_tree_data
-    >> check_should_run_euro_usd_ohlc
-    >> euro_usd_ohlc_snapshot_task
-)
-(
-    wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_steller_expert_data
     >> check_should_run_partnership_asset_prices
     >> partner_asset_prices_snapshot_task
 )
 (
-    wait_on_external_data_dag_wisdom_tree_data
+    # This doesn't really need to wait for this specific stellar expert task.
+    # It actually gets data from the cloud run function that gets data from stellar expert.
+    # Using this wait as a generic proxy to stellar expert data.
+    wait_on_external_data_dag_steller_expert_data
     >> check_should_run_xlm_to_usd
     >> xlm_to_usd_snapshot_task
 )
 (
-    wait_on_external_data_dag_wisdom_tree_data
+    wait_on_external_data_dag_coingecko_data
     >> check_should_run_coingecko
     >> coingecko_snapshot_task
 )
