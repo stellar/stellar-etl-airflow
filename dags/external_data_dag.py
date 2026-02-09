@@ -3,10 +3,10 @@ The external_data_dag DAG exports data from external sources.
 It is scheduled to export information to BigQuery at regular intervals.
 """
 
+import json
 from ast import literal_eval
 from datetime import datetime
 from json import loads
-import json
 
 from airflow import DAG
 from airflow.configuration import conf
