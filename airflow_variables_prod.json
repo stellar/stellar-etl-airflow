@@ -271,7 +271,8 @@
   "partner_addresses_data": {
     "bitcoincom_addresses": {
       "prefix_folder": "wallet-bitcoincom",
-      "prefix_id": "bitcoincom_addresses",
+      "prefix_id": "addresses",
+      "date_format": "YYYYMMDD",
       "table": "addresses_bitcoinwallet"
     }
   },
