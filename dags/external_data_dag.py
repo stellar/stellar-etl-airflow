@@ -3,6 +3,7 @@ The external_data_dag DAG exports data from external sources.
 It is scheduled to export information to BigQuery at regular intervals.
 """
 
+import json
 from ast import literal_eval
 from datetime import datetime
 from json import loads
@@ -255,5 +256,17 @@ stellar_expert_prices_export_task = build_export_task(
     ],
     env_vars={
         "STELLAR_EXPERT_SECRET_NAME": access_secret("stellar_expert_api_keys"),
+    },
+)
+
+airtable_entities_dlt_task = build_export_task(
+    dag,
+    "airtable_entities_dlt_task",
+    command="cd /etl/python/export-airtable-entity-table && python airtable_entities_table_pipeline.py",
+    env_vars={
+        "SOURCES__AIRTABLE__ACCESS_TOKEN": access_secret("airtable_access_token"),
+        "SOURCES__AIRTABLE__BASE_ID": "app8MOJ5Qp0f6lSPK",
+        "SOURCES__AIRTABLE__TABLE_NAMES": json.dumps('["tbl8SqeUV36Xvbk1m"]'),
+        "DESTINATION__BIGQUERY__DATASET_NAME": EXTERNAL_DATA_DATASET_NAME,
     },
 )

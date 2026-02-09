@@ -108,7 +108,7 @@
     "partnership_assets__asset_activity_fact": false
   },
   "dbt_gold_dataset": "test_gold",
-  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:376134c35",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:7da25348f",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -302,7 +302,7 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://9e0a056541c3445083329b072f2df690@o14203.ingest.us.sentry.io/6190849",
   "sentry_environment": "development",
-  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:e549f5a6a",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:d71517d98",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -331,6 +331,7 @@
   },
   "task_sla": {
     "account_activity": 1800,
+    "airtable_entities_dlt_task": 600,
     "asset_balance_agg": 720,
     "asset_prices": 720,
     "asset_stats": 720,
