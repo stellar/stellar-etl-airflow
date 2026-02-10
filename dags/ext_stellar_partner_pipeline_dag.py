@@ -3,8 +3,10 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.sensors.gcs import (
+    GCSObjectsWithPrefixExistenceSensor,
+)
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
     GCSToBigQueryOperator,
 )
@@ -16,35 +18,15 @@ from stellar_etl_airflow.default import (
     init_sentry,
 )
 
-
-# TODO Write Class for grabbing last_updated file in GCS bucket
-def get_latest_file_by_metadata(bucket_name: str, prefix: str, **context) -> str:
-    """
-    Get the most recently uploaded file based on GCS blob metadata.
-    Uses the 'updated' timestamp from GCS to find the latest file.
-    """
-    hook = GCSHook()
-    # Get the actual bucket object to access blob metadata
-    bucket = hook.get_bucket(bucket_name)
-    blobs = list(bucket.list_blobs(prefix=prefix))
-
-    if not blobs:
-        raise ValueError(
-            f"No files found in bucket '{bucket_name}' with prefix: {prefix}"
-        )
-
-    # Find blob with most recent 'updated' timestamp
-    latest_blob = max(blobs, key=lambda b: b.updated)
-    return latest_blob.name
-
-
 init_sentry()
+
 with DAG(
     "ext_stellar_partner_pipeline_dag",
     default_args=get_default_dag_args(),
-    start_date=datetime(2026, 2, 1, 0, 0),
+    start_date=datetime(2023, 1, 1, 0, 0),
     description="This DAG automates monthly updates from partner data dumps in GCS to partner tables in BigQuery.",
-    schedule_interval="0 0 1 * *",
+    # TODO: Confirm that this schedule works for monthly updates
+    schedule_interval='0 0 1 * *',
     params={
         "alias": "partner-data",
     },
@@ -54,43 +36,34 @@ with DAG(
 ) as dag:
     PROJECT = "{{ var.value.bq_project }}"
     DATASET = "{{ var.value.bq_dataset }}"
-    BUCKET_NAME = Variable.get("partner_addresses_bucket")
+    BUCKET_NAME = "{{ var.value.partner_addresses_bucket }}"
     PARTNERS = Variable.get("partner_addresses_data", deserialize_json=True)
     start_tables_task = EmptyOperator(task_id="start_update_task")
 
     for partner in PARTNERS:
-        partner_config = PARTNERS[partner]
-        task_id_suffix = (
-            f"{partner_config['prefix_folder']}_{partner_config['prefix_id']}"
+        OBJECT_PREFIX = "{}/{}_{}".format(
+            PARTNERS[partner]["prefix_folder"], PARTNERS[partner]["prefix_id"], PARTNERS[partner]["date_format"]
         )
-
-        # Prefix to match files: {prefix_folder}/{prefix_id}_
-        OBJECT_PREFIX = (
-            f"{partner_config['prefix_folder']}/{partner_config['prefix_id']}_"
-        )
-
-        get_latest_file_task = PythonOperator(
-            task_id=f"get_latest_file_{task_id_suffix}",
-            python_callable=get_latest_file_by_metadata,
-            op_kwargs={
-                "bucket_name": BUCKET_NAME,
-                "prefix": OBJECT_PREFIX,
-            },
+        check_gcs_file = GCSObjectsWithPrefixExistenceSensor(
+            task_id=f"check_gcs_file_{PARTNERS[partner]['prefix_folder']}_{PARTNERS[partner]['prefix_id']}",
+            bucket=BUCKET_NAME,
+            prefix=OBJECT_PREFIX,
             dag=dag,
+            poke_interval=60,
+            timeout=3600,
             on_failure_callback=alert_after_max_retries,
         )
 
-        send_partner_data_to_bq_task = GCSToBigQueryOperator(
-            task_id=f"send_{task_id_suffix}_to_bq_task",
+        send_partner_data_to_bq_internal_task = GCSToBigQueryOperator(
+            task_id=f"send_{PARTNERS[partner]['prefix_folder']}_{PARTNERS[partner]['prefix_id']}_to_bq_pub_task",
             bucket=BUCKET_NAME,
-            source_objects=[
-                f'{{{{ ti.xcom_pull(task_ids="get_latest_file_{task_id_suffix}") }}}}'
-            ],
+            # This logic pulls the latest file found by the sensor (ordered alphabetically, so latest dates will be at the end)
+            source_objects=['{{ ti.xcom_pull(task_ids="check_gcs_file_' + PARTNERS[partner]['prefix_folder'] + '_' + PARTNERS[partner]['prefix_id'] + '")[-1] }}'],
             destination_project_dataset_table="{}.{}.{}".format(
-                PROJECT, DATASET, partner_config["table"]
+                PROJECT, DATASET, PARTNERS[partner]["table"]
             ),
             skip_leading_rows=1,
-            schema_fields=read_local_schema(partner_config["table"]),
+            schema_fields=read_local_schema(PARTNERS[partner]["table"]),
             write_disposition="WRITE_TRUNCATE",
             dag=dag,
             retry_delay=timedelta(minutes=5),
@@ -98,4 +71,4 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        (start_tables_task >> get_latest_file_task >> send_partner_data_to_bq_task)
+        (start_tables_task >> check_gcs_file >> send_partner_data_to_bq_internal_task)
