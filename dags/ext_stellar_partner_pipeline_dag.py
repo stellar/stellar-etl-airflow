@@ -26,7 +26,7 @@ with DAG(
     start_date=datetime(2023, 1, 1, 0, 0),
     description="This DAG automates monthly updates from partner data dumps in GCS to partner tables in BigQuery.",
     # TODO: Confirm that this schedule works for monthly updates
-    schedule_interval='0 0 1 * *',
+    schedule_interval="0 0 1 * *",
     params={
         "alias": "partner-data",
     },
@@ -42,7 +42,9 @@ with DAG(
 
     for partner in PARTNERS:
         OBJECT_PREFIX = "{}/{}_{}".format(
-            PARTNERS[partner]["prefix_folder"], PARTNERS[partner]["prefix_id"], PARTNERS[partner]["date_format"]
+            PARTNERS[partner]["prefix_folder"],
+            PARTNERS[partner]["prefix_id"],
+            PARTNERS[partner]["date_format"],
         )
         check_gcs_file = GCSObjectsWithPrefixExistenceSensor(
             task_id=f"check_gcs_file_{PARTNERS[partner]['prefix_folder']}_{PARTNERS[partner]['prefix_id']}",
@@ -58,7 +60,13 @@ with DAG(
             task_id=f"send_{PARTNERS[partner]['prefix_folder']}_{PARTNERS[partner]['prefix_id']}_to_bq_pub_task",
             bucket=BUCKET_NAME,
             # This logic pulls the latest file found by the sensor (ordered alphabetically, so latest dates will be at the end)
-            source_objects=['{{ ti.xcom_pull(task_ids="check_gcs_file_' + PARTNERS[partner]['prefix_folder'] + '_' + PARTNERS[partner]['prefix_id'] + '")[-1] }}'],
+            source_objects=[
+                '{{ ti.xcom_pull(task_ids="check_gcs_file_'
+                + PARTNERS[partner]["prefix_folder"]
+                + "_"
+                + PARTNERS[partner]["prefix_id"]
+                + '")[-1] }}'
+            ],
             destination_project_dataset_table="{}.{}.{}".format(
                 PROJECT, DATASET, PARTNERS[partner]["table"]
             ),
