@@ -24,11 +24,11 @@ with DAG(
     "ext_stellar_partner_pipeline_dag",
     default_args=get_default_dag_args(),
     start_date=datetime(2023, 1, 1, 0, 0),
-    description="This DAG automates monthly updates from partner address dumps in GCS to partner stg_addresses_{wallet name} tables in BigQuery.",
+    description="This DAG automates monthly updates from partner data dumps in GCS to partner tables in BigQuery.",
     # TODO: Confirm that this schedule works for monthly updates
     schedule_interval='0 0 1 * *',
     params={
-        "alias": "partner-addresses",
+        "alias": "partner-data",
     },
     render_template_as_native_obj=True,
     catchup=False,
@@ -45,7 +45,7 @@ with DAG(
             PARTNERS[partner]["prefix_folder"], PARTNERS[partner]["prefix_id"], PARTNERS[partner]["date_format"]
         )
         check_gcs_file = GCSObjectsWithPrefixExistenceSensor(
-            task_id=f"check_gcs_file_{partner}_addresses",
+            task_id=f"check_gcs_file_{PARTNERS[partner]['prefix_folder']}_{PARTNERS[partner]['prefix_id']}",
             bucket=BUCKET_NAME,
             prefix=OBJECT_PREFIX,
             dag=dag,
@@ -54,11 +54,11 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        send_partner_addresses_to_bq_internal_task = GCSToBigQueryOperator(
-            task_id=f"send_{partner}_addresses_to_bq_pub_task",
+        send_partner_data_to_bq_internal_task = GCSToBigQueryOperator(
+            task_id=f"send_{PARTNERS[partner]['prefix_folder']}_{PARTNERS[partner]['prefix_id']}_to_bq_pub_task",
             bucket=BUCKET_NAME,
             # This logic pulls the latest file found by the sensor (ordered alphabetically, so latest dates will be at the end)
-            source_objects=['{{ ti.xcom_pull(task_ids="check_gcs_file_' + partner + '_addresses")[-1] }}'],
+            source_objects=['{{ ti.xcom_pull(task_ids="check_gcs_file_' + PARTNERS[partner]['prefix_folder'] + '_' + PARTNERS[partner]['prefix_id'] + '")[-1] }}'],
             destination_project_dataset_table="{}.{}.{}".format(
                 PROJECT, DATASET, PARTNERS[partner]["table"]
             ),
@@ -71,4 +71,4 @@ with DAG(
             on_failure_callback=alert_after_max_retries,
         )
 
-        (start_tables_task >> check_gcs_file >> send_partner_addresses_to_bq_internal_task)
+        (start_tables_task >> check_gcs_file >> send_partner_data_to_bq_internal_task)
