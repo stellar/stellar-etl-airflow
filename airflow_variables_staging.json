@@ -285,21 +285,21 @@
       "type": "MONTH"
     }
   },
+  "partner_addresses_bucket": "ext-stellar-partner-data",
+  "partner_addresses_data": {
+    "bitcoincom_addresses": {
+      "date_format": "YYYYMMDD",
+      "prefix_folder": "wallet-bitcoincom",
+      "prefix_id": "addresses",
+      "table": "addresses_bitcoinwallet"
+    }
+  },
   "partners_bucket": "ext-partner-sftp",
   "partners_data": {
     "mgi": {
       "prefix_folder": "mgi",
       "prefix_id": "stellar_transaction_extract",
       "table": "raw_mgi_stellar_transactions"
-    }
-  },
-  "partner_addresses_bucket": "ext-stellar-partner-data",
-  "partner_addresses_data": {
-    "bitcoincom_addresses": {
-      "prefix_folder": "wallet-bitcoincom",
-      "prefix_id": "addresses",
-      "date_format": "YYYYMMDD",
-      "table": "addresses_bitcoinwallet"
     }
   },
   "public_dataset": "staging_crypto_stellar",
