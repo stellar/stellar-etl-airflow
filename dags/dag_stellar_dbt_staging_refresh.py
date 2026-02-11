@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Any, Dict, List
 
@@ -13,14 +14,9 @@ DEFAULT_LOCATION = "US"
 
 ENVIRONMENT = Variable.get("sentry_environment", "production")
 ALLOWED_ENVIRONMENTS = {"production", "staging"}
-if ENVIRONMENT not in ALLOWED_ENVIRONMENTS:
-    raise AirflowException(
-        "dag_stellar_dbt_staging_refresh may only be parsed in production or staging environments."
-    )
+logger = logging.getLogger(__name__)
 
 DISALLOWED_TARGET_PROJECTS = {"crypto-stellar", "hubble-261722"}
-
-init_sentry()
 
 
 def escape_sql_literal(value: str) -> str:
@@ -317,59 +313,69 @@ def prepare_run_config(**context) -> Dict[str, str]:
     }
 
 
-with DAG(
-    dag_id="dag_stellar_dbt_staging_refresh",
-    default_args=get_default_dag_args(),
-    start_date=datetime(2026, 1, 20),
-    schedule_interval=None,
-    catchup=False,
-    max_active_runs=1,
-    description=(
-        "Staging refresh that clones production tables into the staging dataset only when manually triggered. "
-        "To re-enable the weekly cadence, set `schedule_interval='0 10 * * 3'`."
-    ),
-    tags=["staging-refresh", "clone"],
-    params={
-        "mode": Param(
-            default="schema",
-            type="string",
-            enum=["schema", "tables", "views", "table", "view"],
-            description="Select schema-wide refresh or manual mode for tables/views.",
+if ENVIRONMENT not in ALLOWED_ENVIRONMENTS:
+    logger.warning(
+        "Skipping dag_stellar_dbt_staging_refresh creation; environment '%s' not in %s.",
+        ENVIRONMENT,
+        ALLOWED_ENVIRONMENTS,
+    )
+    dag = None
+else:
+    init_sentry()
+
+    with DAG(
+        dag_id="dag_stellar_dbt_staging_refresh",
+        default_args=get_default_dag_args(),
+        start_date=datetime(2026, 1, 20),
+        schedule=None,
+        catchup=False,
+        max_active_runs=1,
+        description=(
+            "Staging refresh that clones production tables into the staging dataset only when manually triggered. "
+            "To re-enable the weekly cadence, set schedule='0 10 * * 3'."
         ),
-        "drop_staging_objects": Param(
-            default=True,
-            type="boolean",
-            description="Whether to drop all staging tables/views before cloning (schema refresh).",
-        ),
-    },
-) as dag:
-
-    prep_config = PythonOperator(
-        task_id="prepare_clone_config",
-        python_callable=prepare_run_config,
-        dag=dag,
-    )
-
-    drop_staging = BigQueryInsertJobOperator(
-        task_id="drop_staging_objects",
-        configuration={
-            "query": {
-                "query": "{{ ti.xcom_pull(task_ids='prepare_clone_config')['drop_sql'] }}",
-                "useLegacySql": False,
-            }
+        tags=["staging-refresh", "clone"],
+        params={
+            "mode": Param(
+                default="schema",
+                type="string",
+                enum=["schema", "tables", "views", "table", "view"],
+                description="Select schema-wide refresh or manual mode for tables/views.",
+            ),
+            "drop_staging_objects": Param(
+                default=True,
+                type="boolean",
+                description="Whether to drop all staging tables/views before cloning (schema refresh).",
+            ),
         },
-        location=Variable.get("bq_location", default_var=DEFAULT_LOCATION),
-    )
+    ) as dag:
 
-    clone_from_prod = BigQueryInsertJobOperator(
-        task_id="clone_from_production",
-        configuration={
-            "query": {
-                "query": "{{ ti.xcom_pull(task_ids='prepare_clone_config')['clone_sql'] }}",
-                "useLegacySql": False,
-            }
-        },
-        location=Variable.get("bq_location", default_var=DEFAULT_LOCATION),
-    )
+        prep_config = PythonOperator(
+            task_id="prepare_clone_config",
+            python_callable=prepare_run_config,
+            dag=dag,
+        )
 
-    prep_config >> drop_staging >> clone_from_prod
+        drop_staging = BigQueryInsertJobOperator(
+            task_id="drop_staging_objects",
+            configuration={
+                "query": {
+                    "query": "{{ ti.xcom_pull(task_ids='prepare_clone_config')['drop_sql'] }}",
+                    "useLegacySql": False,
+                }
+            },
+            location=Variable.get("bq_location", default_var=DEFAULT_LOCATION),
+        )
+
+        clone_from_prod = BigQueryInsertJobOperator(
+            task_id="clone_from_production",
+            configuration={
+                "query": {
+                    "query": "{{ ti.xcom_pull(task_ids='prepare_clone_config')['clone_sql'] }}",
+                    "useLegacySql": False,
+                }
+            },
+            location=Variable.get("bq_location", default_var=DEFAULT_LOCATION),
+        )
+
+        prep_config >> drop_staging >> clone_from_prod
