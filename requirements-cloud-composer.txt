@@ -1,4 +1,4 @@
 docker==7.0.0
 freezegun==1.5.1
 jsonlines==4.0.0
-sentry-sdk==2.1.1
+sentry-sdk==2.8.0
