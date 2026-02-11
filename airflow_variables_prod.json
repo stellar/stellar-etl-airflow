@@ -262,7 +262,6 @@
   "partner_addresses_bucket": "ext-stellar-partner-data",
   "partner_addresses_data": {
     "bitcoincom_addresses": {
-      "date_format": "YYYYMMDD",
       "prefix_folder": "wallet-bitcoincom",
       "prefix_id": "addresses",
       "table": "addresses_bitcoinwallet"
