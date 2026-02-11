@@ -297,6 +297,74 @@
   "public_project": "staging-hubble",
   "public_source_db": "staging-hubble",
   "public_source_schema": "staging_crypto_stellar",
+  "staging_clone_sources": [
+    {
+      "project": "crypto-stellar",
+      "dataset": "crypto_stellar",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_crypto_stellar"
+    },
+    {
+      "project": "crypto-stellar",
+      "dataset": "crypto_stellar_dbt",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_crypto_stellar_dbt"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "crypto_stellar_internal_2",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_crypto_stellar_internal"
+    },
+    {
+      "project": "crypto-stellar",
+      "dataset": "crypto_stellar_raw",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_crypto_stellar_raw"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "dbt_references",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_dbt_references"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "gold",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_gold"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "snapshots",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_snapshots"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "sdf_conformed",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_sdf_conformed"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "sdf_marts",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_sdf_marts"
+    },
+    {
+      "project": "hubble-261722",
+      "dataset": "sdf_raw",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_sdf_raw"
+    },
+    {
+      "project": "crypto-stellar",
+      "dataset": "snapshots",
+      "target_project": "staging-hubble",
+      "target_dataset": "staging_snapshots"
+    }
+  ],
   "resources": {
     "dbt": {
       "requests": {
