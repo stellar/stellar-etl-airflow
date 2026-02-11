@@ -1,5 +1,5 @@
 alembic==1.13.1
-apache-airflow==2.10.2
+apache-airflow==3.0.6
 apache-airflow-providers-cncf-kubernetes==10.4.1
 apache-airflow-providers-common-sql==1.24.1
 apache-airflow-providers-ftp==3.9.0
