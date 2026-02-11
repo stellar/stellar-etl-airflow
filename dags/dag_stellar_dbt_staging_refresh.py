@@ -7,7 +7,12 @@ from airflow.exceptions import AirflowException
 from airflow.models import Param, Variable
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-from stellar_etl_airflow.default import get_default_dag_args, init_sentry
+from stellar_etl_airflow.default import (
+    get_default_dag_args,
+    init_sentry,
+    log_dag_failure,
+    log_dag_success,
+)
 
 CLONE_SOURCES_VAR = "staging_clone_sources"
 DEFAULT_LOCATION = "US"
@@ -102,9 +107,12 @@ def build_schema_clone_script(
     return f"""
 DECLARE staging_project STRING DEFAULT '{staging_project}';
 DECLARE staging_dataset STRING DEFAULT '{staging_dataset}';
-DECLARE source_datasets ARRAY<STRUCT<project STRING, dataset STRING, target_project STRING, target_dataset STRING>> = {source_array};
+DECLARE source_datasets ARRAY<STRUCT<project STRING, dataset STRING, target_project STRING, target_dataset STRING>> DEFAULT {source_array};
 
-FOR source IN UNNEST(source_datasets) DO
+FOR source IN (
+        SELECT AS STRUCT *
+        FROM UNNEST(source_datasets)
+) DO
     DECLARE table_names ARRAY<STRING>;
     EXECUTE IMMEDIATE FORMAT(
         '{table_query}',
@@ -112,8 +120,11 @@ FOR source IN UNNEST(source_datasets) DO
         source.dataset
     ) INTO table_names;
 
-  IF table_names IS NOT NULL THEN
-    FOR table_name IN UNNEST(table_names) DO
+    IF table_names IS NOT NULL THEN
+        FOR table_name IN (
+                SELECT table_name
+                FROM UNNEST(table_names) AS table_name
+        ) DO
       EXECUTE IMMEDIATE FORMAT(
         "CREATE OR REPLACE TABLE `%s.%s.%s` CLONE `%s.%s.%s`",
         source.target_project,
@@ -126,15 +137,18 @@ FOR source IN UNNEST(source_datasets) DO
     END FOR;
   END IF;
 
-  DECLARE view_names ARRAY<STRING>;
+    DECLARE view_names ARRAY<STRING>;
     EXECUTE IMMEDIATE FORMAT(
         '{view_query}',
         source.project,
         source.dataset
     ) INTO view_names;
 
-  IF view_names IS NOT NULL THEN
-    FOR view_name IN UNNEST(view_names) DO
+    IF view_names IS NOT NULL THEN
+        FOR view_name IN (
+                SELECT view_name
+                FROM UNNEST(view_names) AS view_name
+        ) DO
       EXECUTE IMMEDIATE FORMAT(
         "CREATE OR REPLACE VIEW `%s.%s.%s` AS SELECT * FROM `%s.%s.%s`",
         source.target_project,
@@ -218,11 +232,14 @@ def build_manual_clone_script(
     return f"""
 DECLARE staging_project STRING DEFAULT '{staging_project}';
 DECLARE staging_dataset STRING DEFAULT '{staging_dataset}';
-DECLARE manual_tables ARRAY<STRUCT<project STRING, dataset STRING, name STRING, target_project STRING, target_dataset STRING>> = {tables_array};
-DECLARE manual_views ARRAY<STRUCT<project STRING, dataset STRING, name STRING, target_project STRING, target_dataset STRING>> = {views_array};
+DECLARE manual_tables ARRAY<STRUCT<project STRING, dataset STRING, name STRING, target_project STRING, target_dataset STRING>> DEFAULT {tables_array};
+DECLARE manual_views ARRAY<STRUCT<project STRING, dataset STRING, name STRING, target_project STRING, target_dataset STRING>> DEFAULT {views_array};
 
 IF ARRAY_LENGTH(manual_tables) > 0 THEN
-  FOR entry IN UNNEST(manual_tables) DO
+    FOR entry IN (
+            SELECT AS STRUCT *
+            FROM UNNEST(manual_tables)
+    ) DO
     EXECUTE IMMEDIATE FORMAT(
       "CREATE OR REPLACE TABLE `%s.%s.%s` CLONE `%s.%s.%s`",
       entry.target_project,
@@ -236,7 +253,10 @@ IF ARRAY_LENGTH(manual_tables) > 0 THEN
 END IF;
 
 IF ARRAY_LENGTH(manual_views) > 0 THEN
-  FOR entry IN UNNEST(manual_views) DO
+    FOR entry IN (
+            SELECT AS STRUCT *
+            FROM UNNEST(manual_views)
+    ) DO
     EXECUTE IMMEDIATE FORMAT(
       "CREATE OR REPLACE VIEW `%s.%s.%s` AS SELECT * FROM `%s.%s.%s`",
       entry.target_project,
@@ -278,6 +298,22 @@ def prepare_run_config(**context) -> Dict[str, str]:
             raise AirflowException(
                 "Schema mode requires a list of source datasets. Set the staging_clone_sources variable or pass sources in dag_run.conf."
             )
+        clone_sql = build_schema_clone_script(sources, staging_project, staging_dataset)
+    elif run_mode == "schema_conf":
+        project = conf.get("project")
+        dataset = conf.get("dataset")
+        if not project or not dataset:
+            raise AirflowException(
+                "schema_conf mode requires project and dataset in dag_run.conf."
+            )
+        sources = [
+            {
+                "project": project,
+                "dataset": dataset,
+                "target_project": conf.get("target_project"),
+                "target_dataset": conf.get("target_dataset"),
+            }
+        ]
         clone_sql = build_schema_clone_script(sources, staging_project, staging_dataset)
     else:
         tables = conf.get("tables", []) if run_mode in {"tables", "table"} else []
@@ -335,12 +371,14 @@ else:
             "To re-enable the weekly cadence, set schedule='0 10 * * 3'."
         ),
         tags=["staging-refresh", "clone"],
+        on_success_callback=log_dag_success,
+        on_failure_callback=log_dag_failure,
         params={
             "mode": Param(
                 default="schema",
                 type="string",
-                enum=["schema", "tables", "views", "table", "view"],
-                description="Select schema-wide refresh or manual mode for tables/views.",
+                enum=["schema", "schema_conf", "tables", "views", "table", "view"],
+                description="Select schema-wide refresh or manual mode for tables/views; use schema_conf to pass project/dataset via dag_run.conf.",
             ),
             "drop_staging_objects": Param(
                 default=True,
