@@ -2,8 +2,10 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.models import Variable
+from airflow.operators.empty import EmptyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
+from airflow.utils.trigger_rule import TriggerRule
 from kubernetes.client import models as k8s
 from stellar_etl_airflow.build_cross_dependency_task import (
     LatestDagRunSensor,
@@ -47,11 +49,39 @@ wait_on_dbt_snapshot_tables = build_cross_deps(
 )
 
 # Wait on Snapshot DAGs
-wait_on_dbt_snapshot_pricing_tables = build_cross_deps(
+wait_on_dbt_wisdom_tree_snapshot_pricing_tables = build_cross_deps(
     dag,
-    "wait_on_dbt_snapshot_pricing_tables",
+    "wait_on_dbt_wisdom_tree_snapshot_pricing_tables",
     "dbt_snapshot_pricing_data",
+    "dbt_build_custom_snapshot_wisdom_tree_asset_prices_data",
 )
+
+wait_on_dbt_partnership_assets_snapshot_pricing_tables = build_cross_deps(
+    dag,
+    "wait_on_dbt_partnership_assets_snapshot_pricing_tables",
+    "dbt_snapshot_pricing_data",
+    "dbt_build_custom_snapshot_partnership_asset_prices",
+)
+
+wait_on_dbt_coingecko_snapshot_pricing_tables = build_cross_deps(
+    dag,
+    "wait_on_dbt_coingecko_snapshot_pricing_tables",
+    "dbt_snapshot_pricing_data",
+    "dbt_build_custom_snapshot_asset_prices_coingecko",
+)
+
+
+any_pricing_data_available = EmptyOperator(
+    dag=dag,
+    task_id="any_pricing_data_available",
+    trigger_rule=TriggerRule.ONE_SUCCESS,
+)
+
+[
+    wait_on_dbt_wisdom_tree_snapshot_pricing_tables,
+    wait_on_dbt_partnership_assets_snapshot_pricing_tables,
+    wait_on_dbt_coingecko_snapshot_pricing_tables,
+] >> any_pricing_data_available
 
 # Wait on partner pipeline DAG
 # Hardcoding timeout for this wait task to 2.5 hours to tolerate
@@ -196,7 +226,7 @@ wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_ta
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 asset_prices_task >> tvl_task
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
-wait_on_dbt_snapshot_pricing_tables >> asset_prices_task
+any_pricing_data_available >> asset_prices_task
 
 # account_activity is built as part of the entity_attribution while we refactor
 # model dependencies and execution.
