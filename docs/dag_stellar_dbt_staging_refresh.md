@@ -60,7 +60,7 @@ Use in `dag_run.conf` when triggering.
       "project": "crypto-stellar",
       "dataset": "crypto_stellar_raw",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_raw"
+      "target_dataset": "staging_crypto_stellar_raw"
     }
   ]
 }
@@ -76,13 +76,13 @@ Use in `dag_run.conf` when triggering.
       "project": "crypto-stellar",
       "dataset": "crypto_stellar_raw",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_raw"
+      "target_dataset": "staging_crypto_stellar_raw"
     },
     {
       "project": "hubble-261722",
       "dataset": "dbt_references",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_dbt_references"
+      "target_dataset": "staging_dbt_references"
     }
   ]
 }
@@ -99,7 +99,7 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar_raw",
       "table": "account_signers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_raw"
+      "target_dataset": "staging_crypto_stellar_raw"
     }
   ],
   "views": [
@@ -108,7 +108,7 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar",
       "view": "recent_ledgers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar"
+      "target_dataset": "staging_crypto_stellar"
     }
   ]
 }
@@ -125,14 +125,14 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar_raw",
       "table": "account_signers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_raw"
+      "target_dataset": "staging_crypto_stellar_raw"
     },
     {
       "project": "crypto-stellar",
       "dataset": "crypto_stellar",
       "table": "config_settings",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar"
+      "target_dataset": "staging_crypto_stellar"
     }
   ],
   "views": [
@@ -141,7 +141,7 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar",
       "view": "recent_ledgers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar"
+      "target_dataset": "staging_crypto_stellar"
     }
   ]
 }
@@ -158,7 +158,7 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar_raw",
       "table": "account_signers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_raw"
+      "target_dataset": "staging_crypto_stellar_raw"
     }
   ],
   "views": [
@@ -167,14 +167,14 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar",
       "view": "recent_ledgers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar"
+      "target_dataset": "staging_crypto_stellar"
     },
     {
       "project": "crypto-stellar",
       "dataset": "crypto_stellar_dbt",
       "view": "some_small_view",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_dbt"
+      "target_dataset": "staging_crypto_stellar_dbt"
     }
   ]
 }
@@ -192,7 +192,7 @@ Use in `dag_run.conf` when triggering.
       "dataset": "crypto_stellar_raw",
       "table": "account_signers",
       "target_project": "staging-hubble",
-      "target_dataset": "hunter_staging_crypto_stellar_raw"
+      "target_dataset": "staging_crypto_stellar_raw"
     }
   ],
   "views": []
