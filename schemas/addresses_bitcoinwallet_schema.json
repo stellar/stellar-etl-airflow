@@ -7,6 +7,6 @@
   {
     "mode": "NULLABLE",
     "name": "as_of_date",
-    "type": "DATETIME"
+    "type": "STRING"
   }
 ]
