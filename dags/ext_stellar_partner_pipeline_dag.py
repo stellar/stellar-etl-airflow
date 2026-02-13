@@ -49,7 +49,7 @@ with DAG(
         "alias": "partner-data",
     },
     render_template_as_native_obj=True,
-    catchup=True,
+    catchup=False,
     sla_miss_callback=alert_sla_miss,
 ) as dag:
     PROJECT = "{{ var.value.bq_project }}"
