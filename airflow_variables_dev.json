@@ -261,7 +261,7 @@
       "type": "MONTH"
     }
   },
-  "partner_addresses_bucket": "test-ext-stellar-partner-data",
+  "partner_addresses_bucket": "ext-stellar-partner-data",
   "partner_addresses_data": {
     "bitcoincom_addresses": {
       "prefix_folder": "wallet-bitcoincom",
