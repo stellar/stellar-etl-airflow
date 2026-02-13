@@ -300,6 +300,74 @@
   "schema_filepath": "/home/airflow/gcs/dags/schemas/",
   "sentry_dsn": "https://94027cdcc4c9470f9dafa2c0b456c2c9@o14203.ingest.us.sentry.io/5806618",
   "sentry_environment": "production",
+  "staging_clone_sources": [
+    {
+      "dataset": "crypto_stellar",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_crypto_stellar",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "crypto_stellar_dbt",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_crypto_stellar_dbt",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "crypto_stellar_internal_2",
+      "project": "hubble-261722",
+      "target_dataset": "staging_crypto_stellar_internal",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "crypto_stellar_raw",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_crypto_stellar_raw",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "dbt_references",
+      "project": "hubble-261722",
+      "target_dataset": "staging_dbt_references",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "gold",
+      "project": "hubble-261722",
+      "target_dataset": "staging_gold",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "snapshots",
+      "project": "hubble-261722",
+      "target_dataset": "staging_snapshots",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "sdf_conformed",
+      "project": "hubble-261722",
+      "target_dataset": "staging_sdf_conformed",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "sdf_marts",
+      "project": "hubble-261722",
+      "target_dataset": "staging_sdf_marts",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "sdf_raw",
+      "project": "hubble-261722",
+      "target_dataset": "staging_sdf_raw",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "snapshots",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_snapshots",
+      "target_project": "staging-hubble"
+    }
+  ],
   "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:d71517d98",
   "table_ids": {
     "accounts": "accounts",
