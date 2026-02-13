@@ -31,7 +31,7 @@ with DAG(
     },
     render_template_as_native_obj=True,
     catchup=False,
-    sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 ) as dag:
     PROJECT = "{{ var.value.bq_project }}"
     DATASET = "{{ var.value.bq_dataset }}"
