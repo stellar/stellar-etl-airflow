@@ -78,3 +78,17 @@ def alert_sla_miss(dag, task_list, blocking_task_list, slas, blocking_tis):
             f"SLA Miss! The task {task_id} belonging to DAG {dag_id} missed its SLA for the run date {execution_date}.",
             "warn",
         )
+
+
+def log_dag_success(context):
+    dag_run = context.get("dag_run")
+    dag_id = dag_run.dag_id if dag_run else "unknown_dag"
+    run_id = dag_run.run_id if dag_run else "unknown_run"
+    logging.info("dag %s succeeded for run %s", dag_id, run_id)
+
+
+def log_dag_failure(context):
+    dag_run = context.get("dag_run")
+    dag_id = dag_run.dag_id if dag_run else "unknown_dag"
+    run_id = dag_run.run_id if dag_run else "unknown_run"
+    logging.error("dag %s failed for run %s", dag_id, run_id)

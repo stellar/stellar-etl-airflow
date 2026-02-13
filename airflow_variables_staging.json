@@ -110,7 +110,7 @@
     "trade_agg": false
   },
   "dbt_gold_dataset": "staging_gold",
-  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:7da25348f",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt-staging:f73a546d9",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
@@ -285,6 +285,14 @@
       "type": "MONTH"
     }
   },
+  "partner_addresses_bucket": "ext-stellar-partner-data",
+  "partner_addresses_data": {
+    "bitcoincom_addresses": {
+      "prefix_folder": "wallet-bitcoincom",
+      "prefix_id": "addresses",
+      "table": "addresses_bitcoinwallet"
+    }
+  },
   "partners_bucket": "ext-partner-sftp",
   "partners_data": {
     "mgi": {
@@ -329,6 +337,74 @@
   "sentry_dsn": "https://ca1f33b9d1392e675ff50e66c0736ba2@o14203.ingest.us.sentry.io/4509985659551744",
   "sentry_environment": "staging",
   "slack_elementary_channel": "alerts-hubble-data-quality-staging",
+  "staging_clone_sources": [
+    {
+      "dataset": "crypto_stellar",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_crypto_stellar",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "crypto_stellar_dbt",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_crypto_stellar_dbt",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "crypto_stellar_internal_2",
+      "project": "hubble-261722",
+      "target_dataset": "staging_crypto_stellar_internal",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "crypto_stellar_raw",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_crypto_stellar_raw",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "dbt_references",
+      "project": "hubble-261722",
+      "target_dataset": "staging_dbt_references",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "gold",
+      "project": "hubble-261722",
+      "target_dataset": "staging_gold",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "snapshots",
+      "project": "hubble-261722",
+      "target_dataset": "staging_snapshots",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "sdf_conformed",
+      "project": "hubble-261722",
+      "target_dataset": "staging_sdf_conformed",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "sdf_marts",
+      "project": "hubble-261722",
+      "target_dataset": "staging_sdf_marts",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "sdf_raw",
+      "project": "hubble-261722",
+      "target_dataset": "staging_sdf_raw",
+      "target_project": "staging-hubble"
+    },
+    {
+      "dataset": "snapshots",
+      "project": "crypto-stellar",
+      "target_dataset": "staging_snapshots",
+      "target_project": "staging-hubble"
+    }
+  ],
   "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:d71517d98",
   "table_ids": {
     "accounts": "accounts",
@@ -364,7 +440,7 @@
     "asset_stats": 420,
     "assets": 720,
     "build_batch_stats": 600,
-    "build_bq_generate_avro_job": 3600,
+    "build_bq_generate_avro_job": 12600,
     "build_bq_insert_job": 840,
     "build_del_ins_from_gcs_to_bq_task": 2000,
     "build_delete_data_task": 780,

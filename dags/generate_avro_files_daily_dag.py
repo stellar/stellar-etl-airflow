@@ -30,7 +30,7 @@ dag = DAG(
         "batch_run_date_as_datetime_string": macros.batch_run_date_as_datetime_string,
         "batch_run_date_as_directory_string": macros.batch_run_date_as_directory_string,
     },
-    sla_miss_callback=alert_sla_miss,
+    # sla_miss_callback=alert_sla_miss,
 )
 
 public_project = "{{ var.value.public_project }}"
