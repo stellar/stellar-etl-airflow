@@ -259,6 +259,14 @@
       "type": "MONTH"
     }
   },
+  "partner_addresses_bucket": "ext-stellar-partner-data",
+  "partner_addresses_data": {
+    "bitcoincom_addresses": {
+      "prefix_folder": "wallet-bitcoincom",
+      "prefix_id": "addresses",
+      "table": "addresses_bitcoinwallet"
+    }
+  },
   "partners_bucket": "ext-partner-sftp",
   "partners_data": {
     "mgi": {
