@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 
 OLD_SCHEMAS_DIR = os.environ.get("OLD_SCHEMAS_DIR")
+OLD_CHANGELOG_FILEPATH = os.environ.get("OLD_CHANGELOG_FILEPATH")
 NEW_SCHEMAS_DIR = "schemas"
 CHANGELOG_FILEPATH = "changelog/source_data.md"
 
@@ -173,7 +174,7 @@ def generate_changelog(schemas_added=[], schemas_deleted=[], schemas_changes={})
 
 
 def main():
-    existing_changelog = read_file(filepath=CHANGELOG_FILEPATH)
+    existing_changelog = read_file(filepath=OLD_CHANGELOG_FILEPATH)
     old_schema_filepaths = list_files_in_dir(directory=OLD_SCHEMAS_DIR)
     new_schema_filepaths = list_files_in_dir(directory=NEW_SCHEMAS_DIR)
 
@@ -191,6 +192,9 @@ def main():
             filepath=CHANGELOG_FILEPATH, mode="w", content=new_changelog + "\n\n"
         )
         write_file(filepath=CHANGELOG_FILEPATH, mode="a", content=existing_changelog)
+    else:
+        # Rewrite the changelog since intermediate commits may have overwritten changelog
+        write_file(filepath=CHANGELOG_FILEPATH, mode="w", content=existing_changelog)
 
 
 if __name__ == "__main__":
