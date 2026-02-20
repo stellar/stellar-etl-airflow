@@ -80,6 +80,7 @@ def dbt_task(
     date_macro="ts",
     batch_start_date="data_interval_start",
     batch_end_date="data_interval_end",
+    target=None,
 ):
     """Create a task to run a collection of dbt models. Models are orchestrated by tag.
     If no tag is provided, the model_name will be used. If both are provided, the tag will
@@ -97,8 +98,9 @@ def dbt_task(
         run_singular_test: if true, the task will run singular tests, defaults to "false"
         run_recency_test: if true, the task will run recency tests, defaults to "false"
         date_macro: which airflow execution date macro should be passed to the dbt task, defaults to "ts", sets the env var, execution_date
-        batch_start_date: start date to use for the dbt task which can be a simple date string ("2025-10-14") or timestamp string ("2025-10-314 10:00:00+00:00"), defaults to "data_interval_start" airflow variable
-        batch_end_date: end date to use for the dbt task which can be a simple date string ("2025-10-14") or timestamp string ("2025-10-314 10:00:00+00:00"), defaults to "data_interval_end" airflow variable
+        batch_start_date: start date for the dbt task (date string or timestamp), defaults to "data_interval_start" airflow variable
+        batch_end_date: end date for the dbt task (date string or timestamp), defaults to "data_interval_end" airflow variable
+        target: dbt target name to use (e.g. "staging", "prod"). Overrides the dbt_target Airflow variable when set.
 
     returns:
         k8s pod task
@@ -184,7 +186,7 @@ def dbt_task(
         {
             "DBT_USE_COLORS": "0",
             "DBT_DATASET": "{{ var.value.dbt_dataset_for_test }}",
-            "DBT_TARGET": "{{ var.value.dbt_target }}",
+            "DBT_TARGET": target if target is not None else "{{ var.value.dbt_target }}",
             "DBT_MAX_BYTES_BILLED": "{{ var.value.dbt_maximum_bytes_billed }}",
             "DBT_JOB_TIMEOUT": "{{ var.value.dbt_job_execution_timeout_seconds }}",
             "DBT_THREADS": "{{ var.value.dbt_threads }}",
