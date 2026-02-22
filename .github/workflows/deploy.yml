@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
 
@@ -42,7 +42,7 @@ jobs:
         run: airflow variables import airflow_variables_ci.json
 
       - name: Authenticate to test-hubble GCP
-        uses: google-github-actions/auth@v2.1.12
+        uses: google-github-actions/auth@v3.0.0
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
@@ -54,10 +54,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [tests]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
 
@@ -67,7 +67,7 @@ jobs:
           pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to test-hubble GCP
-        uses: google-github-actions/auth@v2.1.12
+        uses: google-github-actions/auth@v3.0.0
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 
@@ -78,7 +78,7 @@ jobs:
           BUCKET: us-central1-stellar-etl-tes-58aaf371-bucket
 
       - name: Update Airflow variables
-        uses: actions-hub/gcloud@534.0.0
+        uses: actions-hub/gcloud@557.0.0
         env:
           PROJECT_ID: test-hubble-319619
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
@@ -96,10 +96,10 @@ jobs:
     needs: [tests]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
 
@@ -109,7 +109,7 @@ jobs:
           pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to hubble GCP
-        uses: google-github-actions/auth@v2.1.12
+        uses: google-github-actions/auth@v3.0.0
         with:
           credentials_json: "${{ secrets.CREDS_STAGING_HUBBLE }}"
 
@@ -138,10 +138,10 @@ jobs:
     needs: [tests]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
 
@@ -151,7 +151,7 @@ jobs:
           pip install google-cloud-storage==2.18.2
 
       - name: Authenticate to hubble GCP
-        uses: google-github-actions/auth@v2.1.12
+        uses: google-github-actions/auth@v3.0.0
         with:
           credentials_json: "${{ secrets.CREDS_PROD_HUBBLE }}"
 
