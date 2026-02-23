@@ -22,19 +22,19 @@ jobs:
       github.event.pull_request.merged == false &&
       github.event.pull_request.state == 'open'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
 
       - id: file_changes
-        uses: trilom/file-changes-action@v1.2.4
+        uses: trilom/file-changes-action@a6ca26c14274c33b15e6499323aac178af06ad4b
         with:
           output: " "
 
-      - uses: pre-commit/action@v3.0.0
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd
         env:
           extra_args: --color=always --files ${{ steps.file_changes.outputs.files}}
 
@@ -43,10 +43,10 @@ jobs:
     needs: [pre-commit]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
 
@@ -63,7 +63,7 @@ jobs:
         run: airflow variables import airflow_variables_ci.json
 
       - name: Authenticate to test-hubble GCP
-        uses: "google-github-actions/auth@140bb5113ffb6b65a7e9b937a81fa96cf5064462"
+        uses: "google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093"
         with:
           credentials_json: "${{ secrets.CREDS_TEST_HUBBLE }}"
 

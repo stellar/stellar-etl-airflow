@@ -1,4 +1,6 @@
-docker==7.0.0
-freezegun==1.5.1
+apache-airflow-providers-cncf-kubernetes==10.10.0
+apache-airflow-providers-slack==9.5.0
+docker==7.1.0
+freezegun==1.5.5
 jsonlines==4.0.0
-sentry-sdk==2.1.1
+sentry-sdk==2.53.0
