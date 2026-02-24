@@ -36,9 +36,6 @@ dag = DAG(
         "snapshot_full_refresh": Param(
             default="false", type="string"
         ),  # only used for manual runs
-        "skip_asset_prices_usd": Param(
-            default="false", type="string"
-        ),  # only used for manual runs
         "skip_wisdom_tree_asset_prices_data": Param(
             default="false", type="string"
         ),  # only used for manual runs
@@ -81,14 +78,6 @@ wait_on_external_data_dag_stellar_expert_data = build_cross_deps(
     "export_stellar_expert_prices",
 )
 
-check_should_run_asset_prices_usd = ShortCircuitOperator(
-    task_id="check_should_run_asset_prices_usd",
-    python_callable=should_run_task,
-    op_args=["skip_asset_prices_usd"],
-    provide_context=True,
-    dag=dag,
-)
-
 check_should_run_wisdom_tree_asset_prices_data = ShortCircuitOperator(
     task_id="check_should_run_wisdom_tree_asset_prices_data",
     python_callable=should_run_task,
@@ -121,16 +110,6 @@ check_should_run_coingecko = ShortCircuitOperator(
     dag=dag,
 )
 
-asset_prices_usd_snapshot_task = dbt_task(
-    dag,
-    tag="custom_snapshot_asset_prices_usd",
-    operator="+",
-    env_vars={
-        "SNAPSHOT_START_DATE": "{{ ds if run_id.startswith('scheduled_') else params.snapshot_start_date }}",
-        "SNAPSHOT_END_DATE": "{{ next_ds if run_id.startswith('scheduled_') else params.snapshot_end_date }}",
-        "SNAPSHOT_FULL_REFRESH": "{{ false if run_id.startswith('scheduled_') else params.snapshot_full_refresh }}",
-    },
-)
 
 wisdom_tree_asset_prices_data_snapshot_task = dbt_task(
     dag,
@@ -176,14 +155,6 @@ coingecko_snapshot_task = dbt_task(
     },
 )
 
-(
-    # This doesn't really need to wait for this specific coingecko task.
-    # It actually gets data from the cloud run function that gets data from coingecko.
-    # Using this wait as a generic proxy to coingecko data.
-    wait_on_external_data_dag_coingecko_data
-    >> check_should_run_asset_prices_usd
-    >> asset_prices_usd_snapshot_task
-)
 (
     wait_on_external_data_dag_wisdom_tree_data
     >> check_should_run_wisdom_tree_asset_prices_data
