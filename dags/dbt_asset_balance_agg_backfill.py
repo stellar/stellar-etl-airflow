@@ -45,7 +45,6 @@ asset_balance_agg_task = dbt_task(
         "assets",
         "+tag:token_transfer",
         "+tag:entity_attribution",
-        "+tag:wallet_metrics",
     ],
 )
 
