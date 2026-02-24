@@ -406,7 +406,7 @@
       "target_project": "staging-hubble"
     }
   ],
-  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:e0cc89363",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal-dev:ca96a8ac7",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -453,7 +453,6 @@
     "current_state": 1200,
     "custom_snapshot_accounts": 3600,
     "custom_snapshot_asset_prices_coingecko": 3600,
-    "custom_snapshot_asset_prices_usd": 3600,
     "custom_snapshot_contract_data": 3600,
     "custom_snapshot_euro_usd_ohlc": 3600,
     "custom_snapshot_evicted_keys": 3600,
