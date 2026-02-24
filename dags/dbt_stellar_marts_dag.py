@@ -122,13 +122,6 @@ network_stats_agg_task = dbt_task(
 
 history_assets = dbt_task(dag, tag="history_assets", operator="+")
 
-wallet_metrics_task = dbt_task(
-    dag,
-    tag="wallet_metrics",
-    operator="+",
-    excluded=["stellar_dbt_public", "+tag:entity_attribution"],
-)
-
 entity_attribution_task = dbt_task(
     dag,
     tag="entity_attribution",
@@ -151,7 +144,6 @@ entity_attribution_task = dbt_task(
 #         "+tag:partnership_assets",
 #         "+tag:token_transfer",
 #         "+tag:entity_attribution",
-#         "+tag:wallet_metrics",
 #         "+tag:asset_prices",
 #     ],
 # )
@@ -194,7 +186,6 @@ asset_balance_agg_task = dbt_task(
         "assets",
         "+tag:token_transfer",
         "+tag:entity_attribution",
-        "+tag:wallet_metrics",
     ],
 )
 
@@ -220,7 +211,7 @@ wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 # wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_partner_pipeline >> entity_attribution_task
-wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
+wait_on_dbt_enriched_base_tables >> entity_attribution_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
 asset_prices_task >> tvl_task
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
@@ -232,7 +223,6 @@ any_pricing_data_available >> asset_prices_task
 # so that account_activity will work as intended until we refactor
 # asset_prices_task >> account_activity_task
 # partnership_assets_task >> account_activity_task
-# wallet_metrics_task >> account_activity_task
 
 entity_attribution_task >> assets_task
 
