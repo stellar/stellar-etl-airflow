@@ -109,7 +109,7 @@
     "trade_agg": false
   },
   "dbt_gold_dataset": "gold",
-  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:fafa90056",
+  "dbt_image_name": "placeholder",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
