@@ -39,7 +39,10 @@ batch_end_date = "{{ dag_run.conf.get('batch_end_date', data_interval_end) }}"
 # because generally omni_pdts will always be dependent on gold tables. Instead of maintaining
 # a separate set of dependencies for omni_pdts, we can just wait on the entire DAG to finish
 wait_on_dbt_stellar_marts = build_cross_deps(
-    dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts"
+    dag,
+    "wait_on_dbt_stellar_marts",
+    "dbt_stellar_marts",
+    timeout=10800,
 )
 
 omni_pdt_agg_task = dbt_task(
