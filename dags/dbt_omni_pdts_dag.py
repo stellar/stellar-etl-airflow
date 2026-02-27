@@ -20,7 +20,7 @@ init_sentry()
 dag = DAG(
     "dbt_omni_pdts",
     default_args=get_default_dag_args(),
-    start_date=datetime(2026, 2, 26, 0, 0),
+    start_date=datetime(2026, 2, 25, 0, 0),
     description="This DAG runs dbt models at a daily cadence",
     schedule_interval="0 13 * * *",  # Runs at 13:00 UTC
     user_defined_filters={
@@ -43,7 +43,7 @@ wait_on_dbt_stellar_marts = build_cross_deps(
 )
 
 omni_pdt_agg_task = dbt_task(
-    dag, tag="omni_pdts", dbt_image="{{ var.value.dbt_latest_image_name }}"
+    dag, tag="omni_pdts", dbt_image="{{ var.value.dbt_image_latest }}"
 )
 
 wait_on_dbt_stellar_marts >> omni_pdt_agg_task
