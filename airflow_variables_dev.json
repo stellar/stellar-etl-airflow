@@ -108,7 +108,8 @@
     "partnership_assets__asset_activity_fact": false
   },
   "dbt_gold_dataset": "test_gold",
-  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:a70ea5662",
+  "dbt_image_latest": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:latest",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:fafa90056",
   "dbt_internal_marts_dataset": "test_sdf_marts",
   "dbt_internal_source_db": "test-hubble-319619",
   "dbt_internal_source_schema": "test_crypto_stellar_internal",
@@ -378,7 +379,7 @@
       "target_project": "staging-hubble"
     }
   ],
-  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:e0cc89363",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal-dev:ca96a8ac7",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -425,7 +426,6 @@
     "current_state": 720,
     "custom_snapshot_accounts": 3600,
     "custom_snapshot_asset_prices_coingecko": 3600,
-    "custom_snapshot_asset_prices_usd": 3600,
     "custom_snapshot_contract_data": 3600,
     "custom_snapshot_euro_usd_ohlc": 3600,
     "custom_snapshot_evicted_keys": 3600,

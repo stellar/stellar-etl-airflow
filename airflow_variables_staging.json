@@ -110,7 +110,8 @@
     "trade_agg": false
   },
   "dbt_gold_dataset": "staging_gold",
-  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:a70ea5662",
+  "dbt_image_latest": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:latest",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt-staging:054a59461",
   "dbt_internal_marts_dataset": "staging_sdf_marts",
   "dbt_internal_source_db": "staging-hubble",
   "dbt_internal_source_schema": "staging_crypto_stellar_internal",
@@ -145,7 +146,7 @@
   "elementary_secret": "slack-token-elementary",
   "gcs_exported_data_bucket_name": "us-central1-stellar-etl-sta-244c1f2f-bucket",
   "gcs_exported_object_prefix": "dag-exported",
-  "image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl/stellar-etl:f8475c8b1",
+  "image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl/stellar-etl:1016ceff2",
   "image_output_path": "/etl/exported_data/",
   "image_pull_policy": "IfNotPresent",
   "internal_source_db": "staging-hubble",
@@ -405,7 +406,7 @@
       "target_project": "staging-hubble"
     }
   ],
-  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:e0cc89363",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal-staging:9658e66a1",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
@@ -452,7 +453,6 @@
     "current_state": 1200,
     "custom_snapshot_accounts": 3600,
     "custom_snapshot_asset_prices_coingecko": 3600,
-    "custom_snapshot_asset_prices_usd": 3600,
     "custom_snapshot_contract_data": 3600,
     "custom_snapshot_euro_usd_ohlc": 3600,
     "custom_snapshot_evicted_keys": 3600,
@@ -498,8 +498,7 @@
     "token_transfer": 1200,
     "trade_agg": 1020,
     "tvl": 900,
-    "update_sandbox": 5460,
-    "wallet_metrics": 720
+    "update_sandbox": 5460
   },
   "task_timeout": {
     "build_batch_stats": 180,

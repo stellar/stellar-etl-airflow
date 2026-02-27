@@ -109,7 +109,8 @@
     "trade_agg": false
   },
   "dbt_gold_dataset": "gold",
-  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:a70ea5662",
+  "dbt_image_latest": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:latest",
+  "dbt_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-dbt/stellar-dbt:fafa90056",
   "dbt_internal_marts_dataset": "sdf_marts",
   "dbt_internal_source_db": "hubble-261722",
   "dbt_internal_source_schema": "crypto_stellar_internal_2",
@@ -423,7 +424,6 @@
     "current_state": 1200,
     "custom_snapshot_accounts": 3600,
     "custom_snapshot_asset_prices_coingecko": 3600,
-    "custom_snapshot_asset_prices_usd": 3600,
     "custom_snapshot_contract_data": 3600,
     "custom_snapshot_euro_usd_ohlc": 3600,
     "custom_snapshot_evicted_keys": 3600,
@@ -469,8 +469,7 @@
     "token_transfer": 1200,
     "trade_agg": 1020,
     "tvl": 900,
-    "update_sandbox": 5460,
-    "wallet_metrics": 720
+    "update_sandbox": 5460
   },
   "task_timeout": {
     "build_batch_stats": 180,
