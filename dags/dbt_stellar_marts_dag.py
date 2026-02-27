@@ -198,7 +198,13 @@ asset_balance_agg_task = dbt_task(
     ],
 )
 
-asset_prices_task = dbt_task(dag, tag="asset_prices")
+# asset_prices runs in two phases:
+#   1. dbt build --target staging  → writes to sdf_marts_staging, tests run there
+#   2. dbt run  --target prod      → writes to sdf_marts only if staging tests passed
+asset_prices_staging = dbt_task(dag, tag="asset_prices",
+                                 command_type="build", target="staging")
+asset_prices_prod = dbt_task(dag, tag="asset_prices", command_type="run")
+asset_prices_staging >> asset_prices_prod
 
 assets_task = dbt_task(dag, tag="assets")
 
@@ -217,29 +223,28 @@ stellarbeat_task = dbt_task(dag, tag="stellarbeat")
 wait_on_dbt_enriched_base_tables >> trade_agg_task
 wait_on_dbt_enriched_base_tables >> fee_stats_agg_task
 wait_on_dbt_enriched_base_tables >> asset_stats_agg_task
-asset_prices_task >> asset_stats_agg_task
+asset_prices_prod >> asset_stats_agg_task
 wait_on_dbt_enriched_base_tables >> network_stats_agg_task
 # wait_on_dbt_enriched_base_tables >> partnership_assets_task
 wait_on_dbt_enriched_base_tables >> history_assets
 wait_on_partner_pipeline >> entity_attribution_task
 wait_on_dbt_enriched_base_tables >> entity_attribution_task >> wallet_metrics_task
 wait_on_dbt_enriched_base_tables >> tvl_task >> export_tvl_to_gcs
-asset_prices_task >> tvl_task
+asset_prices_prod >> tvl_task
 wait_on_dbt_snapshot_tables >> asset_balance_agg_task
-any_pricing_data_available >> asset_prices_task
+any_pricing_data_available >> asset_prices_staging
 
 # account_activity is built as part of the entity_attribution while we refactor
-# model dependencies and execution.
 # Because of this we need token_transfers to run before entity_attribution
 # so that account_activity will work as intended until we refactor
-# asset_prices_task >> account_activity_task
+# asset_prices_prod >> account_activity_task
 # partnership_assets_task >> account_activity_task
 # wallet_metrics_task >> account_activity_task
 
 entity_attribution_task >> assets_task
 entity_attribution_task >> omni_pdt_agg_task
 asset_balance_agg_task >> omni_pdt_agg_task
-asset_prices_task >> omni_pdt_agg_task
+asset_prices_prod >> omni_pdt_agg_task
 
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
