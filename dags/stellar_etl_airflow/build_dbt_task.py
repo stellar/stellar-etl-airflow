@@ -80,6 +80,7 @@ def dbt_task(
     date_macro="ts",
     batch_start_date="data_interval_start",
     batch_end_date="data_interval_end",
+    dbt_image=None
 ):
     """Create a task to run a collection of dbt models. Models are orchestrated by tag.
     If no tag is provided, the model_name will be used. If both are provided, the tag will
@@ -118,7 +119,8 @@ def dbt_task(
         }
     )
 
-    dbt_image = "{{ var.value.dbt_image_name }}"
+    if dbt_image is None:
+        dbt_image = "{{ var.value.dbt_image_name }}"
 
     # Handle seed command - doesn't use model selection
     if command_type == "seed":
@@ -234,7 +236,7 @@ def dbt_task(
 # build_dbt_task function is deprecated and should be removed.
 # All dbt builds should use dbt_task instead.
 def build_dbt_task(
-    dag, model_name, command_type="run", resource_cfg="default", project="prod"
+    dag, model_name, command_type="run", resource_cfg="default", project="prod", dbt_image=None
 ):
     """Create a task to run dbt on a selected model.
 
@@ -284,7 +286,8 @@ def build_dbt_task(
         f"{{{{ var.json.resources.{resource_cfg}.requests | container_resources }}}}"
     )
 
-    dbt_image = "{{ var.value.dbt_image_name }}"
+    if dbt_image is None:
+        dbt_image = "{{ var.value.dbt_image_name }}"
 
     return KubernetesPodOperator(
         task_id=f"{project}_{model_name}",

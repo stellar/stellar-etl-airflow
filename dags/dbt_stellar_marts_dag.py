@@ -202,8 +202,6 @@ asset_prices_task = dbt_task(dag, tag="asset_prices")
 
 assets_task = dbt_task(dag, tag="assets")
 
-omni_pdt_agg_task = dbt_task(dag, tag="omni_pdts")
-
 stellarbeat_task = dbt_task(dag, tag="stellarbeat")
 
 # Disable soroban tables because they're broken
@@ -237,9 +235,6 @@ any_pricing_data_available >> asset_prices_task
 # wallet_metrics_task >> account_activity_task
 
 entity_attribution_task >> assets_task
-entity_attribution_task >> omni_pdt_agg_task
-asset_balance_agg_task >> omni_pdt_agg_task
-asset_prices_task >> omni_pdt_agg_task
 
 # wait_on_dbt_enriched_base_tables >> soroban
 # wait_on_dbt_enriched_base_tables >> snapshot_state
