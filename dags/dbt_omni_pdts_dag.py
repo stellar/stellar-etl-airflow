@@ -7,9 +7,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from airflow.providers.google.cloud.transfers.gcs_to_gcs import GCSToGCSOperator
 from airflow.utils.trigger_rule import TriggerRule
 from kubernetes.client import models as k8s
-from stellar_etl_airflow.build_cross_dependency_task import (
-    build_cross_deps,
-)
+from stellar_etl_airflow.build_cross_dependency_task import build_cross_deps
 from stellar_etl_airflow.build_dbt_task import dbt_task
 from stellar_etl_airflow.default import (
     alert_sla_miss,
@@ -44,6 +42,8 @@ wait_on_dbt_stellar_marts = build_cross_deps(
     dag, "wait_on_dbt_stellar_marts", "dbt_stellar_marts"
 )
 
-omni_pdt_agg_task = dbt_task(dag, tag="omni_pdts", dbt_image="{{ var.value.dbt_latest_image_name }}")
+omni_pdt_agg_task = dbt_task(
+    dag, tag="omni_pdts", dbt_image="{{ var.value.dbt_latest_image_name }}"
+)
 
 wait_on_dbt_stellar_marts >> omni_pdt_agg_task

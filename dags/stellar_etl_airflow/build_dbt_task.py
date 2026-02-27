@@ -80,7 +80,7 @@ def dbt_task(
     date_macro="ts",
     batch_start_date="data_interval_start",
     batch_end_date="data_interval_end",
-    dbt_image=None
+    dbt_image=None,
 ):
     """Create a task to run a collection of dbt models. Models are orchestrated by tag.
     If no tag is provided, the model_name will be used. If both are provided, the tag will
@@ -236,7 +236,12 @@ def dbt_task(
 # build_dbt_task function is deprecated and should be removed.
 # All dbt builds should use dbt_task instead.
 def build_dbt_task(
-    dag, model_name, command_type="run", resource_cfg="default", project="prod", dbt_image=None
+    dag,
+    model_name,
+    command_type="run",
+    resource_cfg="default",
+    project="prod",
+    dbt_image=None,
 ):
     """Create a task to run dbt on a selected model.
 
