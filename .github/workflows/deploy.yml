@@ -78,7 +78,7 @@ jobs:
           BUCKET: us-central1-stellar-etl-tes-58aaf371-bucket
 
       - name: Update Airflow variables
-        uses: actions-hub/gcloud@92d4286faf220c43432b5fb77e23ee936ee953d8
+        uses: actions-hub/gcloud@25a6ba65b47384aa1d857e8e684ee15047b7bc71
         env:
           PROJECT_ID: test-hubble-319619
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_TEST_HUBBLE }}"
@@ -120,7 +120,7 @@ jobs:
           BUCKET: us-central1-stellar-etl-sta-327f762b-bucket
 
       - name: Update Airflow variables
-        uses: actions-hub/gcloud@92d4286faf220c43432b5fb77e23ee936ee953d8
+        uses: actions-hub/gcloud@25a6ba65b47384aa1d857e8e684ee15047b7bc71
         env:
           PROJECT_ID: staging-hubble
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_STAGING_HUBBLE }}"
@@ -162,7 +162,7 @@ jobs:
           BUCKET: us-central1-stellar-etl-com-7f6b70e1-bucket
 
       - name: Update Airflow variables
-        uses: actions-hub/gcloud@92d4286faf220c43432b5fb77e23ee936ee953d8
+        uses: actions-hub/gcloud@25a6ba65b47384aa1d857e8e684ee15047b7bc71
         env:
           PROJECT_ID: hubble-261722
           APPLICATION_CREDENTIALS: "${{ secrets.CREDS_PROD_HUBBLE }}"
