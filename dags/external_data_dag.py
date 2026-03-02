@@ -26,8 +26,6 @@ EXTERNAL_DATA_PROJECT_NAME = Variable.get("bq_project")
 EXTERNAL_DATA_DATASET_NAME = Variable.get("bq_dataset")
 DBT_TARGET_ENV = Variable.get("dbt_target")
 
-RETOOL_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES["retool_entity_data"]
-RETOOL_EXPORT_TASK_ID = "export_retool_data"
 
 WISDOM_TREE_ASSET_PRICES_TABLE_NAME = EXTERNAL_DATA_TABLE_NAMES[
     "wisdom_tree_asset_prices_data"
@@ -90,40 +88,6 @@ manual_end_date = "{{ params.get('manual_end_date', data_interval_end.isoformat(
 # This ensures compatibility with downstream tasks that may require only the date part.
 start_date = extract_date_from_datetime(manual_start_date)
 end_date = extract_date_from_datetime(manual_end_date)
-
-
-# Build the export task for retool data.
-# The --start-time and --end-time arguments must be in ISO 8601 format.
-retool_export_task = build_export_task(
-    dag,
-    RETOOL_EXPORT_TASK_ID,
-    command="export-retool",
-    cmd_args=[
-        "--start-time",
-        "{{ params.get('manual_start_date') or subtract_data_interval(dag, data_interval_start).isoformat() }}",
-        "--end-time",
-        "{{ params.get('manual_end_date') or subtract_data_interval(dag, data_interval_end).isoformat() }}",
-    ],
-    use_gcs=True,
-    env_vars={
-        "RETOOL_API_KEY": access_secret("retool-api-key"),
-    },
-)
-
-
-retool_insert_to_bq_task = create_export_del_insert_operator(
-    dag,
-    table_name=RETOOL_TABLE_NAME,
-    project=EXTERNAL_DATA_PROJECT_NAME,
-    dataset=EXTERNAL_DATA_DATASET_NAME,
-    export_task_id=RETOOL_EXPORT_TASK_ID,
-    source_object_suffix="",
-    partition=False,
-    cluster=False,
-    table_id=f"{EXTERNAL_DATA_PROJECT_NAME}.{EXTERNAL_DATA_DATASET_NAME}.{RETOOL_TABLE_NAME}",
-)
-
-retool_export_task >> retool_insert_to_bq_task
 
 
 wisdom_tree_asset_prices_export_task = build_export_task(
