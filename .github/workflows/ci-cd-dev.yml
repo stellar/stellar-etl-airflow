@@ -10,6 +10,7 @@ on:
     branches:
       - master
       - staging
+      - "release-*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_protected == 'true' && github.sha || github.ref }}-{{ github.event_name }}
