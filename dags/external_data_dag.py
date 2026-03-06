@@ -223,6 +223,17 @@ stellar_expert_prices_export_task = build_export_task(
     },
 )
 
+stellar_expert_blocklist_export_task = build_export_task(
+    dag,
+    "export_stellar_expert_blocklist",
+    command="cd /etl/python/export-stellar-expert-blocklist && python stellar_expert_blocklist_pipeline.py",
+    env_vars={
+        "STELLAR_EXPERT_SECRET_NAME": access_secret("stellar_expert_api_keys_json"),
+        "DESTINATION__BIGQUERY__DATASET_NAME": EXTERNAL_DATA_DATASET_NAME,
+    },
+)
+
+
 airtable_entities_dlt_task = build_export_task(
     dag,
     "airtable_entities_dlt_task",
