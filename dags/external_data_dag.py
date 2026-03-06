@@ -223,6 +223,19 @@ stellar_expert_prices_export_task = build_export_task(
     },
 )
 
+stellar_expert_blocklist_export_task = build_export_task(
+    dag,
+    "export_stellar_expert_blocklist",
+    command="export-stellar-expert-blocklist",
+    cmd_args=[
+        "--env",
+        DBT_TARGET_ENV,
+    ],
+    env_vars={
+        "STELLAR_EXPERT_SECRET_NAME": access_secret("stellar_expert_api_keys"),
+    },
+)
+
 airtable_entities_dlt_task = build_export_task(
     dag,
     "airtable_entities_dlt_task",
