@@ -228,12 +228,7 @@ stellar_expert_blocklist_export_task = build_export_task(
     "export_stellar_expert_blocklist",
     command="cd /etl/python/export-stellar-expert-blocklist && python stellar_expert_blocklist_pipeline.py",
     env_vars={
-        "STELLAR_EXPERT_AUTH_KEY": json.loads(access_secret("stellar_expert_api_keys"))[
-            "STELLAR_EXPERT_AUTH_KEY"
-        ],
-        "STELLAR_EXPERT_AUTH_VAL": json.loads(access_secret("stellar_expert_api_keys"))[
-            "STELLAR_EXPERT_AUTH_VAL"
-        ],
+        "STELLAR_EXPERT_SECRET_NAME": access_secret("stellar_expert_api_keys"),
         "DESTINATION__BIGQUERY__DATASET_NAME": EXTERNAL_DATA_DATASET_NAME,
     },
 )
