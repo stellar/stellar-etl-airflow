@@ -379,7 +379,7 @@
       "target_project": "staging-hubble"
     }
   ],
-  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal:421466ba5",
+  "stellar_etl_internal_image_name": "us-central1-docker.pkg.dev/hubble-261722/stellar-etl-internal/stellar-etl-internal-dev:de42c17f9",
   "table_ids": {
     "accounts": "accounts",
     "asset_prices__coingecko": "asset_prices__coingecko",
