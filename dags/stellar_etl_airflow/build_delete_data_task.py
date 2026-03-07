@@ -8,7 +8,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 
 def build_delete_data_task(dag, project, dataset, table, dataset_type="bq"):
     batch_id = macros.get_batch_id()
-    batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+    batch_date = "{{ params.get('manual_start_date') or batch_run_date_as_datetime_string(dag, data_interval_start) }}"
 
     # Adding the partition to the filter clause prunes the query
     # if the table is partitioned (tables partitioned by batch_run_date)

@@ -17,7 +17,7 @@ from stellar_etl_airflow.default import alert_after_max_retries
 def get_airflow_metadata():
     return {
         "batch_insert_ts": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "batch_date": "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}",
+        "batch_date": "{{ params.get('manual_start_date') or batch_run_date_as_datetime_string(dag, data_interval_start) }}",
         "batch_id": macros.get_batch_id(),
         "run_id": "{{ run_id }}",
     }

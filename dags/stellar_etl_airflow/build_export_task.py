@@ -141,7 +141,7 @@ def generate_etl_cmd(
         # TODO: cloud-provider should be a parameter instead of hardcoded to gcp
         cmd.extend(["--cloud-provider", "gcp"])
         batch_id = macros.get_batch_id()
-        batch_date = "{{ batch_run_date_as_datetime_string(dag, data_interval_start) }}"
+        batch_date = "{{ params.get('manual_start_date') or batch_run_date_as_datetime_string(dag, data_interval_start) }}"
         batch_insert_ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         metadata = f"'batch_id={batch_id},batch_run_date={batch_date},batch_insert_ts={batch_insert_ts}'"
         cmd.extend(["-u", metadata])
